@@ -16,68 +16,45 @@
 
 import UIKit
 
-extension UISplitViewController {
-    var masterNavigationController: HelmNavigationController? {
+public extension UISplitViewController {
+    var masterNavigationController: UINavigationController? {
         get {
-            if let navigationController = self.viewControllers.first as? HelmNavigationController {
+            if let navigationController = self.viewControllers.first as? UINavigationController {
                 return navigationController
             }
             return nil
         }
     }
-
-    var detailNavigationController: HelmNavigationController? {
+    
+    var detailNavigationController: UINavigationController? {
         get {
-            if let navigationController = self.viewControllers.last as? HelmNavigationController, self.viewControllers.count > 1 {
+            if let navigationController = self.viewControllers.last as? UINavigationController, self.viewControllers.count > 1 {
                 return navigationController
             }
             return nil
         }
     }
-
-    var masterTopViewController: HelmViewController? {
+    
+    var masterTopViewController: UIViewController? {
         get {
-            if let navigationController = self.viewControllers.first as? HelmNavigationController {
-                if let topViewController = navigationController.topMostViewController() as? HelmViewController {
+            if let navigationController = self.viewControllers.first as? UINavigationController {
+                if let topViewController = navigationController.topMostViewController() {
                     return topViewController
                 }
             }
             return nil
         }
     }
-
-    var detailTopViewController: HelmViewController? {
+    
+    var detailTopViewController: UIViewController? {
         get {
-            if let navigationController = self.viewControllers.last as? HelmNavigationController, self.viewControllers.count > 1 {
-                if let topViewController = navigationController.topMostViewController() as? HelmViewController {
-                 return topViewController
+            if let navigationController = self.viewControllers.last as? UINavigationController, self.viewControllers.count > 1 {
+                if let topViewController = navigationController.topMostViewController() {
+                    return topViewController
                 }
             }
             return nil
         }
     }
-
-    func sourceController(moduleName: String) -> HelmViewController? {
-        if let detailTopViewController = detailTopViewController, detailTopViewController.moduleName == moduleName {
-            return detailTopViewController
-        }
-
-        if let masterTopViewController = masterTopViewController, masterTopViewController.moduleName == moduleName {
-            return masterTopViewController
-        }
-        return nil
-    }
-
-    @discardableResult
-    func primeEmptyDetailNavigationController() -> HelmNavigationController {
-        let navigationController = HelmNavigationController()
-        self.showDetailViewController(navigationController, sender: nil)
-        return navigationController
-    }
-
-    override open var description: String {
-        get {
-            return "displayMode: \(self.displayMode) master: \(masterTopViewController?.moduleName ?? "N/A") detail: \(detailTopViewController?.moduleName ?? "N/A") masterVC: \( masterNavigationController != nil ? String(describing: masterNavigationController.self) : "N/A") detailVC: \( detailNavigationController != nil ? String(describing: detailNavigationController.self) : "N/A")"
-        }
-    }
 }
+

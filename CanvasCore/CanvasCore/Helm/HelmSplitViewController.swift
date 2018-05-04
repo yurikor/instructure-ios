@@ -16,17 +16,6 @@
 
 import UIKit
 
-class HelmSplitViewControllerWrapper: UIViewController {
-    
-    override var childViewControllerForStatusBarStyle: UIViewController? {
-        return childViewControllers.first
-    }
-    
-    override var childViewControllerForStatusBarHidden: UIViewController? {
-        return childViewControllers.first
-    }
-}
-
 open class HelmSplitViewController: UISplitViewController {
 
     public init() {
@@ -43,14 +32,35 @@ open class HelmSplitViewController: UISplitViewController {
 
     override open var preferredStatusBarStyle: UIStatusBarStyle {
         if let firstNav = viewControllers.first as? UINavigationController {
-            return firstNav.navigationBar.barStyle == .black ? .lightContent : .default
+            if let presented = firstNav.presentedViewController, presented.isBeingDismissed == false {
+                return presented.preferredStatusBarStyle
+            } else {
+                return firstNav.navigationBar.barStyle == .black ? .lightContent : .default
+            }
         } else {
-            return viewControllers.first!.preferredStatusBarStyle
+            guard let first = viewControllers.first else { return .default }
+            return first.preferredStatusBarStyle
         }
     }
     
     override open var prefersStatusBarHidden: Bool {
         return viewControllers.first?.prefersStatusBarHidden ?? false
+    }
+    
+    open override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        let notification = Notification.Name(rawValue: "HelmSplitViewControllerTraitsUpdated")
+        NotificationCenter.default.post(name: notification, object: nil, userInfo: nil)
+    }
+    
+    open override func showDetailViewController(_ vc: UIViewController, sender: Any?) {
+        super.showDetailViewController(vc, sender: sender)
+        self.masterNavigationController?.syncStyles()
+    }
+    
+    open override func show(_ vc: UIViewController, sender: Any?) {
+        super.show(vc, sender: sender)
+        self.masterNavigationController?.syncStyles()
     }
 }
 
@@ -63,7 +73,7 @@ extension HelmSplitViewController: UISplitViewControllerDelegate {
             }
             return .allVisible;
         } else {
-            if let nav = svc.viewControllers.last as? UINavigationController {
+            if let nav = svc.viewControllers.last as? UINavigationController, let top = nav.topViewController, !top.isKind(of: EmptyViewController.self) {
                 nav.topViewController?.navigationItem.leftBarButtonItem = prettyDisplayModeButtonItem
                 nav.topViewController?.navigationItem.leftItemsSupplementBackButton = true
             }

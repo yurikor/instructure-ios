@@ -18,12 +18,6 @@
 
 import SubmissionActions from './actions'
 
-export type SubmissionStatusProp =
-  'none' |
-  'missing' |
-  'late' |
-  'submitted'
-
 export type GradeProp = 'not_submitted' | 'ungraded' | 'excused' | string
 
 export type SubmissionDataProps = {
@@ -31,13 +25,13 @@ export type SubmissionDataProps = {
   groupID?: string,
   avatarURL?: string,
   name: string,
-  status: SubmissionStatusProp,
+  status: SubmissionStatus,
   grade: ?GradeProp,
   score?: ?number,
   submissionID: ?string,
   submission: ?Object,
-  sectionID: string,
-  allSectionIDs: [string],
+  sectionID: ?string,
+  allSectionIDs: ?string[],
 }
 
 export type SubmissionProps = SubmissionDataProps & {
@@ -52,7 +46,8 @@ export type AsyncSubmissionsDataProps = {
 export type SubmissionListDataProps
   = AsyncSubmissionsDataProps
   & {
-    groupAssignment: ?{ groupCategoryID: string, gradeIndividually: boolean },
+    isMissingGroupsData: boolean,
+    isGroupGradedAssignment: boolean,
     courseColor: string,
     courseName: string,
     pointsPossible?: string,

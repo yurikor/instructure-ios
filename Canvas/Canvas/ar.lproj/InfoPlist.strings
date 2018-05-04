@@ -1,9 +1,12 @@
 /* (No Comment) */
-"CFBundleDisplayName" = "Canvas";
+"NSCameraUsageDescription" = "إرفاق صور ومقاطع فيديو بالرسائل ومنشورات النقاش أو تسليمها في صورة إرسالات تعيينات.";
 
 /* (No Comment) */
-"CFBundleName" = "${PRODUCT_NAME}";
+"NSLocationWhenInUseUsageDescription" = "ساعدنا في العثور على مدارس بالقرب منك.";
 
 /* (No Comment) */
-"CFBundleShortVersionString" = "3.17.1";
+"NSMicrophoneUsageDescription" = "إرفاق تسجيلات صوتية بالرسائل ومنشورات النقاش أو تسليمها في صورة إرسالات تعيينات.";
+
+/* (No Comment) */
+"NSPhotoLibraryUsageDescription" = "إرفاق صور ومقاطع فيديو بالرسائل ومنشورات النقاش أو تسليمها في صورة إرسالات تعيينات.";
 

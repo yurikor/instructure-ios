@@ -18,8 +18,7 @@
 
 import Foundation
 import PSPDFKit
-import CanvasCore
-
+import PSPDFKitUI
 open class PreSubmissionPDFDocumentPresenter: NSObject {
     var pdfDocument: PSPDFDocument
     let session: Session?
@@ -44,12 +43,13 @@ open class PreSubmissionPDFDocumentPresenter: NSObject {
             builder.pageTransition = PSPDFPageTransition.scrollContinuous
             builder.scrollDirection = PSPDFScrollDirection.vertical
             builder.thumbnailBarMode = PSPDFThumbnailBarMode.none
-            builder.fitToWidthEnabled = .YES
-            builder.pagePadding = 5.0
+            builder.spreadFitting = .fill
+            builder.additionalScrollViewFrameInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+            builder.pageMode = .single
             builder.documentLabelEnabled = .NO
             builder.isRenderAnimationEnabled = false
-            builder.shouldHideNavigationBarWithHUD = false
-            builder.shouldHideStatusBarWithHUD = false
+            builder.shouldHideNavigationBarWithUserInterface = false
+            builder.shouldHideStatusBarWithUserInterface = false
             builder.naturalDrawingAnnotationEnabled = true
             builder.applicationActivities = [PSPDFActivityTypeOpenIn, PSPDFActivityTypeGoToPage, PSPDFActivityTypeSearch]
             builder.editableAnnotationTypes = [

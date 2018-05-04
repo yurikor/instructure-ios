@@ -205,9 +205,6 @@
 /* (No Comment) */
 "All members" = "所有成員";
 
-/* Allow Notifications in Settings */
-"Allow Notifications in Settings" = "在設定中允許通知消息";
-
 /* (No Comment) */
 "An unknown error occurred" = "出現未知錯誤";
 
@@ -239,7 +236,7 @@
    Assignment module item type */
 "Assignment" = "任務";
 
-/* Title for Assignments view controller */
+/* (No Comment) */
 "Assignments" = "任務";
 
 /* (No Comment) */
@@ -275,6 +272,9 @@
 /* Calendar landing page title
    Calendar page title */
 "Calendar" = "月曆";
+
+/* No comment provided by engineer. */
+"Calendar Event" = "月曆事件";
 
 /* (No Comment) */
 "Can't load tool" = "無法載入工具";
@@ -384,8 +384,7 @@
 /* (No Comment) */
 "Course Syllabus" = "課程大綱";
 
-/* Courses landing page title
-   Courses page title */
+/* Courses landing page title */
 "Courses" = "課程";
 
 /* (No Comment) */
@@ -402,6 +401,9 @@
 
 /* (No Comment) */
 "Customize" = "自定義";
+
+/* dashboard page title */
+"Dashboard" = "控制面板";
 
 /* (No Comment) */
 "Delete" = "刪除";
@@ -481,10 +483,10 @@
 /* (No Comment) */
 "Edit" = "編輯";
 
-/* Edit course list title */
+/* (No Comment) */
 "Edit Course List" = "編輯課程清單";
 
-/* Edit group list title */
+/* (No Comment) */
 "Edit Group List" = "編輯群組清單";
 
 /* (No Comment) */
@@ -496,7 +498,7 @@
 /* (No Comment) */
 "Email" = "電子郵件";
 
-/* Prompt asking user to enable push notifications */
+/* (No Comment) */
 "Enable Push Notifications" = "啟用推送通知";
 
 /* (No Comment) */
@@ -601,19 +603,19 @@
 /* (No Comment) */
 "Graded discussion. %g points possible." = "已評分的討論。可得點為 %g。";
 
-/* Title for Grades view controller */
+/* (No Comment) */
 "Grades" = "評分";
 
 /* (No Comment) */
 "Group conversation" = "群組會議";
 
-/* Groups page title */
+/* (No Comment) */
 "Groups" = "群組";
 
 /* (No Comment) */
 "Help" = "幫助";
 
-/* Accessibility label for toggling grades to hidden */
+/* (No Comment) */
 "Hide Grades" = "隱藏評分";
 
 /* (No Comment) */
@@ -667,7 +669,7 @@
 /* (No Comment) */
 "Large file" = "大資料夾";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Later" = "以後再說";
 
 /* (No Comment) */
@@ -862,7 +864,7 @@
 /* Nothing to see here. */
 "Nothing to see here." = "這裡沒有內容供瀏覽。";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Notification" = "通知";
 
 /* Settings entry title for Notification Preferences */
@@ -955,7 +957,7 @@
 /* (No Comment) */
 "Privacy Policy" = "隱私政策";
 
-/* (No Comment) */
+/* No comment provided by engineer. */
 "Profile" = "個人檔案";
 
 /* Quiz module item type */
@@ -1033,9 +1035,6 @@
 /* (No Comment) */
 "Search for recipients" = "搜尋收信人";
 
-/* Placeholder text for search bar on assignments page */
-"Search here..." = "在此搜尋...";
-
 /* No comment provided by engineer. */
 "Select Option" = "選擇選項";
 
@@ -1066,7 +1065,7 @@
 /* (No Comment) */
 "Settings" = "設定";
 
-/* Accessibility label for toggling grades to visible */
+/* (No Comment) */
 "Show Grades" = "顯示等級";
 
 /* (No Comment) */
@@ -1209,6 +1208,9 @@
 /* (No Comment) */
 "Text entry" = "文字條目";
 
+/* No comment provided by engineer. */
+"That page has been disabled for this course" = "已針對此課程停用該內容頁";
+
 /* (No Comment) */
 "The recipients could not be added. Please try again. (%@)" = "收信人無法被添加。請重試。(%@)";
 
@@ -1308,7 +1310,7 @@
 /* Label read aloud to describe module item type */
 "Type: %@" = "類型：%@";
 
-/* Notification over status bar that displays when not connected to the internet. */
+/* (No Comment) */
 "Uh-oh! No Internet Connection" = "抱歉！沒有網際網路連結";
 
 /* (No Comment) */
@@ -1320,10 +1322,10 @@
 /* (No Comment) */
 "Unable to upload to server" = "無法上載至伺服器";
 
-/* Grade unavailable */
+/* (No Comment) */
 "Unavailable" = "不可用";
 
-/* Title for grade button when no grade is present */
+/* (No Comment) */
 "Ungraded" = "未評分";
 
 /* (No Comment) */
@@ -1371,7 +1373,7 @@
 /* (No Comment) */
 "Video error" = "視頻錯誤";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "View" = "檢視";
 
 /* (No Comment) */

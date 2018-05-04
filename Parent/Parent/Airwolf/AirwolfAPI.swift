@@ -35,9 +35,17 @@ open class AirwolfAPI {
             parameters["authentication_provider"] = provider
         }
         
-        return try! URLRequest(method: .GET, URL: url, parameters: parameters, encoding: .url)
+        var request = try! URLRequest(method: .GET, URL: url, parameters: parameters, encoding: .url)
+        request.setValue(self.loginUserAgent(), forHTTPHeaderField: "User-Agent")
+        return request
     }
 
+    open class func loginUserAgent() -> String {
+        let template = "Mozilla/5.0 (iPhone; CPU iPhone OS %@ like Mac OS X) AppleWebKit/603.1.23 (KHTML, like Gecko) Version/10.0 Mobile/14E5239e Safari/602.1"
+        let version = UIDevice.current.systemVersion.replacingOccurrences(of: ".", with: "_")
+        return String(format: template, version)
+    }
+    
     open class func createAccountRequest(email: String, password: String, firstName: String, lastName: String) throws -> URLRequest {
         let url = RegionPicker.shared.apiURL
             .appendingPathComponent("newparent")
@@ -68,7 +76,7 @@ open class AirwolfAPI {
         if let provider = authenticationProvider {
             parameters["authentication_provider"] = provider
         }
-        return try session.GET("/add_student/\(parentID)", parameters: parameters, encoding: .urlEncodedInURL, authorized: true)
+        return try session.GET("/add_student/\(parentID)", parameters: parameters, encoding: .urlEncodedInURL, authorized: true, userAgent: self.loginUserAgent())
     }
 
     open class func checkDomainRequest(_ session: Session, parentID: String, studentDomain: URL) throws -> URLRequest {
@@ -77,5 +85,39 @@ open class AirwolfAPI {
 
     open class func deleteStudentRequest(_ session: Session, parentID: String, studentID: String) throws -> URLRequest {
         return try session.DELETE("/student/\(parentID)/\(studentID)")
+    }
+
+    open class func validateSession(_ session: Session, parentID: String, completionHandler: @escaping (_ success: Bool) -> Void) {
+        do {
+            let request = try self.getStudentsRequest(session, parentID: parentID)
+
+            let task = URLSession.shared.dataTask(with: request) {data, response, error in
+                if error != nil {
+                    completionHandler(false)
+                }
+
+                if let httpResponse = response as? HTTPURLResponse {
+                    if (httpResponse.statusCode == 401) {
+                        completionHandler(false)
+                    } else {
+                        completionHandler(true)
+                    }
+                }
+            }
+            task.resume()
+        } catch {
+            completionHandler(false)
+        }
+    }
+
+    open class func validateSessionAndLogout(_ session: Session, parentID: String) {
+        validateSession(session, parentID: parentID) {success in
+            if !success {
+                DispatchQueue.main.async {
+                    Keymaster.sharedInstance.logout()
+                    Router.sharedInstance.routeToLoggedOutViewController(animated: true)
+                }
+            }
+        }
     }
 }

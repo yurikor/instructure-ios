@@ -18,28 +18,41 @@
 
 import template, { type Template } from '../../utils/template'
 
-const emptyAppState: AppState = {
+export const entities: Template<Entities> = template({
+  accountNotifications: {
+    pending: 0,
+    list: [],
+    closing: [],
+    error: '',
+  },
+  courses: {},
+  groups: {},
+  assignmentGroups: {},
+  gradingPeriods: {},
+  enrollments: {},
+  sections: {},
+  assignments: {},
+  users: {},
+  submissions: {},
+  quizzes: {},
+  quizSubmissions: {},
+  discussions: {},
+  announcements: {},
+  courseDetailsTabSelectedRow: { rowID: '' },
+})
+
+export const appState: Template<AppState> = template({
   drawer: { currentSnap: 2, currentTab: -1 },
   favoriteCourses: {
     pending: 0,
     courseRefs: [],
   },
-  entities: {
-    courses: {},
-    groups: {},
-    assignmentGroups: {},
-    gradingPeriods: {},
-    enrollments: {},
-    sections: {},
-    assignments: {},
-    users: {},
-    submissions: {},
-    quizzes: {},
-    quizSubmissions: {},
-    discussions: {},
-    announcements: {},
-    courseDetailsTabSelectedRow: { rowID: '' },
+  favoriteGroups: {
+    pending: 0,
+    groupRefs: [],
+    userHasFavoriteGroups: true,
   },
+  entities: entities(),
   inbox: {
     selectedScope: 'all',
     conversations: {},
@@ -52,6 +65,9 @@ const emptyAppState: AppState = {
   asyncActions: {},
   files: {},
   folders: {},
-}
-
-export const appState: Template<AppState> = template(emptyAppState)
+  userInfo: {
+    canMasquerade: false,
+    showsGradesOnCourseCards: true,
+    externalTools: [],
+  },
+})

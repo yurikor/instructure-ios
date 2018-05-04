@@ -19,7 +19,7 @@
 import httpClient from '../httpClient'
 import { paginate, exhaust } from '../utils/pagination'
 
-export function getLTILaunchDefinitions (courseID: string): Promise<ApiResponse<Array<getLTILaunchDefinitions>>> {
+export function getLTILaunchDefinitions (courseID: string): ApiPromise<getLTILaunchDefinitions[]> {
   const url = `courses/${courseID}/lti_apps/launch_definitions`
 
   const paginated = paginate(url, {
@@ -31,7 +31,7 @@ export function getLTILaunchDefinitions (courseID: string): Promise<ApiResponse<
   return exhaust(paginated)
 }
 
-export function getExternalTool (courseID: string, id: string, options: GetExternalToolOptions): Promise<ApiResponse<ExternalTool>> {
+export function getExternalTool (courseID: string, id: string, options: GetExternalToolOptions): ApiPromise<ExternalTool> {
   const { assignment } = options
   let params = {}
   const url = `courses/${courseID}/external_tools/${id}`
@@ -44,6 +44,15 @@ export function getExternalTool (courseID: string, id: string, options: GetExter
   return httpClient().get(url, { params })
 }
 
+export function getExternalTools (courseID: string, params: { include_parents?: boolean }): ApiPromise<Array<ExternalTool>> {
+  const tools = paginate(`courses/${courseID}/external_tools`, { params })
+  return exhaust(tools)
+}
+
 export function getSessionlessLaunchURL (courseID: string, options: GetExternalToolOptions): Promise<string> {
   return getExternalTool(courseID, 'sessionless_launch', options).then(response => response.data.url)
+}
+
+export function refreshAccountExternalTools (): ApiPromise<ExternalToolLaunchDefinition[]> {
+  return httpClient().get(`accounts/self/lti_apps/launch_definitions?placements[]=global_navigation`)
 }

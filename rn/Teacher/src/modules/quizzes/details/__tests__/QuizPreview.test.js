@@ -14,15 +14,13 @@
 // limitations under the License.
 //
 
-/* @flow */
+/* eslint-disable flowtype/require-valid-file-annotation */
 
 import React from 'react'
 import 'react-native'
 import renderer from 'react-test-renderer'
 
 import { QuizPreview, mapStateToProps } from '../QuizPreview'
-
-jest.mock('react-native-wkwebview-reborn', () => 'WKWebView')
 
 const template = {
   ...require('../../../../__templates__/helm'),

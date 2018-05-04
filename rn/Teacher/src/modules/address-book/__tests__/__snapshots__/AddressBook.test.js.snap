@@ -3,8 +3,6 @@
 exports[`AddressBook renders 1`] = `
 <Screen
   drawUnderNavBar={true}
-  navBarColor="#fff"
-  navBarStyle="light"
   rightBarButtons={
     Array [
       Object {
@@ -23,7 +21,7 @@ exports[`AddressBook renders 1`] = `
       }
     }
   >
-    <RCTScrollView
+    <FlatList
       ItemSeparatorComponent={[Function]}
       ListEmptyComponent={
         <ListEmptyComponent
@@ -50,59 +48,19 @@ exports[`AddressBook renders 1`] = `
         ]
       }
       disableVirtualization={false}
-      getItem={[Function]}
-      getItemCount={[Function]}
       horizontal={false}
       initialNumToRender={10}
       keyExtractor={[Function]}
       maxToRenderPerBatch={10}
       numColumns={1}
-      onContentSizeChange={[Function]}
       onEndReached={[Function]}
       onEndReachedThreshold={2}
-      onLayout={[Function]}
-      onMomentumScrollEnd={[Function]}
-      onScroll={[Function]}
-      onScrollBeginDrag={[Function]}
-      onScrollEndDrag={[Function]}
       refreshing={false}
       renderItem={[Function]}
       scrollEventThrottle={50}
-      stickyHeaderIndices={Array []}
       updateCellsBatchingPeriod={50}
-      viewabilityConfigCallbackPairs={Array []}
       windowSize={21}
-    >
-      <View>
-        <View
-          onLayout={[Function]}
-          style={null}
-        >
-          <TypeAheadSearch
-            defaultQuery=""
-            endpoint="/search/recipients"
-            onChangeText={[Function]}
-            onNextRequestFinished={[Function]}
-            onRequestFinished={[Function]}
-            onRequestStarted={[Function]}
-            parameters={[Function]}
-          />
-        </View>
-        <View
-          onLayout={[Function]}
-          style={null}
-        >
-          <Row
-            border="both"
-            disclosureIndicator={false}
-            onPress={[Function]}
-            renderImage={[Function]}
-            testID="branch_course_1"
-            title="All in Address Book Course"
-          />
-        </View>
-      </View>
-    </RCTScrollView>
+    />
   </View>
 </Screen>
 `;

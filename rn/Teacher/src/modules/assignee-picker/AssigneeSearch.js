@@ -38,15 +38,12 @@ import SectionHeader from '../../common/components/rows/SectionHeader'
 import ListEmptyComponent from '../../common/components/ListEmptyComponent'
 import RowSeparator from '../../common/components/rows/RowSeparator'
 
-export class AssigneeSearch extends Component<any, AssigneeSearchProps, any> {
+export class AssigneeSearch extends Component<AssigneeSearchProps, any> {
   searchBar: SearchBar
   filterString: string
 
-  constructor (props: AssigneeSearchProps) {
-    super(props)
-    this.state = {
-      sections: [],
-    }
+  state = {
+    sections: [],
   }
 
   updateFilterString = (filterString: string) => {
@@ -201,4 +198,4 @@ const styles = StyleSheet.create({
 })
 
 let Connected = connect(searchMapStateToProps, { ...SectionActions, ...EnrollmentActions })(AssigneeSearch)
-export default (Connected: Component<any, AssigneeSearchProps, any>)
+export default (Connected: Component<AssigneeSearchProps, any>)

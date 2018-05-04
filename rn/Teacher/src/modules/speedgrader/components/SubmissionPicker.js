@@ -37,16 +37,9 @@ import brand from '../../../common/branding'
 
 var PickerItemIOS = PickerIOS.Item
 
-export class SubmissionPicker extends Component {
-  props: SubmissionPickerProps
-  state: State
-
-  constructor (props: SubmissionPickerProps) {
-    super(props)
-
-    this.state = {
-      showingPicker: false,
-    }
+export class SubmissionPicker extends Component<SubmissionPickerProps, State> {
+  state: State = {
+    showingPicker: false,
   }
 
   _togglePicker = () => {
@@ -89,7 +82,7 @@ export class SubmissionPicker extends Component {
         >
           <View style={styles.submissionHistoryContainer}>
             <Text style={[styles.submissionDate, this.state.showingPicker && { color: brand.primaryBrandColor }]}>
-              {formattedDueDate(new Date(selected.submitted_at || ''))}
+              {formattedDueDate(new Date((selected && selected.submitted_at) || ''))}
             </Text>
             <Image source={Images.pickerArrow} style={[{ alignSelf: 'center' }, this.state.showingPicker && styles.arrowSelecting]} />
           </View>

@@ -24,18 +24,25 @@ import Screen from '../../../routing/Screen'
 import RichTextEditor from '../../../common/components/rich-text-editor/RichTextEditor'
 import Actions from './actions'
 import { alertError } from '../../../redux/middleware/error-handler'
-import ModalActivityIndicator from '../../../common/components/ModalActivityIndicator'
+import ModalOverlay from '../../../common/components/ModalOverlay'
+import { isTeacher } from '../../app'
+import Images from '../../../images'
 import {
   View,
   LayoutAnimation,
+  processColor,
 } from 'react-native'
 
 type OwnProps = {
   discussionID: string,
-  courseID: string,
+  context: CanvasContext,
+  contextID: string,
   indexPath?: number[],
   entryID?: ?string,
   lastReplyAt: string,
+  message: string,
+  permissions: DiscussionPermissions,
+  isEdit?: boolean,
 }
 
 type State = {
@@ -46,21 +53,19 @@ type State = {
 type Props = OwnProps & typeof Actions & NavigationProps & State
 
 export class EditReply extends React.Component<Props, any> {
-  props: Props
-
-  constructor (props: Props) {
-    super(props)
-    this.state = {
-      pending: false,
-    }
+  state: any = {
+    pending: false,
+    attachment: null,
   }
+  editor: ?RichTextEditor
 
   render () {
+    const permissions = this.props.permissions
     let message = this.props.message || ''
+    const { isEdit } = this.props
     return (
       <Screen
-        title={i18n('Reply')}
-        navBarStyle='light'
+        title={isEdit ? i18n('Edit') : i18n('Reply')}
         navBarTitleColor={color.darkText}
         navBarButtonColor={color.link}
         rightBarButtons={[
@@ -70,18 +75,24 @@ export class EditReply extends React.Component<Props, any> {
             testID: 'edit-discussion-reply.done-btn',
             action: this._actionDonePressed,
           },
-        ]}
-        leftBarButtons={[
-          {
-            title: i18n('Cancel'),
-            testID: 'edit-discussion-reply.cancel-btn',
-            action: this._actionCancelPressed,
+          permissions && permissions.attach && {
+            image: Images.attachmentLarge,
+            testID: 'edit-discussion-reply.attachment-btn',
+            action: this.addAttachment,
+            accessibilityLabel: i18n('Edit attachment ({count})', { count: this.state.attachment ? '1' : i18n('none') }),
+            badge: this.state.attachment && {
+              text: '1',
+              backgroundColor: processColor('#008EE2'),
+              textColor: processColor('white'),
+            },
           },
         ]}
+        dismissButtonTitle={i18n('Cancel')}
       >
         <View style={{ flex: 1 }}>
-          <ModalActivityIndicator text={i18n('Saving')} visible={this.state.pending} />
+          <ModalOverlay text={i18n('Saving')} visible={this.state.pending} />
           <RichTextEditor
+            ref={(r) => { this.editor = r }}
             onChangeValue={this._valueChanged('message')}
             defaultValue={message}
             showToolbar='always'
@@ -89,6 +100,7 @@ export class EditReply extends React.Component<Props, any> {
             placeholder={i18n('Message')}
             focusOnLoad={true}
             navigator={this.props.navigator}
+            attachmentUploadPath={isTeacher() ? `/${this.props.context}/${this.props.contextID}/files` : '/users/self/files'}
           />
         </View>
       </Screen>
@@ -97,12 +109,12 @@ export class EditReply extends React.Component<Props, any> {
 
   componentWillReceiveProps (props: Props) {
     if (props.error) {
-      this.setState({ pending: false })
       this._handleError(props.error)
+      this.setState({ pending: false })
       return
     }
     if (this.state.pending && !props.pending) {
-      this.props.refreshDiscussionEntries(this.props.courseID, this.props.discussionID, true)
+      this.props.refreshDiscussionEntries(this.props.context, this.props.contextID, this.props.discussionID, true)
       this.props.navigator.dismissAllModals()
       return
     }
@@ -112,20 +124,18 @@ export class EditReply extends React.Component<Props, any> {
     this.props.deletePendingReplies(this.props.discussionID)
   }
 
-  _actionDonePressed = () => {
+  _actionDonePressed = async () => {
+    const message = this.editor && await this.editor.getHTML()
     const params = {
-      message: this.state.message,
+      message,
+      attachment: this.state.attachment,
     }
     this.setState({ pending: true })
     if (this.props.isEdit) {
-      this.props.editEntry(this.props.courseID, this.props.discussionID, this.props.entryID, params, this.props.indexPath)
+      this.props.editEntry(this.props.context, this.props.contextID, this.props.discussionID, this.props.entryID, params, this.props.indexPath)
     } else {
-      this.props.createEntry(this.props.courseID, this.props.discussionID, this.props.entryID, params, this.props.indexPath, this.props.lastReplyAt)
+      this.props.createEntry(this.props.context, this.props.contextID, this.props.discussionID, this.props.entryID, params, this.props.indexPath, this.props.lastReplyAt)
     }
-  }
-
-  _actionCancelPressed = () => {
-    this.props.navigator.dismiss()
   }
 
   _valueChanged (property: string, transformer?: any, animated?: boolean = true): Function {
@@ -147,9 +157,20 @@ export class EditReply extends React.Component<Props, any> {
       alertError(error)
     }, 1000)
   }
+
+  addAttachment = () => {
+    this.props.navigator.show('/attachments', { modal: true }, {
+      attachments: this.state.attachment ? [this.state.attachment] : [],
+      maxAllowed: 1,
+      storageOptions: {
+        uploadPath: null,
+      },
+      onComplete: this._valueChanged('attachment', (as) => as[0]),
+    })
+  }
 }
 
-export function mapStateToProps ({ entities }: AppState, { courseID, discussionID }: OwnProps): State {
+export function mapStateToProps ({ entities }: AppState, { context, contextID, discussionID }: OwnProps): State {
   let pending = 0
   let error = null
 

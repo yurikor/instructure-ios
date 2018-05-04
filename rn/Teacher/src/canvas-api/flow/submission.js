@@ -16,15 +16,6 @@
 
 // @flow
 
-export type File = {
-  id: string,
-  display_name: string,
-  url: string,
-  size: number,
-  thumbnail_url: number,
-  mime_class: string,
-}
-
 export type SubmissionType
   = 'online_text_entry'
   | 'online_url'
@@ -36,6 +27,15 @@ export type SubmissionType
   | 'external_tool' // from api docs (should be treated the same)
   | 'discussion_topic'
   | 'online_quiz'
+
+export type SubmissionStatus =
+  'none' |
+  'missing' |
+  'late' |
+  'submitted' |
+  'excused' |
+  'resubmitted' |
+  'unsubmitted'
 
 export type SubmissionDiscussionEntry = {
   message: string,
@@ -67,7 +67,7 @@ export type Submission = {
   body: ?string,
   preview_url: string,
   attempt: ?number,
-  attachments?: Array<Attachment>,
+  attachments?: Attachment[],
   url?: string,
   media_comment?: MediaComment,
   discussion_entries?: SubmissionDiscussionEntry[],

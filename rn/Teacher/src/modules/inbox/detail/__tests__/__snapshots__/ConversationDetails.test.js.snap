@@ -2,9 +2,10 @@
 
 exports[`ConversationDetails doesnt render messages that are pendingDelete 1`] = `
 <Screen
+  customPageViewPath="/conversations"
   drawUnderNavBar={true}
+  navBarButtonColor="#374A59"
   navBarColor="#374A59"
-  navBarStyle="dark"
   rightBarButtons={
     Array [
       Object {
@@ -17,6 +18,7 @@ exports[`ConversationDetails doesnt render messages that are pendingDelete 1`] =
       },
     ]
   }
+  statusBarStyle="light"
   title="Message Details"
 >
   <View
@@ -162,6 +164,7 @@ exports[`ConversationDetails doesnt render messages that are pendingDelete 1`] =
               accessibilityTraits="button"
               accessible={true}
               collapsable={undefined}
+              hasTVPreferredFocus={undefined}
               hitSlop={
                 Object {
                   "bottom": 8,
@@ -220,9 +223,10 @@ exports[`ConversationDetails doesnt render messages that are pendingDelete 1`] =
 
 exports[`ConversationDetails renders correctly 1`] = `
 <Screen
+  customPageViewPath="/conversations"
   drawUnderNavBar={true}
+  navBarButtonColor="#374A59"
   navBarColor="#374A59"
-  navBarStyle="dark"
   rightBarButtons={
     Array [
       Object {
@@ -235,6 +239,7 @@ exports[`ConversationDetails renders correctly 1`] = `
       },
     ]
   }
+  statusBarStyle="light"
   title="Message Details"
 >
   <View
@@ -380,6 +385,7 @@ exports[`ConversationDetails renders correctly 1`] = `
               accessibilityTraits="button"
               accessible={true}
               collapsable={undefined}
+              hasTVPreferredFocus={undefined}
               hitSlop={
                 Object {
                   "bottom": 8,
@@ -436,11 +442,12 @@ exports[`ConversationDetails renders correctly 1`] = `
 </Screen>
 `;
 
-exports[`ConversationDetails renders correctly with some messages 1`] = `
+exports[`ConversationDetails renders correctly with no conversation 1`] = `
 <Screen
+  customPageViewPath="/conversations"
   drawUnderNavBar={true}
+  navBarButtonColor="#374A59"
   navBarColor="#374A59"
-  navBarStyle="dark"
   rightBarButtons={
     Array [
       Object {
@@ -453,6 +460,82 @@ exports[`ConversationDetails renders correctly with some messages 1`] = `
       },
     ]
   }
+  statusBarStyle="light"
+  title="Message Details"
+>
+  <View
+    style={
+      Object {
+        "backgroundColor": "#F5F5F5",
+        "flex": 1,
+      }
+    }
+  >
+    <RCTScrollView
+      ItemSeparatorComponent={[Function]}
+      ListHeaderComponent={<View />}
+      data={Array []}
+      disableVirtualization={false}
+      getItem={[Function]}
+      getItemCount={[Function]}
+      horizontal={false}
+      initialNumToRender={10}
+      keyExtractor={[Function]}
+      maxToRenderPerBatch={10}
+      numColumns={1}
+      onContentSizeChange={[Function]}
+      onEndReachedThreshold={2}
+      onLayout={[Function]}
+      onMomentumScrollEnd={[Function]}
+      onRefresh={undefined}
+      onScroll={[Function]}
+      onScrollBeginDrag={[Function]}
+      onScrollEndDrag={[Function]}
+      refreshing={undefined}
+      renderItem={[Function]}
+      scrollEventThrottle={50}
+      stickyHeaderIndices={Array []}
+      style={
+        Object {
+          "backgroundColor": "#F5F5F5",
+        }
+      }
+      updateCellsBatchingPeriod={50}
+      viewabilityConfigCallbackPairs={Array []}
+      windowSize={21}
+    >
+      <View>
+        <View
+          onLayout={[Function]}
+          style={null}
+        >
+          <View />
+        </View>
+      </View>
+    </RCTScrollView>
+  </View>
+</Screen>
+`;
+
+exports[`ConversationDetails renders correctly with some messages 1`] = `
+<Screen
+  customPageViewPath="/conversations"
+  drawUnderNavBar={true}
+  navBarButtonColor="#374A59"
+  navBarColor="#374A59"
+  rightBarButtons={
+    Array [
+      Object {
+        "accessibilityLabel": "Conversation options",
+        "action": [Function],
+        "image": Object {
+          "testUri": "../../../src/images/kabob.png",
+        },
+        "testID": "inbox.detail.options.button",
+      },
+    ]
+  }
+  statusBarStyle="light"
   title="Message Details"
 >
   <View
@@ -536,6 +619,7 @@ exports[`ConversationDetails renders correctly with some messages 1`] = `
             "author_id": "1234",
             "body": "this is neat",
             "created_at": "2037-06-01T05:59:00Z",
+            "generated": false,
             "id": "123456789",
           },
         ]
@@ -614,6 +698,7 @@ exports[`ConversationDetails renders correctly with some messages 1`] = `
               accessibilityTraits="button"
               accessible={true}
               collapsable={undefined}
+              hasTVPreferredFocus={undefined}
               hitSlop={
                 Object {
                   "bottom": 8,
@@ -754,7 +839,7 @@ exports[`ConversationDetails renders correctly with some messages 1`] = `
                             ]
                           }
                         >
-                          AOT
+                          AO
                         </Text>
                       </View>
                     </TouchableHighlight>
@@ -865,6 +950,7 @@ exports[`ConversationDetails renders correctly with some messages 1`] = `
                   accessibilityTraits="button"
                   accessible={true}
                   collapsable={undefined}
+                  hasTVPreferredFocus={undefined}
                   hitSlop={undefined}
                   isTVSelectable={true}
                   nativeID={undefined}
@@ -930,32 +1016,36 @@ exports[`ConversationDetails renders correctly with some messages 1`] = `
                 }
                 testID={undefined}
               >
-                <Text
-                  accessible={true}
-                  allowFontScaling={true}
-                  ellipsizeMode="tail"
-                  numberOfLines={0}
-                  style={
-                    Array [
-                      Object {
-                        "fontFamily": ".SFUIDisplay",
-                      },
-                      Object {
-                        "color": "#2D3B45",
-                        "fontSize": 16,
-                      },
-                      Object {
-                        "color": "#2D3B45",
-                        "fontSize": 16,
-                      },
-                      Object {
-                        "fontFamily": ".SFUIDisplay",
-                      },
-                    ]
-                  }
+                <View
+                  style={undefined}
                 >
-                  this is neat
-                </Text>
+                  <Text
+                    accessible={true}
+                    allowFontScaling={true}
+                    ellipsizeMode="tail"
+                    numberOfLines={0}
+                    style={
+                      Array [
+                        Object {
+                          "fontFamily": ".SFUIDisplay",
+                        },
+                        Object {
+                          "color": "#2D3B45",
+                          "fontSize": 16,
+                        },
+                        Object {
+                          "color": "#2D3B45",
+                          "fontSize": 16,
+                        },
+                        Object {
+                          "fontFamily": ".SFUIDisplay",
+                        },
+                      ]
+                    }
+                  >
+                    this is neat
+                  </Text>
+                </View>
               </View>
               <View
                 accessibilityComponentType={undefined}
@@ -963,6 +1053,7 @@ exports[`ConversationDetails renders correctly with some messages 1`] = `
                 accessibilityTraits={undefined}
                 accessible={true}
                 collapsable={undefined}
+                hasTVPreferredFocus={undefined}
                 hitSlop={undefined}
                 isTVSelectable={true}
                 nativeID={undefined}
@@ -1037,6 +1128,7 @@ exports[`ConversationDetails renders correctly with some messages 1`] = `
                 accessibilityTraits="button"
                 accessible={true}
                 collapsable={undefined}
+                hasTVPreferredFocus={undefined}
                 hitSlop={
                   Object {
                     "bottom": 15,
@@ -1115,9 +1207,10 @@ exports[`ConversationDetails renders correctly with some messages 1`] = `
 
 exports[`ConversationDetails renders with alternate data 1`] = `
 <Screen
+  customPageViewPath="/conversations"
   drawUnderNavBar={true}
+  navBarButtonColor="#374A59"
   navBarColor="#374A59"
-  navBarStyle="dark"
   rightBarButtons={
     Array [
       Object {
@@ -1130,6 +1223,7 @@ exports[`ConversationDetails renders with alternate data 1`] = `
       },
     ]
   }
+  statusBarStyle="light"
   title="Message Details"
 >
   <View
@@ -1275,6 +1369,7 @@ exports[`ConversationDetails renders with alternate data 1`] = `
               accessibilityTraits="button"
               accessible={true}
               collapsable={undefined}
+              hasTVPreferredFocus={undefined}
               hitSlop={
                 Object {
                   "bottom": 8,

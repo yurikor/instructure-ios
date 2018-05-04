@@ -29,6 +29,9 @@
 @property (weak, nonatomic) IBOutlet UILabel *letterGrade;
 @property (weak, nonatomic) IBOutlet UILabel *pointsLabel;
 @property (weak, nonatomic) IBOutlet UILabel *gradeLabel;
+@property (weak, nonatomic) IBOutlet UILabel *pointsDeductedLabel;
+@property (weak, nonatomic) IBOutlet UILabel *finalScoreLabel;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *latePolicyConstraint;
 @end
 
 @implementation CBIGradeDetailView
@@ -41,19 +44,43 @@
         if (@(assignment.courseIdent) != nil) {
             self.pointsGrade.textColor = [TheKeymaster.currentClient.authSession colorForCourse:@(assignment.courseIdent).description];
             self.letterGrade.textColor = [TheKeymaster.currentClient.authSession colorForCourse:@(assignment.courseIdent).description];
+            self.finalScoreLabel.textColor = [TheKeymaster.currentClient.authSession colorForCourse:@(assignment.courseIdent).description];
         } else {
             self.pointsGrade.textColor = [UIColor contextRed];
             self.letterGrade.textColor = [UIColor contextRed];
+            self.finalScoreLabel.textColor = [UIColor contextRed];
         }
+
+        NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+        BOOL latePolicy = [submission hasLatePolicyApplied] && assignment.scoringType != CKAssignmentScoringTypePassFail;
+        if (!latePolicy) {
+            [self.latePolicyConstraint setActive:NO];
+            self.pointsDeductedLabel.hidden = YES;
+            self.finalScoreLabel.hidden = YES;
+            self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, self.frame.size.width, self.frame.size.height - 70);
+        } else {
+            if (assignment && submission) {
+                self.pointsDeductedLabel.text = [NSString stringWithFormat:@"%@ (-%@)", NSLocalizedStringFromTableInBundle(@"Late Penalty", nil, bundle, nil), [submission.pointsDeducted stringValue]];
+                self.finalScoreLabel.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedStringFromTableInBundle(@"Final Grade", nil, bundle, nil), [assignment gradeStringForSubmission:submission usingEnteredGrade:NO]];
+            }
+        }
+
         if (assignment.pointsPossible){
-            self.pointsGrade.text = (submission.score) ? [NSString stringWithFormat:@"%g/%g", submission.score, assignment.pointsPossible] : [NSString stringWithFormat:@"—/%g", assignment.pointsPossible];
-            [self.pointsGrade setAccessibilityLabel:[NSString stringWithFormat:@"%g %@ %g", submission.score, NSLocalizedString(@"out of", @"Accessibility label modifier for point out of point possible"), assignment.pointsPossible]];
-        }else{
+            if (submission.score != submission.score) {
+                // Rare case where score is null
+                self.pointsGrade.text = [NSString stringWithFormat:@"—/%g", assignment.pointsPossible];
+                [self.pointsGrade setAccessibilityLabel:[NSString stringWithFormat:@"%@ %g", NSLocalizedStringFromTableInBundle(@"out of", nil, bundle, nil), assignment.pointsPossible]];
+            } else {
+                float score = latePolicy ? submission.enteredScore : submission.score;
+                self.pointsGrade.text = [NSString stringWithFormat:@"%g/%g", score, assignment.pointsPossible];
+                [self.pointsGrade setAccessibilityLabel:[NSString stringWithFormat:@"%g %@ %g", score, NSLocalizedStringFromTableInBundle(@"out of", nil, bundle, nil), assignment.pointsPossible]];
+            }
+        } else{
             self.pointsGrade.text = @"—/—";
-            [self.pointsGrade setAccessibilityLabel:NSLocalizedString(@"Not available", @"Accessibility label for points out of points possible label when points are not availiable.")];
+            [self.pointsGrade setAccessibilityLabel:NSLocalizedStringFromTableInBundle(@"Not available", nil, bundle, nil)];
         }
         
-        self.letterGrade.text = (assignment && submission) ? [assignment gradeStringForSubmission:submission] : @"—";
+        self.letterGrade.text = (assignment && submission) ? [assignment gradeStringForSubmission:submission usingEnteredGrade:latePolicy] : @"—";
         
         self.pointsView.layer.cornerRadius = 10;
         self.pointsView.layer.masksToBounds = YES;

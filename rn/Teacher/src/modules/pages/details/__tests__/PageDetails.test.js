@@ -14,119 +14,193 @@
 // limitations under the License.
 //
 
-/* @flow */
+// @flow
 
+import { shallow } from 'enzyme'
 import React from 'react'
-import { Alert } from 'react-native'
-import renderer from 'react-test-renderer'
-import { PageDetails, mapStateToProps, type Props } from '../PageDetails'
-import { setSession } from '../../../../canvas-api'
-import { defaultErrorTitle } from '../../../../redux/middleware/error-handler'
+import { Alert, ActionSheetIOS } from 'react-native'
+import URL from 'url-parse'
+import { alertError } from '../../../../redux/middleware/error-handler'
+import { API, httpCache } from '../../../../canvas-api/model-api'
+import * as template from '../../../../__templates__'
+import app from '../../../app'
+import ConnectedPageDetails, { PageDetails } from '../PageDetails'
 
-jest
-  .mock('Button', () => 'Button')
-  .mock('TouchableHighlight', () => 'TouchableHighlight')
-  .mock('TouchableOpacity', () => 'TouchableOpacity')
-
-const template = {
-  ...require('../../../../__templates__/page'),
-  ...require('../../../../__templates__/helm'),
-  ...require('../../../../__templates__/course'),
-  ...require('../../../../__templates__/error'),
-  ...require('../../../../redux/__templates__/app-state'),
-  ...require('../../../../__templates__/session'),
-}
+jest.mock('../../../../redux/middleware/error-handler', () => {
+  return { alertError: jest.fn() }
+})
+jest.useFakeTimers()
 
 describe('PageDetails', () => {
-  let props: Props
-  beforeAll(() => setSession(template.session()))
+  let props
   beforeEach(() => {
+    httpCache.clear()
+    app.setCurrentApp('teacher')
     props = {
-      page: template.page(),
+      location: new URL('/pages/page-1#jumpto'),
       courseID: '1',
-      getPage: jest.fn(() => Promise.resolve({ data: template.page() })),
-      refreshedPage: jest.fn(),
-      navigator: template.navigator(),
-      courseName: 'Course 1',
       url: 'page-1',
+      navigator: template.navigator(),
+      page: template.pageModel({ url: 'page-1' }),
+      course: template.courseModel({ id: '1', name: 'Course 1' }),
+      courseColor: '#fff',
+      api: new API({ policy: 'cache-only' }),
+      isLoading: false,
+      loadError: null,
+      refresh: jest.fn(),
     }
   })
 
-  it('renders', () => {
-    expect(render(props).toJSON()).toMatchSnapshot()
-  })
-
-  it('renders without page', () => {
-    props.page = null
-    expect(render(props).toJSON()).toMatchSnapshot()
-  })
-
-  it('refreshes page on mount', () => {
-    props.page = null
-    props.url = 'page-1'
-    const spy = jest.fn(() => Promise.resolve({ data: template.page() }))
-    props.getPage = spy
-    const view = render(props)
-    view.getInstance().componentWillMount()
-    expect(spy).toHaveBeenCalledWith(props.courseID, 'page-1')
-  })
-
-  it('dispatches refreshedPage action on refresh', async () => {
-    const spy = jest.fn()
-    props.refreshedPage = spy
-    const page = template.page()
-    props.getPage = jest.fn(() => Promise.resolve({ data: page }))
-    const view = render(props)
-    await view.getInstance().componentWillMount()
-    expect(spy).toHaveBeenCalledWith(page, props.courseID)
-  })
-
-  it('alerts when refresh fails', async () => {
-    const spy = jest.fn()
-    // $FlowFixMe
-    Alert.alert = spy
-    props.getPage = jest.fn(() => Promise.reject(template.error('fail')))
-    const view = render(props)
-    await view.getInstance().componentWillMount()
-    expect(spy).toHaveBeenCalledWith(defaultErrorTitle(), 'fail')
-  })
-
-  function render (props: Props, options: any = {}): any {
-    return renderer.create(<PageDetails {...props} />, options)
-  }
-})
-
-describe('mapStateToProps', () => {
-  it('maps course and page to props', () => {
-    const page = template.page({ url: 'page-1' })
-    const state = template.appState({
-      entities: {
-        pages: {
-          'page-1': {
-            data: page,
-          },
-        },
-      },
-    })
-    expect(mapStateToProps(state, { courseID: '1', url: 'page-1' })).toEqual({
+  it('gets courseColor, course, and page from the model api', () => {
+    const courseColor = 'green'
+    const course = [ template.courseModel() ]
+    const page = template.pageModel({ url: 'test' })
+    httpCache.handle('GET', 'users/self/colors', { custom_colors: { course_1: courseColor } })
+    httpCache.handle('GET', 'courses/1', course)
+    httpCache.handle('GET', 'courses/1/pages/test', page)
+    const tree = shallow(<ConnectedPageDetails courseID='1' url='test' />)
+    expect(tree.find(PageDetails).props()).toMatchObject({
+      courseColor,
+      course,
       page,
-      courseName: '',
     })
   })
 
-  it('maps course name to props', () => {
-    const state = template.appState({
-      entities: {
-        courses: {
-          '1': {
-            course: template.course({ name: 'Course FTW' }),
-          },
-        },
-      },
+  it('gets front page if the url matches', () => {
+    const page = template.pageModel({ url: 'somewhere' })
+    httpCache.handle('GET', 'users/self/colors', { custom_colors: { course_1: 'green' } })
+    httpCache.handle('GET', 'courses/1', template.courseModel())
+    httpCache.handle('GET', 'courses/1/front_page', page)
+    const tree = shallow(<ConnectedPageDetails courseID='1' url='front_page' />)
+    expect(tree.find(PageDetails).props()).toMatchObject({
+      page,
     })
-    expect(mapStateToProps(state, { courseID: '1', url: 'page-1' })).toEqual({
-      page: undefined,
-      courseName: 'Course FTW',
+  })
+
+  it('renders', () => {
+    const tree = shallow(<PageDetails {...props} />)
+    expect(tree).toMatchSnapshot()
+  })
+
+  it('renders while loading', async () => {
+    props.course = null
+    props.page = null
+    props.isLoading = true
+    const tree = shallow(<PageDetails {...props} />)
+    expect(tree).toMatchSnapshot()
+  })
+
+  it('alerts on new loadError', () => {
+    const tree = shallow(<PageDetails {...props} />)
+    tree.setProps({ loadError: null })
+    expect(alertError).not.toHaveBeenCalled()
+    const loadError = new Error()
+    tree.setProps({ loadError })
+    expect(alertError).toHaveBeenCalledWith(loadError)
+  })
+
+  it('routes to page edit', async () => {
+    // $FlowFixMe
+    ActionSheetIOS.showActionSheetWithOptions = jest.fn((options, callback) => callback(0))
+    props.navigator = template.navigator({ show: jest.fn() })
+    props.courseID = '1'
+    props.url = 'page-1'
+    const tree = shallow(<PageDetails {...props} />)
+    tree.find('Screen').prop('rightBarButtons')
+      .find(({ testID }) => testID === 'pages.details.editButton')
+      .action()
+    expect(props.navigator.show).toHaveBeenCalledWith(
+      '/courses/1/pages/page-1/edit',
+      { modal: true, modalPresentationStyle: 'formsheet' },
+      { onChange: expect.any(Function) }
+    )
+  })
+
+  it('deletes page', async () => {
+    // $FlowFixMe
+    ActionSheetIOS.showActionSheetWithOptions = jest.fn((options, callback) => callback(1))
+    // $FlowFixMe
+    Alert.alert = jest.fn((title, message, buttons) => buttons[1].onPress())
+
+    props.api.deletePage = jest.fn()
+    props.page = template.pageModel({ url: 'page-1', isFrontPage: false })
+    const tree = shallow(<PageDetails {...props} />)
+    tree.find('Screen').prop('rightBarButtons')
+      .find(({ testID }) => testID === 'pages.details.editButton')
+      .action()
+    expect(props.api.deletePage).toHaveBeenCalledWith('courses', props.courseID, 'page-1')
+  })
+
+  it('cant delete front page', async () => {
+    // $FlowFixMe
+    ActionSheetIOS.showActionSheetWithOptions = jest.fn((options, callback) => callback(1))
+    // $FlowFixMe
+    Alert.alert = jest.fn((title, message, buttons) => buttons[1].onPress())
+
+    props.api.deletePage = jest.fn()
+    props.page = template.pageModel({ url: 'page-1', isFrontPage: true })
+    const tree = shallow(<PageDetails {...props} />)
+    tree.find('Screen').prop('rightBarButtons')
+      .find(({ testID }) => testID === 'pages.details.editButton')
+      .action()
+    expect(props.api.deletePage).not.toHaveBeenCalled()
+  })
+
+  it('alerts error deleting page', async () => {
+    // $FlowFixMe
+    ActionSheetIOS.showActionSheetWithOptions = jest.fn((options, callback) => callback(1))
+    // $FlowFixMe
+    Alert.alert = jest.fn((title, message, buttons) => buttons[1].onPress())
+
+    const error = new Error()
+    const rejection = Promise.reject(error)
+    props.api.deletePage = jest.fn(() => rejection)
+    props.page = template.pageModel({ url: 'page-1', isFrontPage: false })
+    const tree = shallow(<PageDetails {...props} />)
+    tree.find('Screen').prop('rightBarButtons')
+      .find(({ testID }) => testID === 'pages.details.editButton')
+      .action()
+    expect(props.api.deletePage).toHaveBeenCalledWith('courses', props.courseID, 'page-1')
+    await rejection.catch(() => {})
+    expect(alertError).toHaveBeenCalledWith(error)
+  })
+
+  it('shows edit button if permitted', () => {
+    app.setCurrentApp('teacher')
+    const tree = shallow(<PageDetails {...props} />)
+    const button = tree.find('Screen').prop('rightBarButtons')
+      .find(({ testID }) => testID === 'pages.details.editButton')
+    expect(button).toBeDefined()
+  })
+
+  it('hides edit button if not permitted', () => {
+    app.setCurrentApp('student')
+    const tree = shallow(<PageDetails {...props} />)
+    expect(tree.find('Screen').prop('rightBarButtons')).toBeFalsy()
+  })
+
+  it('bails out without error when page is null', () => {
+    props.page = null
+    const tree = shallow(<PageDetails {...props} />)
+    expect(tree.instance().edit).not.toThrow()
+    expect(tree.instance().showEditActionSheet).not.toThrow()
+    expect(tree.instance()._editActionSheetSelected).not.toThrow()
+    expect(tree.instance().delete).not.toThrow()
+  })
+
+  it('replaces navigation when edited page url changes', () => {
+    props.navigator = template.navigator({
+      show: jest.fn(),
+      replace: jest.fn(),
     })
+    const tree = shallow(<PageDetails {...props} />)
+    tree.instance().edit()
+    const { onChange } = props.navigator.show.mock.calls[0][2]
+    onChange(props.page)
+    expect(props.navigator.replace).not.toHaveBeenCalled()
+    onChange(template.pageModel({ url: 'updated-3' }))
+    expect(props.navigator.replace).toHaveBeenCalledWith(
+      '/courses/1/pages/updated-3'
+    )
   })
 })

@@ -42,7 +42,7 @@ import { Text } from '../../common/text'
 import Screen from '../../routing/Screen'
 import DisclosureIndicator from '../../common/components/DisclosureIndicator'
 
-export class AssigneePicker extends Component<any, AssigneePickerProps, any> {
+export class AssigneePicker extends Component<AssigneePickerProps, any> {
 
   constructor (props: AssigneePickerProps) {
     super(props)
@@ -129,13 +129,8 @@ export class AssigneePicker extends Component<any, AssigneePickerProps, any> {
             action: this.done,
           },
         ]}
-        leftBarButtons={[
-          {
-            title: i18n('Cancel'),
-            testID: 'assignee-picker.cancel-btn',
-            action: this.dismiss,
-          },
-        ]}>
+        dismissButtonTitle={i18n('Cancel')}
+      >
         <ScrollView style={styles.container}>
           { this.state.selected.length > 0 && <View style={styles.space} /> }
           { this.state.selected.map((assignee: Assignee) => <AssigneeRow assignee={assignee} onDelete={this.deleteAssignee} key={assignee.id}/>) }
@@ -203,4 +198,4 @@ const styles = StyleSheet.create({
 })
 
 let Connected = connect(pickerMapStateToProps, { ...Actions, ...EnrollmentActions, ...UserActions, ...GroupActions })(AssigneePicker)
-export default (Connected: Component<any, AssigneePickerProps, any>)
+export default (Connected: Component<AssigneePickerProps, any>)

@@ -49,12 +49,6 @@
 /* Button to submit files to an assignment */
 "%@ (%d)" = "%1$@ (%2$d)";
 
-/* B- (83 out of 100 points */
-"%@ (%g out of %@)" = "%1$@ (%2$g von %3$@)";
-
-/* Event happens on a date at a time */
-"%@ at %@" = "%1$@ bei %2$@";
-
 /* Message for unsupported tab coming soon */
 "%@ is coming soon!" = "%@ kommt in Kürze!";
 
@@ -73,17 +67,11 @@
 /* Message for unsupported tab */
 "%@ is not currently supported." = "%@ wird derzeit nicht unterstützt.";
 
-/* Description for how many times a specific discussion has been liked by other users */
+/* (No Comment) */
 "%@ likes" = "%@ Likes";
 
 /* (No Comment) */
 "%@ need grading" = "%@ muss benotet werden";
-
-/* 88 out of 100 points */
-"%@ out of %@" = "%1$@ von %2$@";
-
-/* 83% (83 out of 100 points */
-"%@%% (%g out of %@)" = "%1$@%% (%2$g von %3$@)";
 
 /* (No Comment) */
 "%@..." = "%@...";
@@ -97,7 +85,7 @@
 /* (No Comment) */
 "%d hours ago" = "vor %d Stunden";
 
-/* Number of files/folders inside a folder. (Used for all cases except 1 item.) */
+/* (No Comment) */
 "%d items" = "%d Elemente";
 
 /* (No Comment) */
@@ -109,10 +97,10 @@
 /* In the context 'Joe, Fred, ((25 more))' */
 "%d more" = "%d mehr";
 
-/* Something like '5 replies' */
+/* (No Comment) */
 "%d replies" = "%d Antworten";
 
-/* Something like '3 unread'. Refers to unread replies in a discsusion. */
+/* (No Comment) */
 "%d unread" = "%d ungelesen";
 
 /* (No Comment) */
@@ -166,10 +154,10 @@
 /* (No Comment) */
 "1 hour ago" = "vor 1 Stunde";
 
-/* Number of files/folders inside a folder. (Only used when there is exactly 1 item. */
+/* (No Comment) */
 "1 item" = "1 Element";
 
-/* Description for a post that has been liked once */
+/* (No Comment) */
 "1 like" = "1 Like";
 
 /* (No Comment) */
@@ -217,10 +205,10 @@
 /* No comment provided by engineer. */
 "Add comment" = "Kommentar hinzufügen";
 
-/* Button title for adding a folder to a folder */
+/* (No Comment) */
 "Add folder" = "Ordner hinzufügen";
 
-/* Title on the add-inline-media sheet */
+/* (No Comment) */
 "Add inline media" = "Inline-Medien hinzufügen";
 
 /* (No Comment) */
@@ -232,10 +220,10 @@
 /* (No Comment) */
 "An unknown error occurred" = "Es ist ein unbekannter Fehler aufgetreten.";
 
-/* Title of the new announcement view */
+/* (No Comment) */
 "Announcement" = "Ankündigung";
 
-/* Title for the announcements view controller */
+/* (No Comment) */
 "Announcements" = "Ankündigungen";
 
 /* Assignment submission type for selecting an Arc video */
@@ -253,7 +241,7 @@
 /* (No Comment) */
 "Archived" = "Archiviert";
 
-/* Action sheet title verifying that a user wants to logout. */
+/* (No Comment) */
 "Are you ready to logout?" = "Sind Sie bereit, sich abzumelden?";
 
 /* Confirmation alert text for submitting an Arc video for an assignment */
@@ -262,7 +250,7 @@
 /* (No Comment) */
 "Ask me later" = "Mich später fragen";
 
-/* Label for an assignment */
+/* (No Comment) */
 "Assignment" = "Aufgabe";
 
 /* (No Comment) */
@@ -280,7 +268,7 @@
 /* (No Comment) */
 "Attachments" = "Anhänge";
 
-/* Label for a discussion */
+/* (No Comment) */
 "Attendance" = "Teilnahme";
 
 /* Audio file type */
@@ -301,7 +289,7 @@
 /* (No Comment) */
 "Calendar" = "Kalender";
 
-/* Invalid LTI tool error title */
+/* No comment provided by engineer. */
 "Can't load tool" = "Tool kann nicht geladen werden";
 
 /* Setup only allows media but no Kaltura instance error title */
@@ -329,7 +317,7 @@
 /* button to change user's profile image */
 "Change Profile Image" = "Profilbild ändern";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Change User" = "Benutzer wechseln";
 
 /* Button label for choosing a photo */
@@ -344,7 +332,7 @@
 /* No comment provided by engineer. */
 "Choose a name for the new folder" = "Einen Namen für den neuen Ordner wählen";
 
-/* Content of an alert popup */
+/* (No Comment) */
 "Choose a name for the new folder." = "Einen Namen für den neuen Ordner wählen.";
 
 /* No comment provided by engineer. */
@@ -359,7 +347,7 @@
 /* Close the window */
 "Close" = "Schließen";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Closed for Comments" = "Für Kommentare geschlossen";
 
 /* Title for Collaborations tab */
@@ -371,10 +359,10 @@
 /* title for media comment upload failure */
 "Comment Error" = "Fehler beim Kommentieren";
 
-/* View comments */
+/* (No Comment) */
 "Comments" = "Kommentare";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Comments are disabled" = "Kommentare sind deaktiviert";
 
 /* (No Comment) */
@@ -395,7 +383,7 @@
 /* Confirm an arc video submission for an assignment */
 "Confirm Submission" = "Abgabe bestätigen";
 
-/* Alert title */
+/* (No Comment) */
 "Confirm deletion" = "Löschen bestätigen";
 
 /* Button title for selecting to continue on to quiz. The will appear in the alert view notfifying the user of mobile quiz limitations. */
@@ -416,7 +404,7 @@
 /* (No Comment) */
 "Courses" = "Kurse";
 
-/* cancel folder creation */
+/* Cancel button title */
 "Create Folder" = "Ordner anlegen";
 
 /* Header for a section showing submitted filenames */
@@ -431,14 +419,13 @@
 /* (No Comment) */
 "Customize" = "Anpassen";
 
-/* Default delete button MLVC
-   Delete Button title */
+/* Default delete button MLVC */
 "Delete" = "Löschen";
 
-/* Button for deleting files or folders. %d will be the number of selected items */
+/* (No Comment) */
 "Delete (%d)" = "Löschen (%d)";
 
-/* Alert message */
+/* (No Comment) */
 "Delete this reply?" = "Diese Antwort löschen?";
 
 /* delete file confirmation alert */
@@ -450,25 +437,25 @@
 /* No comment provided by engineer. */
 "Detail" = "Details";
 
-/* Placeholder text for discussion details field */
+/* (No Comment) */
 "Details" = "Details";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Discard" = "Verwerfen";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Discard this entry?" = "Diesen Eintrag verwerfen?";
 
-/* Title of the new discussion view */
+/* (No Comment) */
 "Discussion" = "Diskussion";
 
 /* Title for discussion entry submission */
 "Discussion Entry" = "Diskussionseintrag";
 
-/* Title for Discussion Topics view controller */
+/* (No Comment) */
 "Discussion Topics" = "Diskussionsthemen";
 
-/* Title for Discussions view controller */
+/* (No Comment) */
 "Discussions" = "Diskussionen";
 
 /* Dismiss button title
@@ -484,10 +471,10 @@
 /* (No Comment) */
 "Don't ask me again" = "Micht nicht nochmal fragen";
 
-/* Button to cancel deleting folders */
+/* (No Comment) */
 "Don't delete" = "Nicht löschen";
 
-/* Button to stop editing a list */
+/* (No Comment) */
 "Done" = "Fertig";
 
 /* Shown when we cancel a file download */
@@ -508,7 +495,7 @@
 /* Link to the End User License Agreement document */
 "EULA" = "EULA";
 
-/* Button to edit a discussion entry */
+/* (No Comment) */
 "Edit" = "Bearbeiten";
 
 /* (No Comment) */
@@ -517,14 +504,11 @@
 /* (No Comment) */
 "Edit Group List" = "Gruppenverzeichnis bearbeiten";
 
-/* Button title for deleting items in a folder */
+/* (No Comment) */
 "Edit items" = "Elemente bearbeiten";
 
 /* (No Comment) */
 "Editing reply by %1$@, %2$@" = "Antwort von %1$@, %2$@ wird bearbeitet";
-
-/* Header when editing a discussion entry with name and timestamp */
-"Editing reply by %@, %@" = "Antwort von %1$@, %2$@ wird bearbeitet";
 
 /* the users email */
 "Email" = "E-Mail";
@@ -532,13 +516,16 @@
 /* (No Comment) */
 "Enable Push Notifications" = "Push-Benachrichtigungen aktivieren";
 
-/* masquerade prompt */
+/* (No Comment) */
 "Enter User ID and Domain." = "Benutzer-ID und Domain eingeben.";
+
+/* No comment provided by engineer. */
+"Enter folder name" = "Ordnernamen eingeben";
 
 /* Submission input view placeholder text */
 "Enter submission" = "Einreichung eingeben";
 
-/* Confirmation message after posting a discussion entry */
+/* (No Comment) */
 "Entry posted" = "Eintrag gepostet";
 
 /* Title for an error popup */
@@ -556,7 +543,7 @@
 /* Error deleting folder alert view title */
 "Error deleting folder" = "Fehler beim Löschen des Ordners";
 
-/* Label for a calendar event */
+/* (No Comment) */
 "Event" = "Ereignis";
 
 /* No comment provided by engineer. */
@@ -583,7 +570,7 @@
 /* No comment provided by engineer. */
 "File received" = "Datei erhalten";
 
-/* Title for an alert popup */
+/* (No Comment) */
 "File unavailable" = "Datei nicht vorhanden";
 
 /* File upload submission type */
@@ -594,6 +581,9 @@
 
 /* Title for the files screen */
 "Files" = "Dateien";
+
+/* No comment provided by engineer. */
+"Final Grade" = "Gesamtnote";
 
 /* Shown when we finish downloading a file */
 "Finished downloading" = "Download abgeschlossen";
@@ -607,13 +597,13 @@
 /* title for discussion assignment submission button */
 "Go To Discussion" = "Zur Diskussion gehen";
 
-/* Action on an alert */
+/* (No Comment) */
 "Go to App Store" = "Zum App Store gehen";
 
-/* text for the \"go to quiz\" button */
+/* (No Comment) */
 "Go to Quiz" = "Zum Quiz gehen";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Go to discussion" = "Zur Diskussion gehen";
 
 /* No comment provided by engineer. */
@@ -622,7 +612,7 @@
 /* (No Comment) */
 "Grade %@" = "Note: %@";
 
-/* Launch the SpeedGrader app */
+/* (No Comment) */
 "Grade in SpeedGrader" = "Im SpeedGrader benoten";
 
 /* (No Comment) */
@@ -631,13 +621,13 @@
 /* (No Comment) */
 "Grade: %@" = "Note: %@";
 
-/* Label for a discussion */
+/* (No Comment) */
 "Graded Discussion" = "Benotete Diskussion";
 
-/* Lets user know discussion is graded */
+/* (No Comment) */
 "Graded discussion." = "Benotete Diskussion.";
 
-/* Graded discussion. 25 points possible */
+/* (No Comment) */
 "Graded discussion. %g points possible." = "Benotete Diskussion. %g Punkte möglich.";
 
 /* (No Comment) */
@@ -649,7 +639,7 @@
 /* (No Comment) */
 "Groups" = "Gruppen";
 
-/* help button */
+/* (No Comment) */
 "Help" = "Hilfe";
 
 /* (No Comment) */
@@ -679,7 +669,7 @@
 /* (No Comment) */
 "Individual messages" = "Einzelne Nachrichten";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Invalid URL" = "Unzulässige URL";
 
 /* (No Comment) */
@@ -697,7 +687,7 @@
 /* (No Comment) */
 "Jumps to current day on calendar" = "Springt zum aktuellen Kalendertag";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Keep" = "Halten";
 
 /* Title for an LTI launch submitted as an assignment */
@@ -706,10 +696,13 @@
 /* (No Comment) */
 "Landing Page" = "Zielseite";
 
-/* Title for an alert popup */
+/* (No Comment) */
 "Large file" = "Große Datei";
 
-/* Button in an alert */
+/* No comment provided by engineer. */
+"Late Penalty" = "Strafe für Verspätung";
+
+/* (No Comment) */
 "Later" = "Später";
 
 /* title for submission button */
@@ -718,7 +711,7 @@
 /* Title for legal section on the about page */
 "Legal" = "Juristisch";
 
-/* Generic loading title with ellipsis */
+/* (No Comment) */
 "Loading..." = "Wird geladen...";
 
 /* (No Comment) */
@@ -733,7 +726,7 @@
 /* (No Comment) */
 "Login Problem" = "Anmeldeproblem";
 
-/* Title for a button to logout a user */
+/* (No Comment) */
 "Logout" = "Abmeldung";
 
 /* (No Comment) */
@@ -784,7 +777,7 @@
 /* Button title for selecting to view more info about the limitations of mobile quizzes */
 "More Info" = "Mehr Informationen";
 
-/* Title of a link to show additional due dates customized for sections or groups. */
+/* (No Comment) */
 "Multiple Due Dates" = "Mehrere Abgabetermine";
 
 /* (No Comment) */
@@ -802,19 +795,19 @@
 /* (No Comment) */
 "Must view" = "Muss ansehen";
 
-/* files button */
+/* (No Comment) */
 "My Files" = "Meine Dateien";
 
 /* the users name */
 "Name" = "Name";
 
-/* Title notifying user that SpeedGrader is available for iPad */
+/* (No Comment) */
 "Need SpeedGrader for iPad" = "Brauche SpeedGrader für iPad";
 
 /* Network error title */
 "Network Error" = "Netzwerkfehler";
 
-/* Title for an alert popup, where the user will be asked to provide a name for the new folder */
+/* No comment provided by engineer. */
 "New Folder" = "Neuer Ordner";
 
 /* No comment provided by engineer. */
@@ -823,7 +816,7 @@
 /* No comment provided by engineer. */
 "Next item" = "Nächstes Element";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "No" = "Kein";
 
 /* No comment provided by engineer. */
@@ -866,7 +859,7 @@
 /* (No Comment) */
 "Not Complete" = "Nicht abgeschlossen";
 
-/* Accessibility label for points out of points possible label when points are not availiable. */
+/* No comment provided by engineer. */
 "Not available" = "NIcht verfügbar";
 
 /* (No Comment) */
@@ -893,7 +886,7 @@
 /* (No Comment) */
 "Notifications" = "Benachrichtigungen";
 
-/* OK Button Title */
+/* No comment provided by engineer. */
 "OK" = "OK";
 
 /* No comment provided by engineer. */
@@ -908,10 +901,13 @@
 /* Title for an error alert */
 "Oops!" = "Oops!";
 
+/* Link to Open Source Components */
+"Open Source Components" = "Open-Source-Komponenten";
+
 /* Open a document in the application Safari */
 "Open in Safari" = "In Safari öffnen";
 
-/* Link to open assignment in SpeedGrader */
+/* (No Comment) */
 "Open in SpeedGrader" = "Im SpeedGrader benoten";
 
 /* Open file in another application */
@@ -920,7 +916,7 @@
 /* No comment provided by engineer. */
 "Other" = "Andere(r)";
 
-/* A message indicating that the user cannot see other people's replies until the user has first posted a reply of their own. Only one line of text, so as concise as possible. */
+/* (No Comment) */
 "Other replies hidden until you reply" = "Andere Antworten solange verborgen, bis Sie antworten";
 
 /* Title for Outcomes tab */
@@ -935,7 +931,7 @@
 /* Title for the people view */
 "People" = "Menschen";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Pinned Discussions" = "Fixierte Diskussionen";
 
 /* (No Comment) */
@@ -944,7 +940,7 @@
 /* Network error message */
 "Please check your network connection and try again." = "Bitte überprüfen Sie Ihre Netzwerkanbindung.";
 
-/* Button to post new discussion topic */
+/* No comment provided by engineer. */
 "Post" = "Posten";
 
 /* (No Comment) */
@@ -953,7 +949,7 @@
 /* No comment provided by engineer. */
 "Post comment" = "Kommentar posten";
 
-/* Message shown while posting a discussion entry */
+/* (No Comment) */
 "Posting…" = "Wird gepostet";
 
 /* (No Comment) */
@@ -1022,16 +1018,16 @@
 /* Button title for confirming a file deletion */
 "Remove this file?" = "Diese Datei entfernen?";
 
-/* option to report a problem */
+/* (No Comment) */
 "Report a problem" = "Ein Problem melden";
 
-/* option to request a feature */
+/* (No Comment) */
 "Request a feature" = "Ein Feature anfordern";
 
-/* View grading rubric */
+/* (No Comment) */
 "Rubric" = "Rubrik";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Save" = "Speichern";
 
 /* Title for Assignment Notifications Sheet */
@@ -1070,16 +1066,16 @@
 /* title for quiz assignment submission button */
 "Show Quiz" = "Quiz zeigen";
 
-/* Title for button confirming showing a file */
+/* (No Comment) */
 "Show file" = "Datei zeigen";
 
 /* (No Comment) */
 "Show recipients" = "Empfänger zeigen";
 
-/* Message for an error popup */
+/* (No Comment) */
 "Some items could not be deleted" = "Einige Elemente konnten nicht gelöscht werden";
 
-/* Message for a warning popup */
+/* (No Comment) */
 "Some selected folders are not empty. Are you sure you want to delete them?" = "Einige ausgewählte Ordner sind nicht leer. Möchten Sie sie wirklich löschen?";
 
 /* 404 Error for missing assignment */
@@ -1091,13 +1087,13 @@
 /* (No Comment) */
 "Starts recording a media comment" = "Startet die Aufzeichnung eines Medienkommentars";
 
-/* button title for cancelling a logout. */
+/* (No Comment) */
 "Stay Logged In" = "Angemeldet bleiben";
 
 /* Stop loading button for webview */
 "Stop" = "Anhalten";
 
-/* Button title for stopping masquerading; when a privileged user becomes another user in the system */
+/* (No Comment) */
 "Stop Masquerading" = "Ausgeben als... anhalten";
 
 /* (No Comment) */
@@ -1112,23 +1108,22 @@
 /* (No Comment) */
 "Sub Header" = "Subheader";
 
-/* View previously submitted assignment */
+/* No comment provided by engineer. */
 "Submission" = "Einreichung";
 
 /* Title for file submission error */
 "Submission Error" = "Fehler beim Einreichen";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Submission complete" = "Einreichung abgeschlossen";
 
-/* Submit an assignment
-   Submit Arc video as assignment button */
+/* Submit Arc video as assignment button */
 "Submit" = "Einreichen";
 
 /* Submitted grouping */
 "Submitted" = "Eingereicht";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Submitting..." = "Wird eingereicht...";
 
 /* Subscribe to calendar feed allows the user to export their calendar events to a 3rd party calendar */
@@ -1170,7 +1165,7 @@
 /* Take a video to use in a comment. */
 "Take a Video..." = "Ein Video aufnehmen...";
 
-/* Displayed in a row when an error occurs loading more items */
+/* (No Comment) */
 "Tap to try again" = "Für einen neuen Versuch tippen";
 
 /* (No Comment) */
@@ -1197,7 +1192,7 @@
 /* (No Comment) */
 "The recipients could not be added. Please try again. (%@)" = "Die Empfänger konnten nicht hinzugefügt werden. Bitte erneut versuchen. (%@)";
 
-/* Explanation for while a file is unavailable */
+/* (No Comment) */
 "The server could not be reached" = "Der Server wurde nicht erreicht";
 
 /* (No Comment) */
@@ -1209,7 +1204,7 @@
 /* Error message */
 "There are no actions for this item" = "Für dieses Element gibt es keine Handlungen";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "There are no items to display" = "Es gibt keine Elemente zum Anzeigen";
 
 /* message for media comment upload failure */
@@ -1233,7 +1228,7 @@
 /* (No Comment) */
 "This app is not authorized for use." = "Keine Autorisierung, um diese App zu verwenden.";
 
-/* Invalid LTI tool error message */
+/* No comment provided by engineer. */
 "This assignment doesn't appear to be a valid external tool or is misconfigured." = "Diese Aufgabe scheint kein zulässiges externes Tool oder falsch konfiguriert zu sein.";
 
 /* message displayed in the details section if there is no comment. */
@@ -1242,16 +1237,16 @@
 /* Error message for refresh failing with an unauthorized code */
 "This can happen if your course hasn't started yet or you don't have permission to access this page." = "Dies kann passieren, wenn Ihr Kurs noch nicht begonnen hat, oder Sie nicht berechtigt sind, auf diese Seite zuzugreifen.";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "This entry has been deleted" = "Der Eintrag wurde gelöscht";
 
 /* Text indicating a file cannot be previewed */
 "This file cannot be displayed on this device." = "Diese Datei kann auf diesem Gerät nicht angezeigt werden.";
 
-/* Text indicating that a file cannot be opened */
+/* (No Comment) */
 "This file is locked" = "Diese Datei ist gesperrt";
 
-/* Text indicating that a folder cannot be opened */
+/* (No Comment) */
 "This folder is locked" = "Dieser Ordner ist gesperrt";
 
 /* (No Comment) */
@@ -1290,7 +1285,7 @@
 /* (No Comment) */
 "Uh-oh! No Internet Connection" = "Oh je! Keine Internetverbindung";
 
-/* Error title */
+/* (No Comment) */
 "Unable to load" = "Kann nicht laden";
 
 /* (No Comment) */
@@ -1314,7 +1309,7 @@
 /* (No Comment) */
 "Unread" = "Ungelesen";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Unsaved Reply" = "Nicht gespeicherte Antwort";
 
 /* Button title for uploading a file */
@@ -1329,7 +1324,7 @@
 /* (No Comment) */
 "Upload failed. Reason: (%@)" = "Upload fehlgeschlagen. Grund: (%@)";
 
-/* Button title for adding a file to a folder */
+/* (No Comment) */
 "Upload file" = "Datei hochladen";
 
 /* Error message */
@@ -1338,16 +1333,13 @@
 /* (No Comment) */
 "Upload to assignment &quot;%@&quot; failed" = "Hochladen zur Aufgabe &quot;%@&quot; fehlgeschlagen";
 
-/* Error message */
-"Upload to folder \"%@\" failed" = "Upload in Ordner \"%@\" fehlgeschlagen";
-
 /* (No Comment) */
 "Upload to folder &quot;%@&quot; failed" = "Hochladen zum Ordner &quot;%@&quot; fehlgeschlagen";
 
 /* button for using the recorded audio */
 "Use" = "Verwendung";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "User ID" = "Benutzer-ID";
 
 /* Title for User Info section on the about page */
@@ -1362,7 +1354,7 @@
 /* (No Comment) */
 "View" = "Ansicht";
 
-/* Title for a warning popup */
+/* (No Comment) */
 "Warning" = "Warnung";
 
 /* error message for failure to load a file submission */
@@ -1374,7 +1366,7 @@
 /* Error Title */
 "Whoops!" = "Ups!";
 
-/* unlock date for discussion/announcement */
+/* (No Comment) */
 "Will unlock %@." = "%@ wird entsperrt.";
 
 /* (No Comment) */
@@ -1386,28 +1378,28 @@
 /* (No Comment) */
 "Would you mind letting us know the problems you have been having with the app?" = "Hätten Sie was dagegen, uns die Probleme mitzuteilen, die Sie mit der App hatten?";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Yes" = "Ja";
 
-/* Masquerade title telling who you are masquerading as */
+/* (No Comment) */
 "You are now masquerading as %@" = "Sie geben sich nun als %@ aus";
 
 /* Masquerade success message */
 "You are now masquerading as %@. To Stop Masquerading go to your Profile." = "Sie geben sich nun als %@ aus. Um damit aufzuhören, gehen Sie auf Ihr Profil.";
 
-/* Message in an alert */
+/* (No Comment) */
 "You do not have SpeedGrader for iPad. You can download it for free from the App Store." = "Sie haben keinen SpeedGrader für iPad. Sie können ihn im App Store kostenlos herunterladen.";
 
 /* (No Comment) */
 "You do not have access to this content. The Course or Group may not have started, or may have been concluded." = "Dieser Inhalt steht Ihnen nicht zu Verfügung. Der Kurs/die Gruppe hat möglicherweise noch nicht begonnen oder wurde geschlossen.";
 
-/* Error message */
+/* (No Comment) */
 "You do not have permission to delete this reply" = "Sie haben keine Berechtigung, diese Antwort zu löschen";
 
 /* Masquerade error message */
 "You don't have permission to masquerade as this user or there is no user with that ID" = "Sie haben keine Berechtigung, sich als dieser Benutzer auszugeben oder zu dieser ID gibt es keinen Benutzer";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "You have an unsaved reply. Would you like to discard that reply?" = "Sie haben eine ungespeicherte Nachricht. Möchten Sie diese Antwort verwerfen?";
 
 /* An explanation of how to transfer files to the Canvas app. */
@@ -1416,13 +1408,13 @@
 /* (No Comment) */
 "You must first complete:" = "Sie müssen zunächst das Folgende vervollständigen:";
 
-/* Error message */
+/* (No Comment) */
 "You need a title and a description to post" = "Zum Posten brauchen Sie einen Titel und eine Beschreibung";
 
 /* (No Comment) */
 "You should go rate Canvas on the App Store!" = "Sie sollten Canvas im App Store bewerten.";
 
-/* Error content */
+/* (No Comment) */
 "Your files could not be found" = "Ihre Dateien konnten nicht gefunden werden";
 
 /* Media submission type selected with no Kaltura set up */
@@ -1431,16 +1423,13 @@
 /* (No Comment) */
 "due on %1$@ at %2$@" = "Fällig am %1$@ um %2$@";
 
-/* Assignment is due on a date at a time */
-"due on %@ at %@" = "Fällig am %1$@ um %2$@";
-
 /* (No Comment) */
 "moments ago" = "vor einigen Augenblicken";
 
-/* Accessibility label modifier for point out of point possible */
+/* No comment provided by engineer. */
 "out of" = "von";
 
-/* The assignment is out of 100 points */
+/* (No Comment) */
 "out of %@" = "von %@";
 
 /* (No Comment) */

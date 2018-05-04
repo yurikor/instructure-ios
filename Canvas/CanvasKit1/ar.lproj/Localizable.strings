@@ -19,6 +19,9 @@
 /* 88 out of 100 points */
 "%@ out of %@" = "%1$@ من بين %2$@";
 
+/* {point range max} to > {point range min} pts */
+"%@ to > %@ pts" = "%1$@ إلى > %2$@ نقطة";
+
 /* 83% (83 out of 100 points */
 "%@%% (%g out of %@)" = "%1$@%% (%2$g من بين %3$@)";
 
@@ -82,9 +85,6 @@
 /* No comment provided by engineer. */
 "Note: Media files are not immediately available for playback while they are processed on the server." = "ملاحظة: لا يمكن قراءة ملفات الوسائط بشكل فوري أثناء معالجتها على الخادم.";
 
-/* No comment provided by engineer. */
-"OK" = "موافق";
-
 /* Short name for observer enrollment */
 "Observer" = "ملاحظ";
 
@@ -99,6 +99,9 @@
 
 /* A button that records */
 "Record" = "تسجيل";
+
+/* No comment provided by engineer. */
+"Score" = "الدرجة";
 
 /* Hint about the play button */
 "Starts playing your recording" = "بدء تشغيل تسجيلك";
@@ -146,7 +149,7 @@
 "Video" = "فيديو";
 
 /* No comment provided by engineer. */
-"Video error" = "خطأ في الفيديو";
+"Video Error" = "خطأ بالفيديو";
 
 /* No comment provided by engineer. */
 "Warning" = "تحذير";

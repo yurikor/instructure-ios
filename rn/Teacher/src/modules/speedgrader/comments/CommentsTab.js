@@ -14,7 +14,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-// @flow
+/* eslint-disable flowtype/require-valid-file-annotation */
 
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
@@ -25,7 +25,7 @@ import {
   ActionSheetIOS,
   AppState,
 } from 'react-native'
-import { getSession } from '../../../canvas-api'
+import { getSession } from '@canvas-api'
 import CommentRow, { type CommentRowProps, type CommentContent } from './CommentRow'
 import CommentInput, { type Comment } from './CommentInput'
 import DrawerState from '../utils/drawer-state'
@@ -33,19 +33,20 @@ import SubmissionCommentActions from './actions'
 import SpeedGraderActions from '../actions'
 import { type SubmittedContentDataProps } from './SubmittedContent'
 import CommentStatus from './CommentStatus'
-import Images from '../../../images'
-import MediaComment, { type Media } from '../../../common/components/MediaComment'
-import Permissions from '../../../common/permissions'
+import Images from '@images'
+import MediaComment, { type Media } from '@common/components/MediaComment'
+import Permissions from '@common/permissions'
 import i18n from 'format-message'
-import filesize from 'filesize'
+import bytes from '@utils/locale-bytes'
 import striptags from 'striptags'
+import ListEmptyComponent from '../../../common/components/ListEmptyComponent'
 
 const Actions = {
   ...SubmissionCommentActions,
   ...SpeedGraderActions,
 }
 
-export class CommentsTab extends Component<any, CommentsTabProps, any> {
+export class CommentsTab extends Component<CommentsTabProps, any> {
   constructor (props: CommentsTabProps) {
     super(props)
 
@@ -153,6 +154,7 @@ export class CommentsTab extends Component<any, CommentsTabProps, any> {
   switchFile = (submissionID: string, attemptIndex: number, attachmentIndex: number) => {
     this.props.selectSubmissionFromHistory(submissionID, attemptIndex)
     this.props.selectFile(submissionID, attachmentIndex)
+    this.props.drawerState.snapTo(0, true)
   }
 
   navigateToContextCard = (userID: string) => {
@@ -167,11 +169,11 @@ export class CommentsTab extends Component<any, CommentsTabProps, any> {
       {...item}
       anonymous={this.props.anonymous}
       testID={'submission-comment-' + item.key}
-      style={{ transform: [{ rotate: '180deg' }] }}
       retryPendingComment={this.makeAComment}
       deletePendingComment={this.deletePendingComment}
       switchFile={this.switchFile}
       localID={item.key}
+      onAvatarPress={this.navigateToContextCard}
     />
 
   statusComplete = () => {
@@ -182,13 +184,17 @@ export class CommentsTab extends Component<any, CommentsTabProps, any> {
     // $FlowFixMe
     const rows = this.props.commentRows
     let hasPending = this.props.commentRows.some(c => c.pending)
+    let containerStyles = {}
+    if (rows.length === 0) containerStyles = { flex: 1, justifyContent: 'center' }
     return (
       <View style={{ flex: 1 }}>
         <FlatList
           showsVerticalScrollIndicator={false}
-          style={{ transform: [{ rotate: '180deg' }] }}
+          inverted={true}
           data={rows}
           renderItem={this.renderComment}
+          ListEmptyComponent={<ListEmptyComponent title={i18n('There are no comments to display.')} />}
+          contentContainerStyle={containerStyles}
         />
         { this.state.shouldShowStatus &&
           <CommentStatus
@@ -276,8 +282,7 @@ type CommentRowData = {
 }
 
 function extractComments (submissionComments: SubmissionComment[]): Array<CommentRowData> {
-  const session = getSession()
-  const myUserID = session ? session.user.id : '😲'
+  const myUserID = getSession().user.id
 
   return submissionComments
     .map(comment => ({
@@ -285,6 +290,7 @@ function extractComments (submissionComments: SubmissionComment[]): Array<Commen
       name: comment.author_name,
       date: new Date(comment.created_at),
       avatarURL: comment.author.avatar_image_url,
+      userID: comment.author.id,
       from: comment.author.id === myUserID ? 'me' : 'them',
       contents: comment.media_comment ? contentForMediaComment(comment.media_comment) : { type: 'text', message: comment.comment },
       pending: 0,
@@ -323,7 +329,7 @@ function contentForAttempt (attempt: Submission, assignment: Assignment): Array<
         contentID: `attachment-${attachment.id}`,
         icon: Images.speedGrader.submissions.document,
         title: attachment.display_name,
-        subtitle: filesize(attachment.size),
+        subtitle: bytes(attachment.size),
       }))
     case 'media_recording':
       if (!attempt.media_comment) {
@@ -383,6 +389,7 @@ function rowForSubmission (user: User, attempt: Submission, assignment: Assignme
     key: `submission-${attemptNumber}`,
     name: user.name,
     avatarURL: user.avatar_url,
+    userID: user.id,
     from: 'them',
     date: new Date(submittedAt),
     contents: {
@@ -404,7 +411,7 @@ function extractAttempts (submission: SubmissionWithHistory, assignment: Assignm
 
 function extractPendingComments (assignments: ?AssignmentContentState, userID): Array<CommentRowData> {
   const session = getSession()
-  if (!assignments || !session) {
+  if (!assignments) {
     return []
   }
 
@@ -415,6 +422,7 @@ function extractPendingComments (assignments: ?AssignmentContentState, userID): 
     from: 'me',
     name: session.user.name,
     avatarURL: session.user.avatar_url,
+    userID: session.user.id,
     contents: pending.mediaComment ? { ...pending.comment, url: pending.mediaComment.url } : pending.comment,
     pending: pending.pending,
     error: pending.error || undefined, // this fixes flow even though error could already be undefined...
@@ -422,7 +430,7 @@ function extractPendingComments (assignments: ?AssignmentContentState, userID): 
 }
 
 export function mapStateToProps ({ entities }: AppState, ownProps: RoutingProps): CommentRows {
-  const { submissionID, userID, assignmentID } = ownProps
+  const { submissionID, userID, assignmentID, courseID } = ownProps
 
   const submission = submissionID &&
     entities.submissions[submissionID]
@@ -431,9 +439,20 @@ export function mapStateToProps ({ entities }: AppState, ownProps: RoutingProps)
 
   const assignments = entities.assignments[assignmentID]
 
+  const assignmentData = assignments && assignments.data
+  const quiz = assignmentData && assignmentData.quiz_id && entities.quizzes[assignmentData.quiz_id].data
+
+  const courseContent = entities.courses[courseID]
+
   const pendingComments = extractPendingComments(assignments, userID)
   const comments = submission && submission.submission_comments ? extractComments(submission.submission_comments) : []
   const attempts = submission ? extractAttempts(submission, assignments.data) : []
+
+  let anonymous = (
+    assignments && assignments.anonymousGradingOn ||
+    quiz && quiz.anonymous_submissions ||
+    courseContent && courseContent.enabledFeatures.includes('anonymous_grading')
+  )
 
   const commentRows = [
     ...comments,
@@ -443,7 +462,7 @@ export function mapStateToProps ({ entities }: AppState, ownProps: RoutingProps)
 
   return {
     commentRows,
-    anonymous: !!assignments.anonymousGradingOn,
+    anonymous,
   }
 }
 

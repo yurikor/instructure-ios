@@ -1,3 +1,5 @@
+"Inbox" = "Indboks";
+
 /* Error message component with the report id */
 " Error report ID: (reportID)" = " Fejlrapport-ID: (reportID)";
 
@@ -44,8 +46,14 @@
 /* all pages segmented control title */
 "All Pages" = "Alle sider";
 
-/* Title for push notification pre-authorization alert */
-"Allow Push Notifications?" = "Tillad push beskeder?";
+/* No comment provided by engineer. */
+"All notifications are currently disabled." = "Alle meddelelser er for øjeblikket deaktiveret.";
+
+/* No comment provided by engineer. */
+"All notifications are currently enabled." = "Alle meddelelser er for øjeblikket aktiveret.";
+
+/* No comment provided by engineer. */
+"Allow Notifications in Settings" = "Tillad meddelelser i indstillinger";
 
 /* label for number of attempts that are allowed */
 "Allowed Attempts" = "Tilladte forsøg";
@@ -86,7 +94,8 @@
 /* Alert title when unable to parse JSON for notification preferences */
 "Can't Display Notification Preferences" = "Kan ikke vise notifikationsindstillinger";
 
-/* Cancel button title
+/* Cancel Audio recording.
+   Cancel button title
    Cancel submission option
    Cancel upload */
 "Cancel" = "Annuller";
@@ -119,6 +128,9 @@
 "Choose your answers below" = "Vælg dine svar nedenfor";
 
 /* No comment provided by engineer. */
+"Collapse" = "Skjul";
+
+/* No comment provided by engineer. */
 "Comments" = "Kommentarer";
 
 /* File upload completed */
@@ -144,9 +156,6 @@
 
 /* Notification display name for course activities group */
 "Course Activities" = "Fagets aktiviteter";
-
-/* Button for creating a note from text selection */
-"Create Note" = "Opret note";
 
 /* Header label for a screen that customizes a course */
 "Customize" = "Tilpas";
@@ -237,11 +246,17 @@
 /* No comment provided by engineer. */
 "Error parsing the Roll Call response. Unexpected null value: (k)" = "Der opstod en fejl ved parsing af navneopkald-responsen. Uventet null-værdi: (k)";
 
+/* No comment provided by engineer. */
+"Error retrieving tool launch URL" = "Der opstod en fejl under hentning af værktøjsstarterens URL";
+
 /* rollcall status error */
 "Error: No data returned from the rollcall api." = "Fejl: Ingen data returneret fra navneopkald-api.";
 
 /* Exit button to leave the quiz */
 "Exit" = "Afslut";
+
+/* No comment provided by engineer. */
+"Expand" = "Udvid";
 
 /* Error message when the server returns a invalid response */
 "Expected a response in the 200-299 range. Got %@" = "Forventet et svar i området 200-299. Fik %@";
@@ -288,15 +303,15 @@
 /* Hides the question list */
 "Hide Question List" = "Skul spørgsmålsliste";
 
-/* No comment provided by engineer. */
-"Inbox" = "Indbakke";
-
 /* Indigo course color button */
 "Indigo" = "Indigo";
 
 /* Mark student late
    Student is present in class */
 "Late" = "Sen";
+
+/* No comment provided by engineer. */
+"Launch External Tool" = "Start eksternt værktøj";
 
 /* Leave the quiz */
 "Leave" = "Forlad";
@@ -332,9 +347,6 @@
 /* Next button for advancing a quiz */
 "Next" = "Næste";
 
-/* Title for no button for push notification pre-authorization alert */
-"No" = "Nej";
-
 /* Alert title when unable to load communication channels */
 "No Communication Channels Found" = "Ingen kommunikationskanaler fundet";
 
@@ -361,9 +373,6 @@
 
 /* Title for alert showing when a quiz isn't takeable */
 "Not Takeable" = "Kan ikke tages";
-
-/* No comment provided by engineer. */
-"Note..." = "Note...";
 
 /* Error title for push notification registration error */
 "Notification Error" = "Meddelelsesfejl";
@@ -442,10 +451,10 @@
 "Question %@" = "Spørgsmål %@";
 
 /* state for a question that has been flagged */
-"Question (questionNumber) Flagged" = "Spørgsmål (questionNumber) markeret med flag ";
+"Question (number) Flagged" = "Spørgsmål (nummer) Markeret med flag";
 
 /* state for unflagged question */
-"Question (questionNumber) Unflagged" = "Spørgsmål (questionNumber) ikke markeret med flag";
+"Question (number) Unflagged" = "Spørgsmål (nummer) Ikke markeret med flag";
 
 /* label for the number of questions */
 "Questions" = "Spørgsmål";
@@ -705,10 +714,7 @@
 "Unable to display any notification preferences returned from the server at this time." = "Er på nuværende tidspunkt ikke i stand til at vise notifikationsindstillinger returneret fra serveren.";
 
 /* Alert message when unable to load communication channels */
-"Unable to load any Communication Channels at this time.  Error: (result.error?.localizedDescription)" = "Kan ikke indlæse nogen kommunikationskanaler på nuværende tidspunkt.  Fejl: (resultat.fejl?.localizedDescription)";
-
-/* Alert message when unable to load notification preferences */
-"Unable to load any notification preferences at this time.  Error: (result.error?.localizedDescription)" = "Kan ikke indlæse nogen meddelelsesindstillinger på nuværende tidspunkt.  Fejl: (resultat.fejl?.localizedDescription)";
+"Unable to load any Communication Channels at this time." = "Kan ikke indlæse nogen kommunikationskanaler på nuværende tidspunkt.";
 
 /* Error message when parsing communication preferences */
 "Unable to parse JSON for communication channels" = "Kan ikke parse JSON for kommunikationskanaler";
@@ -758,14 +764,8 @@
 /* Error message for being unable to update a push notification preference */
 "We were not able to update this value with the server" = "Vi var ikke i stand til at opdatere denne værdi på serveren";
 
-/* Message for push notification pre-authorization alert */
-"Would you like to allow Canvas to send you important notifications about announcements, course, assignments, etc?" = "Ønsker du at tillade Canvas at sende dig vigtige notifikationerom bekendtgørelser, kursus, opgaver etc?";
-
 /* Yellow course color button */
 "Yellow" = "Gul";
-
-/* Title for yes button for push notification pre-authorization alert */
-"Yes" = "Ja";
 
 /* Description for Yo communication channel */
 "Yo" = "Yo";
@@ -796,4 +796,7 @@
 
 /* File upload in progress */
 "uploading..." = "overførsel ...";
+
+/* web content failed to load */
+"⚠️ Error Loading Content" = "⚠️ Fejl ved indlæsning af indhold";
 

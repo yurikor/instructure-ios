@@ -19,11 +19,11 @@
 import React from 'react'
 import ActivityIndicatorView from './ActivityIndicatorView'
 import canvas from '../../canvas-api'
-import WKWebView from 'react-native-wkwebview-reborn'
+import CanvasWebView from './CanvasWebView'
 
-export default class AuthenticatedWebView extends React.Component<any, any, any> {
+export default class AuthenticatedWebView extends React.Component<any, any> {
 
-  webView: WebView
+  webView: CanvasWebView
 
   constructor (props: any) {
     super(props)
@@ -33,10 +33,10 @@ export default class AuthenticatedWebView extends React.Component<any, any, any>
   }
 
   injectJavaScript = (script: string) => {
-    this.webView.evaluateJavaScript(script)
+    return this.webView.evaluateJavaScript(script)
   }
 
-  captureRef = (c: WebView) => {
+  captureRef = (c: CanvasWebView) => {
     this.webView = c
   }
 
@@ -78,6 +78,6 @@ export default class AuthenticatedWebView extends React.Component<any, any, any>
       ...this.props,
       source: uri ? { uri } : this.props.source,
     }
-    return <WKWebView {...props} ref={this.captureRef} />
+    return <CanvasWebView {...props} ref={this.captureRef} />
   }
 }

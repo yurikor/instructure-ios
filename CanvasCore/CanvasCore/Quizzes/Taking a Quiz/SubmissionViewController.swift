@@ -36,7 +36,7 @@ protocol SubmissionInteractor: class {
     func markQuestonFlagged(_ flagged: Bool, forQuestionAtIndex questionIndex: Int)
 }
 
-class SubmissionViewController: UITableViewController {
+class SubmissionViewController: UITableViewController, PageViewEventViewControllerLoggingProtocol {
 
     var quiz: Quiz?
     var questions: [SubmissionQuestion]
@@ -58,7 +58,7 @@ class SubmissionViewController: UITableViewController {
     fileprivate let dropdownToolbarTitleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 40, height: 20))
     fileprivate let invisibleTextFieldForDropdowns = UITextField()
     lazy var dropdownsPicker: UIPickerView = {
-        let picker = UIPickerView(frame: CGRect(x: 0, y: 0, width: 0, height: DropdownPickerHeight))
+        let picker = UIPickerView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         picker.backgroundColor = .white
         picker.delegate = self
         picker.dataSource = self
@@ -106,7 +106,18 @@ class SubmissionViewController: UITableViewController {
         invisibleTextFieldForDropdowns.inputAccessoryView = dropdownToolbar
         view.addSubview(invisibleTextFieldForDropdowns)
     }
-
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        startTrackingTimeOnViewController()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        let event = quizService.pageViewName() + "/take"
+        stopTrackingTimeOnViewController(eventName: event)
+    }
+    
     func navigateToQuestionAtIndex(_ questionIndex: Int) {
         let index = Index(questionIndex: questionIndex)
         tableView.scrollToRow(at: index.indexPath, at: .top, animated: true)
@@ -326,12 +337,12 @@ extension SubmissionViewController: UIPickerViewDelegate, UIPickerViewDataSource
                 picker.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 picker.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                 picker.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-                picker.heightAnchor.constraint(equalToConstant: DropdownPickerHeight)
             ])
         }
     }
 
     struct DropdownBlank {
+        let number: String
         let key: String
         let color: UIColor
     }
@@ -342,7 +353,7 @@ extension SubmissionViewController: UIPickerViewDelegate, UIPickerViewDataSource
         }
 
         return colorsForMultipleDropdownQuestion(question).reduce(html) { coloredHTML, colors in
-            return coloredHTML.replacingOccurrences(of: "[\(colors.key)]", with: "<span style=\"color: \(colors.color.hex)\">[ \(colors.key) ]</span>")
+            return coloredHTML.replacingOccurrences(of: "[\(colors.key)]", with: "<span style=\"color: \(colors.color.hex)\">[ \(colors.number) ]</span>")
         }
     }
 
@@ -351,7 +362,7 @@ extension SubmissionViewController: UIPickerViewDelegate, UIPickerViewDataSource
         return multipleDropdownBlanks(question: question)
             .enumerated()
             .map { index, key in
-                DropdownBlank(key: key, color: colors[index % colors.count])
+                DropdownBlank(number: NumberFormatter.localizedString(from: NSNumber(value: index + 1), number: .none), key: key, color: colors[index % colors.count])
             }
     }
 
@@ -377,7 +388,6 @@ extension SubmissionViewController: UIPickerViewDelegate, UIPickerViewDataSource
             }
             let popover = DropdownPopoverPickerViewController(toolbar: dropdownToolbar, picker: dropdownsPicker)
             popover.modalPresentationStyle = .popover
-            let sourceSize: CGFloat = 10
             popover.popoverPresentationController?.sourceView = dropdownButton.topArrow
             popover.popoverPresentationController?.permittedArrowDirections = [.left]
             popover.preferredContentSize = CGSize(width: 350, height: DropdownPickerHeight + dropdownToolbar.frame.size.height)
@@ -461,7 +471,7 @@ extension SubmissionViewController: UIPickerViewDelegate, UIPickerViewDataSource
     }
 
     func dropdownToolbarDoneAction() {
-        guard let indexPath = currentDropdownIndexPath else {
+        guard let _ = currentDropdownIndexPath else {
             return
         }
 
@@ -470,7 +480,7 @@ extension SubmissionViewController: UIPickerViewDelegate, UIPickerViewDataSource
         if let indexPath = currentDropdownIndexPath, let questionIndex = Index(indexPath: indexPath).questionIndex, let blank = dropdownBlank(at: indexPath) {
             let question = questions[questionIndex]
             var answerHash: [String: String]
-            if case var .idsHash(hash) = question.answer {
+            if case let .idsHash(hash) = question.answer {
                 answerHash = hash
             } else {
                 answerHash = [:]
@@ -1102,7 +1112,7 @@ extension SubmissionViewController {
                     let answerIndex = indexPath.row - 1
                     let blanks = colorsForMultipleDropdownQuestion(question.question)
                     let blank = blanks[answerIndex]
-                    cell.dropdownLabel.text = blank.key
+                    cell.dropdownLabel.text = blank.number
                     cell.dropdownLabel.textColor = blank.color
                     switch question.answer {
                     case .idsHash(let hash):

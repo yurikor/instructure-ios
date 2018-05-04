@@ -262,11 +262,9 @@ extension CalendarEvent: SynchronizedModel {
 
         if allDay, let allDayDate: String = try json <| "all_day_date" {
             self.allDayDate = allDayDate
-            let date = CalendarEvent.dayDateFormatter.date(from: allDayDate)
-            startAt = date
-            endAt = date
-        } else if let endAt = endAt {
-            allDayDate = CalendarEvent.dayDateFormatter.string(from: endAt)
+            startAt = CalendarEvent.dayDateFormatter.date(from: allDayDate)
+        } else if let startAt = startAt {
+            allDayDate = CalendarEvent.dayDateFormatter.string(from: startAt)
         } else {
             allDayDate = "Unknown"
         }

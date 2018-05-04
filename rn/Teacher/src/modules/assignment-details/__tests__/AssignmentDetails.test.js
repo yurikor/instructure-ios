@@ -14,18 +14,13 @@
 // limitations under the License.
 //
 
-/**
- * @flow
- */
+/* eslint-disable flowtype/require-valid-file-annotation */
 
-import { Alert } from 'react-native'
 import React from 'react'
 import { AssignmentDetails } from '../AssignmentDetails'
 import explore from '../../../../test/helpers/explore'
-import RCTSFSafariViewController from 'react-native-sfsafariviewcontroller'
 import renderer from 'react-test-renderer'
-import { setSession } from '../../../canvas-api'
-import { defaultErrorTitle } from '../../../redux/middleware/error-handler'
+import * as LTITools from '../../../common/LTITools'
 
 const template = {
   ...require('../../../__templates__/assignments'),
@@ -48,6 +43,7 @@ let assignment: any = template.assignment()
 let defaultProps = {
   navigator: template.navigator(),
   courseID: course.id,
+  course: course,
   assignmentID: assignment.id,
   refreshAssignmentDetails: (courseID: string, assignmentID: string) => {},
   assignmentDetails: assignment,
@@ -57,8 +53,6 @@ let defaultProps = {
   refreshing: false,
   getSessionlessLaunchURL: jest.fn(),
 }
-
-beforeAll(() => setSession(template.session()))
 
 test('renders', () => {
   let tree = renderer.create(
@@ -75,9 +69,28 @@ test('renders with no submission types', () => {
   expect(tree).toMatchSnapshot()
 })
 
+test('renders with no assignment', () => {
+  let props = {
+    ...defaultProps,
+    assignmentDetails: null,
+  }
+  let tree = renderer.create(
+    <AssignmentDetails {...props} />
+  ).toJSON()
+  expect(tree).toMatchSnapshot()
+})
+
 test('renders as a designer', () => {
   let tree = renderer.create(
     <AssignmentDetails {...defaultProps} showSubmissionSummary={false} />
+  ).toJSON()
+  expect(tree).toMatchSnapshot()
+})
+
+test('renders with not_graded submission type', () => {
+  defaultProps.assignmentDetails = template.assignment({ submission_types: ['not_graded'] })
+  let tree = renderer.create(
+    <AssignmentDetails {...defaultProps} />
   ).toJSON()
   expect(tree).toMatchSnapshot()
 })
@@ -162,15 +175,14 @@ test('routes to the right place when submissions dial is tapped', () => {
 describe('external tool', () => {
   describe('happy path', () => {
     beforeEach(() => {
-      RCTSFSafariViewController.open = jest.fn()
+      LTITools.launchExternalTool = jest.fn()
     })
 
-    setSession(template.session())
     const url = 'https://canvas.instructure.com/external_tool'
     const props = {
       ...defaultProps,
-      getSessionlessLaunchURL: jest.fn(() => Promise.resolve(url)),
       assignmentDetails: template.assignment({
+        url,
         submission_types: ['external_tool'],
       }),
     }
@@ -178,35 +190,16 @@ describe('external tool', () => {
       <AssignmentDetails {...props} />
     ).toJSON()
 
-    it('launches from submission types', async () => {
+    it('launches from submission types', () => {
       const submissionTypes: any = explore(tree).selectByID('assignment-details.assignment-section.submission-type')
-      await submissionTypes.props.onPress()
-      expect(RCTSFSafariViewController.open).toHaveBeenCalledWith(url)
+      submissionTypes.props.onPress()
+      expect(LTITools.launchExternalTool).toHaveBeenCalledWith(url)
     })
 
-    it('launches from button', async () => {
+    it('launches from button', () => {
       const button: any = explore(tree).selectByID('assignment-details.launch-external-tool.button')
-      await button.props.onPress()
-      expect(RCTSFSafariViewController.open).toHaveBeenCalledWith(url)
-    })
-  })
-
-  describe('sad path', () => {
-    it('shows an alert', async () => {
-      Alert.alert = jest.fn()
-      const props = {
-        ...defaultProps,
-        assignmentDetails: template.assignment({
-          submission_types: ['external_tool'],
-        }),
-        getSessionlessLaunchURL: jest.fn(() => Promise.reject(template.error('Network error'))),
-      }
-      const tree = renderer.create(
-        <AssignmentDetails {...props} />
-      ).toJSON()
-      const button: any = explore(tree).selectByID('assignment-details.launch-external-tool.button')
-      await button.props.onPress()
-      expect(Alert.alert).toHaveBeenCalledWith(defaultErrorTitle(), 'Network error')
+      button.props.onPress()
+      expect(LTITools.launchExternalTool).toHaveBeenCalledWith(url)
     })
   })
 })

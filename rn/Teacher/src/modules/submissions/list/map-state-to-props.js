@@ -16,9 +16,6 @@
 
 // @flow
 
-import type {
-  SubmissionListDataProps,
-} from './submission-prop-types'
 import { getSubmissionsProps } from './get-submissions-props'
 import shuffle from 'knuth-shuffle-seeded'
 import {
@@ -30,28 +27,25 @@ type RoutingProps = {
   assignmentID: string,
 }
 
-export function mapStateToProps ({ entities }: AppState, { courseID, assignmentID }: RoutingProps): SubmissionListDataProps {
+export function mapStateToProps ({ entities }: AppState, { courseID, assignmentID }: RoutingProps) {
   // submissions
   const assignmentContent = entities.assignments[assignmentID]
   const courseContent = entities.courses[courseID]
   let pointsPossible
-  let groupAssignment = null
+  let isMissingGroupsData = false
+  let isGroupGradedAssignment = false
   if (assignmentContent && assignmentContent.data) {
     const a = assignmentContent.data
-    const groupExists = a.group_category_id && courseContent.groups.refs
+    isMissingGroupsData = (!a.grade_group_students_individually && a.group_category_id > 0 && !Object.keys(entities.groups).length)
+    const groupExists = !isMissingGroupsData && a.group_category_id && courseContent.groups.refs
       .filter(ref => entities.groups[ref].group.group_category_id === a.group_category_id)
       .length > 0
-    if (groupExists) {
-      groupAssignment = {
-        groupCategoryID: a.group_category_id,
-        gradeIndividually: a.grade_group_students_individually,
-      }
-    }
+    isGroupGradedAssignment = (groupExists && !a.grade_group_students_individually)
     pointsPossible = assignmentContent.data.points_possible
   }
 
   let submissions
-  if (groupAssignment && !groupAssignment.gradeIndividually) {
+  if (isGroupGradedAssignment) {
     submissions = getGroupSubmissionProps(entities, courseID, assignmentID)
   } else {
     submissions = getSubmissionsProps(entities, courseID, assignmentID)
@@ -78,12 +72,13 @@ export function mapStateToProps ({ entities }: AppState, { courseID, assignmentI
     gradingType = assignmentContent.data.grading_type
   }
 
-  const sections = Object.values(entities.sections).filter((s) => {
+  const sections = Object.values(entities.sections).filter((s: any) => {
     return s.course_id === courseID
   })
 
   return {
-    groupAssignment,
+    isMissingGroupsData,
+    isGroupGradedAssignment,
     courseColor,
     courseName,
     pointsPossible,

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-// @flow
+/* eslint-disable flowtype/require-valid-file-annotation */
 
 import React from 'react'
 import { SubmissionSettings, mapStateToProps } from '../SubmissionSettings'
@@ -54,14 +54,6 @@ describe('SubmissionSettings', () => {
       <SubmissionSettings {...defaultProps} disableAnonymous={true} />
     ).toJSON()
     expect(tree).toMatchSnapshot()
-  })
-
-  it('calls navigator.dismiss when done is pressed', () => {
-    let instance = renderer.create(
-      <SubmissionSettings {...defaultProps} />
-    ).getInstance()
-    instance.dismiss()
-    expect(defaultProps.navigator.dismiss).toHaveBeenCalled()
   })
 
   it('calls anonymousGrading when the toggle is pressed', () => {

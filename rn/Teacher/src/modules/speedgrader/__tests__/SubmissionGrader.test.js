@@ -14,13 +14,15 @@
 // limitations under the License.
 //
 
-// @flow
+/* eslint-disable flowtype/require-valid-file-annotation */
 
 import React from 'react'
 import SubmissionGrader from '../SubmissionGrader'
 import renderer from 'react-test-renderer'
 import DrawerState from '../utils/drawer-state'
 import explore from '../../../../test/helpers/explore'
+import { shallow } from 'enzyme'
+import * as template from '../../../__templates__'
 
 jest
   .mock('TouchableOpacity', () => 'TouchableOpacity')
@@ -29,15 +31,11 @@ jest
   .mock('../GradeTab')
   .mock('../components/GradePicker')
   .mock('../components/Header')
-  .mock('../components/SubmissionPicker')
+  .mock('../components/SubmissionPicker', () => 'SubmissionPicker')
   .mock('../components/FilesTab')
   .mock('../components/SimilarityScore')
   .mock('../comments/CommentsTab')
   .mock('../SubmissionViewer', () => 'SubmissionViewer')
-
-let template = {
-  ...require('../../../__templates__/submissions'),
-}
 
 let defaultProps = {
   submissionID: '1',
@@ -53,21 +51,21 @@ describe('SubmissionGrader', () => {
   })
 
   it('renders', () => {
-    let tree = renderer.create(
+    let tree = shallow(
       <SubmissionGrader {...defaultProps} />
     )
 
-    let instance = tree.getInstance()
-    let event = {
-      nativeEvent: {
-        layout: {
-          height: 200,
-          width: 200,
-        },
-      },
-    }
-    instance.onLayout(event)
-    // expect(tree.toJSON()).toMatchSnapshot()
+    tree.setState({ width: 200, height: 200 })
+    expect(tree).toMatchSnapshot()
+  })
+
+  it('renders wide', () => {
+    let tree = shallow(
+      <SubmissionGrader {...defaultProps} />
+    )
+
+    tree.setState({ width: 1000, height: 200 })
+    expect(tree).toMatchSnapshot()
   })
 
   it('can render the handle content', () => {

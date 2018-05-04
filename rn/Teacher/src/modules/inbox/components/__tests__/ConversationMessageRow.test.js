@@ -14,11 +14,11 @@
 // limitations under the License.
 //
 
-/* @flow */
+/* eslint-disable flowtype/require-valid-file-annotation */
 import 'react-native'
 import React from 'react'
 import ConversationMessage from '../ConversationMessageRow'
-import { setSession } from '../../../../canvas-api'
+import { getSession, setSession } from '../../../../canvas-api'
 import explore from '../../../../../test/helpers/explore'
 
 const template = {
@@ -37,8 +37,6 @@ jest
 import renderer from 'react-test-renderer'
 
 it('renders correctly', () => {
-  const session = template.session()
-  setSession(session)
   const convo = template.conversation({
     id: '1',
   })
@@ -51,8 +49,7 @@ it('renders correctly', () => {
 })
 
 it('renders correctly with author being the logged in user', () => {
-  const session = template.session()
-  setSession(session)
+  const session = getSession()
   const convo = template.conversation({
     id: '1',
     participants: [
@@ -72,8 +69,8 @@ it('renders correctly with author being the logged in user', () => {
 })
 
 it('renders correctly with author lots of participants', () => {
-  const session = template.session()
-  setSession(session)
+  const session = getSession()
+
   const convo = template.conversation({
     id: '1',
     participants: [
@@ -142,13 +139,12 @@ it('navigates to compose when reply to first message button pressed', () => {
       subject: 'Subject 1',
       canSelectCourse: false,
       canEditSubject: false,
+      navBarTitle: 'Reply',
     },
   )
 })
 
 it('navigates to context card when the avatar is pressed', () => {
-  const session = template.session()
-  setSession(session)
   const convo = template.conversation({
     id: '1',
   })
@@ -165,4 +161,19 @@ it('navigates to context card when the avatar is pressed', () => {
     `/courses/1/users/1234`,
     { modal: true, modalPresentationStyle: 'currentContext' },
   )
+})
+
+it('navigates to a link when pressed', () => {
+  const convo = template.conversation({})
+  const message = template.conversationMessage()
+  const navigator = template.navigator()
+
+  let instance = renderer.create(
+    <ConversationMessage navigator={navigator} conversation={convo} message={message} />
+  ).getInstance()
+
+  const link = 'http://www.google.com'
+  instance.handleLink(link)
+
+  expect(navigator.show).toHaveBeenCalledWith(link, { deepLink: true })
 })

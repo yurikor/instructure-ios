@@ -14,20 +14,21 @@
 // limitations under the License.
 //
 
-// @flow
+/* eslint-disable flowtype/require-valid-file-annotation */
 
 import { CoursesActions } from '../actions'
 import { CourseSettingsActions } from '../settings/actions'
+import { EnrollmentsActions } from '../../enrollments/actions'
 import { courses as coursesReducer } from '../courses-reducer'
 import { apiResponse, apiError } from '../../../../test/helpers/apiMock'
 import { testAsyncReducer } from '../../../../test/helpers/async'
-import * as courseTemplate from '../../../__templates__/course'
+import * as templates from '../../../__templates__'
 
 describe('courses refresher', () => {
   it('should capture courses from response', async () => {
-    const course = courseTemplate.course()
+    const course = templates.course()
     const courses = [course]
-    const customColors = courseTemplate.customColors()
+    const customColors = templates.customColors()
 
     let action = CoursesActions({
       getCourses: apiResponse(courses),
@@ -71,15 +72,12 @@ describe('courses refresher', () => {
         pending: 0,
         refs: [],
       },
-      pages: {
-        pending: 0,
-        refs: [],
-      },
       enabledFeatures: [],
       gradingPeriods: {
         pending: 0,
         refs: [],
       },
+      permissions: null,
     }
     expect(state).toEqual([{}, {
       [course.id]: expected,
@@ -87,10 +85,10 @@ describe('courses refresher', () => {
   })
 
   it('puts in all courses', async () => {
-    const course = courseTemplate.course()
-    const nonTeacherCourse = { ...courseTemplate.course({ id: 991 }), enrollments: [] }
+    const course = templates.course()
+    const nonTeacherCourse = { ...templates.course({ id: 991 }), enrollments: [] }
     const courses = [course, nonTeacherCourse]
-    const customColors = courseTemplate.customColors()
+    const customColors = templates.customColors()
 
     let action = CoursesActions({
       getCourses: apiResponse(courses),
@@ -172,7 +170,7 @@ describe('update course', () => {
   let defaultState
 
   beforeEach(() => {
-    course = courseTemplate.course({
+    course = templates.course({
       id: '1',
       name: 'Old Name',
       default_view: 'wiki',
@@ -194,7 +192,7 @@ describe('update course', () => {
 
   it('should update the course state', async () => {
     let api = {
-      updateCourse: apiResponse(),
+      updateCourse: apiResponse({ ...newCourse }),
     }
     let action = CourseSettingsActions(api).updateCourse(newCourse, course)
 
@@ -215,6 +213,70 @@ describe('update course', () => {
           pending: 0,
           course: {
             name: 'New Name',
+            default_view: 'feed',
+          },
+          error: null,
+        },
+      },
+    ])
+  })
+
+  it('should update the course state with original name', async () => {
+    let api = {
+      updateCourse: apiResponse({ name: newCourse.name }),
+    }
+    let action = CourseSettingsActions(api).updateCourse(newCourse, course)
+
+    let state = await testAsyncReducer(coursesReducer, action, defaultState)
+
+    expect(state).toMatchObject([
+      {
+        '1': {
+          pending: 1,
+          course: {
+            name: 'New Name',
+            default_view: 'feed',
+          },
+        },
+      },
+      {
+        '1': {
+          pending: 0,
+          course: {
+            name: 'New Name',
+            original_name: 'New Name',
+            default_view: 'feed',
+          },
+          error: null,
+        },
+      },
+    ])
+  })
+
+  it('should update the course state with differing name and original name', async () => {
+    let api = {
+      updateCourse: apiResponse({ original_name: newCourse.name, name: 'nickname' }),
+    }
+    let action = CourseSettingsActions(api).updateCourse(newCourse, course)
+
+    let state = await testAsyncReducer(coursesReducer, action, defaultState)
+
+    expect(state).toMatchObject([
+      {
+        '1': {
+          pending: 1,
+          course: {
+            name: 'New Name',
+            default_view: 'feed',
+          },
+        },
+      },
+      {
+        '1': {
+          pending: 0,
+          course: {
+            name: 'nickname',
+            original_name: 'New Name',
             default_view: 'feed',
           },
           error: null,
@@ -249,6 +311,57 @@ describe('update course', () => {
             default_view: 'wiki',
           },
           error: 'error',
+        },
+      },
+    ])
+  })
+})
+
+describe('update course nickname', () => {
+  let course
+  let nickname = 'nickname'
+  let defaultState
+
+  beforeEach(() => {
+    course = templates.course({
+      id: '1',
+      name: 'Old Name',
+      default_view: 'wiki',
+    })
+
+    defaultState = {
+      '1': {
+        error: 'try again',
+        course,
+        pending: 0,
+      },
+    }
+  })
+
+  it('should update the course nickname', async () => {
+    let api = {
+      updateCourseNickname: apiResponse({ nickname, name: course.name }),
+    }
+    let action = CoursesActions(api).updateCourseNickname(course, nickname)
+    let state = await testAsyncReducer(coursesReducer, action, defaultState)
+
+    expect(state).toMatchObject([
+      {
+        '1': {
+          pending: 1,
+          course: {
+            name: course.name,
+          },
+        },
+      },
+      {
+        '1': {
+          pending: 0,
+          course: {
+            name: nickname,
+            original_name: course.name,
+          },
+          error: null,
         },
       },
     ])
@@ -318,5 +431,200 @@ describe('getCourseEnabledFeature', () => {
         enabledFeatures: ['anonymous_grading'],
       },
     })
+  })
+})
+
+describe('getCoursePermissions', () => {
+  it('should set the permissions on the course', () => {
+    let action = {
+      type: CoursesActions().getCoursePermissions.toString(),
+      payload: {
+        courseID: '1',
+        result: {
+          data: { send_messages: false },
+        },
+      },
+    }
+
+    let state = {
+      '1': {},
+    }
+    let newState = coursesReducer(state, action)
+    expect(newState).toMatchObject({
+      '1': {
+        permissions: { send_messages: false },
+      },
+    })
+  })
+})
+
+describe('refresh single course', () => {
+  it('no existing permissions', () => {
+    let action = {
+      type: CoursesActions().refreshCourse.toString(),
+      payload: {
+        result: {
+          data: {
+            permissions: {
+              create_announcement: true,
+              create_discussion_topic: true,
+            }
+            ,
+          },
+        },
+        context: 'courses',
+        contextID: '1',
+      },
+    }
+
+    let state = {}
+    let newState = coursesReducer(state, action)
+    expect(newState).toMatchObject(
+      {
+        '1': {
+          'announcements': { 'pending': 0, 'refs': [] },
+          'assignmentGroups': { 'pending': 0, 'refs': [] },
+          'attendanceTool': { 'pending': 0 },
+          'color': '#FFFFFF00',
+          'course': {},
+          'discussions': { 'pending': 0, 'refs': [] },
+          'enabledFeatures': [],
+          'enrollments': { 'pending': 0, 'refs': [] },
+          'error': null,
+          'gradingPeriods': { 'pending': 0, 'refs': [] },
+          'groups': { 'pending': 0, 'refs': [] },
+          'oldColor': '#FFFFFF00',
+          'pending': 0,
+          'permissions': {},
+          'quizzes': { 'pending': 0, 'refs': [] },
+          'tabs': { 'pending': 0, 'tabs': [] },
+        },
+        'undefined': { 'permissions': { 'create_announcement': true, 'create_discussion_topic': true } },
+      }
+    )
+  })
+
+  it('existing permissions', () => {
+    let action = {
+      type: CoursesActions().refreshCourse.toString(),
+      payload: {
+        result: {
+          data: {
+            permissions: {
+              create_announcement: false,
+              create_discussion_topic: true,
+            }
+            ,
+          },
+        },
+        context: 'courses',
+        contextID: '1',
+      },
+    }
+
+    let state = {
+      '1': {
+        'announcements': { 'pending': 0, 'refs': [] },
+        'assignmentGroups': { 'pending': 0, 'refs': [] },
+        'attendanceTool': { 'pending': 0 },
+        'color': '#FFFFFF00',
+        'course': {},
+        'discussions': { 'pending': 0, 'refs': [] },
+        'enabledFeatures': [],
+        'enrollments': { 'pending': 0, 'refs': [] },
+        'error': null,
+        'gradingPeriods': { 'pending': 0, 'refs': [] },
+        'groups': { 'pending': 0, 'refs': [] },
+        'oldColor': '#FFFFFF00',
+        'pending': 0,
+        'permissions': {},
+        'quizzes': { 'pending': 0, 'refs': [] },
+        'tabs': { 'pending': 0, 'tabs': [] },
+      },
+      'undefined': { 'permissions': { 'create_announcement': false, 'create_discussion_topic': true } },
+    }
+    let newState = coursesReducer(state, action)
+    expect(newState).toMatchObject(
+      {
+        '1': {
+          'announcements': { 'pending': 0, 'refs': [] },
+          'assignmentGroups': { 'pending': 0, 'refs': [] },
+          'attendanceTool': { 'pending': 0 },
+          'color': '#FFFFFF00',
+          'course': {},
+          'discussions': { 'pending': 0, 'refs': [] },
+          'enabledFeatures': [],
+          'enrollments': { 'pending': 0, 'refs': [] },
+          'error': null,
+          'gradingPeriods': { 'pending': 0, 'refs': [] },
+          'groups': { 'pending': 0, 'refs': [] },
+          'oldColor': '#FFFFFF00',
+          'pending': 0,
+          'permissions': {},
+          'quizzes': { 'pending': 0, 'refs': [] },
+          'tabs': { 'pending': 0, 'tabs': [] },
+        },
+        'undefined': { 'permissions': { 'create_announcement': false, 'create_discussion_topic': true } },
+      }
+    )
+  })
+})
+
+describe('refresh users courses', () => {
+  it('should add the refs to the right course', () => {
+    let action = {
+      type: EnrollmentsActions().refreshUserEnrollments.toString(),
+      payload: {
+        result: {
+          data: [
+            templates.enrollment({ id: '1', course_id: '1' }),
+            templates.enrollment({ id: '2', course_id: '2' }),
+          ],
+        },
+      },
+    }
+
+    let state = {
+      '1': {},
+      '2': {},
+    }
+
+    let newState = coursesReducer(state, action)
+    expect(newState).toMatchObject({
+      '1': {
+        enrollments: {
+          refs: ['1'],
+        },
+      },
+      '2': {
+        enrollments: {
+          refs: ['2'],
+        },
+      },
+    })
+  })
+
+  it('should create initial course state if no course is present', () => {
+    let action = {
+      type: EnrollmentsActions().refreshUserEnrollments.toString(),
+      payload: {
+        result: {
+          data: [
+            templates.enrollment({ id: '1', course_id: '1' }),
+          ],
+        },
+      },
+    }
+
+    let state = {}
+    let newState = coursesReducer(state, action)
+    expect(newState).toMatchObject({
+      '1': {
+        enrollments: {
+          refs: ['1'],
+        },
+      },
+    })
+    expect(newState['1'].color).not.toBeUndefined()
   })
 })

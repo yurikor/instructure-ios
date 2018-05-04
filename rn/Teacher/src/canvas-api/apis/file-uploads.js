@@ -14,10 +14,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-/* @flow */
+// @flow
 
 import httpClient from '../httpClient'
-import axios, { CancelToken } from 'axios'
+import { getFile } from './files'
 
 type UploadTarget = {
   upload_url: string,
@@ -26,10 +26,10 @@ type UploadTarget = {
 
 export type UploadOptions = {
   path: string,
-  parentFolderID?: string,
-  parentFolderPath?: string,
+  parentFolderID?: ?string,
+  parentFolderPath?: ?string,
   onProgress?: (Progress) => void,
-  cancelUpload: (() => void) => void,
+  cancelUpload?: (() => void) => void,
 }
 
 export type Progress = {
@@ -39,7 +39,11 @@ export type Progress = {
 
 export async function uploadAttachment (attachment: Attachment, options: UploadOptions): Promise<File> {
   const target = await requestUploadTarget(attachment, options)
-  return await postFile(attachment.uri, target, options)
+  const file = await postFile(attachment.uri, target, options)
+
+  // GET the file because we need the url to contain the verifier token
+  const response = await getFile(file.id)
+  return response.data
 }
 
 // Helpers
@@ -47,6 +51,7 @@ export async function uploadAttachment (attachment: Attachment, options: UploadO
 async function requestUploadTarget (attachment: Attachment, options: UploadOptions): Promise<UploadTarget> {
   const params: any = {
     name: attachment.filename || attachment.display_name,
+    on_duplicate: 'rename',
   }
   if (attachment.size) params.size = attachment.size
   if (options.parentFolderID) params.parent_folder_id = options.parentFolderID
@@ -69,10 +74,20 @@ async function postFile (uri: string, target: UploadTarget, options: UploadOptio
     type: 'multipart/form-data',
   })
 
-  const cancelToken = new CancelToken(c => options.cancelUpload && options.cancelUpload(c))
-  const response = await axios.post(upload_url, formdata, {
-    onUploadProgress: ({ loaded, total }) => { options.onProgress && options.onProgress({ loaded, total }) },
-    cancelToken,
+  const uploading = httpClient().post(upload_url, formdata, {
+    headers: { // remove default auth & accept
+      'Authorization': null,
+      'Accept': 'application/json',
+    },
   })
+  const request = uploading.request
+  if (request) {
+    request.upload.addEventListener('progress', ({ loaded, total }) => {
+      options.onProgress && options.onProgress({ loaded, total })
+    })
+    options.cancelUpload && options.cancelUpload(() => request.abort())
+  }
+  const response = await uploading
+
   return response.data
 }

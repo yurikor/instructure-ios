@@ -33,7 +33,7 @@ import { Text, Paragraph } from '../../../common/text'
 import Images from '../../../images'
 import Screen from '../../../routing/Screen'
 
-export class NotATeacher extends PureComponent {
+export class NotATeacher extends PureComponent<{}> {
 
   logout = () => {
     NativeModules.NativeLogin.logout()
@@ -53,7 +53,7 @@ export class NotATeacher extends PureComponent {
     let buttonText = i18n('Try logging in again')
 
     return (
-      <Screen navBarHidden={true}>
+      <Screen navBarHidden>
         <View style={style.container}>
           <View style={style.subContainer}>
             <Text style={{ fontSize: 30 }} testID='no-teacher.title'>{title}</Text>

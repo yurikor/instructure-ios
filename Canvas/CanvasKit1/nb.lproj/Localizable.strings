@@ -19,6 +19,9 @@
 /* 88 out of 100 points */
 "%@ out of %@" = "%1$@ ut av %2$@";
 
+/* {point range max} to > {point range min} pts */
+"%@ to > %@ pts" = "%1$@ til > %2$@ poeng";
+
 /* 83% (83 out of 100 points */
 "%@%% (%g out of %@)" = "%1$@%% (%2$g ut av %3$@)";
 
@@ -82,9 +85,6 @@
 /* No comment provided by engineer. */
 "Note: Media files are not immediately available for playback while they are processed on the server." = "Merk: Mediafiler er ikke umiddelbart tilgjengelig for avspilling mens de behandles på serveren.";
 
-/* No comment provided by engineer. */
-"OK" = "OK";
-
 /* Short name for observer enrollment */
 "Observer" = "Observatør";
 
@@ -99,6 +99,9 @@
 
 /* A button that records */
 "Record" = "Opptak";
+
+/* No comment provided by engineer. */
+"Score" = "Resultat";
 
 /* Hint about the play button */
 "Starts playing your recording" = "Begynn avspilling av ditt opptak";
@@ -146,7 +149,7 @@
 "Video" = "Video";
 
 /* No comment provided by engineer. */
-"Video error" = "Videofeil";
+"Video Error" = "Videofeil";
 
 /* No comment provided by engineer. */
 "Warning" = "Advarsel";

@@ -20,7 +20,6 @@
 #import "CKCanvasAPIResponse.h"
 #import "CKCanvasURLConnection.h"
 #import "CKDiscussionTopic.h"
-#import "NSData+CKAdditions.h"
 #import "NSString+CKAdditions.h"
 #import "TouchXML.h"
 #import "NSDictionary+CKAdditions.h"
@@ -1767,7 +1766,7 @@ static CGFloat overallProgressForDictionaries(NSArray *progressDicts) {
         for (NSDictionary *groupJSON in json) {
             NSNumber *groupID = groupJSON[@"id"];
             NSNumber *groupCategoryID = groupJSON[@"group_category_id"];
-            if ([groupCategoryID isEqualToNumber:assignment.groupCategoryID]) {
+            if ([groupCategoryID isEqual:assignment.groupCategoryID]) {
                 NSString *groupUploadURLString = [NSString stringWithFormat:@"%@://%@/api/v1/groups/%@/files", self.apiProtocol, self.hostname, groupID];
                 completed(nil, YES, [NSURL URLWithString:groupUploadURLString]);
                 return;
@@ -2542,14 +2541,14 @@ static CGFloat overallProgressForDictionaries(NSArray *progressDicts) {
                 NSString *arrayKey = [NSString stringWithFormat:@"%@[]", key];
                 NSMutableArray *kvPairs = [NSMutableArray array];
                 for (id arrayValue in theArray) {
-                    NSString *pair = [NSString stringWithFormat:@"%@=%@", [arrayKey realURLEncodedString], [[arrayValue description] realURLEncodedString]];
+                    NSString *pair = [NSString stringWithFormat:@"%@=%@", [arrayKey formEncodedString], [[arrayValue description] formEncodedString]];
                     [kvPairs addObject:pair];
                 }
                 [bodyString appendString:[kvPairs componentsJoinedByString:@"&"]];
             }
             else {
                 [bodyString appendFormat:@"%@=%@",
-                 [key realURLEncodedString], [value realURLEncodedString]];
+                 [key formEncodedString], [value formEncodedString]];
             }
         }
         

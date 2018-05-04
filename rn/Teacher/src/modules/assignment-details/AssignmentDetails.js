@@ -27,7 +27,7 @@ import SubmissionType from './components/SubmissionType'
 import AssignmentSection from './components/AssignmentSection'
 import i18n from 'format-message'
 import { Heading1, Text } from '../../common/text'
-import WebContainer from '../../common/components/WebContainer'
+import CanvasWebView from '../../common/components/CanvasWebView'
 import DescriptionDefaultView from '../../common/components/DescriptionDefaultView'
 import PublishedIcon from './components/PublishedIcon'
 import AssignmentDates from './components/AssignmentDates'
@@ -36,11 +36,10 @@ import { RefreshableScrollView } from '../../common/components/RefreshableList'
 import DisclosureIndicator from '../../common/components/DisclosureIndicator'
 import refresh from '../../utils/refresh'
 import AssignmentActions from '../assignments/actions'
+import CourseActions from '../courses/actions'
 import Images from '../../images'
 import Screen from '../../routing/Screen'
-import RCTSFSafariViewController from 'react-native-sfsafariviewcontroller'
-import { alertError } from '../../redux/middleware/error-handler'
-import { getSessionlessLaunchURL } from '../../canvas-api'
+import * as LTITools from '../../common/LTITools'
 
 import {
   View,
@@ -49,80 +48,75 @@ import {
   TouchableHighlight,
 } from 'react-native'
 
-export class AssignmentDetails extends Component<any, AssignmentDetailsProps, any> {
+export class AssignmentDetails extends Component<AssignmentDetailsProps, any> {
   props: AssignmentDetailsProps
 
-  render () {
-    const assignment = this.props.assignmentDetails
+  submissionTypes = () => {
+    return (this.props.assignmentDetails || {}).submission_types || []
+  }
 
-    let sectionTitleDue = i18n('Due')
+  renderTitle = (assignment: Assignment) => {
+    return (<AssignmentSection isFirstRow={true} style={style.topContainer}>
+              <Heading1 testID='assignment-details.assignment-name-lbl'>{assignment.name}</Heading1>
+              <View style={style.pointsContainer}>
+                <Text style={style.points} testID='assignment-details.points-possible-lbl'>
+                  {i18n('{ pointsPossible, number } pts', { pointsPossible: assignment.points_possible })}
+                </Text>
+                <PublishedIcon published={assignment.published} style={style.publishedIcon} />
+              </View>
+          </AssignmentSection>)
+  }
 
-    let sectionTitleSubmissionTypes = i18n('Submission Types')
+  renderDueDates = (assignment: Assignment) => {
+    return (<AssignmentSection
+              title={i18n('Due')}
+              accessibilityLabel={i18n('Due Dates, Double tap for details.')}
+              testID='assignment-details.assignment-section.due'
+              image={Images.assignments.calendar}
+              showDisclosureIndicator={true}
+              onPress={this.viewDueDateDetails}>
+              <AssignmentDates assignment={assignment}/>
+            </AssignmentSection>)
+  }
 
-    let sectionTitleSubmissions = i18n('Submissions')
+  renderSubmissionTypes = () => {
+    const isExternalTool = this.submissionTypes().includes('external_tool')
+    return (<AssignmentSection
+              title={i18n('Submission Types')}
+              testID='assignment-details.assignment-section.submission-type'
+              onPress={isExternalTool ? this.launchExternalTool : null}
+              showDisclosureIndicator={isExternalTool}>
+              <SubmissionType data={this.submissionTypes()} />
+            </AssignmentSection>)
+  }
 
-    let submissionTypes = assignment.submission_types || []
-    let noSubmissions = submissionTypes.includes('none')
-    let noSubmissionsMessage = i18n('Tap to view submissions list.')
+  renderSubmissionSummary = (assignment: Assignment) => {
+    let noSubmissions = this.submissionTypes().includes('none')
+    if (this.submissionTypes().includes('not_graded')) {
+      return (<View style={style.section}>
+                <TouchableOpacity
+                  testID='assignment-details.assignment-section.submissions'
+                  accessibilityLabel={i18n('View all submissions')}
+                  accessibilityTraits='button'
+                  accessible={!noSubmissions}
+                  onPress={this.viewAllSubmissions}
+                >
+                  <View style={style.notGradedSubmissions}>
+                    <Text style={style.header} testID='assignment-details.description-section-title-lbl'>{i18n('Submissions')}</Text>
+                    <DisclosureIndicator />
+                  </View>
+                </TouchableOpacity>
+              </View>)
+    }
+
     let submissionContainerAccessibilityTraits = noSubmissions ? {
       accessibilityTraits: 'button',
-      accessibilityLabel: noSubmissionsMessage,
+      accessibilityLabel: i18n('Tap to view submissions list.'),
       accessible: noSubmissions,
     } : {}
 
-    const isExternalTool = submissionTypes.includes('external_tool')
-
-    return (
-      <Screen
-        navBarColor={this.props.courseColor}
-        navBarStyle='dark'
-        title={i18n('Assignment Details')}
-        subtitle={this.props.courseName}
-        testID='assignment-details'
-        rightBarButtons={[
-          {
-            title: i18n('Edit'),
-            testID: 'assignment-details.edit-btn',
-            action: this.editAssignment,
-          },
-        ]}
-      >
-        <RefreshableScrollView
-          refreshing={Boolean(this.props.pending)}
-          onRefresh={this.props.refresh}
-        >
-          <AssignmentSection isFirstRow={true} style={style.topContainer}>
-            <Heading1 testID='assignment-details.assignment-name-lbl'>{assignment.name}</Heading1>
-            <View style={style.pointsContainer}>
-              <Text style={style.points} testID='assignment-details.points-possible-lbl'>
-                {i18n('{ pointsPossible, number } pts', { pointsPossible: assignment.points_possible })}
-              </Text>
-              <PublishedIcon published={assignment.published} style={style.publishedIcon} />
-            </View>
-          </AssignmentSection>
-
-          <AssignmentSection
-            title={sectionTitleDue}
-            accessibilityLabel={i18n('Due Dates, Double tap for details.')}
-            testID='assignment-details.assignment-section.due'
-            image={Images.assignments.calendar}
-            showDisclosureIndicator={true}
-            onPress={this.viewDueDateDetails}>
-            <AssignmentDates assignment={assignment}/>
-          </AssignmentSection>
-
-          <AssignmentSection
-           title={sectionTitleSubmissionTypes}
-           testID='assignment-details.assignment-section.submission-type'
-           onPress={isExternalTool && this.launchExternalTool}
-           showDisclosureIndicator={isExternalTool}
-         >
-            <SubmissionType data={assignment.submission_types} />
-          </AssignmentSection>
-
-          {this.props.showSubmissionSummary &&
-            <View style={style.section}>
-              <Text style={style.header} testID='assignment-details.assignment-section.submissions-title-lbl'>{sectionTitleSubmissions}</Text>
+    return (<View style={style.section}>
+              <Text style={style.header} testID='assignment-details.assignment-section.submissions-title-lbl'>{i18n('Submissions')}</Text>
               <View style={style.submissions} {...submissionContainerAccessibilityTraits}>
                 <View style={{ flex: 1, justifyContent: 'flex-start', flexDirection: 'row' }}>
                   <SubmissionBreakdownGraphSection submissionTypes={assignment.submission_types} onPress={this.onSubmissionDialPress} courseID={this.props.courseID} assignmentID={this.props.assignmentID} style={style.submission}/>
@@ -132,7 +126,7 @@ export class AssignmentDetails extends Component<any, AssignmentDetailsProps, an
                   accessibilityLabel={i18n('View all submissions')}
                   accessibilityTraits='button'
                   accessible={!noSubmissions}
-                  onPress={() => this.viewSubmissions()}
+                  onPress={this.viewAllSubmissions}
                   style={{
                     justifyContent: 'center',
                     width: 44,
@@ -144,16 +138,20 @@ export class AssignmentDetails extends Component<any, AssignmentDetailsProps, an
                   <DisclosureIndicator />
                 </TouchableOpacity>
               </View>
-            </View>
-          }
+            </View>)
+  }
 
-          <View style={style.section}>
-            <Text style={style.header} testID='assignment-details.description-section-title-lbl'>{i18n('Description')}</Text>
-            {this.checkAssignmentDescription(assignment.description)}
-          </View>
+  renderDescription = (assignment: Assignment) => {
+    return (<View style={style.section}>
+              <Text style={style.header} testID='assignment-details.description-section-title-lbl'>{i18n('Description')}</Text>
+              {this.checkAssignmentDescription(assignment.description)}
+            </View>)
+  }
 
-          { isExternalTool &&
-            <TouchableHighlight
+  renderExternalToolButton = () => {
+    const isExternalTool = this.submissionTypes().includes('external_tool')
+    if (!isExternalTool) return null
+    return (<TouchableHighlight
               onPress={this.launchExternalTool}
               style={style.launchExternalToolButton}
               accessible={true}
@@ -164,9 +162,37 @@ export class AssignmentDetails extends Component<any, AssignmentDetailsProps, an
               <View style={style.launchExternalToolButtonContainer}>
                 <Text style={style.launchExternalToolButtonTitle}>{i18n('Launch External Tool')}</Text>
               </View>
-            </TouchableHighlight>
-          }
+            </TouchableHighlight>)
+  }
 
+  rightBarButtons = () => {
+    return [{
+      title: i18n('Edit'),
+      testID: 'assignment-details.edit-btn',
+      action: this.editAssignment,
+    }]
+  }
+
+  render () {
+    const assignment = this.props.assignmentDetails
+    if (!assignment) return null
+
+    return (
+      <Screen
+        navBarColor={this.props.courseColor}
+        navBarStyle='dark'
+        title={i18n('Assignment Details')}
+        subtitle={this.props.courseName}
+        testID='assignment-details'
+        rightBarButtons={this.rightBarButtons()}
+      >
+        <RefreshableScrollView refreshing={Boolean(this.props.pending)} onRefresh={this.props.refresh}>
+          { this.renderTitle(assignment) }
+          { this.renderDueDates(assignment) }
+          { this.renderSubmissionTypes() }
+          { this.props.showSubmissionSummary && this.renderSubmissionSummary(assignment) }
+          { this.renderDescription(assignment) }
+          { this.renderExternalToolButton() }
         </RefreshableScrollView>
       </Screen>
     )
@@ -200,21 +226,26 @@ export class AssignmentDetails extends Component<any, AssignmentDetailsProps, an
 
   checkAssignmentDescription (description: ?string) {
     if (description) {
-      return (<WebContainer style={{ flex: 1 }} html={description} testID='assignment-details.description-section-info-lbl' scrollEnabled={false} navigator={this.props.navigator}/>)
+      return (
+        <CanvasWebView
+          style={{ flex: 1 }}
+          html={description}
+          testID='assignment-details.description-section-info-lbl'
+          scrollEnabled={false}
+          navigator={this.props.navigator}
+        />
+      )
     } else {
-      return (<DescriptionDefaultView testID='assignment-details.description-default-view'/>)
+      return (
+        <DescriptionDefaultView
+          testID='assignment-details.description-default-view'
+        />
+      )
     }
   }
 
-  launchExternalTool = async () => {
-    try {
-      const url = await this.props.getSessionlessLaunchURL(this.props.courseID, {
-        assignment: this.props.assignmentDetails,
-      })
-      url && RCTSFSafariViewController.open(url)
-    } catch (e) {
-      alertError(e)
-    }
+  launchExternalTool = () => {
+    LTITools.launchExternalTool(this.props.assignmentDetails.url)
   }
 }
 
@@ -270,6 +301,11 @@ const style = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: colors.grey2,
   },
+  notGradedSubmissions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   launchExternalToolButton: {
     flex: 1,
     backgroundColor: '#008EE2',
@@ -295,7 +331,7 @@ const style = StyleSheet.create({
 
 const assignementDetailsShape = PropTypes.shape({
   id: PropTypes.string,
-  name: PropTypes.string.isRequired,
+  name: PropTypes.string,
   description: PropTypes.string,
   created_at: PropTypes.string,
   updated_at: PropTypes.string,
@@ -314,17 +350,17 @@ AssignmentDetails.propTypes = {
   error: PropTypes.string,
 }
 
-const mergeProps = (stateProps, dispatchProps, ownProps) => ({
-  ...stateProps,
-  ...dispatchProps,
-  ...ownProps,
-  getSessionlessLaunchURL,
-})
-
 let Refreshed = refresh(
-  props => props.refreshAssignmentDetails(props.courseID, props.assignmentID, props.showSubmissionSummary),
-  props => !props.assignmentDetails,
+  props => {
+    props.refreshAssignmentList(props.courseID)
+    props.refreshCourses()
+    props.refreshAssignmentDetails(props.courseID, props.assignmentID, props.showSubmissionSummary)
+  },
+  props => !props.assignmentDetails || !props.course || !props.courseColor,
   props => Boolean(props.pending)
 )(AssignmentDetails)
-let Connected = connect(mapStateToProps, AssignmentActions, mergeProps)(Refreshed)
-export default (Connected: Component<any, AssignmentDetailsProps, any>)
+let Connected = connect(mapStateToProps, {
+  ...AssignmentActions,
+  ...CourseActions,
+})(Refreshed)
+export default (Connected: Component<AssignmentDetailsProps, any>)

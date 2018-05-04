@@ -18,7 +18,7 @@
 * @flow
 */
 
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import {
   View,
   StyleSheet,
@@ -26,7 +26,8 @@ import {
 
 import i18n from 'format-message'
 import { formattedDueDateWithStatus } from '../../../common/formatters'
-import Icon from '../../../common/components/PublishedIcon'
+import AccessIcon from '../../../common/components/AccessIcon'
+import AccessLine from '../../../common/components/AccessLine'
 import AssignmentDates from '../../../common/AssignmentDates'
 import { Text } from '../../../common/text'
 import Row from '../../../common/components/rows/Row'
@@ -39,7 +40,7 @@ type Props = {
   selected: boolean,
 }
 
-export default class AssignmentListRow extends Component<Props, any> {
+export default class AssignmentListRow extends PureComponent<Props> {
   onPress = () => {
     const assignment = this.props.assignment
     this.props.onPress(assignment)
@@ -60,7 +61,7 @@ export default class AssignmentListRow extends Component<Props, any> {
   }
 
   ungradedBubble (assignment: Assignment) {
-    if (!assignment.needs_grading_count) {
+    if (!assignment.needs_grading_count || assignment.grading_type === 'not_graded') {
       return <View />
     }
 
@@ -78,7 +79,7 @@ export default class AssignmentListRow extends Component<Props, any> {
     const { assignment, selected } = this.props
     return (
       <View>
-        <View style={styles.row}>
+        <View>
           <Row
             renderImage={this._renderIcon}
             title={assignment.name}
@@ -94,7 +95,7 @@ export default class AssignmentListRow extends Component<Props, any> {
             {this.ungradedBubble(assignment)}
           </Row>
         </View>
-        {this.props.assignment.published ? <View style={styles.publishedIndicatorLine} /> : <View />}
+        <AccessLine visible={assignment.published} />
       </View>
     )
   }
@@ -113,16 +114,13 @@ export default class AssignmentListRow extends Component<Props, any> {
     }
     return (
       <View style={styles.icon} testID={testID}>
-        <Icon published={assignment.published} tintColor={this.props.tintColor} style={styles.icon} image={image} />
+        <AccessIcon entry={assignment} tintColor={this.props.tintColor} style={styles.icon} image={image} />
       </View>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  row: {
-    marginLeft: -10,
-  },
   ungradedText: {
     flex: 0,
     alignSelf: 'flex-start',
@@ -139,14 +137,6 @@ const styles = StyleSheet.create({
     paddingRight: 6,
     marginTop: 4,
     overflow: 'hidden',
-  },
-  publishedIndicatorLine: {
-    backgroundColor: '#00AC18',
-    position: 'absolute',
-    top: 4,
-    bottom: 4,
-    left: 0,
-    width: 3,
   },
   icon: {
     alignSelf: 'flex-start',

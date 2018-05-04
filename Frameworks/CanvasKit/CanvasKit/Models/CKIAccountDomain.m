@@ -23,10 +23,10 @@
 + (NSDictionary *)JSONKeyPathsByPropertyKey
 {
     NSDictionary *keyPaths = @{
-            @"name": @"name"
-            ,@"domain": @"domain"
-            ,@"distance": @"distance"
-            ,@"authenticationProvider": @"authentication_provider"
+            @"name": @"name",
+            @"domain": @"domain",
+            @"distance": @"distance",
+            @"authenticationProvider": @"authentication_provider",
     };
     NSDictionary *superPaths = [super JSONKeyPathsByPropertyKey];
     return [superPaths dictionaryByAddingObjectsFromDictionary:keyPaths];
@@ -60,12 +60,12 @@
 
 + (CKIAccountDomain *)cantFindSchool {
     CKIAccountDomain *canvasNetSchool = [CKIAccountDomain new];
-    canvasNetSchool.name = @"Can't find your school?";
+    canvasNetSchool.name = NSLocalizedStringFromTableInBundle(@"Can't find your school? Try typing the full school URL.", nil, [NSBundle bundleForClass:[self class]], @"Help label when user can't find their school.");
     return canvasNetSchool;
 }
 
 + (NSArray *)developmentSchools {
-    NSArray *devDomains = @[@"mobiledev", @"mobileqa", @"mobileqat"];
+    NSArray *devDomains = @[];
     
     __block NSMutableArray *devSchools = [NSMutableArray array];
     [devDomains enumerateObjectsUsingBlock:^(NSString *domain, NSUInteger idx, BOOL *stop) {
@@ -79,5 +79,16 @@
     return devSchools;
 }
 
-
+- (BOOL)isEqual:(id)object {
+    CKIAccountDomain *other = (CKIAccountDomain *)object;
+    if (![other isKindOfClass:[CKIAccountDomain class]]) {
+        return NO;
+    }
+    return [other.id isEqualToString:self.id];
+}
+    
+- (NSUInteger)hash {
+    return self.id.hash;
+}
+    
 @end

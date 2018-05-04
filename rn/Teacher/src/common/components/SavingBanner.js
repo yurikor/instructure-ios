@@ -16,7 +16,7 @@
 
 // @flow
 
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import {
   View,
   Text,
@@ -27,9 +27,10 @@ import i18n from 'format-message'
 
 export type SavingBannerProps = {
   title?: string,
+  style?: Object | number,
 }
 
-export default class SavingBanner extends Component<any, SavingBannerProps, any> {
+export default class SavingBanner extends PureComponent<SavingBannerProps, any> {
   render () {
     const title = this.props.title || i18n('Saving...')
     return (<View style={[style.container, this.props.style]}>

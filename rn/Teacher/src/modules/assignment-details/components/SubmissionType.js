@@ -27,8 +27,9 @@ import {
   StyleSheet,
 } from 'react-native'
 
-export default class SubmissionType extends Component {
+export default class SubmissionType extends Component<Object> {
   render () {
+    if (!this.props.data) return null
     const types = submissionTypes()
     return (<View style={style.vertical}>
       {this.props.data.map(item =>

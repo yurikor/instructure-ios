@@ -16,26 +16,36 @@
 
 // @flow
 import { AsyncStorage } from 'react-native'
-import { getSession } from '../../canvas-api'
+import { getSessionUnsafe } from '../../canvas-api'
 import type { MiddlewareAPI } from 'redux'
 import hydrate from '../hydrate-action'
 
-const STORE_VERSION = '6'
+const STORE_VERSION = '14'
 
 function storeName (session: Session): string {
-  return `redux.state.${session.user.id}.${STORE_VERSION}`
+  return `redux.state.${session.baseURL}.${session.user.id}.${STORE_VERSION}`
 }
 
 async function removeOldStates (session: Session) {
   await AsyncStorage.multiRemove(
-    (await AsyncStorage.getAllKeys())
-      .filter(k => k.startsWith(`redux.state.${session.user.id}`))
+    (await AsyncStorage.getAllKeys()).filter(k =>
+      k.startsWith('redux.state.') &&
+      !k.endsWith(`.${STORE_VERSION}`)
+    )
   )
 }
 
 async function persistState (store) {
   let state = store.getState()
-  let session = getSession()
+  // we don't need async actions in the cache
+  // it also causes errors because we keep track of errors
+  // which contain circular references that cannot be stringified
+  state = {
+    ...state,
+    asyncActions: {},
+  }
+
+  let session = getSessionUnsafe()
   if (!session) return
 
   let expires = new Date()
@@ -49,7 +59,7 @@ async function persistState (store) {
 }
 
 export async function hydrateStoreFromPersistedState (store: any): any {
-  let session = getSession()
+  let session = getSessionUnsafe()
   if (session) {
     let cachedState = await AsyncStorage.getItem(storeName(session))
     if (!cachedState) {
@@ -61,6 +71,11 @@ export async function hydrateStoreFromPersistedState (store: any): any {
     } catch (err) {}
     store.dispatch(hydrate(appState))
   }
+}
+
+export async function purgeUserStoreData () {
+  let session = getSessionUnsafe()
+  return session && AsyncStorage.removeItem(storeName(session))
 }
 
 const createPersistMiddleware = (timeoutWait: number): MiddlewareAPI => {

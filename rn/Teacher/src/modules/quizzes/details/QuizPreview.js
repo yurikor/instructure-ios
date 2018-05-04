@@ -37,9 +37,9 @@ type LocalProps = Props & {
   navigator: Navigator,
 }
 
-export class QuizPreview extends Component<any, LocalProps, any> {
+export class QuizPreview extends Component<LocalProps, any> {
 
-  webView: AuthenticatedWebView
+  webView: ?AuthenticatedWebView
 
   constructor (props: any) {
     super(props)
@@ -51,11 +51,11 @@ export class QuizPreview extends Component<any, LocalProps, any> {
     setTimeout(this.onTimeout, 30000)
   }
 
-  captureRef = (c: AuthenticatedWebView) => {
+  captureRef = (c: ?AuthenticatedWebView) => {
     this.webView = c
   }
 
-  onMessage = (event: any) => {
+  onMessage = (event: { body: any }) => {
     const message = event.body
     if (!message) return
     switch (message) {
@@ -80,14 +80,14 @@ export class QuizPreview extends Component<any, LocalProps, any> {
       } else if (button) {
         button.click()
       } else if (login) {
-        window.webkit.messageHandlers.reactNative.postMessage('login')
+        window.webkit.messageHandlers.canvas.postMessage('login')
       } else if (instructions) {
-        window.webkit.messageHandlers.reactNative.postMessage('done')
+        window.webkit.messageHandlers.canvas.postMessage('done')
       } else {
-        window.webkit.messageHandlers.reactNative.postMessage('error')
+        window.webkit.messageHandlers.canvas.postMessage('error')
       }
     `
-    this.webView.injectJavaScript(js)
+    this.webView && this.webView.injectJavaScript(js)
   }
 
   onError = (event: any) => {
@@ -108,14 +108,6 @@ export class QuizPreview extends Component<any, LocalProps, any> {
     return (
       <Screen
         title={i18n('Quiz Preview')}
-        leftBarButtons={[
-          {
-            title: i18n('Done'),
-            style: 'done',
-            testID: 'quiz-preview.dismiss-btn',
-            action: this.props.navigator.dismiss.bind(this),
-          },
-        ]}
       >
         <View style={style.container}>
           { this.state.error &&
@@ -128,13 +120,15 @@ export class QuizPreview extends Component<any, LocalProps, any> {
           }
           { !this.state.error &&
             <View style={ this.state.waiting ? style.waitingWebView : style.webView }>
-              <AuthenticatedWebView style={ this.state.waiting ? style.waitingWebView : style.webView }
-                                    source={{ uri }}
-                                    automaticallyAdjustContentInsets={false}
-                                    onMessage={this.onMessage}
-                                    ref={this.captureRef}
-                                    onLoadEnd={this.onLoadEnd}
-                                    onError={this.onError} />
+              <AuthenticatedWebView
+                style={ this.state.waiting ? style.waitingWebView : style.webView }
+                source={{ uri }}
+                automaticallyAdjustContentInsets={false}
+                onMessage={this.onMessage}
+                ref={this.captureRef}
+                onFinishedLoading={this.onLoadEnd}
+                onError={this.onError}
+              />
             </View>
           }
         </View>

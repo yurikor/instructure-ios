@@ -16,21 +16,23 @@
 
 // @flow
 
-import React from 'react'
+import i18n from 'format-message'
 import PropTypes from 'prop-types'
+import React from 'react'
 import {
   NativeModules,
   DeviceEventEmitter,
+  SafeAreaView,
 } from 'react-native'
 
-import { processConfig, checkDefaults } from './utils'
+import { processConfig } from './utils'
 
 const Helm = NativeModules.Helm
 
 type ScreenProps = {
   title?: string,
   subtitle?: string,
-  statusBarStyle?: any,
+  statusBarStyle?: 'light' | 'default',
   statusBarHidden?: boolean,
   statusBarUpdateAnimation?: any,
   automaticallyAdjustsScrollViewInsets?: boolean,
@@ -40,11 +42,11 @@ type ScreenProps = {
 
   // Nav bar stuff
   navBarStyle?: 'light' | 'dark',
-  navBarButtonColor?: string,
-  navBarColor?: string,
+  navBarButtonColor?: ?string,
+  navBarColor?: ?string,
   navBarHidden?: boolean,
   navBarTranslucent?: boolean,
-  navBarImage?: string,
+  navBarImage?: ?string,
   hideNavBarShadowImage?: boolean,
   navBarTransparent?: boolean,
   drawUnderNavBar?: boolean,
@@ -52,22 +54,37 @@ type ScreenProps = {
   leftBarButtons?: any,
   rightBarButtons?: any,
   backButtonTitle?: string,
+  dismissButtonTitle?: string,
+  showDismissButton?: boolean,
 
-  children: any,
+  customPageViewPath?: ?string,
+
+  children?: React$Node,
+  disableGlobalSafeArea?: boolean,
 }
 
-class Screen extends React.Component<any, ScreenProps, any> {
+type State = {
+  hasRendered: boolean,
+}
+
+type ScreenContext = {
+  screenInstanceID: string,
+}
+
+export default class Screen extends React.Component<ScreenProps, State> {
   deviceEventEmitterSubscriptions: Object = {}
 
-  static propTypes = {
-    children: PropTypes.node,
+  static defaultProps = {
+    navBarStyle: 'light',
+    statusBarStyle: 'default',
+    showDismissButton: true,
   }
 
   static contextTypes = {
     screenInstanceID: PropTypes.string,
   }
 
-  constructor (props: Object, context: Screen.contextTypes) {
+  constructor (props: Object, context: ScreenContext) {
     super(props, context)
     this.state = { hasRendered: false }
     this.handleProps(props, context.screenInstanceID, false)
@@ -78,7 +95,7 @@ class Screen extends React.Component<any, ScreenProps, any> {
     this.setState({ hasRendered: true })
   }
 
-  componentWillReceiveProps (nextProps: Object, nextContext: Screen.contextTypes) {
+  componentWillReceiveProps (nextProps: Object, nextContext: ScreenContext) {
     this.handleProps(nextProps, nextContext.screenInstanceID, this.state.hasRendered)
   }
 
@@ -98,14 +115,19 @@ class Screen extends React.Component<any, ScreenProps, any> {
       this.deviceEventEmitterSubscriptions[key] = DeviceEventEmitter.addListener(key, callback)
       return key
     })
-    Helm.setScreenConfig(checkDefaults(configFRD), id, hasRendered)
+    configFRD.backButtonTitle = configFRD.backButtonTitle || i18n('Back') // cannot resolve locale staticly
+    if (configFRD.navBarStyle === 'dark') configFRD.statusBarStyle = 'light'
+    Helm.setScreenConfig(configFRD, id, hasRendered)
   }
 
   render () {
     if (!this.state.hasRendered) return null
     if (!this.props.children) return null
-    return React.Children.only(this.props.children)
+    if (this.props.disableGlobalSafeArea) return React.Children.only(this.props.children)
+    return (
+      <SafeAreaView style={{ flex: 1 }}>
+        { React.Children.only(this.props.children) }
+      </SafeAreaView>
+    )
   }
 }
-
-module.exports = Screen

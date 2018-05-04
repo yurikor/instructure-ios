@@ -61,12 +61,13 @@ type SubmissionGraderProps = {
   drawerInset: number,
   navigator: Navigator,
   gradeSubmissionWithRubric: Function,
+  setScrollEnabled: (boolean) => void,
 }
 
 const DRAWER_WIDTH = 375
-const COMPACT_DEVICE_WIDTH = 768
+const COMPACT_DEVICE_WIDTH = 834
 
-export default class SubmissionGrader extends Component<any, SubmissionGraderProps, State> {
+export default class SubmissionGrader extends Component<SubmissionGraderProps, State> {
   state: State
   props: SubmissionGraderProps
   drawer: BottomDrawer
@@ -76,14 +77,17 @@ export default class SubmissionGrader extends Component<any, SubmissionGraderPro
   constructor (props: SubmissionGraderProps) {
     super(props)
 
+    // $FlowFixMe
     this.state = {
       width: width,
       height: height,
-      selectedTabIndex: -1,
+      selectedTabIndex: props.selectedTabIndex || -1,
       unsavedChanges: null,
     }
+  }
 
-    props.drawerState.registerDrawer(this)
+  componentDidMount () {
+    this.props.drawerState.registerDrawer(this)
   }
 
   componentWillUnmount () {
@@ -122,10 +126,14 @@ export default class SubmissionGrader extends Component<any, SubmissionGraderPro
       this.setState({
         selectedTabIndex: -1,
       })
+    } else if (this.state.selectedTabIndex < 0) {
+      this.setState({
+        selectedTabIndex: 0,
+      })
     }
   }
 
-  captureToolTip = (toolTip: ToolTip) => {
+  captureToolTip = (toolTip: any) => {
     this.toolTip = toolTip
   }
 
@@ -178,7 +186,10 @@ export default class SubmissionGrader extends Component<any, SubmissionGraderPro
       if (!submission.attachments) return defaultLabel
       var numberOfFiles = submission.attachments.length
     } else {
-      if (!submission.submission_history[selectedIndex].attachments) return defaultLabel
+      if (!submission.submission_history[selectedIndex] ||
+          !submission.submission_history[selectedIndex].attachments) {
+        return defaultLabel
+      }
       numberOfFiles = submission.submission_history[selectedIndex].attachments.length
     }
     return i18n('Files ({ numberOfFiles, number })', { numberOfFiles })
@@ -255,10 +266,12 @@ export default class SubmissionGrader extends Component<any, SubmissionGraderPro
           submissionProps={this.props.submissionProps}
           submissionID={this.props.submissionID}
           assignmentID={this.props.assignmentID}
+          courseID={this.props.courseID}
           navigator={this.props.navigator}
+          userID={this.props.userID}
         />
         <View style={styles.splitView}>
-          <A11yGroup style={styles.left}>
+          <View style={styles.left}>
             <SubmissionPicker
               submissionProps={this.props.submissionProps}
               submissionID={this.props.submissionID}
@@ -267,15 +280,16 @@ export default class SubmissionGrader extends Component<any, SubmissionGraderPro
             <SubmissionViewer
               {...this.props}
               size={{
-                width: width - DRAWER_WIDTH, height,
+                height,
+                width: width - DRAWER_WIDTH,
               }}
               drawerInset={0}
             />
-          </A11yGroup>
-          <A11yGroup style={styles.right}>
+          </View>
+          <View style={styles.right}>
             {this.renderHandleContent()}
             {this.renderTab(this.state.selectedTabIndex)}
-          </A11yGroup>
+          </View>
         </View>
         <ToolTip ref={this.captureToolTip} />
       </A11yGroup>
@@ -303,7 +317,7 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   splitViewHeader: {
-    paddingBottom: 4,
+    paddingBottom: 16,
     borderBottomColor: colors.seperatorColor,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },

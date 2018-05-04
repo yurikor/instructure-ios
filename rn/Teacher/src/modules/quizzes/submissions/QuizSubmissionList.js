@@ -61,13 +61,13 @@ export type QuizSubmissionListDataProps = {
 export type QuizSubmissionListProps = QuizSubmissionListDataProps & QuizSubmissionListNavProps
 
 export type QuizSubmissionListState = {
-  filterOptions: Array<SubmissionFilterOptions>,
+  filterOptions: Array<SubmissionFilterOption>,
 }
 
-export class QuizSubmissionList extends Component<any, QuizSubmissionListProps, any> {
+export class QuizSubmissionList extends Component<QuizSubmissionListProps, any> {
 
   filterOptions: SubmissionFilterOption[]
-  selectedFilter: ?SelectedSubmissionFilter
+  selectedFilter: ?Function
 
   constructor (props: any) {
     super(props)
@@ -187,7 +187,7 @@ export class QuizSubmissionList extends Component<any, QuizSubmissionListProps, 
                 filterOptions={this.state.filterOptions}
                 applyFilter={this.applyFilter}
                 initialFilterType={this.props.filterType}
-                filterPromptMessage={i18n('Out of {points}', { points: this.props.pointsPossible })}
+                filterPromptMessage={i18n('Out of {points, number}', { points: this.props.pointsPossible })}
                 navigator={this.props.navigator}
                 pointsPossible={this.props.pointsPossible}
                 anonymous={this.props.anonymous}
@@ -249,7 +249,7 @@ let Refreshed = refresh(
   props => Boolean(props.pending)
 )(QuizSubmissionList)
 let Connected = connect(mapStateToProps, { ...Actions, ...EnrollmentActions, ...SectionActions, ...CoursesActions })(Refreshed)
-export default (Connected: Component<any, QuizSubmissionListProps, any>)
+export default (Connected: Component<QuizSubmissionListProps, any>)
 
 function createFilterFromSection (section) {
   return {

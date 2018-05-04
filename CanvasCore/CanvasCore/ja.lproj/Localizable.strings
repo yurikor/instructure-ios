@@ -1,3 +1,5 @@
+"Inbox" = "インボックス";
+
 /* Error message component with the report id */
 " Error report ID: (reportID)" = " エラーレポート ID(reportID)";
 
@@ -44,8 +46,14 @@
 /* all pages segmented control title */
 "All Pages" = "すべてのページ";
 
-/* Title for push notification pre-authorization alert */
-"Allow Push Notifications?" = "プッシュ通知を許可しますか？";
+/* No comment provided by engineer. */
+"All notifications are currently disabled." = "すべての通知は、現在無効です。";
+
+/* No comment provided by engineer. */
+"All notifications are currently enabled." = "すべての通知は、現在有効です。";
+
+/* No comment provided by engineer. */
+"Allow Notifications in Settings" = "通知の設定を許可";
 
 /* label for number of attempts that are allowed */
 "Allowed Attempts" = "試行許可数";
@@ -86,7 +94,8 @@
 /* Alert title when unable to parse JSON for notification preferences */
 "Can't Display Notification Preferences" = "通知の設定を表示できません";
 
-/* Cancel button title
+/* Cancel Audio recording.
+   Cancel button title
    Cancel submission option
    Cancel upload */
 "Cancel" = "キャンセル";
@@ -119,6 +128,9 @@
 "Choose your answers below" = "下の回答を選択してください";
 
 /* No comment provided by engineer. */
+"Collapse" = "折りたたみ";
+
+/* No comment provided by engineer. */
 "Comments" = "コメント";
 
 /* File upload completed */
@@ -144,9 +156,6 @@
 
 /* Notification display name for course activities group */
 "Course Activities" = "コースアクティビティ";
-
-/* Button for creating a note from text selection */
-"Create Note" = "ノートを作成する";
 
 /* Header label for a screen that customizes a course */
 "Customize" = "カスタマイズ";
@@ -237,11 +246,17 @@
 /* No comment provided by engineer. */
 "Error parsing the Roll Call response. Unexpected null value: (k)" = "ロールコール応答を解析中にエラーが発生しました。予期しないヌル値：(k)";
 
+/* No comment provided by engineer. */
+"Error retrieving tool launch URL" = "ツール起動 URL 取得中にエラーが発生しました";
+
 /* rollcall status error */
 "Error: No data returned from the rollcall api." = "エラー:ロールコールAPIから返されたデータはありません。";
 
 /* Exit button to leave the quiz */
 "Exit" = "終了";
+
+/* No comment provided by engineer. */
+"Expand" = "展開";
 
 /* Error message when the server returns a invalid response */
 "Expected a response in the 200-299 range. Got %@" = "200-299の範囲で応答が期待されます。取得%@";
@@ -288,15 +303,15 @@
 /* Hides the question list */
 "Hide Question List" = "質問リストを隠す";
 
-/* No comment provided by engineer. */
-"Inbox" = "受信トレイ";
-
 /* Indigo course color button */
 "Indigo" = "インディゴ";
 
 /* Mark student late
    Student is present in class */
 "Late" = "遅れている";
+
+/* No comment provided by engineer. */
+"Launch External Tool" = "外部ツールを起動する";
 
 /* Leave the quiz */
 "Leave" = "退出する";
@@ -332,9 +347,6 @@
 /* Next button for advancing a quiz */
 "Next" = "次";
 
-/* Title for no button for push notification pre-authorization alert */
-"No" = "いいえ";
-
 /* Alert title when unable to load communication channels */
 "No Communication Channels Found" = "コミュニケーションチャンネルが見つかりません";
 
@@ -361,9 +373,6 @@
 
 /* Title for alert showing when a quiz isn't takeable */
 "Not Takeable" = "受けられません";
-
-/* No comment provided by engineer. */
-"Note..." = "ノート...";
 
 /* Error title for push notification registration error */
 "Notification Error" = "通知エラー";
@@ -442,10 +451,10 @@
 "Question %@" = "質問%@";
 
 /* state for a question that has been flagged */
-"Question (questionNumber) Flagged" = "質問 (questionNumber) がフラグ付けされました";
+"Question (number) Flagged" = "質問 (数) がフラグ付けされました";
 
 /* state for unflagged question */
-"Question (questionNumber) Unflagged" = "質問 (questionNumber) のフラグが解除されました";
+"Question (number) Unflagged" = "質問 (数) がフラグ解除されました";
 
 /* label for the number of questions */
 "Questions" = "質問";
@@ -705,10 +714,7 @@
 "Unable to display any notification preferences returned from the server at this time." = "只今、サーバーから返信されたすべての通知設定を表示することができません。";
 
 /* Alert message when unable to load communication channels */
-"Unable to load any Communication Channels at this time.  Error: (result.error?.localizedDescription)" = "現時点では通信チャネルを読み込めません。エラー:(result.error?.localizedDescription)";
-
-/* Alert message when unable to load notification preferences */
-"Unable to load any notification preferences at this time.  Error: (result.error?.localizedDescription)" = "現時点では通知設定を読み込めません。エラー:(result.error?.localizedDescription)";
+"Unable to load any Communication Channels at this time." = "現時点では通信チャネルを読み込めません。";
 
 /* Error message when parsing communication preferences */
 "Unable to parse JSON for communication channels" = "通信チャネル用に JSON をパースすることはできません";
@@ -758,14 +764,8 @@
 /* Error message for being unable to update a push notification preference */
 "We were not able to update this value with the server" = "サーバーでこの値をアップデートすることができませんでした";
 
-/* Message for push notification pre-authorization alert */
-"Would you like to allow Canvas to send you important notifications about announcements, course, assignments, etc?" = "アナウンスメント、コースや課題についての重要な通知をCanvasがあなたに送信することを許可しますか？";
-
 /* Yellow course color button */
 "Yellow" = "イエロー";
-
-/* Title for yes button for push notification pre-authorization alert */
-"Yes" = "はい";
 
 /* Description for Yo communication channel */
 "Yo" = "やあ";
@@ -796,4 +796,7 @@
 
 /* File upload in progress */
 "uploading..." = "アップロード中...";
+
+/* web content failed to load */
+"⚠️ Error Loading Content" = "⚠️ コンテンツ読み込み中エラー";
 

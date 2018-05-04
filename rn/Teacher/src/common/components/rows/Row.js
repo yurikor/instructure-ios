@@ -30,26 +30,27 @@ import { Text } from '../../text'
 
 export type RowProps = {
   title: string,
-  subtitle?: string,
-  image?: string,
+  subtitle?: ?string,
+  image?: { uri: string } | number,
   imageTint?: string,
   imageSize?: { height: number, width: number }, // Defaults to 20 x 20 if not supplied
   disclosureIndicator?: boolean,
   border?: 'top' | 'bottom' | 'both',
   onPress?: Function,
   testID?: string,
-  children: any,
+  children?: React$Node,
   renderImage?: Function,
-  identifier: any, // Passed in as the first parameter to the onPress callback
-  accessories: any,
-  accessibilityLabel: ?string,
-  accessibilityTraits: ?string | ?string[],
+  identifier?: any, // Passed in as the first parameter to the onPress callback
+  accessories?: any,
+  accessibilityLabel?: ?string,
+  accessibilityTraits?: React$ElementProps<typeof View>,
   titleProps?: { ellipsizeMode?: string, numberOfLines?: number },
-  selected: boolean,
-  titleStyles?: Text.propTypes,
+  selected?: ?boolean,
+  titleStyles?: any,
+  subtitleStyles?: any,
 }
 
-export default class Row extends Component<any, RowProps, any> {
+export default class Row extends Component<RowProps> {
 
   onPress = () => {
     if (this.props.onPress) {
@@ -61,6 +62,7 @@ export default class Row extends Component<any, RowProps, any> {
     const imageSize = this.props.imageSize || { height: 20, width: 20 }
     const title = this.props.title
     const testID = this.props.testID || 'row.undefined-cell'
+    const hasIcon = this.props.image || this.props.renderImage
 
     let topBorder
     let bottomBorder
@@ -94,21 +96,24 @@ export default class Row extends Component<any, RowProps, any> {
       backgroundColor = color.grey1
     }
 
+    const titleStyles = [style.title, this.props.titleStyles].filter(Boolean)
+    const subtitleStyles = [style.subtitle, this.props.subtitleStyles].filter(Boolean)
+
     return (<TouchableHighlight style={[topBorder, bottomBorder]} { ...traits } onPress={this.onPress} testID={this.props.testID} {...underlayProps} >
               <View style={[style.container, { backgroundColor }]}>
                 { this.props.renderImage && this.props.renderImage() }
                 { this.props.image && <Image style={[style.image, { tintColor: this.props.imageTint, height: imageSize.height, width: imageSize.width }]} source={this.props.image} /> }
-                <View style={style.titlesContainer}>
+                <View style={[style.titlesContainer, { marginLeft: hasIcon ? 12 : 0 }]}>
                   { Boolean(title) &&
                     <Text
-                      style={[style.title, this.props.titleStyles]}
+                      style={titleStyles}
                       ellipsizeMode={(this.props.titleProps && this.props.titleProps.ellipsizeMode) || 'tail'}
                       numberOfLines={(this.props.titleProps && this.props.titleProps.numberOfLines) || 0}
                     >
                       {title}
                     </Text>
                   }
-                  { Boolean(this.props.subtitle) && <Text style={style.subtitle} testID={`${testID}-subtitle-lbl`}>{this.props.subtitle}</Text> }
+                  { Boolean(this.props.subtitle) && <Text style={subtitleStyles} testID={`${testID}-subtitle-lbl`}>{this.props.subtitle}</Text> }
                   { this.props.children }
                 </View>
                 { Boolean(this.props.accessories || this.props.disclosureIndicator) &&
@@ -168,6 +173,5 @@ const style = StyleSheet.create({
   },
   image: {
     resizeMode: 'contain',
-    marginRight: global.style.defaultPadding,
   },
 })

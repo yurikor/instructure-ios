@@ -14,7 +14,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-/* @flow */
+// @flow
 
 export type Quiz = {
   id: string,
@@ -43,6 +43,7 @@ export type Quiz = {
   access_code: ?string,
   assignment_group_id: ?string,
   all_dates?: AssignmentDate[],
+  can_unpublish: boolean,
 }
 
 export type QuizSubmission = {
@@ -50,15 +51,15 @@ export type QuizSubmission = {
   quiz_id: string,
   user_id: string,
   submission_id: string,
-  started_at: ?string,
-  finished_at: ?string,
-  end_at: ?string,
+  started_at?: ?string,
+  finished_at?: ?string,
+  end_at?: ?string,
   attempt: number,
   extra_attempts: number,
   extra_time: number, // minutes
   manually_unlocked: boolean,
-  time_spent: ?number, // seconds
-  score: ?number, // The score of the quiz submission, if graded.
+  time_spent?: ?number, // seconds
+  score?: ?number, // The score of the quiz submission, if graded.
   score_before_regrade: number,
   kept_score: number,
   fudge_points: number,

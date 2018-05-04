@@ -14,23 +14,20 @@
 // limitations under the License.
 //
 
-class AssignmentDetailsPageTest: TeacherTest {
+import SoSeedySwift
 
-//    //TestRail ID = C3109579
-//    func testAssignmentDetailsPage_displaysPageObjects() {
-//        openAssignmentDetailsPage(self)
-//        assignmentDetailsPage.assertPageObjects()
-//    }
+class AssignmentDetailsPageTest: TeacherTest {
+    var assignment: Soseedy_Assignment!
 
     //TestRail ID = C3109579
     func testAssignmentDetailsPage_displaysInstructions() {
-        openAssignmentDetailsPage(self)
+        getToAssignmentDetails(withDescription: true)
         assignmentDetailsPage.assertDisplaysInstructions()
     }
 
     //TestRail ID = C3109579
     func testAssignmentDetailsPage_displaysCorrectDetails() {
-        let (_, assignment) = openAssignmentDetailsPage(self)
+        getToAssignmentDetails()
         assignmentDetailsPage.assertAssignmentDetails(
             assignment.name,
             publishStatusFormattedString(assignment.published))
@@ -38,79 +35,61 @@ class AssignmentDetailsPageTest: TeacherTest {
 
     //TestRail ID = C3134480
     func testAssignmentDetailsPage_displaysNoInstructionsMessage() {
-        openAssignmentDetailsPage(self)
+        getToAssignmentDetails(withDescription: false)
         assignmentDetailsPage.assertDisplaysNoInstructionsView()
     }
 
-/*
-    //TestRail ID = C3134481
-    func testAssignmentDetailsPage_displaysClosedAvailability() {
-        // not implemented on iOS yet.
-    }
- */
-
-//    //TestRail ID = C3134483
-//    func testAssignmentDetailsPage_displaysNoToDate() {
-//        openAssignmentDetailsPage(self)
-//        assignmentDetailsPage.assertAvailableFromLabel(
-//            emptyDateFormatttedString(for: dateTitleLabel.availableFrom), false)
-//        assignmentDetailsPage.assertAvailableToLabel(
-//            emptyDateFormatttedString(for: dateTitleLabel.availableTo), true)
-//    }
-
-//    //TestRail ID = C3134482
-//    func testAssignmentDetailsPage_displaysNoFromDate() {
-//        openAssignmentDetailsPage(self)
-//        assignmentDetailsPage.assertAvailableFromLabel(
-//            emptyDateFormatttedString(for: dateTitleLabel.availableFrom), true)
-//        assignmentDetailsPage.assertAvailableToLabel(
-//            emptyDateFormatttedString(for: dateTitleLabel.availableTo), false)
-//    }
-
     //TestRail ID = C3165154
     func testAssignmentDetailsPage_displaysSubmissionTypeNone() {
-        let (_, assignment) = openAssignmentDetailsPage(self)
+        getToAssignmentDetails(submissionTypes: [.noType])
         assignmentDetailsPage.assertSubmissionTypes(
-            submissionTypesFormattedString(assignment.submissionTypes))
+            submissionTypesFormattedString([.none]))
     }
 
     //TestRail ID = C3165154
     func testAssignmentDetailsPage_displaysSubmissionTypeOnPaper() {
-        let (_, assignment) = openAssignmentDetailsPage(self)
+        getToAssignmentDetails(submissionTypes: [.onPaper])
         assignmentDetailsPage.assertSubmissionTypes(
-            submissionTypesFormattedString(assignment.submissionTypes))
+            submissionTypesFormattedString([.onPaper]))
     }
 
     //TestRail ID = C3165154
     func testAssignmentDetailsPage_displaysSubmissionTypeOnlineTextEntry() {
-        let (_, assignment) = openAssignmentDetailsPage(self)
+        getToAssignmentDetails(submissionTypes: [.onlineTextEntry])
         assignmentDetailsPage.assertSubmissionTypes(
-            submissionTypesFormattedString(assignment.submissionTypes))
+            submissionTypesFormattedString([.onlineTextEntry]))
     }
 
     //TestRail ID = C3165154
     func testAssignmentDetailsPage_displaysSubmissionTypeOnlineUrl() {
-        let (_, assignment) = openAssignmentDetailsPage(self)
+        getToAssignmentDetails(submissionTypes: [.onlineURL])
         assignmentDetailsPage.assertSubmissionTypes(
-            submissionTypesFormattedString(assignment.submissionTypes))
+            submissionTypesFormattedString([.onlineURL]))
     }
 
     //TestRail ID = C3165154
     func testAssignmentDetailsPage_displaysSubmissionTypeOnlineUpload() {
-        let (_, assignment) = openAssignmentDetailsPage(self)
+        getToAssignmentDetails(submissionTypes: [.onlineUpload])
         assignmentDetailsPage.assertSubmissionTypes(
-            submissionTypesFormattedString(assignment.submissionTypes))
+            submissionTypesFormattedString([.onlineUpload]))
     }
 
-//    //TestRail ID = C3109579
-//    func testAssignmentDetailsPage_displaysSubmittedDonut() {
-//        openAssignmentDetailsPage(self)
-//        assignmentDetailsPage.assertUngradedSubmissionGraph(1)
-//    }
-
-//    //TestRail ID = C3109579
-//    func testAssignmentDetailsPage_displaysNotSubmittedDonut() {
-//        openAssignmentDetailsPage(self)
-//        assignmentDetailsPage.assertNotSubmittedSubmissionGraph(1)
-//    }
+    func getToAssignmentDetails(
+        withDescription: Bool = false,
+        submissionTypes: [Soseedy_SubmissionType] = []
+    ) {
+        let course = SoSeedySwift.createCourse()
+        let user = SoSeedySwift.createTeacher(in: course)
+        SoSeedySwift.favorite(course, as: user)
+        assignment = SoSeedySwift.createAssignment(
+            for: course,
+            as: user,
+            withDescription: withDescription,
+            submissionTypes: submissionTypes
+        )
+        logIn2(user)
+        coursesListPage.openCourseDetailsPage(course)
+        courseBrowserPage.openAssignmentListPage()
+        assignmentListPage.openAssignmentDetailsPage(assignment)
+    }
 }

@@ -17,18 +17,22 @@
 // @flow
 
 import React, { Component } from 'react'
-import ReactNative, {
+import {
   View,
   StyleSheet,
   Image,
   TouchableHighlight,
 } from 'react-native'
 import i18n from 'format-message'
-import { Text } from '../../../common/text'
+import { Text, Heading1 } from '../../../common/text'
 import Images from '../../../images'
+import A11yGroup from '../../../common/components/A11yGroup'
+import { type CourseGradeInfo } from '../../../utils/course-grades'
 
 type Props = {
   course: Course,
+  grade: ?CourseGradeInfo,
+  showGrade?: boolean,
   color: string,
   style: any,
   onPress: Function,
@@ -40,16 +44,9 @@ type State = {
   height: number,
 }
 
-export default class CourseCard extends Component {
-  props: Props
-  state: State
-
-  constructor (props: Props) {
-    super(props)
-
-    this.state = {
-      height: props.initialHeight || 0,
-    }
+export default class CourseCard extends Component<Props, State> {
+  state: State = {
+    height: this.props.initialHeight || 0,
   }
 
   createImageStyles () {
@@ -66,12 +63,14 @@ export default class CourseCard extends Component {
   }
 
   onLayout = (event: any) => {
+    // *if* we are supplied with height and width, no need to calculate our height
+    if (this.props.height && this.props.width) { return }
     this.setState({
       height: event.nativeEvent.layout.width,
     })
   }
 
-  onPress = (event: ReactNative.NativeSyntheticEvent): void => {
+  onPress = () => {
     this.props.onPress(this.props.course)
   }
 
@@ -80,21 +79,30 @@ export default class CourseCard extends Component {
   }
 
   render () {
-    let { course } = this.props
-    let style = {
+    const { course, grade, showGrade } = this.props
+    const style = {
       ...this.props.style,
       height: this.state.height,
     }
+    let gradeDisplay = null
+    if (showGrade) {
+      if (grade && grade.currentDisplay) {
+        gradeDisplay = grade.currentDisplay
+      } else {
+        gradeDisplay = i18n('N/A')
+      }
+    }
     return (
-      <TouchableHighlight
-        onLayout={this.onLayout}
-        style={[styles.card, style]}
-        testID={course.course_code}
-        onPress={this.onPress}
-        accessible={false}
-        underlayColor='transparent'
-      >
-        <View style={styles.cardContainer}>
+      <A11yGroup>
+        <TouchableHighlight
+          onLayout={this.onLayout}
+          style={[styles.card, style]}
+          testID={'course-' + course.id}
+          onPress={this.onPress}
+          accessible={false}
+          underlayColor='transparent'
+        >
+          <View style={styles.cardContainer}>
             <View style={styles.imageWrapper}>
               {Boolean(course.image_download_url) &&
                 <Image source={{ uri: course.image_download_url }} style={styles.image} />
@@ -102,8 +110,17 @@ export default class CourseCard extends Component {
               <View style={this.createImageStyles()}
                 accessible={true}
                 accessibilityTraits='button'
-                accessibilityLabel={course.name}
+                accessibilityLabel={`${course.name} ${gradeDisplay || ''}`}
               />
+              { showGrade &&
+                <View style={styles.gradePill}>
+                  <Heading1
+                    numberOfLines={2}
+                    style={[styles.gradeText, { color: this.props.color }]}>
+                    { gradeDisplay }
+                  </Heading1>
+                </View>
+              }
               <TouchableHighlight
                 style={styles.kabobButton}
                 onPress={this.onCoursePreferencesPressed}
@@ -117,11 +134,14 @@ export default class CourseCard extends Component {
               </TouchableHighlight>
             </View>
             <View style={styles.titleWrapper} accessible={false}>
-              <Text numberOfLines={2} style={this.createTitleStyles()} accessible={false}>{course.name}</Text>
+              <Text numberOfLines={2} style={this.createTitleStyles()} accessible={false}>
+                {course.name}
+              </Text>
               <Text numberOfLines={1} style={styles.code} accessible={false}>{course.course_code}</Text>
             </View>
           </View>
         </TouchableHighlight>
+      </A11yGroup>
     )
   }
 }
@@ -129,6 +149,11 @@ export default class CourseCard extends Component {
 const styles = StyleSheet.create({
   card: {
     height: 160,
+  },
+  cardContainer: {
+    borderColor: '#e3e3e3',
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 4,
     shadowColor: '#000',
     shadowRadius: 1,
     shadowOpacity: 0.2,
@@ -136,13 +161,6 @@ const styles = StyleSheet.create({
       width: 0,
       height: 1,
     },
-    backgroundColor: '#ffffff01',
-  },
-  cardContainer: {
-    borderColor: '#e3e3e3',
-    borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: 4,
-    overflow: 'hidden',
     flex: 1,
     backgroundColor: 'white',
   },
@@ -153,6 +171,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   imageColor: {
+    borderTopLeftRadius: 4,
+    borderTopRightRadius: 4,
     position: 'absolute',
     top: 0,
     bottom: 0,
@@ -187,5 +207,18 @@ const styles = StyleSheet.create({
     marginTop: 2,
     fontWeight: '600',
   },
+  gradePill: {
+    flex: 1,
+    maxWidth: 120,
+    backgroundColor: 'white',
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    paddingLeft: 6,
+    paddingRight: 6,
+    borderRadius: 8,
+  },
+  gradeText: {
+    fontSize: 14,
+  },
 })
-

@@ -16,6 +16,7 @@
 
 // @flow
 
+import * as accountApi from './account'
 import * as coursesApi from './courses'
 import * as usersApi from './users'
 import * as enrollmentsApi from './enrollments'
@@ -31,8 +32,11 @@ import * as externalTools from './external-tools'
 import * as mediaComments from './media-comments'
 import * as fileUploads from './file-uploads'
 import * as files from './files'
+import * as accounts from './accounts'
+import * as userCustomData from './user-custom-data'
 
-export default ({
+export default {
+  ...accountApi,
   ...coursesApi,
   ...usersApi,
   ...enrollmentsApi,
@@ -48,4 +52,6 @@ export default ({
   ...mediaComments,
   ...fileUploads,
   ...files,
-}: *)
+  ...accounts,
+  ...userCustomData,
+}

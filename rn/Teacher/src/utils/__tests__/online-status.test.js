@@ -14,10 +14,18 @@
 // limitations under the License.
 //
 
-// @flow
-import * as onlineStatus from '../online-status'
+/* eslint-disable flowtype/require-valid-file-annotation */
 
+import * as onlineStatus from '../online-status'
+import { NetInfo } from 'react-native'
+
+beforeEach(() => jest.resetAllMocks())
 afterAll(() => onlineStatus.updateStatus('wifi'))
+
+jest.mock('NetInfo', () => ({
+  fetch: jest.fn(),
+  addEventListener: jest.fn(),
+}))
 
 test('updateStatus', () => {
   onlineStatus.updateStatus('wifi')
@@ -31,4 +39,22 @@ test('isOnline', () => {
   expect(onlineStatus.isOnline()).toBeTruthy()
   onlineStatus.updateStatus('none')
   expect(onlineStatus.isOnline()).toBeFalsy()
+})
+
+test('refreshOnlineStatus', async () => {
+  NetInfo.fetch.mockReturnValueOnce(Promise.resolve('LTE'))
+
+  await onlineStatus.refreshOnlineStatus()
+  expect(onlineStatus.getOnlineStatus()).toEqual('LTE')
+})
+
+test('updateAppState', async () => {
+  NetInfo.fetch.mockReturnValueOnce(Promise.resolve('LTE'))
+
+  await onlineStatus.updateAppState('background')
+  expect(NetInfo.fetch).not.toHaveBeenCalled()
+
+  await onlineStatus.updateAppState('active')
+  expect(NetInfo.fetch).toHaveBeenCalled()
+  expect(onlineStatus.getOnlineStatus()).toEqual('LTE')
 })

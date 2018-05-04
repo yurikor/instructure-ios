@@ -25,45 +25,44 @@ import {
   StyleSheet,
 } from 'react-native'
 
-import Icon from '../../common/components/PublishedIcon'
+import AccessIcon from '../../common/components/AccessIcon'
+import AccessLine from '../../common/components/AccessLine'
 import { Text } from '../../common/text'
 import Row from '../../common/components/rows/Row'
 import Images from '../../images'
-import { gradeProp, statusProp, dueDate } from '../submissions/list/get-submissions-props'
-import SubmissionStatus from '../submissions/list/SubmissionStatus'
+import SubmissionStatusLabel from '../submissions/list/SubmissionStatusLabel'
 import LinearGradient from 'react-native-linear-gradient'
 import Token from '../../common/components/Token'
 import colors from '../../common/colors'
 import { formatGradeText } from '../../common/formatters'
 
 type Props = {
-  assignment: Assignment,
-  submission: Submission,
-  user: User,
+  submission: SubmissionV2,
   tintColor: string,
   onPress: (Assignment) => void,
 }
 
 export default class UserSubmissionRow extends Component<Props, any> {
   onPress = () => {
-    const assignment = this.props.assignment
+    const assignment = this.props.submission.assignment
     this.props.onPress(assignment)
   }
 
   submissionStatus = () => {
-    let status = ''
+    let status = 'none'
     if (this.props.submission && this.props.submission.excused) {
       status = 'excused'
     } else {
-      let due = dueDate(this.props.assignment, this.props.user)
-      status = statusProp(this.props.submission, due)
+      status = this.props.submission.submission_status
     }
-    return <SubmissionStatus style={{ marginBottom: 8 }} status={status} />
+    return <SubmissionStatusLabel style={{ marginBottom: 8 }} status={status} />
   }
 
   grade = () => {
-    const grade = formatGradeText(this.props.submission.grade, this.props.assignment.grading_type, this.props.assignment.points_possible)
-    const flex = Math.min(1, (this.props.submission.score || 0) / this.props.assignment.points_possible)
+    const submission = this.props.submission
+    const assignment = submission.assignment
+    const grade = formatGradeText(submission.grade, assignment.grading_type, assignment.points_possible)
+    const flex = Math.min(1, (submission.score || 0) / assignment.points_possible)
     return (
       <View style={styles.gradeWrapper}>
         <View style={styles.progressWrapper}>
@@ -88,15 +87,13 @@ export default class UserSubmissionRow extends Component<Props, any> {
   }
 
   render () {
-    const { assignment, submission } = this.props
-    const hasGrade = submission &&
-                     submission.grade &&
-                     submission.grade_matches_current_submission
-    const needsGrading = gradeProp(submission) === 'ungraded'
+    const { submission } = this.props
+    const assignment = submission.assignment
+    const needsGrading = submission.grading_status === 'needs_grading'
 
     return (
       <View>
-        <View style={styles.row}>
+        <View>
           <Row
             renderImage={this._renderIcon}
             title={assignment.name}
@@ -107,7 +104,7 @@ export default class UserSubmissionRow extends Component<Props, any> {
             height='auto'
           >
             {this.submissionStatus()}
-            {hasGrade && !submission.excused && this.grade()}
+            {submission.grading_status === 'graded' && this.grade()}
             {needsGrading &&
               <View style={{ flexDirection: 'row' }}>
                 <Token color='#FC5E13'>{i18n('Needs Grading')}</Token>
@@ -115,35 +112,33 @@ export default class UserSubmissionRow extends Component<Props, any> {
             }
           </Row>
         </View>
-        {this.props.assignment.published ? <View style={styles.publishedIndicatorLine} /> : <View />}
+        <AccessLine visible={assignment.published} />
       </View>
     )
   }
 
   _renderIcon = () => {
-    const assignment = this.props.assignment
+    const assignment = this.props.submission.assignment
+    const testIDSuffix = `-icon-${assignment.published ? 'published' : 'not-published'}-${assignment.id}.icon-img`
+    const submissionTypes = assignment.submission_types || []
     let image = Images.course.assignments
-    let testIDSuffix = `-icon-${assignment.published ? 'published' : 'not-published'}-${assignment.id}.icon-img`
     let testID = `user-submission-row${testIDSuffix}`
-    if (assignment.submission_types.includes('online_quiz')) {
+    if (submissionTypes.includes('online_quiz')) {
       image = Images.course.quizzes
       testID = `user-submission-row${testIDSuffix}`
-    } else if (assignment.submission_types.includes('discussion_topic')) {
+    } else if (submissionTypes.includes('discussion_topic')) {
       image = Images.course.discussions
       testID = `user-submission-row${testIDSuffix}`
     }
     return (
       <View style={styles.icon} testID={testID}>
-        <Icon published={assignment.published} tintColor={this.props.tintColor} style={styles.icon} image={image} />
+        <AccessIcon entry={assignment} tintColor={this.props.tintColor} style={styles.icon} image={image} />
       </View>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  row: {
-    marginLeft: -10,
-  },
   ungradedText: {
     flex: 0,
     alignSelf: 'flex-start',
@@ -160,14 +155,6 @@ const styles = StyleSheet.create({
     paddingRight: 6,
     marginTop: 4,
     overflow: 'hidden',
-  },
-  publishedIndicatorLine: {
-    backgroundColor: '#00AC18',
-    position: 'absolute',
-    top: 4,
-    bottom: 4,
-    left: 0,
-    width: 3,
   },
   icon: {
     alignSelf: 'flex-start',

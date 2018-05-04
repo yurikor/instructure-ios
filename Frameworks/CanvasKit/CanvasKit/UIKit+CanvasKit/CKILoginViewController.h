@@ -16,10 +16,11 @@
 
 #import <UIKit/UIKit.h>
 #import "CKIClient.h"
+@import WebKit;
 
 @interface CKILoginViewController : UIViewController
 
-@property (nonatomic, strong) UIWebView *webView;
+@property (nonatomic, strong) WKWebView * webView;
 
 /**
  Block to be performed when authentication is successful
@@ -33,5 +34,10 @@
 
 - (id)initWithRequest:(NSURLRequest *)request method:(CKIAuthenticationMethod)method;
 - (void)cancelOAuth;
+
++ (NSString *)safariUserAgent;
+
++ (void)setLoadingImage:(UIImage *)image;
++ (UIImage *)loadingImage;
 
 @end

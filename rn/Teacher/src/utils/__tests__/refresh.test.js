@@ -33,7 +33,7 @@ describe('refresh', () => {
   })
 
   it('has all the correct statics', () => {
-    class C extends Component {
+    class C extends Component<{}> {
       static yo = 'asdf'
     }
     let Refreshed = refresh(() => {}, () => true, () => false)(C)
@@ -46,6 +46,15 @@ describe('refresh', () => {
     let Refreshed = refresh(refreshFunction, () => true, () => false)(Text)
     renderer.create(
       <Refreshed>This is text</Refreshed>
+    )
+    expect(refreshFunction).toHaveBeenCalled()
+  })
+
+  it('calls the refresh function if forceRefresh is true', () => {
+    let refreshFunction = jest.fn()
+    let Refreshed = refresh(refreshFunction, () => false, () => false)(Text)
+    renderer.create(
+      <Refreshed forceRefresh={true}>This is text</Refreshed>
     )
     expect(refreshFunction).toHaveBeenCalled()
   })

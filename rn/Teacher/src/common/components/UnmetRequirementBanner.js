@@ -16,7 +16,7 @@
 
 // @flow
 
-import React from 'react'
+import React, { PureComponent } from 'react'
 import {
     View,
     StyleSheet,
@@ -31,7 +31,12 @@ type Props = {
   testID?: string,
 }
 
-export default class UnmetRequirementBanner extends React.Component<Props, any> {
+export default class UnmetRequirementBanner extends PureComponent<Props, any> {
+  static defaultProps = {
+    visible: false,
+    text: 'Unmet Requirements',
+    backgroundColor: '#EE0612',
+  }
 
   componentWillUpdate () {
     LayoutAnimation.easeInEaseOut()
@@ -48,12 +53,6 @@ export default class UnmetRequirementBanner extends React.Component<Props, any> 
       </View>
     )
   }
-}
-
-UnmetRequirementBanner.defaultProps = {
-  visible: false,
-  text: 'Unmet Requirements',
-  backgroundColor: '#EE0612',
 }
 
 const styles = StyleSheet.create({

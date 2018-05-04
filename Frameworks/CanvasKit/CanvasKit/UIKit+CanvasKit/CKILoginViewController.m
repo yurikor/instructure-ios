@@ -18,8 +18,9 @@
 #import "NSString+CKIAdditions.h"
 @import ReactiveObjC;
 #import "CKIClient.h"
+#import "UIAlertController+Show.h"
 
-@interface CKILoginViewController () <UIWebViewDelegate, NSURLSessionTaskDelegate, UIAlertViewDelegate>
+@interface CKILoginViewController () <WKNavigationDelegate, NSURLSessionTaskDelegate>
 @property (nonatomic, copy) NSURLRequest *request;
 @property (nonatomic) CKIAuthenticationMethod method;
 @property (nonatomic, copy) void(^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *);
@@ -50,11 +51,10 @@
     [super viewDidLoad];
     [self registerUserAgentForGoogle];
     [self setTitle:self.request.URL.host];
-    self.webView = [[UIWebView alloc] initWithFrame:self.view.frame];
-    [self.webView setDelegate:self];
-    [self.webView setScalesPageToFit:YES];
+    self.webView = [[WKWebView alloc] initWithFrame:self.view.frame];
+    self.webView.navigationDelegate = self;
     [self.webView setOpaque:NO];
-    [self.webView setBackgroundColor:[UIColor blackColor]];
+    [self.webView setBackgroundColor:[UIColor whiteColor]];
     self.view = self.webView;
     
     [self clearExistingSessions];
@@ -68,6 +68,9 @@
                     [self loadLoginRequest];
                 });
             }] resume];
+    self.edgesForExtendedLayout = UIRectEdgeNone;
+    [self.navigationController.navigationBar setBarStyle:UIBarStyleDefault];
+    [self.navigationController.navigationBar setTranslucent:NO];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -76,12 +79,28 @@
     [self unregisterUserAgentForGoogle];
 }
 
-- (void)registerUserAgentForGoogle
-{
++ (NSString *)safariUserAgent {
+    return @"Mozilla/5.0 (iPhone; CPU iPhone OS %@ like Mac OS X) AppleWebKit/603.1.23 (KHTML, like Gecko) Version/10.0 Mobile/14E5239e Safari/602.1";
+}
+
+static UIImage *_loadingImage = nil;
+
++ (void)setLoadingImage:(UIImage *)image {
+    _loadingImage = image;
+}
+
++ (UIImage *)loadingImage {
+    return _loadingImage;
+}
+
+- (void)registerUserAgentForGoogle {
     // Google auth does not support WebViews so we have to send a Safari user agent
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{@"UserAgent": self.class.userAgent}];
+}
+
++ (NSString *)userAgent {
     NSString *systemVersion = [[UIDevice currentDevice] systemVersion];
-    NSString *userAgent = [NSString stringWithFormat: @"Mozilla/5.0 (iPhone; CPU iPhone OS %@ like Mac OS X) AppleWebKit/603.1.23 (KHTML, like Gecko) Version/10.0 Mobile/14E5239e Safari/602.1", [systemVersion stringByReplacingOccurrencesOfString:@"." withString:@"_"]];
-    [[NSUserDefaults standardUserDefaults] registerDefaults:@{@"UserAgent": userAgent}];
+    return [NSString stringWithFormat:[CKILoginViewController safariUserAgent], [systemVersion stringByReplacingOccurrencesOfString:@"." withString:@"_"]];
 }
 
 - (void)unregisterUserAgentForGoogle
@@ -96,31 +115,15 @@
         [request setHTTPShouldHandleCookies:YES];
         NSDictionary *cookieProperties = @{
                                            NSHTTPCookieValue: @"1",
-                                           NSHTTPCookieDomain: request.URL.host,
+                                           NSHTTPCookieDomain: @".instructure.com",
                                            NSHTTPCookieName: @"canvas_sa_delegated",
                                            NSHTTPCookiePath: @"/"
                                            };
         NSHTTPCookie *cookie = [NSHTTPCookie cookieWithProperties:cookieProperties];
         [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookie:cookie];
     }
+    [request setValue:[self.class userAgent] forHTTPHeaderField:@"User-Agent"];
     [self.webView loadRequest:request];
-}
-
-#pragma mark - UIAlertView Delegate
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    if (buttonIndex == 1) {
-        [self cancelOAuth];
-    } else {
-        NSString *username = [[alertView textFieldAtIndex:0] text];
-        NSString *password = [[alertView textFieldAtIndex:1] text];
-        
-        NSURLCredential *secretHandshake = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceForSession];
-        if (self.completionHandler) {
-            self.completionHandler(NSURLSessionAuthChallengeUseCredential,secretHandshake);
-        }
-    }
 }
 
 #pragma mark - NSURLSession Delegate
@@ -133,15 +136,33 @@
         self.completionHandler = completionHandler;
         
         if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodNTLM] || [challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodHTTPBasic]){
-            UIAlertView *alertView = [UIAlertView new];
-            alertView.delegate = self;
-            alertView.title = NSLocalizedString(@"Login", nil);
-            alertView.alertViewStyle = UIAlertViewStyleLoginAndPasswordInput;
-            [alertView textFieldAtIndex:0].placeholder = NSLocalizedString(@"Username", nil);
-            [alertView addButtonWithTitle:NSLocalizedString(@"OK", nil)];
-            [alertView addButtonWithTitle:NSLocalizedString(@"Cancel", nil)];
             
-            [alertView show];
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Login", nil) message:nil preferredStyle:UIAlertControllerStyleAlert];
+            
+            [alert addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+                textField.placeholder = NSLocalizedString(@"Username", nil);
+            }];
+            
+            [alert addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+                textField.placeholder = NSLocalizedStringFromTableInBundle(@"Password", nil, [NSBundle bundleForClass:[self class]], nil);
+            }];
+            
+            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+                [self cancelOAuth];
+            }];
+            UIAlertAction *OKAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                NSString *username = alert.textFields.firstObject.text;
+                NSString *password = alert.textFields.lastObject.text;
+                
+                NSURLCredential *secretHandshake = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceForSession];
+                if (self.completionHandler) {
+                    self.completionHandler(NSURLSessionAuthChallengeUseCredential,secretHandshake);
+                }
+            }];
+            [alert addAction:cancelAction];
+            [alert addAction:OKAction];
+            
+            [alert show];
         } else if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]){
             //See AFURLSessionManager
             credential = [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust];
@@ -159,23 +180,25 @@
 }
 
 #pragma mark - Webview Delegate
-
-- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
 {
-    if ([[[request URL] description] isEqualToString:@"about:blank"]) {
-        return NO;
+    if ([[[navigationAction.request URL] description] isEqualToString:@"about:blank"]) {
+        decisionHandler(WKNavigationActionPolicyCancel);
+        return;
     }
     
     // I dunno why, but we have to wait for the code to be the first param cuz it can keep changing as we follow redirects
-    if ([request.URL.absoluteString containsString:@"/canvas/login?code="]) {
-        self.successBlock([self getValueFromRequest:request withKey:@"code"]);
-        return NO;
-    } else if ([self getValueFromRequest:request withKey:@"error"]) {
+    if ([navigationAction.request.URL.absoluteString containsString:@"/canvas/login?code="]) {
+        self.successBlock([self getValueFromRequest:navigationAction.request withKey:@"code"]);
+        decisionHandler(WKNavigationActionPolicyCancel);
+        return;
+    } else if ([self getValueFromRequest:navigationAction.request withKey:@"error"]) {
         self.failureBlock([NSError errorWithDomain:@"com.instructure.canvaskit" code:0 userInfo:@{NSLocalizedDescriptionKey: @"Authentication failed. Most likely the user denied the request for access."}]);
-        return NO;
+        decisionHandler(WKNavigationActionPolicyCancel);
+        return;
     }
     
-    return YES;
+    decisionHandler(WKNavigationActionPolicyAllow);
 }
 
 #pragma mark - OAuth Processing
@@ -194,11 +217,23 @@
     return parameters[key];
 }
 
-- (void)cancelOAuth
-{
-    [self dismissViewControllerAnimated:YES completion:^{
-        self.failureBlock([NSError errorWithDomain:@"com.instructure.canvaskit" code:0 userInfo:@{NSLocalizedDescriptionKey: @"User cancelled authentication"}]);
-    }];
+- (void)cancelOAuth {
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
+- (BOOL)shouldAutorotate {
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        return NO;
+    }
+    return YES;
+}
+    
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        return UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown;
+    }
+    
+    return UIInterfaceOrientationMaskAll;
+}
+    
 @end

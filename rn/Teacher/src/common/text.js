@@ -26,56 +26,66 @@ import ReactNative, {
 import colors from './colors'
 import flattenStyle from 'flattenStyle'
 
-const REGULAR_FONT = '.SFUIDisplay'
-export const MEDIUM_FONT: string = '.SFUIDisplay-medium'
-const SEMI_BOLD_FONT = '.SFUIDisplay-semibold'
-export const BOLD_FONT: string = '.SFUIDisplay-bold'
+export const REGULAR_FONT = '.SFUIDisplay'
+export const REGULAR_FONT_ITALIC = '.SFUIDisplay-italic'
+export const MEDIUM_FONT = '.SFUIDisplay-medium'
+export const MEDIUM_FONT_ITALIC = 'SFUIDisplay-medium-italic'
+export const SEMI_BOLD_FONT = '.SFUIDisplay-semibold'
+export const SEMI_BOLD_FONT_ITALIC = '.SFUIDisplay-semibold-italic'
+export const BOLD_FONT = '.SFUIDisplay-bold'
+export const BOLD_FONT_ITALIC = '.SFUIDisplay-bold-italic'
+export const HEAVY_FONT = '.SFUIDisplay-heavy'
+export const HEAVY_FONT_ITALIC = '.SFUIDisplay-heavy-italic'
 
-export function Text ({ style, ...props }: Object): ReactNative.Element<ReactNative.Text> {
+export function Text ({ style, ...props }: Object) {
   let font = fontFamilyFromStyle(style)
   return <ReactNative.Text style={ [styles.font, styles.text, style, { fontFamily: font }] } {...props} />
 }
 
-Text.propTypes = ReactNative.Text.propsTypes
+Text.propTypes = ReactNative.Text.propTypes
 
-export function Heading1 ({ style, ...props }: Object): ReactNative.Element<ReactNative.Text> {
+export function Heading1 ({ style, ...props }: Object) {
   return <ReactNative.Text style={[styles.font, styles.h1, style]} {...props} accessibilityTraits='header' />
 }
 
-export function Heading2 ({ style, ...props }: Object): ReactNative.Element<ReactNative.Text> {
+export function Heading2 ({ style, ...props }: Object) {
   return <ReactNative.Text style={[styles.font, styles.h2, style]} {...props} />
 }
 
-export function Title ({ style, ...props }: Object): ReactNative.Element<ReactNative.Text> {
+export function Title ({ style, ...props }: Object) {
   return <ReactNative.Text style={[styles.font, styles.title, style]} { ...props } />
 }
 
-export function SubTitle ({ style, ...props }: Object): ReactNative.Element<ReactNative.Text> {
+export function SubTitle ({ style, ...props }: Object) {
   return <ReactNative.Text style={[styles.font, styles.subtitle, style]} { ...props } />
 }
 
-export function Paragraph ({ style, ...props }: Object): ReactNative.Element<ReactNative.Text> {
+export function Paragraph ({ style, ...props }: Object) {
   return <ReactNative.Text style={[styles.font, styles.p, style]} {...props} />
 }
 
-export function TextInput ({ style, ...props }: Object): ReactNative.Element<ReactNative.Text> {
+export function Heavy ({ style, ...props }: Object) {
+  return <ReactNative.Text style={[styles.heavy, style]} {...props} />
+}
+
+export function TextInput ({ style, ...props }: Object) {
   let font = fontFamilyFromStyle(style)
   return <ReactNative.TextInput style={[styles.font, styles.textInput, style, { fontFamily: font }]} {...props} />
 }
 
-export function ModalActivityIndicatorAlertText ({ style, ...props }: Object): ReactNative.Element<ReactNative.Text> {
-  return <ReactNative.Text style={[styles.font, styles.modalActivityIndicatorAlertText, style]} {...props} />
+export function ModalOverlayText ({ style, ...props }: Object) {
+  return <ReactNative.Text style={[styles.font, styles.modalOverlayText, style]} {...props} />
 }
 
-export function UnmetRequirementBannerText ({ style, ...props }: Object): ReactNative.Element<ReactNative.Text> {
+export function UnmetRequirementBannerText ({ style, ...props }: Object) {
   return <ReactNative.Text style={[styles.font, styles.unmetRequirementBannerText, style]} {...props} />
 }
 
-export function UnmetRequirementSubscriptText ({ style, ...props }: Object): ReactNative.Element<ReactNative.Text> {
+export function UnmetRequirementSubscriptText ({ style, ...props }: Object) {
   return <ReactNative.Text style={[styles.font, styles.unmetRequirementSubscriptText, style]} {...props} />
 }
 
-export function Separated (props: Object): ReactNative.Element<typeof View> {
+export function Separated (props: Object) {
   const uniqueKey = Math.random().toString(36).substr(2, 16)
   let count = 0
   const result = props.separated
@@ -104,26 +114,54 @@ export function Separated (props: Object): ReactNative.Element<typeof View> {
   )
 }
 
-export function DotSeparated (props: Object): ReactNative.Element<Separated> {
+export function DotSeparated (props: Object) {
   return <Separated {...props} separator={'  •  '} />
 }
 
-const FontWeight: { [string]: string } = {
-  normal: REGULAR_FONT,
-  bold: BOLD_FONT,            // 700 weight
-  semibold: SEMI_BOLD_FONT,   // 600 weight
-  '700': BOLD_FONT,
-  '600': SEMI_BOLD_FONT,
-  '500': MEDIUM_FONT,
-  '300': REGULAR_FONT,
+const FontWeight = {
+  normal: {
+    normal: REGULAR_FONT,
+    italic: REGULAR_FONT_ITALIC,
+  },
+  bold: { // 700 weight
+    normal: BOLD_FONT,
+    italic: BOLD_FONT_ITALIC,
+  },
+  semibold: { // 600 weight
+    normal: SEMI_BOLD_FONT,
+    italic: SEMI_BOLD_FONT_ITALIC,
+  },
+  medium: { // 500 weight
+    normal: MEDIUM_FONT,
+    italic: MEDIUM_FONT_ITALIC,
+  },
+  '700': { // 700 weight
+    normal: BOLD_FONT,
+    italic: BOLD_FONT_ITALIC,
+  },
+  '600': {
+    normal: SEMI_BOLD_FONT,
+    italic: SEMI_BOLD_FONT_ITALIC,
+  },
+  '500': {
+    normal: MEDIUM_FONT,
+    italic: MEDIUM_FONT_ITALIC,
+  },
+  '400': {
+    normal: REGULAR_FONT,
+    italic: REGULAR_FONT_ITALIC,
+  },
+  '300': {
+    normal: REGULAR_FONT,
+    italic: REGULAR_FONT_ITALIC,
+  },
 }
 
 function fontFamilyFromStyle (style: Object): string {
   let styleObj = flattenStyle(style) || {}
-  let fontWeight = styleObj.fontWeight
-  let defaultKey = 'normal'
-  let weight = fontWeight || defaultKey
-  return FontWeight[weight] || FontWeight[defaultKey]
+  let fontWeight = styleObj.fontWeight || 'normal'
+  let fontStyle = styleObj.fontStyle || 'normal'
+  return FontWeight[fontWeight][fontStyle]
 }
 
 const styles = StyleSheet.create({
@@ -154,6 +192,11 @@ const styles = StyleSheet.create({
     lineHeight: 23,
     color: colors.lightText,
   },
+  heavy: {
+    fontSize: 24,
+    color: colors.darkText,
+    fontFamily: HEAVY_FONT,
+  },
   text: {
     fontSize: 16,
     color: colors.darkText,
@@ -161,7 +204,7 @@ const styles = StyleSheet.create({
   textInput: {
     fontSize: 17,
   },
-  modalActivityIndicatorAlertText: {
+  modalOverlayText: {
     fontSize: 24,
     color: '#fff',
     fontFamily: SEMI_BOLD_FONT,

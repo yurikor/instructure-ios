@@ -26,11 +26,19 @@ import { default as AnnouncementListActions } from '../announcements/list/action
 import { default as EditActions } from './edit/actions'
 import i18n from 'format-message'
 import composeReducers from '../../redux/compose-reducers'
-
 import { parseErrorMessage } from '../../redux/middleware/error-handler'
 
 const { refreshDiscussions } = ListActions
-const { refreshDiscussionEntries, refreshSingleDiscussion, createEntry, editEntry, deleteDiscussionEntry, deletePendingReplies, markAllAsRead, markEntryAsRead } = DetailsActions
+const {
+  refreshDiscussionEntries,
+  refreshSingleDiscussion,
+  createEntry,
+  editEntry,
+  deleteDiscussionEntry,
+  deletePendingReplies,
+  markAllAsRead,
+  markEntryAsRead,
+} = DetailsActions
 const { refreshAnnouncements } = AnnouncementListActions
 const {
   createDiscussion,
@@ -196,12 +204,13 @@ export const discussionData: Reducer<DiscussionState, any> = handleActions({
   [refreshDiscussions.toString()]: handleAsyncDiscussions,
   [refreshAnnouncements.toString()]: handleAsyncDiscussions,
   [refreshDiscussionEntries.toString()]: handleAsync({
-    resolved: (state, { result: [discussionView, discussion], courseID, discussionID }) => {
+    resolved: (state, { result: [discussionView, discussion], context, contextID, discussionID }) => {
       let entity = { ...state[discussionID] } || {}
 
       let participantsAsMap = discussionView.data.participants.reduce((map, p) => ({ ...map, [p.id]: p }), {})
       let replies = discussionView.data.view
       let unreadEntries = discussionView.data.unread_entries || []
+      let entryRatings = discussionView.data.entry_ratings || {}
       let newEntries = discussionView.data.new_entries || []
       let pendingReplies = { ...(entity.pendingReplies || {}) }
 
@@ -222,7 +231,8 @@ export const discussionData: Reducer<DiscussionState, any> = handleActions({
 
       pendingRepliesNeedingToBeRemoved.forEach((r) => { delete pendingReplies[r] })
 
-      entity.data = { ...discussion.data, replies: replies, participants: participantsAsMap }
+      let existingDiscussion = entity.data || {}
+      entity.data = { ...existingDiscussion, ...discussion.data, replies: replies, participants: participantsAsMap }
       entity.pendingReplies = pendingReplies
 
       return {
@@ -232,6 +242,28 @@ export const discussionData: Reducer<DiscussionState, any> = handleActions({
           pending: state[discussionID] && state[discussionID].pending ? state[discussionID].pending - 1 : 0,
           error: null,
           unread_entries: unreadEntries,
+          entry_ratings: entryRatings,
+          initialPostRequired: false,
+        },
+      }
+    },
+    rejected: (state, { error, discussionID }) => {
+      let message = parseErrorMessage(error)
+      if (error.response && error.response.status === 403) {
+        return {
+          ...state,
+          [discussionID]: {
+            ...state[discussionID],
+            initialPostRequired: true,
+          },
+        }
+      }
+
+      return {
+        ...state,
+        [discussionID]: {
+          ...state[discussionID],
+          error: message,
         },
       }
     },
@@ -242,6 +274,7 @@ export const discussionData: Reducer<DiscussionState, any> = handleActions({
       [discussionID]: {
         ...state[discussionID],
         data: {
+          ...state[discussionID].data,
           ...result.data,
         },
       },
@@ -322,10 +355,13 @@ export const discussionData: Reducer<DiscussionState, any> = handleActions({
     },
   }),
   [createDiscussion.toString()]: handleAsync({
-    resolved: (state, { result: { data } }) => ({
+    resolved: (state, { params, result: { data } }) => ({
       ...state,
       [data.id]: {
-        data,
+        data: {
+          ...data,
+          sections: params.sections,
+        },
         pending: 0,
         error: null,
       },
@@ -344,7 +380,10 @@ export const discussionData: Reducer<DiscussionState, any> = handleActions({
       ...state,
       [params.id]: {
         ...state[params.id],
-        data,
+        data: {
+          ...data,
+          sections: params.sections,
+        },
         pending: (state[params.id] && state[params.id].pending || 1) - 1,
         error: null,
       },

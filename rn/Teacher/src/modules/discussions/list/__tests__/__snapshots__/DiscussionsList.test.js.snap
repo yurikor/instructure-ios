@@ -129,6 +129,100 @@ exports[`DiscussionsList renders an activity indicator while loading 1`] = `
 </View>
 `;
 
+exports[`DiscussionsList renders as student app 1`] = `
+<Screen
+  drawUnderNavBar={true}
+  navBarColor={null}
+  navBarStyle="dark"
+  rightBarButtons={false}
+  subtitle={undefined}
+  title="Discussions"
+>
+  <View
+    style={
+      Object {
+        "flex": 1,
+      }
+    }
+  >
+    <RCTScrollView
+      ItemSeparatorComponent={undefined}
+      ListEmptyComponent={
+        <ListEmptyComponent
+          title="There are no discussions to display."
+        />
+      }
+      data={Array []}
+      disableVirtualization={false}
+      getItem={[Function]}
+      getItemCount={[Function]}
+      horizontal={false}
+      initialNumToRender={10}
+      keyExtractor={[Function]}
+      maxToRenderPerBatch={10}
+      onContentSizeChange={[Function]}
+      onEndReachedThreshold={2}
+      onLayout={[Function]}
+      onMomentumScrollEnd={[Function]}
+      onRefresh={undefined}
+      onScroll={[Function]}
+      onScrollBeginDrag={[Function]}
+      onScrollEndDrag={[Function]}
+      onViewableItemsChanged={undefined}
+      refreshing={false}
+      renderItem={[Function]}
+      renderSectionHeader={[Function]}
+      scrollEventThrottle={50}
+      sections={Array []}
+      stickyHeaderIndices={Array []}
+      stickySectionHeadersEnabled={true}
+      testID="discussion-list.list"
+      updateCellsBatchingPeriod={50}
+      windowSize={21}
+    >
+      <View>
+        <View
+          onLayout={[Function]}
+          style={null}
+        >
+          <View
+            style={
+              Object {
+                "alignItems": "center",
+                "flex": 1,
+                "height": 100,
+                "justifyContent": "center",
+              }
+            }
+          >
+            <Text
+              accessible={true}
+              allowFontScaling={true}
+              ellipsizeMode="tail"
+              style={
+                Array [
+                  Object {
+                    "fontFamily": ".SFUIDisplay",
+                  },
+                  Object {
+                    "color": "#2D3B45",
+                    "fontFamily": ".SFUIDisplay-semibold",
+                    "fontSize": 16,
+                  },
+                  undefined,
+                ]
+              }
+            >
+              There are no discussions to display.
+            </Text>
+          </View>
+        </View>
+      </View>
+    </RCTScrollView>
+  </View>
+</Screen>
+`;
+
 exports[`DiscussionsList renders discussions 1`] = `
 <Screen
   drawUnderNavBar={true}
@@ -176,16 +270,24 @@ exports[`DiscussionsList renders discussions 1`] = `
                   "created_at": "2017-03-17T19:15:25Z",
                   "description": "a course that can take any beginner to professional in a matter of microseconds.  Harness the power of your favorite languages like PHP and Cold Fusion.",
                   "due_at": "2037-06-01T05:59:00Z",
+                  "grade_group_students_individually": false,
                   "grading_type": "points",
+                  "group_category_id": null,
+                  "has_overrides": false,
                   "html_url": "http://hostname.tld/whatever",
                   "id": "123456789",
                   "lock_at": "2037-06-01T05:59:59Z",
                   "name": "learn to write code",
                   "needs_grading_count": 0,
+                  "only_visible_to_overrides": false,
                   "overrides": Array [],
                   "peer_reviews": false,
                   "points_possible": 20,
                   "position": 1,
+                  "published": true,
+                  "rubric": null,
+                  "rubric_assessment": Object {},
+                  "rubric_settings": null,
                   "submission_types": Array [
                     "online_text_entry",
                     "online_url",
@@ -193,12 +295,15 @@ exports[`DiscussionsList renders discussions 1`] = `
                     "online_upload",
                   ],
                   "unlock_at": "2017-03-17T06:00:00Z",
+                  "unpublishable": false,
                   "updated_at": "2017-03-17T19:15:25Z",
                 },
                 "assignment_id": "123456789",
                 "author": Object {
+                  "avatar_image_url": "http://www.fillmurray.com/100/100",
                   "avatar_url": "http://www.fillmurray.com/100/100",
                   "display_name": "The Donald",
+                  "html_url": "",
                   "id": "1",
                   "short_name": "The Donald",
                 },
@@ -208,6 +313,7 @@ exports[`DiscussionsList renders discussions 1`] = `
                 "discussion_type": "side_comment",
                 "html_url": "http://mobiledev.instructure.com/courses/1/discussion_topics",
                 "id": "1",
+                "is_section_specific": false,
                 "last_reply_at": "2016-12-11T04:03:17Z",
                 "message": "<p>And why?</p>",
                 "only_graders_can_rate": false,
@@ -240,16 +346,24 @@ exports[`DiscussionsList renders discussions 1`] = `
                   "created_at": "2017-03-17T19:15:25Z",
                   "description": "a course that can take any beginner to professional in a matter of microseconds.  Harness the power of your favorite languages like PHP and Cold Fusion.",
                   "due_at": "2037-06-01T05:59:00Z",
+                  "grade_group_students_individually": false,
                   "grading_type": "points",
+                  "group_category_id": null,
+                  "has_overrides": false,
                   "html_url": "http://hostname.tld/whatever",
                   "id": "123456789",
                   "lock_at": "2037-06-01T05:59:59Z",
                   "name": "learn to write code",
                   "needs_grading_count": 0,
+                  "only_visible_to_overrides": false,
                   "overrides": Array [],
                   "peer_reviews": false,
                   "points_possible": 20,
                   "position": 1,
+                  "published": true,
+                  "rubric": null,
+                  "rubric_assessment": Object {},
+                  "rubric_settings": null,
                   "submission_types": Array [
                     "online_text_entry",
                     "online_url",
@@ -257,12 +371,15 @@ exports[`DiscussionsList renders discussions 1`] = `
                     "online_upload",
                   ],
                   "unlock_at": "2017-03-17T06:00:00Z",
+                  "unpublishable": false,
                   "updated_at": "2017-03-17T19:15:25Z",
                 },
                 "assignment_id": "123456789",
                 "author": Object {
+                  "avatar_image_url": "http://www.fillmurray.com/100/100",
                   "avatar_url": "http://www.fillmurray.com/100/100",
                   "display_name": "The Donald",
+                  "html_url": "",
                   "id": "1",
                   "short_name": "The Donald",
                 },
@@ -272,6 +389,7 @@ exports[`DiscussionsList renders discussions 1`] = `
                 "discussion_type": "side_comment",
                 "html_url": "http://mobiledev.instructure.com/courses/1/discussion_topics",
                 "id": "2",
+                "is_section_specific": false,
                 "last_reply_at": "2016-12-11T04:03:17Z",
                 "message": "<p>And why?</p>",
                 "only_graders_can_rate": false,
@@ -333,16 +451,24 @@ exports[`DiscussionsList renders discussions 1`] = `
                   "created_at": "2017-03-17T19:15:25Z",
                   "description": "a course that can take any beginner to professional in a matter of microseconds.  Harness the power of your favorite languages like PHP and Cold Fusion.",
                   "due_at": "2037-06-01T05:59:00Z",
+                  "grade_group_students_individually": false,
                   "grading_type": "points",
+                  "group_category_id": null,
+                  "has_overrides": false,
                   "html_url": "http://hostname.tld/whatever",
                   "id": "123456789",
                   "lock_at": "2037-06-01T05:59:59Z",
                   "name": "learn to write code",
                   "needs_grading_count": 0,
+                  "only_visible_to_overrides": false,
                   "overrides": Array [],
                   "peer_reviews": false,
                   "points_possible": 20,
                   "position": 1,
+                  "published": true,
+                  "rubric": null,
+                  "rubric_assessment": Object {},
+                  "rubric_settings": null,
                   "submission_types": Array [
                     "online_text_entry",
                     "online_url",
@@ -350,12 +476,15 @@ exports[`DiscussionsList renders discussions 1`] = `
                     "online_upload",
                   ],
                   "unlock_at": "2017-03-17T06:00:00Z",
+                  "unpublishable": false,
                   "updated_at": "2017-03-17T19:15:25Z",
                 },
                 "assignment_id": "123456789",
                 "author": Object {
+                  "avatar_image_url": "http://www.fillmurray.com/100/100",
                   "avatar_url": "http://www.fillmurray.com/100/100",
                   "display_name": "The Donald",
+                  "html_url": "",
                   "id": "1",
                   "short_name": "The Donald",
                 },
@@ -365,6 +494,7 @@ exports[`DiscussionsList renders discussions 1`] = `
                 "discussion_type": "side_comment",
                 "html_url": "http://mobiledev.instructure.com/courses/1/discussion_topics",
                 "id": "1",
+                "is_section_specific": false,
                 "last_reply_at": "2016-12-11T04:03:17Z",
                 "message": "<p>And why?</p>",
                 "only_graders_can_rate": false,
@@ -397,16 +527,24 @@ exports[`DiscussionsList renders discussions 1`] = `
                   "created_at": "2017-03-17T19:15:25Z",
                   "description": "a course that can take any beginner to professional in a matter of microseconds.  Harness the power of your favorite languages like PHP and Cold Fusion.",
                   "due_at": "2037-06-01T05:59:00Z",
+                  "grade_group_students_individually": false,
                   "grading_type": "points",
+                  "group_category_id": null,
+                  "has_overrides": false,
                   "html_url": "http://hostname.tld/whatever",
                   "id": "123456789",
                   "lock_at": "2037-06-01T05:59:59Z",
                   "name": "learn to write code",
                   "needs_grading_count": 0,
+                  "only_visible_to_overrides": false,
                   "overrides": Array [],
                   "peer_reviews": false,
                   "points_possible": 20,
                   "position": 1,
+                  "published": true,
+                  "rubric": null,
+                  "rubric_assessment": Object {},
+                  "rubric_settings": null,
                   "submission_types": Array [
                     "online_text_entry",
                     "online_url",
@@ -414,12 +552,15 @@ exports[`DiscussionsList renders discussions 1`] = `
                     "online_upload",
                   ],
                   "unlock_at": "2017-03-17T06:00:00Z",
+                  "unpublishable": false,
                   "updated_at": "2017-03-17T19:15:25Z",
                 },
                 "assignment_id": "123456789",
                 "author": Object {
+                  "avatar_image_url": "http://www.fillmurray.com/100/100",
                   "avatar_url": "http://www.fillmurray.com/100/100",
                   "display_name": "The Donald",
+                  "html_url": "",
                   "id": "1",
                   "short_name": "The Donald",
                 },
@@ -429,6 +570,7 @@ exports[`DiscussionsList renders discussions 1`] = `
                 "discussion_type": "side_comment",
                 "html_url": "http://mobiledev.instructure.com/courses/1/discussion_topics",
                 "id": "2",
+                "is_section_specific": false,
                 "last_reply_at": "2016-12-11T04:03:17Z",
                 "message": "<p>And why?</p>",
                 "only_graders_can_rate": false,
@@ -529,11 +671,6 @@ exports[`DiscussionsList renders discussions 1`] = `
           >
             <View
               accessible={false}
-              style={
-                Object {
-                  "marginLeft": -12,
-                }
-              }
             >
               <TouchableHighlight
                 accessibilityLabel="discussion 1"
@@ -588,12 +725,11 @@ exports[`DiscussionsList renders discussions 1`] = `
                         Object {
                           "alignItems": "center",
                           "flex": 0,
-                          "height": 32,
-                          "width": 46,
                         }
                       }
                     >
                       <Image
+                        resizeMode="cover"
                         source={
                           Object {
                             "testUri": "../../../src/images/course/Assignment.png",
@@ -601,14 +737,14 @@ exports[`DiscussionsList renders discussions 1`] = `
                         }
                         style={
                           Array [
+                            false,
                             Object {
-                              "position": "absolute",
-                            },
-                            Object {
-                              "tintColor": null,
+                              "minHeight": 24,
+                              "minWidth": 24,
                             },
                           ]
                         }
+                        testID="access-icon-image"
                       />
                       <View
                         style={
@@ -616,11 +752,11 @@ exports[`DiscussionsList renders discussions 1`] = `
                             "alignItems": "center",
                             "backgroundColor": "white",
                             "borderRadius": 8,
+                            "bottom": -6,
                             "height": 16,
                             "justifyContent": "center",
-                            "left": 20,
                             "position": "absolute",
-                            "top": 10,
+                            "right": -5,
                             "width": 16,
                           }
                         }
@@ -638,17 +774,23 @@ exports[`DiscussionsList renders discussions 1`] = `
                               "width": 12,
                             }
                           }
+                          testID="access-icon-icon"
                         />
                       </View>
                     </View>
                   </View>
                   <View
                     style={
-                      Object {
-                        "flex": 1,
-                        "flexDirection": "column",
-                        "justifyContent": "center",
-                      }
+                      Array [
+                        Object {
+                          "flex": 1,
+                          "flexDirection": "column",
+                          "justifyContent": "center",
+                        },
+                        Object {
+                          "marginLeft": 12,
+                        },
+                      ]
                     }
                   >
                     <Text
@@ -669,7 +811,6 @@ exports[`DiscussionsList renders discussions 1`] = `
                             Object {
                               "fontWeight": "600",
                             },
-                            undefined,
                           ],
                           Object {
                             "fontFamily": ".SFUIDisplay-semibold",
@@ -964,11 +1105,6 @@ exports[`DiscussionsList renders discussions 1`] = `
           >
             <View
               accessible={false}
-              style={
-                Object {
-                  "marginLeft": -12,
-                }
-              }
             >
               <TouchableHighlight
                 accessibilityLabel="discussion 2"
@@ -1023,12 +1159,11 @@ exports[`DiscussionsList renders discussions 1`] = `
                         Object {
                           "alignItems": "center",
                           "flex": 0,
-                          "height": 32,
-                          "width": 46,
                         }
                       }
                     >
                       <Image
+                        resizeMode="cover"
                         source={
                           Object {
                             "testUri": "../../../src/images/course/Assignment.png",
@@ -1036,14 +1171,14 @@ exports[`DiscussionsList renders discussions 1`] = `
                         }
                         style={
                           Array [
+                            false,
                             Object {
-                              "position": "absolute",
-                            },
-                            Object {
-                              "tintColor": null,
+                              "minHeight": 24,
+                              "minWidth": 24,
                             },
                           ]
                         }
+                        testID="access-icon-image"
                       />
                       <View
                         style={
@@ -1051,11 +1186,11 @@ exports[`DiscussionsList renders discussions 1`] = `
                             "alignItems": "center",
                             "backgroundColor": "white",
                             "borderRadius": 8,
+                            "bottom": -6,
                             "height": 16,
                             "justifyContent": "center",
-                            "left": 20,
                             "position": "absolute",
-                            "top": 10,
+                            "right": -5,
                             "width": 16,
                           }
                         }
@@ -1073,17 +1208,23 @@ exports[`DiscussionsList renders discussions 1`] = `
                               "width": 12,
                             }
                           }
+                          testID="access-icon-icon"
                         />
                       </View>
                     </View>
                   </View>
                   <View
                     style={
-                      Object {
-                        "flex": 1,
-                        "flexDirection": "column",
-                        "justifyContent": "center",
-                      }
+                      Array [
+                        Object {
+                          "flex": 1,
+                          "flexDirection": "column",
+                          "justifyContent": "center",
+                        },
+                        Object {
+                          "marginLeft": 12,
+                        },
+                      ]
                     }
                   >
                     <Text
@@ -1104,7 +1245,6 @@ exports[`DiscussionsList renders discussions 1`] = `
                             Object {
                               "fontWeight": "600",
                             },
-                            undefined,
                           ],
                           Object {
                             "fontFamily": ".SFUIDisplay-semibold",
@@ -1443,8 +1583,10 @@ exports[`DiscussionsList renders discussions with no assignments 1`] = `
                 "assignment": null,
                 "assignment_id": "123456789",
                 "author": Object {
+                  "avatar_image_url": "http://www.fillmurray.com/100/100",
                   "avatar_url": "http://www.fillmurray.com/100/100",
                   "display_name": "The Donald",
+                  "html_url": "",
                   "id": "1",
                   "short_name": "The Donald",
                 },
@@ -1454,6 +1596,7 @@ exports[`DiscussionsList renders discussions with no assignments 1`] = `
                 "discussion_type": "side_comment",
                 "html_url": "http://mobiledev.instructure.com/courses/1/discussion_topics",
                 "id": "1",
+                "is_section_specific": false,
                 "last_reply_at": "2016-12-11T04:03:17Z",
                 "message": "<p>And why?</p>",
                 "only_graders_can_rate": false,
@@ -1482,8 +1625,10 @@ exports[`DiscussionsList renders discussions with no assignments 1`] = `
                 "assignment": null,
                 "assignment_id": "123456789",
                 "author": Object {
+                  "avatar_image_url": "http://www.fillmurray.com/100/100",
                   "avatar_url": "http://www.fillmurray.com/100/100",
                   "display_name": "The Donald",
+                  "html_url": "",
                   "id": "1",
                   "short_name": "The Donald",
                 },
@@ -1493,6 +1638,7 @@ exports[`DiscussionsList renders discussions with no assignments 1`] = `
                 "discussion_type": "side_comment",
                 "html_url": "http://mobiledev.instructure.com/courses/1/discussion_topics",
                 "id": "2",
+                "is_section_specific": false,
                 "last_reply_at": "2016-12-11T04:03:17Z",
                 "message": "<p>And why?</p>",
                 "only_graders_can_rate": false,
@@ -1550,8 +1696,10 @@ exports[`DiscussionsList renders discussions with no assignments 1`] = `
                 "assignment": null,
                 "assignment_id": "123456789",
                 "author": Object {
+                  "avatar_image_url": "http://www.fillmurray.com/100/100",
                   "avatar_url": "http://www.fillmurray.com/100/100",
                   "display_name": "The Donald",
+                  "html_url": "",
                   "id": "1",
                   "short_name": "The Donald",
                 },
@@ -1561,6 +1709,7 @@ exports[`DiscussionsList renders discussions with no assignments 1`] = `
                 "discussion_type": "side_comment",
                 "html_url": "http://mobiledev.instructure.com/courses/1/discussion_topics",
                 "id": "1",
+                "is_section_specific": false,
                 "last_reply_at": "2016-12-11T04:03:17Z",
                 "message": "<p>And why?</p>",
                 "only_graders_can_rate": false,
@@ -1589,8 +1738,10 @@ exports[`DiscussionsList renders discussions with no assignments 1`] = `
                 "assignment": null,
                 "assignment_id": "123456789",
                 "author": Object {
+                  "avatar_image_url": "http://www.fillmurray.com/100/100",
                   "avatar_url": "http://www.fillmurray.com/100/100",
                   "display_name": "The Donald",
+                  "html_url": "",
                   "id": "1",
                   "short_name": "The Donald",
                 },
@@ -1600,6 +1751,7 @@ exports[`DiscussionsList renders discussions with no assignments 1`] = `
                 "discussion_type": "side_comment",
                 "html_url": "http://mobiledev.instructure.com/courses/1/discussion_topics",
                 "id": "2",
+                "is_section_specific": false,
                 "last_reply_at": "2016-12-11T04:03:17Z",
                 "message": "<p>And why?</p>",
                 "only_graders_can_rate": false,
@@ -1700,11 +1852,6 @@ exports[`DiscussionsList renders discussions with no assignments 1`] = `
           >
             <View
               accessible={false}
-              style={
-                Object {
-                  "marginLeft": -12,
-                }
-              }
             >
               <TouchableHighlight
                 accessibilityLabel="discussion 1"
@@ -1759,12 +1906,11 @@ exports[`DiscussionsList renders discussions with no assignments 1`] = `
                         Object {
                           "alignItems": "center",
                           "flex": 0,
-                          "height": 32,
-                          "width": 46,
                         }
                       }
                     >
                       <Image
+                        resizeMode="cover"
                         source={
                           Object {
                             "testUri": "../../../src/images/course/Discussions.png",
@@ -1772,14 +1918,14 @@ exports[`DiscussionsList renders discussions with no assignments 1`] = `
                         }
                         style={
                           Array [
+                            false,
                             Object {
-                              "position": "absolute",
-                            },
-                            Object {
-                              "tintColor": null,
+                              "minHeight": 24,
+                              "minWidth": 24,
                             },
                           ]
                         }
+                        testID="access-icon-image"
                       />
                       <View
                         style={
@@ -1787,11 +1933,11 @@ exports[`DiscussionsList renders discussions with no assignments 1`] = `
                             "alignItems": "center",
                             "backgroundColor": "white",
                             "borderRadius": 8,
+                            "bottom": -6,
                             "height": 16,
                             "justifyContent": "center",
-                            "left": 20,
                             "position": "absolute",
-                            "top": 10,
+                            "right": -5,
                             "width": 16,
                           }
                         }
@@ -1809,17 +1955,23 @@ exports[`DiscussionsList renders discussions with no assignments 1`] = `
                               "width": 12,
                             }
                           }
+                          testID="access-icon-icon"
                         />
                       </View>
                     </View>
                   </View>
                   <View
                     style={
-                      Object {
-                        "flex": 1,
-                        "flexDirection": "column",
-                        "justifyContent": "center",
-                      }
+                      Array [
+                        Object {
+                          "flex": 1,
+                          "flexDirection": "column",
+                          "justifyContent": "center",
+                        },
+                        Object {
+                          "marginLeft": 12,
+                        },
+                      ]
                     }
                   >
                     <Text
@@ -1840,7 +1992,6 @@ exports[`DiscussionsList renders discussions with no assignments 1`] = `
                             Object {
                               "fontWeight": "600",
                             },
-                            undefined,
                           ],
                           Object {
                             "fontFamily": ".SFUIDisplay-semibold",
@@ -2102,11 +2253,6 @@ exports[`DiscussionsList renders discussions with no assignments 1`] = `
           >
             <View
               accessible={false}
-              style={
-                Object {
-                  "marginLeft": -12,
-                }
-              }
             >
               <TouchableHighlight
                 accessibilityLabel="discussion 2"
@@ -2161,12 +2307,11 @@ exports[`DiscussionsList renders discussions with no assignments 1`] = `
                         Object {
                           "alignItems": "center",
                           "flex": 0,
-                          "height": 32,
-                          "width": 46,
                         }
                       }
                     >
                       <Image
+                        resizeMode="cover"
                         source={
                           Object {
                             "testUri": "../../../src/images/course/Discussions.png",
@@ -2174,14 +2319,14 @@ exports[`DiscussionsList renders discussions with no assignments 1`] = `
                         }
                         style={
                           Array [
+                            false,
                             Object {
-                              "position": "absolute",
-                            },
-                            Object {
-                              "tintColor": null,
+                              "minHeight": 24,
+                              "minWidth": 24,
                             },
                           ]
                         }
+                        testID="access-icon-image"
                       />
                       <View
                         style={
@@ -2189,11 +2334,11 @@ exports[`DiscussionsList renders discussions with no assignments 1`] = `
                             "alignItems": "center",
                             "backgroundColor": "white",
                             "borderRadius": 8,
+                            "bottom": -6,
                             "height": 16,
                             "justifyContent": "center",
-                            "left": 20,
                             "position": "absolute",
-                            "top": 10,
+                            "right": -5,
                             "width": 16,
                           }
                         }
@@ -2211,17 +2356,23 @@ exports[`DiscussionsList renders discussions with no assignments 1`] = `
                               "width": 12,
                             }
                           }
+                          testID="access-icon-icon"
                         />
                       </View>
                     </View>
                   </View>
                   <View
                     style={
-                      Object {
-                        "flex": 1,
-                        "flexDirection": "column",
-                        "justifyContent": "center",
-                      }
+                      Array [
+                        Object {
+                          "flex": 1,
+                          "flexDirection": "column",
+                          "justifyContent": "center",
+                        },
+                        Object {
+                          "marginLeft": 12,
+                        },
+                      ]
                     }
                   >
                     <Text
@@ -2242,7 +2393,6 @@ exports[`DiscussionsList renders discussions with no assignments 1`] = `
                             Object {
                               "fontWeight": "600",
                             },
-                            undefined,
                           ],
                           Object {
                             "fontFamily": ".SFUIDisplay-semibold",
@@ -2552,16 +2702,24 @@ exports[`DiscussionsList renders in correct order 1`] = `
                   "created_at": "2017-03-17T19:15:25Z",
                   "description": "a course that can take any beginner to professional in a matter of microseconds.  Harness the power of your favorite languages like PHP and Cold Fusion.",
                   "due_at": "2037-06-01T05:59:00Z",
+                  "grade_group_students_individually": false,
                   "grading_type": "points",
+                  "group_category_id": null,
+                  "has_overrides": false,
                   "html_url": "http://hostname.tld/whatever",
                   "id": "123456789",
                   "lock_at": "2037-06-01T05:59:59Z",
                   "name": "learn to write code",
                   "needs_grading_count": 0,
+                  "only_visible_to_overrides": false,
                   "overrides": Array [],
                   "peer_reviews": false,
                   "points_possible": 20,
                   "position": 1,
+                  "published": true,
+                  "rubric": null,
+                  "rubric_assessment": Object {},
+                  "rubric_settings": null,
                   "submission_types": Array [
                     "online_text_entry",
                     "online_url",
@@ -2569,12 +2727,15 @@ exports[`DiscussionsList renders in correct order 1`] = `
                     "online_upload",
                   ],
                   "unlock_at": "2017-03-17T06:00:00Z",
+                  "unpublishable": false,
                   "updated_at": "2017-03-17T19:15:25Z",
                 },
                 "assignment_id": "123456789",
                 "author": Object {
+                  "avatar_image_url": "http://www.fillmurray.com/100/100",
                   "avatar_url": "http://www.fillmurray.com/100/100",
                   "display_name": "The Donald",
+                  "html_url": "",
                   "id": "1",
                   "short_name": "The Donald",
                 },
@@ -2585,6 +2746,7 @@ exports[`DiscussionsList renders in correct order 1`] = `
                 "due_at": "2118-03-28T15:07:56.312Z",
                 "html_url": "http://mobiledev.instructure.com/courses/1/discussion_topics",
                 "id": "1",
+                "is_section_specific": false,
                 "last_reply_at": "2016-12-11T04:03:17Z",
                 "message": "<p>And why?</p>",
                 "only_graders_can_rate": false,
@@ -2617,16 +2779,24 @@ exports[`DiscussionsList renders in correct order 1`] = `
                   "created_at": "2017-03-17T19:15:25Z",
                   "description": "a course that can take any beginner to professional in a matter of microseconds.  Harness the power of your favorite languages like PHP and Cold Fusion.",
                   "due_at": "2037-06-01T05:59:00Z",
+                  "grade_group_students_individually": false,
                   "grading_type": "points",
+                  "group_category_id": null,
+                  "has_overrides": false,
                   "html_url": "http://hostname.tld/whatever",
                   "id": "123456789",
                   "lock_at": "2037-06-01T05:59:59Z",
                   "name": "learn to write code",
                   "needs_grading_count": 0,
+                  "only_visible_to_overrides": false,
                   "overrides": Array [],
                   "peer_reviews": false,
                   "points_possible": 20,
                   "position": 1,
+                  "published": true,
+                  "rubric": null,
+                  "rubric_assessment": Object {},
+                  "rubric_settings": null,
                   "submission_types": Array [
                     "online_text_entry",
                     "online_url",
@@ -2634,12 +2804,15 @@ exports[`DiscussionsList renders in correct order 1`] = `
                     "online_upload",
                   ],
                   "unlock_at": "2017-03-17T06:00:00Z",
+                  "unpublishable": false,
                   "updated_at": "2017-03-17T19:15:25Z",
                 },
                 "assignment_id": "123456789",
                 "author": Object {
+                  "avatar_image_url": "http://www.fillmurray.com/100/100",
                   "avatar_url": "http://www.fillmurray.com/100/100",
                   "display_name": "The Donald",
+                  "html_url": "",
                   "id": "1",
                   "short_name": "The Donald",
                 },
@@ -2650,6 +2823,7 @@ exports[`DiscussionsList renders in correct order 1`] = `
                 "due_at": "2117-03-28T15:07:56.312Z",
                 "html_url": "http://mobiledev.instructure.com/courses/1/discussion_topics",
                 "id": "2",
+                "is_section_specific": false,
                 "last_reply_at": "2016-12-11T04:03:17Z",
                 "message": "<p>And why?</p>",
                 "only_graders_can_rate": false,
@@ -2711,16 +2885,24 @@ exports[`DiscussionsList renders in correct order 1`] = `
                   "created_at": "2017-03-17T19:15:25Z",
                   "description": "a course that can take any beginner to professional in a matter of microseconds.  Harness the power of your favorite languages like PHP and Cold Fusion.",
                   "due_at": "2037-06-01T05:59:00Z",
+                  "grade_group_students_individually": false,
                   "grading_type": "points",
+                  "group_category_id": null,
+                  "has_overrides": false,
                   "html_url": "http://hostname.tld/whatever",
                   "id": "123456789",
                   "lock_at": "2037-06-01T05:59:59Z",
                   "name": "learn to write code",
                   "needs_grading_count": 0,
+                  "only_visible_to_overrides": false,
                   "overrides": Array [],
                   "peer_reviews": false,
                   "points_possible": 20,
                   "position": 1,
+                  "published": true,
+                  "rubric": null,
+                  "rubric_assessment": Object {},
+                  "rubric_settings": null,
                   "submission_types": Array [
                     "online_text_entry",
                     "online_url",
@@ -2728,12 +2910,15 @@ exports[`DiscussionsList renders in correct order 1`] = `
                     "online_upload",
                   ],
                   "unlock_at": "2017-03-17T06:00:00Z",
+                  "unpublishable": false,
                   "updated_at": "2017-03-17T19:15:25Z",
                 },
                 "assignment_id": "123456789",
                 "author": Object {
+                  "avatar_image_url": "http://www.fillmurray.com/100/100",
                   "avatar_url": "http://www.fillmurray.com/100/100",
                   "display_name": "The Donald",
+                  "html_url": "",
                   "id": "1",
                   "short_name": "The Donald",
                 },
@@ -2744,6 +2929,7 @@ exports[`DiscussionsList renders in correct order 1`] = `
                 "due_at": "2118-03-28T15:07:56.312Z",
                 "html_url": "http://mobiledev.instructure.com/courses/1/discussion_topics",
                 "id": "1",
+                "is_section_specific": false,
                 "last_reply_at": "2016-12-11T04:03:17Z",
                 "message": "<p>And why?</p>",
                 "only_graders_can_rate": false,
@@ -2776,16 +2962,24 @@ exports[`DiscussionsList renders in correct order 1`] = `
                   "created_at": "2017-03-17T19:15:25Z",
                   "description": "a course that can take any beginner to professional in a matter of microseconds.  Harness the power of your favorite languages like PHP and Cold Fusion.",
                   "due_at": "2037-06-01T05:59:00Z",
+                  "grade_group_students_individually": false,
                   "grading_type": "points",
+                  "group_category_id": null,
+                  "has_overrides": false,
                   "html_url": "http://hostname.tld/whatever",
                   "id": "123456789",
                   "lock_at": "2037-06-01T05:59:59Z",
                   "name": "learn to write code",
                   "needs_grading_count": 0,
+                  "only_visible_to_overrides": false,
                   "overrides": Array [],
                   "peer_reviews": false,
                   "points_possible": 20,
                   "position": 1,
+                  "published": true,
+                  "rubric": null,
+                  "rubric_assessment": Object {},
+                  "rubric_settings": null,
                   "submission_types": Array [
                     "online_text_entry",
                     "online_url",
@@ -2793,12 +2987,15 @@ exports[`DiscussionsList renders in correct order 1`] = `
                     "online_upload",
                   ],
                   "unlock_at": "2017-03-17T06:00:00Z",
+                  "unpublishable": false,
                   "updated_at": "2017-03-17T19:15:25Z",
                 },
                 "assignment_id": "123456789",
                 "author": Object {
+                  "avatar_image_url": "http://www.fillmurray.com/100/100",
                   "avatar_url": "http://www.fillmurray.com/100/100",
                   "display_name": "The Donald",
+                  "html_url": "",
                   "id": "1",
                   "short_name": "The Donald",
                 },
@@ -2809,6 +3006,7 @@ exports[`DiscussionsList renders in correct order 1`] = `
                 "due_at": "2117-03-28T15:07:56.312Z",
                 "html_url": "http://mobiledev.instructure.com/courses/1/discussion_topics",
                 "id": "2",
+                "is_section_specific": false,
                 "last_reply_at": "2016-12-11T04:03:17Z",
                 "message": "<p>And why?</p>",
                 "only_graders_can_rate": false,
@@ -2909,11 +3107,6 @@ exports[`DiscussionsList renders in correct order 1`] = `
           >
             <View
               accessible={false}
-              style={
-                Object {
-                  "marginLeft": -12,
-                }
-              }
             >
               <TouchableHighlight
                 accessibilityLabel="First"
@@ -2968,12 +3161,11 @@ exports[`DiscussionsList renders in correct order 1`] = `
                         Object {
                           "alignItems": "center",
                           "flex": 0,
-                          "height": 32,
-                          "width": 46,
                         }
                       }
                     >
                       <Image
+                        resizeMode="cover"
                         source={
                           Object {
                             "testUri": "../../../src/images/course/Assignment.png",
@@ -2981,14 +3173,14 @@ exports[`DiscussionsList renders in correct order 1`] = `
                         }
                         style={
                           Array [
+                            false,
                             Object {
-                              "position": "absolute",
-                            },
-                            Object {
-                              "tintColor": null,
+                              "minHeight": 24,
+                              "minWidth": 24,
                             },
                           ]
                         }
+                        testID="access-icon-image"
                       />
                       <View
                         style={
@@ -2996,11 +3188,11 @@ exports[`DiscussionsList renders in correct order 1`] = `
                             "alignItems": "center",
                             "backgroundColor": "white",
                             "borderRadius": 8,
+                            "bottom": -6,
                             "height": 16,
                             "justifyContent": "center",
-                            "left": 20,
                             "position": "absolute",
-                            "top": 10,
+                            "right": -5,
                             "width": 16,
                           }
                         }
@@ -3018,17 +3210,23 @@ exports[`DiscussionsList renders in correct order 1`] = `
                               "width": 12,
                             }
                           }
+                          testID="access-icon-icon"
                         />
                       </View>
                     </View>
                   </View>
                   <View
                     style={
-                      Object {
-                        "flex": 1,
-                        "flexDirection": "column",
-                        "justifyContent": "center",
-                      }
+                      Array [
+                        Object {
+                          "flex": 1,
+                          "flexDirection": "column",
+                          "justifyContent": "center",
+                        },
+                        Object {
+                          "marginLeft": 12,
+                        },
+                      ]
                     }
                   >
                     <Text
@@ -3049,7 +3247,6 @@ exports[`DiscussionsList renders in correct order 1`] = `
                             Object {
                               "fontWeight": "600",
                             },
-                            undefined,
                           ],
                           Object {
                             "fontFamily": ".SFUIDisplay-semibold",
@@ -3344,11 +3541,6 @@ exports[`DiscussionsList renders in correct order 1`] = `
           >
             <View
               accessible={false}
-              style={
-                Object {
-                  "marginLeft": -12,
-                }
-              }
             >
               <TouchableHighlight
                 accessibilityLabel="Second"
@@ -3403,12 +3595,11 @@ exports[`DiscussionsList renders in correct order 1`] = `
                         Object {
                           "alignItems": "center",
                           "flex": 0,
-                          "height": 32,
-                          "width": 46,
                         }
                       }
                     >
                       <Image
+                        resizeMode="cover"
                         source={
                           Object {
                             "testUri": "../../../src/images/course/Assignment.png",
@@ -3416,14 +3607,14 @@ exports[`DiscussionsList renders in correct order 1`] = `
                         }
                         style={
                           Array [
+                            false,
                             Object {
-                              "position": "absolute",
-                            },
-                            Object {
-                              "tintColor": null,
+                              "minHeight": 24,
+                              "minWidth": 24,
                             },
                           ]
                         }
+                        testID="access-icon-image"
                       />
                       <View
                         style={
@@ -3431,11 +3622,11 @@ exports[`DiscussionsList renders in correct order 1`] = `
                             "alignItems": "center",
                             "backgroundColor": "white",
                             "borderRadius": 8,
+                            "bottom": -6,
                             "height": 16,
                             "justifyContent": "center",
-                            "left": 20,
                             "position": "absolute",
-                            "top": 10,
+                            "right": -5,
                             "width": 16,
                           }
                         }
@@ -3453,17 +3644,23 @@ exports[`DiscussionsList renders in correct order 1`] = `
                               "width": 12,
                             }
                           }
+                          testID="access-icon-icon"
                         />
                       </View>
                     </View>
                   </View>
                   <View
                     style={
-                      Object {
-                        "flex": 1,
-                        "flexDirection": "column",
-                        "justifyContent": "center",
-                      }
+                      Array [
+                        Object {
+                          "flex": 1,
+                          "flexDirection": "column",
+                          "justifyContent": "center",
+                        },
+                        Object {
+                          "marginLeft": 12,
+                        },
+                      ]
                     }
                   >
                     <Text
@@ -3484,7 +3681,6 @@ exports[`DiscussionsList renders in correct order 1`] = `
                             Object {
                               "fontWeight": "600",
                             },
-                            undefined,
                           ],
                           Object {
                             "fontFamily": ".SFUIDisplay-semibold",
@@ -3827,16 +4023,24 @@ exports[`DiscussionsList renders pinned discussions 1`] = `
                   "created_at": "2017-03-17T19:15:25Z",
                   "description": "a course that can take any beginner to professional in a matter of microseconds.  Harness the power of your favorite languages like PHP and Cold Fusion.",
                   "due_at": "2037-06-01T05:59:00Z",
+                  "grade_group_students_individually": false,
                   "grading_type": "points",
+                  "group_category_id": null,
+                  "has_overrides": false,
                   "html_url": "http://hostname.tld/whatever",
                   "id": "123456789",
                   "lock_at": "2037-06-01T05:59:59Z",
                   "name": "learn to write code",
                   "needs_grading_count": 0,
+                  "only_visible_to_overrides": false,
                   "overrides": Array [],
                   "peer_reviews": false,
                   "points_possible": 20,
                   "position": 1,
+                  "published": true,
+                  "rubric": null,
+                  "rubric_assessment": Object {},
+                  "rubric_settings": null,
                   "submission_types": Array [
                     "online_text_entry",
                     "online_url",
@@ -3844,12 +4048,15 @@ exports[`DiscussionsList renders pinned discussions 1`] = `
                     "online_upload",
                   ],
                   "unlock_at": "2017-03-17T06:00:00Z",
+                  "unpublishable": false,
                   "updated_at": "2017-03-17T19:15:25Z",
                 },
                 "assignment_id": "123456789",
                 "author": Object {
+                  "avatar_image_url": "http://www.fillmurray.com/100/100",
                   "avatar_url": "http://www.fillmurray.com/100/100",
                   "display_name": "The Donald",
+                  "html_url": "",
                   "id": "1",
                   "short_name": "The Donald",
                 },
@@ -3859,6 +4066,7 @@ exports[`DiscussionsList renders pinned discussions 1`] = `
                 "discussion_type": "side_comment",
                 "html_url": "http://mobiledev.instructure.com/courses/1/discussion_topics",
                 "id": "1",
+                "is_section_specific": false,
                 "last_reply_at": "2016-12-11T04:03:17Z",
                 "message": "<p>And why?</p>",
                 "only_graders_can_rate": false,
@@ -3896,16 +4104,24 @@ exports[`DiscussionsList renders pinned discussions 1`] = `
                   "created_at": "2017-03-17T19:15:25Z",
                   "description": "a course that can take any beginner to professional in a matter of microseconds.  Harness the power of your favorite languages like PHP and Cold Fusion.",
                   "due_at": "2037-06-01T05:59:00Z",
+                  "grade_group_students_individually": false,
                   "grading_type": "points",
+                  "group_category_id": null,
+                  "has_overrides": false,
                   "html_url": "http://hostname.tld/whatever",
                   "id": "123456789",
                   "lock_at": "2037-06-01T05:59:59Z",
                   "name": "learn to write code",
                   "needs_grading_count": 0,
+                  "only_visible_to_overrides": false,
                   "overrides": Array [],
                   "peer_reviews": false,
                   "points_possible": 20,
                   "position": 1,
+                  "published": true,
+                  "rubric": null,
+                  "rubric_assessment": Object {},
+                  "rubric_settings": null,
                   "submission_types": Array [
                     "online_text_entry",
                     "online_url",
@@ -3913,12 +4129,15 @@ exports[`DiscussionsList renders pinned discussions 1`] = `
                     "online_upload",
                   ],
                   "unlock_at": "2017-03-17T06:00:00Z",
+                  "unpublishable": false,
                   "updated_at": "2017-03-17T19:15:25Z",
                 },
                 "assignment_id": "123456789",
                 "author": Object {
+                  "avatar_image_url": "http://www.fillmurray.com/100/100",
                   "avatar_url": "http://www.fillmurray.com/100/100",
                   "display_name": "The Donald",
+                  "html_url": "",
                   "id": "1",
                   "short_name": "The Donald",
                 },
@@ -3928,6 +4147,7 @@ exports[`DiscussionsList renders pinned discussions 1`] = `
                 "discussion_type": "side_comment",
                 "html_url": "http://mobiledev.instructure.com/courses/1/discussion_topics",
                 "id": "2",
+                "is_section_specific": false,
                 "last_reply_at": "2016-12-11T04:03:17Z",
                 "locked": true,
                 "message": "<p>And why?</p>",
@@ -3990,16 +4210,24 @@ exports[`DiscussionsList renders pinned discussions 1`] = `
                   "created_at": "2017-03-17T19:15:25Z",
                   "description": "a course that can take any beginner to professional in a matter of microseconds.  Harness the power of your favorite languages like PHP and Cold Fusion.",
                   "due_at": "2037-06-01T05:59:00Z",
+                  "grade_group_students_individually": false,
                   "grading_type": "points",
+                  "group_category_id": null,
+                  "has_overrides": false,
                   "html_url": "http://hostname.tld/whatever",
                   "id": "123456789",
                   "lock_at": "2037-06-01T05:59:59Z",
                   "name": "learn to write code",
                   "needs_grading_count": 0,
+                  "only_visible_to_overrides": false,
                   "overrides": Array [],
                   "peer_reviews": false,
                   "points_possible": 20,
                   "position": 1,
+                  "published": true,
+                  "rubric": null,
+                  "rubric_assessment": Object {},
+                  "rubric_settings": null,
                   "submission_types": Array [
                     "online_text_entry",
                     "online_url",
@@ -4007,12 +4235,15 @@ exports[`DiscussionsList renders pinned discussions 1`] = `
                     "online_upload",
                   ],
                   "unlock_at": "2017-03-17T06:00:00Z",
+                  "unpublishable": false,
                   "updated_at": "2017-03-17T19:15:25Z",
                 },
                 "assignment_id": "123456789",
                 "author": Object {
+                  "avatar_image_url": "http://www.fillmurray.com/100/100",
                   "avatar_url": "http://www.fillmurray.com/100/100",
                   "display_name": "The Donald",
+                  "html_url": "",
                   "id": "1",
                   "short_name": "The Donald",
                 },
@@ -4022,6 +4253,7 @@ exports[`DiscussionsList renders pinned discussions 1`] = `
                 "discussion_type": "side_comment",
                 "html_url": "http://mobiledev.instructure.com/courses/1/discussion_topics",
                 "id": "1",
+                "is_section_specific": false,
                 "last_reply_at": "2016-12-11T04:03:17Z",
                 "message": "<p>And why?</p>",
                 "only_graders_can_rate": false,
@@ -4059,16 +4291,24 @@ exports[`DiscussionsList renders pinned discussions 1`] = `
                   "created_at": "2017-03-17T19:15:25Z",
                   "description": "a course that can take any beginner to professional in a matter of microseconds.  Harness the power of your favorite languages like PHP and Cold Fusion.",
                   "due_at": "2037-06-01T05:59:00Z",
+                  "grade_group_students_individually": false,
                   "grading_type": "points",
+                  "group_category_id": null,
+                  "has_overrides": false,
                   "html_url": "http://hostname.tld/whatever",
                   "id": "123456789",
                   "lock_at": "2037-06-01T05:59:59Z",
                   "name": "learn to write code",
                   "needs_grading_count": 0,
+                  "only_visible_to_overrides": false,
                   "overrides": Array [],
                   "peer_reviews": false,
                   "points_possible": 20,
                   "position": 1,
+                  "published": true,
+                  "rubric": null,
+                  "rubric_assessment": Object {},
+                  "rubric_settings": null,
                   "submission_types": Array [
                     "online_text_entry",
                     "online_url",
@@ -4076,12 +4316,15 @@ exports[`DiscussionsList renders pinned discussions 1`] = `
                     "online_upload",
                   ],
                   "unlock_at": "2017-03-17T06:00:00Z",
+                  "unpublishable": false,
                   "updated_at": "2017-03-17T19:15:25Z",
                 },
                 "assignment_id": "123456789",
                 "author": Object {
+                  "avatar_image_url": "http://www.fillmurray.com/100/100",
                   "avatar_url": "http://www.fillmurray.com/100/100",
                   "display_name": "The Donald",
+                  "html_url": "",
                   "id": "1",
                   "short_name": "The Donald",
                 },
@@ -4091,6 +4334,7 @@ exports[`DiscussionsList renders pinned discussions 1`] = `
                 "discussion_type": "side_comment",
                 "html_url": "http://mobiledev.instructure.com/courses/1/discussion_topics",
                 "id": "2",
+                "is_section_specific": false,
                 "last_reply_at": "2016-12-11T04:03:17Z",
                 "locked": true,
                 "message": "<p>And why?</p>",
@@ -4193,11 +4437,6 @@ exports[`DiscussionsList renders pinned discussions 1`] = `
           >
             <View
               accessible={false}
-              style={
-                Object {
-                  "marginLeft": -12,
-                }
-              }
             >
               <TouchableHighlight
                 accessibilityLabel="discussion 1"
@@ -4252,12 +4491,11 @@ exports[`DiscussionsList renders pinned discussions 1`] = `
                         Object {
                           "alignItems": "center",
                           "flex": 0,
-                          "height": 32,
-                          "width": 46,
                         }
                       }
                     >
                       <Image
+                        resizeMode="cover"
                         source={
                           Object {
                             "testUri": "../../../src/images/course/Assignment.png",
@@ -4265,14 +4503,14 @@ exports[`DiscussionsList renders pinned discussions 1`] = `
                         }
                         style={
                           Array [
+                            false,
                             Object {
-                              "position": "absolute",
-                            },
-                            Object {
-                              "tintColor": null,
+                              "minHeight": 24,
+                              "minWidth": 24,
                             },
                           ]
                         }
+                        testID="access-icon-image"
                       />
                       <View
                         style={
@@ -4280,11 +4518,11 @@ exports[`DiscussionsList renders pinned discussions 1`] = `
                             "alignItems": "center",
                             "backgroundColor": "white",
                             "borderRadius": 8,
+                            "bottom": -6,
                             "height": 16,
                             "justifyContent": "center",
-                            "left": 20,
                             "position": "absolute",
-                            "top": 10,
+                            "right": -5,
                             "width": 16,
                           }
                         }
@@ -4302,17 +4540,23 @@ exports[`DiscussionsList renders pinned discussions 1`] = `
                               "width": 12,
                             }
                           }
+                          testID="access-icon-icon"
                         />
                       </View>
                     </View>
                   </View>
                   <View
                     style={
-                      Object {
-                        "flex": 1,
-                        "flexDirection": "column",
-                        "justifyContent": "center",
-                      }
+                      Array [
+                        Object {
+                          "flex": 1,
+                          "flexDirection": "column",
+                          "justifyContent": "center",
+                        },
+                        Object {
+                          "marginLeft": 12,
+                        },
+                      ]
                     }
                   >
                     <Text
@@ -4333,7 +4577,6 @@ exports[`DiscussionsList renders pinned discussions 1`] = `
                             Object {
                               "fontWeight": "600",
                             },
-                            undefined,
                           ],
                           Object {
                             "fontFamily": ".SFUIDisplay-semibold",
@@ -4684,11 +4927,6 @@ exports[`DiscussionsList renders pinned discussions 1`] = `
           >
             <View
               accessible={false}
-              style={
-                Object {
-                  "marginLeft": -12,
-                }
-              }
             >
               <TouchableHighlight
                 accessibilityLabel="discussion 2"
@@ -4743,12 +4981,11 @@ exports[`DiscussionsList renders pinned discussions 1`] = `
                         Object {
                           "alignItems": "center",
                           "flex": 0,
-                          "height": 32,
-                          "width": 46,
                         }
                       }
                     >
                       <Image
+                        resizeMode="cover"
                         source={
                           Object {
                             "testUri": "../../../src/images/course/Assignment.png",
@@ -4756,14 +4993,14 @@ exports[`DiscussionsList renders pinned discussions 1`] = `
                         }
                         style={
                           Array [
+                            false,
                             Object {
-                              "position": "absolute",
-                            },
-                            Object {
-                              "tintColor": null,
+                              "minHeight": 24,
+                              "minWidth": 24,
                             },
                           ]
                         }
+                        testID="access-icon-image"
                       />
                       <View
                         style={
@@ -4771,11 +5008,11 @@ exports[`DiscussionsList renders pinned discussions 1`] = `
                             "alignItems": "center",
                             "backgroundColor": "white",
                             "borderRadius": 8,
+                            "bottom": -6,
                             "height": 16,
                             "justifyContent": "center",
-                            "left": 20,
                             "position": "absolute",
-                            "top": 10,
+                            "right": -5,
                             "width": 16,
                           }
                         }
@@ -4793,17 +5030,23 @@ exports[`DiscussionsList renders pinned discussions 1`] = `
                               "width": 12,
                             }
                           }
+                          testID="access-icon-icon"
                         />
                       </View>
                     </View>
                   </View>
                   <View
                     style={
-                      Object {
-                        "flex": 1,
-                        "flexDirection": "column",
-                        "justifyContent": "center",
-                      }
+                      Array [
+                        Object {
+                          "flex": 1,
+                          "flexDirection": "column",
+                          "justifyContent": "center",
+                        },
+                        Object {
+                          "marginLeft": 12,
+                        },
+                      ]
                     }
                   >
                     <Text
@@ -4824,7 +5067,6 @@ exports[`DiscussionsList renders pinned discussions 1`] = `
                             Object {
                               "fontWeight": "600",
                             },
-                            undefined,
                           ],
                           Object {
                             "fontFamily": ".SFUIDisplay-semibold",

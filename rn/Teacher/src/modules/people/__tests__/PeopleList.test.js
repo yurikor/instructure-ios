@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-/* @flow */
+/* eslint-disable flowtype/require-valid-file-annotation */
 import React from 'react'
 import { ActionSheetIOS } from 'react-native'
 import { PeopleList, mapStateToProps, type Props } from '../PeopleList'
@@ -144,6 +144,7 @@ describe('People List', () => {
       search: 'Malthael',
       per_page: 15,
       type: 'user',
+      skip_visibility_checks: 1,
     })
   })
 

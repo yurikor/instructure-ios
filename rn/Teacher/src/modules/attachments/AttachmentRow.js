@@ -29,7 +29,7 @@ import Row from '../../common/components/rows/Row'
 import images from '../../images'
 import colors from '../../common/colors'
 import { Circle } from 'react-native-progress'
-import bytes from 'bytes'
+import bytes from '../../utils/locale-bytes'
 import i18n from 'format-message'
 import { type Progress } from '../../canvas-api'
 
@@ -39,10 +39,10 @@ export type Props = {
   progress: Progress,
   error: ?string,
   testID: string,
-  onRemovePressed: () => void,
-  onPress: () => void,
-  onRetry: () => void,
-  onCancel: () => void,
+  onRemovePressed: () => any,
+  onPress: () => any,
+  onRetry: () => any,
+  onCancel: () => any,
 }
 
 export default class AttachmentRow extends Component<Props, any> {
@@ -63,17 +63,13 @@ export default class AttachmentRow extends Component<Props, any> {
   renderSubtitle () {
     if (this.props.error) return null
     const { loaded, total } = this.props.progress
-    const bytesOpts = {
-      decimalPlaces: 0,
-      unitSeparator: ' ',
-    }
     if (total > 0) {
       if (loaded >= total) {
-        return bytes(total, bytesOpts)
+        return bytes(total, { style: 'integer' })
       }
       return i18n('Uploading {loaded} of {total}', {
-        loaded: bytes(loaded, bytesOpts),
-        total: bytes(total, bytesOpts),
+        loaded: bytes(loaded, { style: 'integer' }),
+        total: bytes(total, { style: 'integer' }),
       })
     }
 
@@ -163,6 +159,8 @@ export default class AttachmentRow extends Component<Props, any> {
 
   onPressError = () => {
     ActionSheetIOS.showActionSheetWithOptions({
+      title: i18n('Failed to upload attachment'),
+      message: this.props.error,
       options: [
         i18n('Retry Upload'),
         i18n('Delete'),
@@ -191,9 +189,6 @@ const style = StyleSheet.create({
     height: 14,
     tintColor: 'black',
   },
-  image: {
-    marginRight: global.style.defaultPadding,
-  },
   cancel: {
     position: 'absolute',
     top: 0,
@@ -207,4 +202,5 @@ const style = StyleSheet.create({
     width: 6,
     height: 6,
   },
+  image: {},
 })

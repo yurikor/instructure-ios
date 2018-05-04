@@ -25,12 +25,13 @@ import i18n from 'format-message'
 
 import colors from '../../colors'
 
-type RowWithSwitchProps = RowProps & {
-  value: boolean,
+export type RowWithSwitchProps = RowProps & {
+  value?: boolean,
   onValueChange: Function,
+  disabled?: boolean,
 }
 
-export default class RowWithSwitch extends Component<any, RowWithSwitchProps, any> {
+export default class RowWithSwitch extends Component<RowWithSwitchProps, any> {
 
   onValueChange = (value: boolean) => {
     this.props.onValueChange(value, this.props.identifier)
@@ -45,8 +46,8 @@ export default class RowWithSwitch extends Component<any, RowWithSwitchProps, an
     const accessories = <Switch {...this.props}
                                 testID={this.props.identifier}
                                 onValueChange={this.onValueChange}
-                                tintColor={ colors.primaryBrandColor}
-                                onTintColor={ colors.primaryBrandColor} />
+                                tintColor={null}
+                                onTintColor={colors.primaryBrandColor} />
     const accessibilityLabel = this.props.accessibilityLabel || `${this.props.title}, ${this.props.value ? i18n('On') : i18n('Off')}`
     return (
       <Row {...this.props}

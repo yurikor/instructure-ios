@@ -14,19 +14,19 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-/* @flow */
+// @flow
 
 import httpClient from '../httpClient'
 
-export function getCustomColors (): Promise<AxiosResponse<CustomColors>> {
+export function getCustomColors (): ApiPromise<CustomColors> {
   return httpClient().get('users/self/colors')
 }
 
-export function getUserProfile (userID: string): Promise<AxiosResponse<User>> {
+export function getUserProfile (userID: string): ApiPromise<User> {
   return httpClient().get(`/users/${userID}/profile`)
 }
 
-export function createUser (createUserData: CreateUser): Promise<AxiosResponse<User>> {
+export function createUser (createUserData: CreateUser): ApiPromise<User> {
   let data = {
     user: {
       short_name: createUserData.user.name,
@@ -47,6 +47,6 @@ export function createUser (createUserData: CreateUser): Promise<AxiosResponse<U
   return httpClient().post(`/accounts/self/users`, data)
 }
 
-export function getToDo (): Promise<AxiosResponse<ToDoItem[]>> {
-  return httpClient().get('users/self/todo')
+export function getToDoCount (): ApiPromise<Object> {
+  return httpClient().get('users/self/todo_item_count')
 }

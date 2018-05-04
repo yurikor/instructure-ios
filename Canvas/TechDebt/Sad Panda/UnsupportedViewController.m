@@ -17,13 +17,13 @@
     
 
 #import "UnsupportedViewController.h"
-
-
+#import "UIAlertController+TechDebt.h"
 #import "UIViewController+AnalyticsTracking.h"
 #import "CBILog.h"
 
 @import CanvasKit;
 @import CanvasKeymaster;
+@import CanvasCore;
 
 @interface UnsupportedViewController ()
 @property (nonatomic, weak) IBOutlet UILabel *unsupportedLabel;
@@ -55,10 +55,27 @@
 {
     DDLogVerbose(@"openInSafarButtonTouched : %@", self.tabName);
     if ([[UIApplication sharedApplication] canOpenURL:self.canvasURL]) {
-        [[UIApplication sharedApplication] openURL:self.canvasURL];
+        
+        [[APIBridge shared] call:@"getAuthenticatedSessionURL" args: [NSArray arrayWithObjects: self.canvasURL.absoluteString, nil] callback:^(id  _Nullable response, NSError * _Nullable error) {
+            
+            NSURL *url = nil;
+            if (error == nil && response != nil && [response isKindOfClass:[NSDictionary class]]) {
+                NSDictionary *data = response;
+                if ([[data allKeys] containsObject:@"session_url"]) {
+                    NSString *sessionURL = data[@"session_url"];
+                    url = [NSURL URLWithString:sessionURL];
+                }
+            }
+            
+            if (url == nil) {
+                url = self.canvasURL;
+            }
+            
+            [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
+        }];
+        
     } else {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Whoops!", "Error Title") message:NSLocalizedString(@"There was a problem launching Safari",nil) delegate:nil cancelButtonTitle:NSLocalizedString(@"OK",nil) otherButtonTitles:nil];
-        [alertView show];
+        [UIAlertController showAlertWithTitle:NSLocalizedString(@"Whoops!", "Error Title") message:NSLocalizedString(@"There was a problem launching Safari", nil)];
     }
 }
 

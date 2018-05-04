@@ -1,6 +1,12 @@
 /* No comment provided by engineer. */
 "An error occurred" = "Gen yon erè ki fèt";
 
+/* (No Comment) */
+"Can't find your school?" = "Ou paka jwenn lekòl ou a?";
+
+/* Help label when user can't find their school. */
+"Can't find your school? Try typing the full school URL." = "Ou paka jwenn lekòl ou a? Eseye tape tout URL lekòl la";
+
 /* No comment provided by engineer. */
 "Cancel" = "Anile";
 
@@ -11,8 +17,11 @@
 "OK" = "OK";
 
 /* No comment provided by engineer. */
+"Password" = "Modpas";
+
+/* No comment provided by engineer. */
 "Username" = "Non Itilizatè";
 
 /* No comment provided by engineer. */
-"You are not authorized to perform this action." = "Ou pa gen otorizasyon pou fè aksyon sa a.";
+"You are not authorized to perform this action." = "Ou pa otorize pou ou poze aksyon sa a.";
 

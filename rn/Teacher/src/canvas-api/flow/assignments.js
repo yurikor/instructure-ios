@@ -29,7 +29,7 @@ export type Rubric = {
   vendor_guid?: string,
   description: string,
   long_description: string,
-  ratings: Array<RubricRating>,
+  ratings: RubricRating[],
 }
 
 export type RubricSettings = {
@@ -55,7 +55,7 @@ export type AssignmentGroup = {
   rules?: any,
 }
 
-export type GradingType = 'pass_fail' | 'percent' | 'letter_grade' | 'gpa_scale' | 'points'
+export type GradingType = 'pass_fail' | 'percent' | 'letter_grade' | 'gpa_scale' | 'points' | 'not_graded'
 
 export type Assignment = {
   id: string,
@@ -75,11 +75,11 @@ export type Assignment = {
   only_visible_to_overrides: boolean,
   points_possible: number,
   needs_grading_count: number,
-  submission_types: string[],
+  submission_types: SubmissionType[],
   html_url: string,
   position: number,
   grading_type: GradingType,
-  rubric: ?Array<Rubric>,
+  rubric: ?Rubric[],
   rubric_settings: ?RubricSettings,
   rubric_assessment: {
     [string]: RubricAssessment,
@@ -87,8 +87,9 @@ export type Assignment = {
   group_category_id: ?string,
   grade_group_students_individually: boolean,
   quiz_id?: string,
-  discussion_topic?: Disussion,
+  discussion_topic?: Discussion,
   external_tool_tag_attributes?: { url: ?string },
+  submission?: Submission,
 }
 
 export type AssignmentDate = {

@@ -20,10 +20,6 @@
 #import "SupportTicketManager.h"
 #import "CanvasKeymaster.h"
 
-@import CWStatusBarNotification;
-
-static float DefaultToastDuration = 1.65f;
-
 @interface SupportTicketViewController () <UITextViewDelegate, UITextFieldDelegate, UIActionSheetDelegate>
 @property (weak, nonatomic) IBOutlet UITextField *subjectTextField;
 @property (weak, nonatomic) IBOutlet UIButton *impactButton;
@@ -79,12 +75,12 @@ static float DefaultToastDuration = 1.65f;
     
     if (self.ticketType == SupportTicketTypeFeatureRequest) {
         self.ticket.ticketType = SupportTicketTypeFeatureRequest;
-        self.title = NSLocalizedStringFromTableInBundle(@"Request a feature", @"Localizable", [NSBundle bundleForClass:[self class]], nil);
+        self.title = NSLocalizedStringFromTableInBundle(@"Request a Feature", @"Localizable", [NSBundle bundleForClass:[self class]], nil);
         self.subjectTextField.placeholder = NSLocalizedStringFromTableInBundle(@"Build all the things", @"Localizable", [NSBundle bundleForClass:[self class]], nil);
         self.descriptionPlaceholder.text = NSLocalizedStringFromTableInBundle(@"Describe the feature here", @"Localizable", [NSBundle bundleForClass:[self class]], nil);
     } else {
         self.ticket.ticketType = SupportTicketTypeProblem;
-        self.title = NSLocalizedStringFromTableInBundle(@"Report a problem", @"Localizable", [NSBundle bundleForClass:[self class]], nil);
+        self.title = NSLocalizedStringFromTableInBundle(@"Report a Problem", @"Localizable", [NSBundle bundleForClass:[self class]], nil);
     }
     
 }
@@ -156,21 +152,22 @@ static float DefaultToastDuration = 1.65f;
 - (IBAction)cancelButtonTouched:(id)sender
 {
     if (self.bodyTextView.text.length > 20) {
-        UIActionSheet *verifyActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Continue Editing" destructiveButtonTitle:@"Cancel Request" otherButtonTitles:nil];
-        if (self.tabBarController) {
-            [verifyActionSheet showFromTabBar:self.tabBarController.tabBar];
-        } else {
-            [verifyActionSheet showFromBarButtonItem:_cancelButton animated:true];
-        }
+        
+        NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+        NSString *cancelButton = NSLocalizedStringFromTableInBundle(@"Continue Editing", nil, bundle, @"");
+        NSString *destructiveButton = NSLocalizedStringFromTableInBundle(@"Cancel Request", nil, bundle, @"");
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:cancelButton style:UIAlertActionStyleCancel handler:nil];
+        UIAlertAction *destroy = [UIAlertAction actionWithTitle:destructiveButton style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+            [self dismissViewControllerAnimated:YES completion:nil];
+        }];
+        
+        [alert addAction:cancel];
+        [alert addAction:destroy];
+        alert.popoverPresentationController.barButtonItem = _cancelButton;
+        [self presentViewController:alert animated:YES completion:nil];
         
     } else {
-        [self dismissViewControllerAnimated:YES completion:nil];
-    }
-}
-
-- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    if (buttonIndex == actionSheet.destructiveButtonIndex) {
         [self dismissViewControllerAnimated:YES completion:nil];
     }
 }
@@ -190,6 +187,15 @@ static float DefaultToastDuration = 1.65f;
     
 }
 
+- (void)alertWithTitle:(NSString *)title message:(NSString *)message {
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *action = [UIAlertAction actionWithTitle:NSLocalizedString(@"Dismiss", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+    }];
+    [alert addAction:action];
+    [self presentViewController:alert animated:true completion:nil];
+}
+
 - (IBAction)sendButtonTouched:(id)sender
 {
     
@@ -203,19 +209,21 @@ static float DefaultToastDuration = 1.65f;
     
     NSURL *baseURL = TheKeymaster.currentClient.baseURL ? TheKeymaster.currentClient.baseURL : [NSURL URLWithString:@"https://canvas.instructure.com"];
     SupportTicketManager *manager = [[SupportTicketManager alloc] initWithBaseURL:baseURL];
-    __block CWStatusBarNotification *notification = [CWStatusBarNotification new];
-    notification.notificationLabelTextColor = [UIColor whiteColor];
-    notification.notificationLabelBackgroundColor = [UIColor colorWithRed:0.0/255.0 green:122.0/255.0 blue:253.0/255.0 alpha:1.0];
     
+    NSBundle *keymaster = [NSBundle bundleForClass:[self class]];
     [manager sendTicket:self.ticket withSuccess:^{
-        [notification displayNotificationWithMessage:@"Thanks, your request was received!"
-                                              forDuration:DefaultToastDuration];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSString *title = NSLocalizedStringFromTableInBundle(@"Success!", @"Localizable", keymaster, @"");
+            NSString *message = NSLocalizedStringFromTableInBundle(@"Thanks, your request was received!", @"Localizable", keymaster, @"");
+            [self alertWithTitle:title message:message];
+        });
     } failure:^(NSError *error) {
-        [notification displayNotificationWithMessage:@"Request Failed!  Check network and try again!"
-                                         forDuration:DefaultToastDuration];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSString *title = NSLocalizedStringFromTableInBundle(@"Request Failed!", @"Localizable", keymaster, @"");
+            NSString *message = NSLocalizedStringFromTableInBundle(@"Check network and try again!", @"Localizable", keymaster, @"");
+            [self alertWithTitle:title message:message];
+        });
     }];
-    
-    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)promptUserToEnterMissingFields
@@ -230,8 +238,10 @@ static float DefaultToastDuration = 1.65f;
         requiredActionString = NSLocalizedString(@"describe your problem", nil);
     }
     
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:[NSString stringWithFormat:@"All Fields are required. Please %@.", requiredActionString] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    [alert show];
+    NSString *message = [NSString stringWithFormat:@"All Fields are required. Please %@.", requiredActionString];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:message preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"") style:UIAlertActionStyleDefault handler:nil]];
+    [self.presentingViewController presentViewController:alert animated:true completion:nil];
 }
 
 - (void)makePretty

@@ -21,7 +21,6 @@
 import React, { Component } from 'react'
 import {
   View,
-  WebView,
   Image,
   StyleSheet,
   Text,
@@ -41,6 +40,7 @@ import Images from '../../images'
 import Navigator from '../../routing/Navigator'
 import Video from './Video'
 import md5 from 'md5'
+import CanvasWebView from './CanvasWebView'
 
 type Props = {
   attachment: Attachment,
@@ -48,8 +48,16 @@ type Props = {
   navigator: Navigator,
 }
 
-export default class AttachmentView extends Component<Props, any> {
-  state = {
+type State = {
+  size: { width: number, height: number },
+  filePath: ?string,
+  jobID?: ?number,
+  error?: ?string,
+  downloadPromise?: Promise<*>,
+}
+
+export default class AttachmentView extends Component<Props, State> {
+  state: State = {
     size: { width: 0, height: 0 },
     filePath: null,
   }
@@ -98,10 +106,6 @@ export default class AttachmentView extends Component<Props, any> {
     }
   }
 
-  done = () => {
-    this.props.navigator.dismiss()
-  }
-
   share = () => {
     if (this.state.filePath) {
       ActionSheetIOS.showShareActionSheetWithOptions({ url: this.state.filePath }, (error: Error) => {
@@ -139,7 +143,13 @@ export default class AttachmentView extends Component<Props, any> {
         if (this.props.attachment['content-type'] && this.props.attachment['content-type'].indexOf('audio') !== -1) {
           body = this.renderAudioVisual()
         } else {
-          body = <WebView source={{ uri: this.state.filePath }} style={styles.document} />
+          body = (
+            <CanvasWebView
+              navigator={this.props.navigator}
+              source={{ uri: this.state.filePath }}
+              style={styles.document}
+            />
+          )
         }
     }
     return body
@@ -147,8 +157,9 @@ export default class AttachmentView extends Component<Props, any> {
 
   renderAudioVisual () {
     return (
-      <View style={styles.centeredContainer} onLayout={this.handleLayout}>
+      <View style={styles.centeredContainer}>
         <Video
+          // $FlowFixMe
           source={{ uri: this.state.filePath }}
           style={{ width: this.state.size.width, height: Math.ceil(this.state.size.width * 9.0 / 16.0) }}
         />
@@ -160,29 +171,22 @@ export default class AttachmentView extends Component<Props, any> {
     return (
       <Screen
         title={i18n('Attachment')}
-        navBarStyle='light'
         navBarTitleColors={Colors.darkText}
         navBarButtonColor={Colors.link}
-        drawUnderNavBar={true}
-        leftBarButtons={[{
-          testID: 'attachment-view.done-btn',
-          title: i18n('Done'),
-          style: 'done',
-          action: this.done,
-        }]}
+        drawUnderNavBar
         rightBarButtons={[{
           testID: 'attachment-view.share-btn',
           image: Images.share,
           action: this.share,
         }]}
       >
-        <View style={styles.container}>
-          { (this.state.jobID !== null) &&
+        <View style={styles.container} onLayout={this.handleLayout}>
+          { (this.state.filePath == null) &&
             <View style={styles.centeredContainer}>
               <ActivityIndicator />
             </View>
           }
-          { this.state.jobID === null && this.renderBody() }
+          { this.state.filePath != null && this.renderBody() }
         </View>
       </Screen>
     )

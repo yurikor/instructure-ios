@@ -18,71 +18,96 @@
 
 import React, { Component } from 'react'
 import {
-  WebView,
   StyleSheet,
-  View,
+  WebView,
+  NativeModules,
+  Clipboard,
 } from 'react-native'
 
 import isEqual from 'lodash/isEqual'
+import RNFS from 'react-native-fs'
+import canvas from './../../../canvas-api'
 
-const source = require('../../../../lib/zss-rich-text-editor.html')
+const { NativeFileSystem } = NativeModules
 
 type Props = {
-  onInputChange?: (value: string) => void,
-  onHeightChange?: (height: number) => void,
-  html?: string,
   onLoad?: () => void,
   onFocus?: () => void,
   onBlur?: () => void,
-  editorItemsChanged?: (items: [string]) => void,
+  editorItemsChanged?: (items: string[]) => void,
   scrollEnabled?: boolean,
   navigator: Navigator,
+  getFile: typeof canvas.getFile,
 }
 
-export default class ZSSRichTextEditor extends Component<Props, any> {
-  webView: WebView
-  showingLinkModal: boolean
+type State = {
+  source: ?string,
+  linkModalVisible: boolean,
+  items: string[],
+}
 
-  constructor (props: Props) {
-    super(props)
-
-    this.state = {
-      linkModalVisible: false,
-      lastHeightUpdate: 0,
-      setHTML: false,
-    }
+function extractFileID (string: string): ?string {
+  // cant have spaces
+  if (string.indexOf(' ') >= 0) {
+    return null
   }
 
-  componentWillReceiveProps (newProps: Props) {
-    if (newProps.html && !this.state.setHTML) {
-      this.updateHTML(newProps.html)
-    }
+  // make sure it's a download url
+  const urlMatcher = /^https:\/\/.*[^\s]\/files\/\d+\/download$/
+  if (!string.match(urlMatcher)) {
+    return null
+  }
+
+  const match = string.match(/files\/\d+\/download/)
+
+  // $FlowFixMe - `match` is guaranteed to be defined because of previous check
+  return match[0].split('/')[1]
+}
+
+export default class ZSSRichTextEditor extends Component<Props, State> {
+  static defaultProps = {
+    getFile: canvas.getFile,
+  }
+
+  webView: ?WebView
+  showingLinkModal: boolean
+  onHTML: ?((string) => void)
+
+  state: State = {
+    linkModalVisible: false,
+    items: [],
+    source: null,
+  }
+
+  async componentDidMount () {
+    const path = await NativeFileSystem.pathForResource('zss-rich-text-editor', 'html')
+    const source = await RNFS.readFile(`file://${path}`)
+    this.setState({ source })
   }
 
   render () {
     return (
-      <View style={styles.container}>
-        <WebView
-          source={source}
-          ref={webView => { this.webView = webView }}
-          onMessage={this._onMessage}
-          onLoad={this._onLoad}
-          scalesPageToFit={true}
-          scrollEnabled={this.props.scrollEnabled === undefined || this.props.scrollEnabled}
-          style={{ backgroundColor: 'transparent' }}
-        />
-      </View>
+      <WebView
+        source={{ html: this.state.source || '', baseUrl: RNFS.MainBundlePath }}
+        ref={webView => { this.webView = webView }}
+        onMessage={this._onMessage}
+        onLoad={this._onLoad}
+        scalesPageToFit={true}
+        scrollEnabled={this.props.scrollEnabled === undefined || this.props.scrollEnabled}
+        style={styles.editor}
+        hideKeyboardAccessoryView={true}
+      />
     )
   }
 
   // PUBLIC ACTIONS
 
   setBold = () => {
-    this.trigger('zss_editor.setBold();', true)
+    this.trigger('zss_editor.setBold();')
   }
 
   setItalic = () => {
-    this.trigger('zss_editor.setItalic();', true)
+    this.trigger('zss_editor.setItalic();')
   }
 
   insertLink = () => {
@@ -96,32 +121,27 @@ export default class ZSSRichTextEditor extends Component<Props, any> {
     this.trigger('zss_editor.prepareInsert();')
   }
 
-  updateHTML = (html: string) => {
-    const cleanHTML = this._escapeJSONString(html)
-    this.trigger(`zss_editor.setHTML("${cleanHTML}");`, true)
-    this.setState({ setHTML: true })
+  updateHTML = (html: ?string) => {
+    const cleanHTML = this._escapeJSONString(html || '')
+    this.trigger(`zss_editor.setHTML("${cleanHTML}");`)
   }
 
   setCustomCSS = (css?: string) => {
     if (!css) { css = '' }
-    const images = 'img { max-width: 100%; }'
-
-    const styles = [images, css].join(' ')
-
-    this.trigger(`zss_editor.setCustomCSS('${styles}');`, true)
+    this.trigger(`zss_editor.setCustomCSS('${css}');`)
   }
 
   setUnorderedList = () => {
-    this.trigger(`zss_editor.setUnorderedList();`, true)
+    this.trigger(`zss_editor.setUnorderedList();`)
   }
 
   setOrderedList = () => {
-    this.trigger(`zss_editor.setOrderedList();`, true)
+    this.trigger(`zss_editor.setOrderedList();`)
   }
 
   setTextColor = (color: string) => {
     this.prepareInsert()
-    this.trigger(`zss_editor.setTextColor('${color}');`, true)
+    this.trigger(`zss_editor.setTextColor('${color}');`)
   }
 
   focusEditor = () => {
@@ -132,8 +152,12 @@ export default class ZSSRichTextEditor extends Component<Props, any> {
     this.trigger('zss_editor.blurEditor();')
   }
 
-  getHTML = () => {
-    this.trigger(`setTimeout(function() { zss_editor.postInput() }, 1);`)
+  getHTML = async () => {
+    const promise = new Promise((resolve, reject) => {
+      this.onHTML = resolve
+    })
+    this.trigger(`zss_editor.postHTML();`)
+    return promise
   }
 
   undo = () => {
@@ -142,13 +166,6 @@ export default class ZSSRichTextEditor extends Component<Props, any> {
 
   redo = () => {
     this.trigger('zss_editor.redo();')
-  }
-
-  setNeedsHeightUpdate = () => {
-    this.trigger(`
-      var height = $('#zss_editor_content').height();
-      postMessage(JSON.stringify({type: 'HEIGHT_UPDATE', data: height}));
-    `)
   }
 
   setContentHeight = (height: number) => {
@@ -163,11 +180,23 @@ export default class ZSSRichTextEditor extends Component<Props, any> {
     }
   }
 
-  trigger = (js: string, inputChanged?: boolean) => {
-    this.webView.injectJavaScript(js)
-    if (inputChanged) {
-      setTimeout(this.getHTML, 100)
-    }
+  insertImage = (url: string) => {
+    this.trigger(`zss_editor.insertImage('${url}');`)
+  }
+
+  insertVideoComment = (mediaID: string) => {
+    this.trigger(`zss_editor.insertVideoComment('${mediaID}');`)
+  }
+
+  insertHTML = (html: string) => {
+    this.trigger(`zss_editor.insertHTML('${html}');`)
+  }
+
+  trigger = async (js: string) => {
+    if (!this.webView) return
+    try {
+      await this.webView.injectJavaScript(js)
+    } catch (e) {}
   }
 
   // PRIVATE
@@ -193,12 +222,36 @@ export default class ZSSRichTextEditor extends Component<Props, any> {
       case 'EDITOR_BLURRED':
         this._handleBlur()
         break
-      case 'EDITOR_INPUT':
-        this._handleInput(message.data)
+      case 'EDITOR_HTML':
+        this._handleHTML(message.data)
         break
-      case 'HEIGHT_UPDATE':
-        this._handleHeight(message.data)
+      case 'EDITOR_PASTE':
+        this._handlePaste()
         break
+    }
+  }
+
+  _handlePaste = async () => {
+    let string = await Clipboard.getString()
+    if (!string) return
+
+    try {
+      let fileID = extractFileID(string)
+      if (fileID) {
+        let { data } = await this.props.getFile(fileID)
+        this.prepareInsert()
+        if (data.mime_class === 'image') {
+          this.insertImage(data.url)
+        } else {
+          this.insertHTML(string)
+        }
+      } else {
+        this.prepareInsert()
+        this.insertHTML(string)
+      }
+    } catch (error) {
+      this.prepareInsert()
+      this.insertHTML(string)
     }
   }
 
@@ -224,20 +277,17 @@ export default class ZSSRichTextEditor extends Component<Props, any> {
     this._showLinkModal(null, selection)
   }
 
-  _handleInput = (value) => {
-    if (this.props.onInputChange) {
-      this.props.onInputChange(value)
-    }
-    this.setNeedsHeightUpdate()
+  _handleHTML = (value) => {
+    this.onHTML && this.onHTML(value)
   }
 
   _insertLink = (url, title) => {
-    this.trigger(`zss_editor.insertLink("${url}", "${title}");`, true)
+    this.trigger(`zss_editor.insertLink("${url}", "${title}");`)
     this._hideLinkModal()
   }
 
   _updateLink = (url, title) => {
-    this.trigger(`zss_editor.updateLink("${url}", "${title}");`, true)
+    this.trigger(`zss_editor.updateLink("${url}", "${title}");`)
     this._hideLinkModal()
   }
 
@@ -268,18 +318,14 @@ export default class ZSSRichTextEditor extends Component<Props, any> {
     this.showingLinkModal = false
   }
 
-  _onZSSLoaded = () => {
-    if (this.props.html) {
-      this.updateHTML(this.props.html)
-    }
+  _onZSSLoaded = async () => {
+    this.setCustomCSS()
+    await this._setVideoPreviewImagePath()
+    this.props.onLoad && this.props.onLoad()
   }
 
   _onLoad = () => {
     this._zssInit()
-    this.setCustomCSS()
-    if (this.props.onLoad) {
-      this.props.onLoad()
-    }
   }
 
   _zssInit () {
@@ -298,12 +344,9 @@ export default class ZSSRichTextEditor extends Component<Props, any> {
     }
   }
 
-  _handleHeight (height: number) {
-    if (this.props.onHeightChange && height !== this.state.lastHeightUpdate) {
-      this.setState({ lastHeightUpdate: height })
-      // $FlowFixMe
-      this.props.onHeightChange(height)
-    }
+  _setVideoPreviewImagePath = async () => {
+    const path = await NativeFileSystem.pathForResource('video-preview', 'png')
+    await this.trigger(`zss_editor.videoPreviewImagePath = '${path}';`)
   }
 
   // UTILITIES
@@ -322,7 +365,8 @@ export default class ZSSRichTextEditor extends Component<Props, any> {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  editor: {
+    backgroundColor: 'transparent',
     flex: 1,
     flexDirection: 'column',
   },

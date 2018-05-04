@@ -39,11 +39,19 @@ class ModuleItemViewModel: NSObject {
         let masteryPathsItemModuleItemID = self.moduleItem.producer.map { $0 as? MasteryPathsItem }.map { $0?.moduleItemID }.skipRepeats(==)
         let url = self.url.producer.skipRepeats(==)
         let moduleID = self.moduleID.producer.skipRepeats(==)
-        return SignalProducer.combineLatest(url, content, masteryPathsItemModuleItemID, moduleID).map { url, content, moduleItemID, moduleID in
+        let courseID = self.moduleItem.producer.map { $0?.courseID }.skipRepeats(==)
+        let htmlURL = self.moduleItem.producer.map { $0?.htmlURL }.skipRepeats(==)
+        return SignalProducer.combineLatest(url, content, masteryPathsItemModuleItemID, moduleID, courseID, htmlURL).map { url, content, moduleItemID, moduleID, courseID, htmlURL in
             if let content = content {
                 switch content {
                 case .externalURL(url: let url):
-                    return WebBrowserViewController(url: url, delegate: self)
+                    let webView = CanvasWebView()
+                    webView.load(source: .url(url))
+                    return CanvasWebViewController(webView: webView, showDoneButton: false)
+                case .externalTool(_, _):
+                    if let url = url {
+                        return LTIViewController(toolName: "", courseID: courseID, launchURL: url, in: self.session, fallbackURL: htmlURL.flatMap(URL.init))
+                    }
                 case .masteryPaths:
                     if let moduleItemID = moduleItemID, let moduleID = moduleID {
                         return try! MasteryPathSelectOptionViewController(session: self.session, moduleID: moduleID, itemIDWithMasteryPaths: moduleItemID)
@@ -51,7 +59,11 @@ class ModuleItemViewModel: NSObject {
                 default: break
                 }
             }
-            return url.flatMap(Router.shared().controller)
+            if let url = url {
+                let controller = Router.shared().controller(forHandling: url)
+                return controller
+            }
+            return nil
         }
     }()
 
@@ -121,9 +133,10 @@ class ModuleItemViewModel: NSObject {
         vm.icon <~ self.moduleItem.producer.map { $0?.icon }
         vm.accessibilityIdentifier.value = "module_item"
         vm.titleLineBreakMode = .byWordWrapping
-
+        
+        let type = self.moduleItem.value?.contentType
         vm.accessoryView <~ SignalProducer.combineLatest(self.completed.producer, self.locked.producer).map { (completed, locked) -> UIView? in
-            guard !locked else {
+            if locked && type != .assignment {
                 let imageView = UIImageView(image: .icon(.lock))
                 imageView.tintColor = .prettyGray()
                 return imageView
@@ -159,9 +172,9 @@ class ModuleItemViewModel: NSObject {
                 }
                 return fontStyle
             }
-        vm.titleTextColor <~ self.locked.producer.map { $0 ? .lightGray : .black }
+        vm.titleTextColor <~ self.locked.producer.map { $0 && type != .assignment ? .lightGray : .black }
         vm.indentationLevel <~ self.moduleItem.producer.map { $0?.indent ?? 0 }.map { Int($0) }
-        vm.selectionEnabled <~ self.locked.producer.map { !$0 }
+        vm.selectionEnabled <~ self.locked.producer.map { !$0 || type == .assignment }
         vm.setSelected <~ self.selected
 
         let contentType = self.moduleItem.producer.map { $0?.contentType.accessibilityLabel }
@@ -183,7 +196,7 @@ class ModuleItemViewModel: NSObject {
         observer = try ModuleItem.observer(session, moduleItemID: moduleItemID)
         moduleItem = MutableProperty(observer.object)
         moduleItem <~ observer.signal.map { $0.1 }.filter { !($0?.isDeleted ?? false) }
-        moduleID = Property(initial: nil, then: moduleItem.signal.map { $0?.moduleID }.skipRepeats(==))
+        moduleID = Property(initial: nil, then: moduleItem.producer.map { $0?.moduleID }.skipRepeats(==))
 
         let moduleSignal = moduleID
             .signal
@@ -333,7 +346,7 @@ class ModuleItemViewModel: NSObject {
 
 // MARK: - WebBrowserViewControllerDelegate
 extension ModuleItemViewModel: WebBrowserViewControllerDelegate {
-    func webBrowser(_ webBrowser: WebBrowserViewController!, didFinishLoading webView: UIWebView!) {
+    func webBrowser(_ webBrowser: WebBrowserViewController!, didFinishLoading webView: WKWebView!) {
         if moduleItemMatches(webBrowser.url) {
             markAsViewedAction.apply(()).start()
         }

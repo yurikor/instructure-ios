@@ -205,9 +205,6 @@
 /* (No Comment) */
 "All members" = "All members";
 
-/* Allow Notifications in Settings */
-"Allow Notifications in Settings" = "Allow notifications in settings";
-
 /* (No Comment) */
 "An unknown error occurred" = "An unknown error occurred";
 
@@ -239,7 +236,7 @@
    Assignment module item type */
 "Assignment" = "Assignment";
 
-/* Title for Assignments view controller */
+/* (No Comment) */
 "Assignments" = "Assignments";
 
 /* (No Comment) */
@@ -275,6 +272,9 @@
 /* Calendar landing page title
    Calendar page title */
 "Calendar" = "Calendar";
+
+/* No comment provided by engineer. */
+"Calendar Event" = "Calendar event";
 
 /* (No Comment) */
 "Can't load tool" = "Cannot load tool";
@@ -384,8 +384,7 @@
 /* (No Comment) */
 "Course Syllabus" = "Course syllabus";
 
-/* Courses landing page title
-   Courses page title */
+/* Courses landing page title */
 "Courses" = "Courses";
 
 /* (No Comment) */
@@ -402,6 +401,9 @@
 
 /* (No Comment) */
 "Customize" = "Customise";
+
+/* dashboard page title */
+"Dashboard" = "Dashboard";
 
 /* (No Comment) */
 "Delete" = "Delete";
@@ -481,10 +483,10 @@
 /* (No Comment) */
 "Edit" = "Edit";
 
-/* Edit course list title */
+/* (No Comment) */
 "Edit Course List" = "Edit course list";
 
-/* Edit group list title */
+/* (No Comment) */
 "Edit Group List" = "Edit group list";
 
 /* (No Comment) */
@@ -496,7 +498,7 @@
 /* (No Comment) */
 "Email" = "Email";
 
-/* Prompt asking user to enable push notifications */
+/* (No Comment) */
 "Enable Push Notifications" = "Enable push notifications";
 
 /* (No Comment) */
@@ -601,19 +603,19 @@
 /* (No Comment) */
 "Graded discussion. %g points possible." = "Marked discussion. %g points possible.";
 
-/* Title for Grades view controller */
+/* (No Comment) */
 "Grades" = "Marks";
 
 /* (No Comment) */
 "Group conversation" = "Group conversation";
 
-/* Groups page title */
+/* (No Comment) */
 "Groups" = "Groups";
 
 /* (No Comment) */
 "Help" = "Help";
 
-/* Accessibility label for toggling grades to hidden */
+/* (No Comment) */
 "Hide Grades" = "Hide marks";
 
 /* (No Comment) */
@@ -667,7 +669,7 @@
 /* (No Comment) */
 "Large file" = "Large file";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Later" = "Later";
 
 /* (No Comment) */
@@ -862,7 +864,7 @@
 /* Nothing to see here. */
 "Nothing to see here." = "Nothing to see here.";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Notification" = "Notification";
 
 /* Settings entry title for Notification Preferences */
@@ -955,7 +957,7 @@
 /* (No Comment) */
 "Privacy Policy" = "Privacy Policy";
 
-/* (No Comment) */
+/* No comment provided by engineer. */
 "Profile" = "Profile";
 
 /* Quiz module item type */
@@ -1033,9 +1035,6 @@
 /* (No Comment) */
 "Search for recipients" = "Search for recipients";
 
-/* Placeholder text for search bar on assignments page */
-"Search here..." = "Search here...";
-
 /* No comment provided by engineer. */
 "Select Option" = "Select option";
 
@@ -1066,7 +1065,7 @@
 /* (No Comment) */
 "Settings" = "Settings";
 
-/* Accessibility label for toggling grades to visible */
+/* (No Comment) */
 "Show Grades" = "Show marks";
 
 /* (No Comment) */
@@ -1209,6 +1208,9 @@
 /* (No Comment) */
 "Text entry" = "Text entry";
 
+/* No comment provided by engineer. */
+"That page has been disabled for this course" = "That page has been disabled for this course";
+
 /* (No Comment) */
 "The recipients could not be added. Please try again. (%@)" = "The recipients could not be added. Please try again. (%@)";
 
@@ -1308,7 +1310,7 @@
 /* Label read aloud to describe module item type */
 "Type: %@" = "Type: %@";
 
-/* Notification over status bar that displays when not connected to the internet. */
+/* (No Comment) */
 "Uh-oh! No Internet Connection" = "Uh-oh! No Internet connection";
 
 /* (No Comment) */
@@ -1320,10 +1322,10 @@
 /* (No Comment) */
 "Unable to upload to server" = "Unable to upload to server";
 
-/* Grade unavailable */
+/* (No Comment) */
 "Unavailable" = "Unavailable";
 
-/* Title for grade button when no grade is present */
+/* (No Comment) */
 "Ungraded" = "Ungraded";
 
 /* (No Comment) */
@@ -1371,7 +1373,7 @@
 /* (No Comment) */
 "Video error" = "Video error";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "View" = "View";
 
 /* (No Comment) */

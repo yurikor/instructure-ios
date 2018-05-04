@@ -13,7 +13,7 @@ exports[`Attachments renders attachments 1`] = `
       },
     ]
   }
-  navBarColor="#fff"
+  navBarStyle="light"
   rightBarButtons={
     Array [
       Object {
@@ -26,6 +26,8 @@ exports[`Attachments renders attachments 1`] = `
       },
     ]
   }
+  showDismissButton={false}
+  statusBarStyle="default"
   title="Attachments"
 >
   <View
@@ -36,25 +38,37 @@ exports[`Attachments renders attachments 1`] = `
       }
     }
   >
-    <RCTScrollView
+    <Component
       ItemSeparatorComponent={[Function]}
       ListEmptyComponent={[Function]}
       data={
         Array [
           Object {
             "data": Object {
+              "content-type": "application/document",
               "display_name": "Book Report",
               "filename": "Attachment 1.jpg",
+              "hidden": false,
               "id": "1",
+              "lock_at": null,
+              "locked": false,
               "mime_class": "document",
+              "parent_folder_id": null,
               "preview_url": "/",
               "size": 488212,
               "thumbnail_url": "http://fillmurray.com/322/200",
+              "unlock_at": null,
               "uri": "file://somewhere/on/disk.jpg",
               "url": "http://canvaslms.com/bookreport",
+              "usage_rights": Object {
+                "legal_copyright": "",
+                "use_justification": "own_copyright",
+              },
             },
             "error": null,
             "fileID": "1",
+            "id": "1",
+            "index": 0,
             "progress": Object {
               "loaded": 0,
               "total": 0,
@@ -62,18 +76,30 @@ exports[`Attachments renders attachments 1`] = `
           },
           Object {
             "data": Object {
+              "content-type": "application/document",
               "display_name": "Book Report",
               "filename": "Attachment 1.jpg",
+              "hidden": false,
               "id": "2",
+              "lock_at": null,
+              "locked": false,
               "mime_class": "document",
+              "parent_folder_id": null,
               "preview_url": "/",
               "size": 488212,
               "thumbnail_url": "http://fillmurray.com/322/200",
+              "unlock_at": null,
               "uri": "file://somewhere/on/disk.jpg",
               "url": "http://canvaslms.com/bookreport",
+              "usage_rights": Object {
+                "legal_copyright": "",
+                "use_justification": "own_copyright",
+              },
             },
             "error": null,
             "fileID": "2",
+            "id": "2",
+            "index": 1,
             "progress": Object {
               "loaded": 0,
               "total": 0,
@@ -81,342 +107,26 @@ exports[`Attachments renders attachments 1`] = `
           },
         ]
       }
-      disableVirtualization={false}
-      getItem={[Function]}
-      getItemCount={[Function]}
-      horizontal={false}
-      initialNumToRender={10}
       keyExtractor={[Function]}
-      maxToRenderPerBatch={10}
-      numColumns={1}
-      onContentSizeChange={[Function]}
-      onEndReachedThreshold={2}
-      onLayout={[Function]}
-      onMomentumScrollEnd={[Function]}
-      onScroll={[Function]}
-      onScrollBeginDrag={[Function]}
-      onScrollEndDrag={[Function]}
       renderItem={[Function]}
-      scrollEventThrottle={50}
-      stickyHeaderIndices={Array []}
       testID="attachments.list.list"
-      updateCellsBatchingPeriod={50}
-      viewabilityConfigCallbackPairs={Array []}
-      windowSize={21}
-    >
-      <View>
-        <View
-          onLayout={[Function]}
-          style={null}
-        >
-          <TouchableHighlight
-            accessibilityLabel={undefined}
-            accessibilityTraits={
-              Array [
-                "button",
-              ]
-            }
-            accessible={false}
-            onPress={[Function]}
-            style={
-              Array [
-                undefined,
-                undefined,
-              ]
-            }
-            testID="attachments.attachment-row.0"
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "alignItems": "center",
-                    "backgroundColor": "white",
-                    "flex": 1,
-                    "flexDirection": "row",
-                    "minHeight": 54,
-                    "paddingBottom": 12,
-                    "paddingLeft": 16,
-                    "paddingRight": 16,
-                    "paddingTop": 12,
-                  },
-                  Object {
-                    "backgroundColor": "white",
-                  },
-                ]
-              }
-            >
-              <View
-                accessibilityLabel="Upload complete"
-                accessible={true}
-                style={
-                  Object {
-                    "marginRight": 16,
-                  }
-                }
-              >
-                <Image
-                  source={
-                    Object {
-                      "testUri": "../../../src/images/attachments/complete-icon.png",
-                    }
-                  }
-                  testID="attachments.attachment-row.0.icon.complete"
-                />
-              </View>
-              <View
-                style={
-                  Object {
-                    "flex": 1,
-                    "flexDirection": "column",
-                    "justifyContent": "center",
-                  }
-                }
-              >
-                <Text
-                  accessible={true}
-                  allowFontScaling={true}
-                  ellipsizeMode="tail"
-                  numberOfLines={0}
-                  style={
-                    Array [
-                      Object {
-                        "fontFamily": ".SFUIDisplay",
-                      },
-                      Object {
-                        "color": "#2D3B45",
-                        "fontSize": 16,
-                      },
-                      Array [
-                        Object {
-                          "fontWeight": "600",
-                        },
-                        undefined,
-                      ],
-                      Object {
-                        "fontFamily": ".SFUIDisplay-semibold",
-                      },
-                    ]
-                  }
-                >
-                  Book Report
-                </Text>
-              </View>
-              <View
-                style={
-                  Object {
-                    "flex": 0,
-                  }
-                }
-              >
-                <View
-                  style={
-                    Object {
-                      "alignItems": "center",
-                      "flex": 1,
-                      "flexDirection": "row",
-                      "justifyContent": "flex-end",
-                    }
-                  }
-                >
-                  <TouchableHighlight
-                    accessibilityLabel="Remove attachment"
-                    accessibilityTraits="button"
-                    hitSlop={
-                      Object {
-                        "bottom": 8,
-                        "left": 8,
-                        "right": 8,
-                        "top": 8,
-                      }
-                    }
-                    onPress={[Function]}
-                    testID="attachments.attachment-row.0.remove.btn"
-                    underlayColor="white"
-                  >
-                    <Image
-                      source={
-                        Object {
-                          "testUri": "../../../src/images/x-icon.png",
-                        }
-                      }
-                      style={
-                        Object {
-                          "height": 14,
-                          "tintColor": "black",
-                          "width": 14,
-                        }
-                      }
-                    />
-                  </TouchableHighlight>
-                </View>
-              </View>
-            </View>
-          </TouchableHighlight>
-          <View
-            style={
-              Array [
-                Object {
-                  "backgroundColor": "#C7CDD1",
-                  "height": 0.5,
-                },
-                undefined,
-              ]
-            }
-          />
-        </View>
-        <View
-          onLayout={[Function]}
-          style={null}
-        >
-          <TouchableHighlight
-            accessibilityLabel={undefined}
-            accessibilityTraits={
-              Array [
-                "button",
-              ]
-            }
-            accessible={false}
-            onPress={[Function]}
-            style={
-              Array [
-                undefined,
-                undefined,
-              ]
-            }
-            testID="attachments.attachment-row.1"
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "alignItems": "center",
-                    "backgroundColor": "white",
-                    "flex": 1,
-                    "flexDirection": "row",
-                    "minHeight": 54,
-                    "paddingBottom": 12,
-                    "paddingLeft": 16,
-                    "paddingRight": 16,
-                    "paddingTop": 12,
-                  },
-                  Object {
-                    "backgroundColor": "white",
-                  },
-                ]
-              }
-            >
-              <View
-                accessibilityLabel="Upload complete"
-                accessible={true}
-                style={
-                  Object {
-                    "marginRight": 16,
-                  }
-                }
-              >
-                <Image
-                  source={
-                    Object {
-                      "testUri": "../../../src/images/attachments/complete-icon.png",
-                    }
-                  }
-                  testID="attachments.attachment-row.1.icon.complete"
-                />
-              </View>
-              <View
-                style={
-                  Object {
-                    "flex": 1,
-                    "flexDirection": "column",
-                    "justifyContent": "center",
-                  }
-                }
-              >
-                <Text
-                  accessible={true}
-                  allowFontScaling={true}
-                  ellipsizeMode="tail"
-                  numberOfLines={0}
-                  style={
-                    Array [
-                      Object {
-                        "fontFamily": ".SFUIDisplay",
-                      },
-                      Object {
-                        "color": "#2D3B45",
-                        "fontSize": 16,
-                      },
-                      Array [
-                        Object {
-                          "fontWeight": "600",
-                        },
-                        undefined,
-                      ],
-                      Object {
-                        "fontFamily": ".SFUIDisplay-semibold",
-                      },
-                    ]
-                  }
-                >
-                  Book Report
-                </Text>
-              </View>
-              <View
-                style={
-                  Object {
-                    "flex": 0,
-                  }
-                }
-              >
-                <View
-                  style={
-                    Object {
-                      "alignItems": "center",
-                      "flex": 1,
-                      "flexDirection": "row",
-                      "justifyContent": "flex-end",
-                    }
-                  }
-                >
-                  <TouchableHighlight
-                    accessibilityLabel="Remove attachment"
-                    accessibilityTraits="button"
-                    hitSlop={
-                      Object {
-                        "bottom": 8,
-                        "left": 8,
-                        "right": 8,
-                        "top": 8,
-                      }
-                    }
-                    onPress={[Function]}
-                    testID="attachments.attachment-row.1.remove.btn"
-                    underlayColor="white"
-                  >
-                    <Image
-                      source={
-                        Object {
-                          "testUri": "../../../src/images/x-icon.png",
-                        }
-                      }
-                      style={
-                        Object {
-                          "height": 14,
-                          "tintColor": "black",
-                          "width": 14,
-                        }
-                      }
-                    />
-                  </TouchableHighlight>
-                </View>
-              </View>
-            </View>
-          </TouchableHighlight>
-        </View>
-      </View>
-    </RCTScrollView>
+    />
     <AttachmentPicker
+      fileTypes={
+        Array [
+          "all",
+        ]
+      }
+      navigator={
+        Object {
+          "dismiss": [Function],
+          "dismissAllModals": [Function],
+          "isModal": false,
+          "pop": [Function],
+          "show": [Function],
+          "traitCollection": [Function],
+        }
+      }
       style={
         Object {
           "bottom": 0,
@@ -426,6 +136,7 @@ exports[`Attachments renders attachments 1`] = `
           "top": 0,
         }
       }
+      userFiles={false}
     />
   </View>
 </Screen>
@@ -444,7 +155,7 @@ exports[`Attachments renders empty state 1`] = `
       },
     ]
   }
-  navBarColor="#fff"
+  navBarStyle="light"
   rightBarButtons={
     Array [
       Object {
@@ -457,6 +168,8 @@ exports[`Attachments renders empty state 1`] = `
       },
     ]
   }
+  showDismissButton={false}
+  statusBarStyle="default"
   title="Attachments"
 >
   <View
@@ -467,119 +180,30 @@ exports[`Attachments renders empty state 1`] = `
       }
     }
   >
-    <RCTScrollView
+    <Component
       ItemSeparatorComponent={[Function]}
       ListEmptyComponent={[Function]}
       data={Array []}
-      disableVirtualization={false}
-      getItem={[Function]}
-      getItemCount={[Function]}
-      horizontal={false}
-      initialNumToRender={10}
       keyExtractor={[Function]}
-      maxToRenderPerBatch={10}
-      numColumns={1}
-      onContentSizeChange={[Function]}
-      onEndReachedThreshold={2}
-      onLayout={[Function]}
-      onMomentumScrollEnd={[Function]}
-      onScroll={[Function]}
-      onScrollBeginDrag={[Function]}
-      onScrollEndDrag={[Function]}
       renderItem={[Function]}
-      scrollEventThrottle={50}
-      stickyHeaderIndices={Array []}
       testID="attachments.list.list"
-      updateCellsBatchingPeriod={50}
-      viewabilityConfigCallbackPairs={Array []}
-      windowSize={21}
-    >
-      <View>
-        <View
-          onLayout={[Function]}
-          style={null}
-        >
-          <View
-            style={
-              Object {
-                "alignItems": "center",
-                "flex": 1,
-                "height": 400,
-                "justifyContent": "center",
-                "paddingHorizontal": 50,
-              }
-            }
-          >
-            <Image
-              source={
-                Object {
-                  "testUri": "../../../src/images/attachment-80.png",
-                }
-              }
-              style={
-                Object {
-                  "marginBottom": 36,
-                }
-              }
-            />
-            <Text
-              accessible={true}
-              allowFontScaling={true}
-              ellipsizeMode="tail"
-              style={
-                Array [
-                  Object {
-                    "fontFamily": ".SFUIDisplay",
-                  },
-                  Object {
-                    "color": "#2D3B45",
-                    "fontSize": 16,
-                  },
-                  Object {
-                    "fontSize": 24,
-                    "fontWeight": "600",
-                    "marginBottom": 4,
-                    "textAlign": "center",
-                  },
-                  Object {
-                    "fontFamily": ".SFUIDisplay-semibold",
-                  },
-                ]
-              }
-            >
-              No Attachments
-            </Text>
-            <Text
-              accessible={true}
-              allowFontScaling={true}
-              ellipsizeMode="tail"
-              style={
-                Array [
-                  Object {
-                    "fontFamily": ".SFUIDisplay",
-                  },
-                  Object {
-                    "color": "#2D3B45",
-                    "fontSize": 16,
-                  },
-                  Object {
-                    "color": "#8B969E",
-                    "fontSize": 16,
-                    "textAlign": "center",
-                  },
-                  Object {
-                    "fontFamily": ".SFUIDisplay",
-                  },
-                ]
-              }
-            >
-              Add an attachment by tapping the plus at the top right.
-            </Text>
-          </View>
-        </View>
-      </View>
-    </RCTScrollView>
+    />
     <AttachmentPicker
+      fileTypes={
+        Array [
+          "all",
+        ]
+      }
+      navigator={
+        Object {
+          "dismiss": [Function],
+          "dismissAllModals": [Function],
+          "isModal": false,
+          "pop": [Function],
+          "show": [Function],
+          "traitCollection": [Function],
+        }
+      }
       style={
         Object {
           "bottom": 0,
@@ -589,6 +213,7 @@ exports[`Attachments renders empty state 1`] = `
           "top": 0,
         }
       }
+      userFiles={false}
     />
   </View>
 </Screen>

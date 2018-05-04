@@ -1,3 +1,5 @@
+"Inbox" = "收件夾";
+
 /* Error message component with the report id */
 " Error report ID: (reportID)" = " 報告 ID 錯誤：(reportID)";
 
@@ -44,8 +46,14 @@
 /* all pages segmented control title */
 "All Pages" = "所有頁面";
 
-/* Title for push notification pre-authorization alert */
-"Allow Push Notifications?" = "允許推送通知？";
+/* No comment provided by engineer. */
+"All notifications are currently disabled." = "所有通知目前都已禁用。";
+
+/* No comment provided by engineer. */
+"All notifications are currently enabled." = "所有通知目前都已啟用。";
+
+/* No comment provided by engineer. */
+"Allow Notifications in Settings" = "在設定中允許通知消息";
 
 /* label for number of attempts that are allowed */
 "Allowed Attempts" = "允許的嘗試";
@@ -86,7 +94,8 @@
 /* Alert title when unable to parse JSON for notification preferences */
 "Can't Display Notification Preferences" = "無法顯示通知偏好設定";
 
-/* Cancel button title
+/* Cancel Audio recording.
+   Cancel button title
    Cancel submission option
    Cancel upload */
 "Cancel" = "取消";
@@ -119,6 +128,9 @@
 "Choose your answers below" = "於下方選擇您的回答";
 
 /* No comment provided by engineer. */
+"Collapse" = "收起";
+
+/* No comment provided by engineer. */
 "Comments" = "評論";
 
 /* File upload completed */
@@ -144,9 +156,6 @@
 
 /* Notification display name for course activities group */
 "Course Activities" = "課程活動";
-
-/* Button for creating a note from text selection */
-"Create Note" = "創建筆記";
 
 /* Header label for a screen that customizes a course */
 "Customize" = "自定義";
@@ -237,11 +246,17 @@
 /* No comment provided by engineer. */
 "Error parsing the Roll Call response. Unexpected null value: (k)" = "解析點名回應時出錯。意外的空值：(k)";
 
+/* No comment provided by engineer. */
+"Error retrieving tool launch URL" = "檢索工具啟動 URL 時發生錯誤";
+
 /* rollcall status error */
 "Error: No data returned from the rollcall api." = "錯誤：沒有從點名 API 返回的數據。";
 
 /* Exit button to leave the quiz */
 "Exit" = "退出";
+
+/* No comment provided by engineer. */
+"Expand" = "展開";
 
 /* Error message when the server returns a invalid response */
 "Expected a response in the 200-299 range. Got %@" = "回應應在 200-299 範圍內。得到%@";
@@ -288,15 +303,15 @@
 /* Hides the question list */
 "Hide Question List" = "隱藏問題清單";
 
-/* No comment provided by engineer. */
-"Inbox" = "收件匣";
-
 /* Indigo course color button */
 "Indigo" = "靛藍色";
 
 /* Mark student late
    Student is present in class */
 "Late" = "逾期";
+
+/* No comment provided by engineer. */
+"Launch External Tool" = "啟動外部工具";
 
 /* Leave the quiz */
 "Leave" = "離開";
@@ -332,9 +347,6 @@
 /* Next button for advancing a quiz */
 "Next" = "下一個";
 
-/* Title for no button for push notification pre-authorization alert */
-"No" = "不是";
-
 /* Alert title when unable to load communication channels */
 "No Communication Channels Found" = "無法找到通訊頻道";
 
@@ -361,9 +373,6 @@
 
 /* Title for alert showing when a quiz isn't takeable */
 "Not Takeable" = "不可用";
-
-/* No comment provided by engineer. */
-"Note..." = "筆記...";
 
 /* Error title for push notification registration error */
 "Notification Error" = "通知錯誤";
@@ -442,10 +451,10 @@
 "Question %@" = "問題%@";
 
 /* state for a question that has been flagged */
-"Question (questionNumber) Flagged" = "問題 (questionNumber) 已標註";
+"Question (number) Flagged" = "問題 (number) 已標註";
 
 /* state for unflagged question */
-"Question (questionNumber) Unflagged" = "問題 (questionNumber) 已取消標註";
+"Question (number) Unflagged" = "問題 (number) 已取消標註";
 
 /* label for the number of questions */
 "Questions" = "問題";
@@ -564,7 +573,7 @@
 "Submitting" = "提交";
 
 /* Label for indication of submitting quiz */
-"Submitting Quiz" = "正在提交考試";
+"Submitting Quiz" = "正在提交測驗";
 
 /* TA role */
 "TA" = "助教";
@@ -705,10 +714,7 @@
 "Unable to display any notification preferences returned from the server at this time." = "目前無法顯示來自此伺服器的任何通知偏好設定。";
 
 /* Alert message when unable to load communication channels */
-"Unable to load any Communication Channels at this time.  Error: (result.error?.localizedDescription)" = "目前無法載入任何通訊頻道。錯誤：（結果.錯誤？.localizedDescription）";
-
-/* Alert message when unable to load notification preferences */
-"Unable to load any notification preferences at this time.  Error: (result.error?.localizedDescription)" = "目前無法載入任何通知偏好設定。錯誤：（結果.錯誤？.localizedDescription）";
+"Unable to load any Communication Channels at this time." = "目前無法載入任何通訊頻道。";
 
 /* Error message when parsing communication preferences */
 "Unable to parse JSON for communication channels" = "未能解析通信頻道的 JSON";
@@ -758,14 +764,8 @@
 /* Error message for being unable to update a push notification preference */
 "We were not able to update this value with the server" = "無法在伺服器上更新這個數值";
 
-/* Message for push notification pre-authorization alert */
-"Would you like to allow Canvas to send you important notifications about announcements, course, assignments, etc?" = "您是否允許 Canvas 給您發送關於通告、課程和作業列表等內容的重要通知？";
-
 /* Yellow course color button */
 "Yellow" = "黃色";
-
-/* Title for yes button for push notification pre-authorization alert */
-"Yes" = "是";
 
 /* Description for Yo communication channel */
 "Yo" = "Yo";
@@ -796,4 +796,7 @@
 
 /* File upload in progress */
 "uploading..." = "上傳中......";
+
+/* web content failed to load */
+"⚠️ Error Loading Content" = "⚠️ 載入內容時發生錯誤";
 

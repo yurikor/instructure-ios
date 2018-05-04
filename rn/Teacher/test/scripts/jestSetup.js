@@ -15,10 +15,22 @@
 //
 
 /* @flow */
+import 'trace' // long async stack traces
+import 'clarify' // remove node noise from stack traces
+
+// import 'react-native-mock/mock'
+import { setSession } from '../../src/canvas-api/session'
+import Enzyme from 'enzyme'
+import Adapter from 'enzyme-adapter-react-16'
+Enzyme.configure({ adapter: new Adapter() })
+
+import * as template from '../../src/__templates__'
+
 import setupI18n from '../../i18n/setup'
 import { shouldTrackAsyncActions } from '../../src/redux/middleware/redux-promise'
 setupI18n('en')
 shouldTrackAsyncActions(false)
+setSession(template.session())
 
 const { NativeModules } = require('react-native')
 
@@ -30,18 +42,31 @@ require.requireActual('ActivityIndicator').displayName = 'ActivityIndicator'
 require.requireActual('TouchableOpacity').displayName = 'TouchableOpacity'
 
 jest.mock('../../src/canvas-api')
+global.fetch = require('jest-fetch-mock')
+
+global.requestIdleCallback = jest.fn(cb => cb())
 
 NativeModules.NativeAccessibility = {
   focusElement: jest.fn(),
+  refresh: jest.fn(),
 }
 
 NativeModules.NativeLogin = {
   logout: jest.fn(),
+  switchUser: jest.fn(),
+}
+
+NativeModules.WindowTraitsManager = {
+  currentWindowTraits: jest.fn(),
 }
 
 NativeModules.PushNotifications = {
   requestPermissions: jest.fn(),
   scheduleLocalNotification: jest.fn(),
+}
+
+NativeModules.CoreDataSync = {
+  syncAction: jest.fn(() => Promise.resolve()),
 }
 
 NativeModules.HapticFeedback = {
@@ -64,6 +89,51 @@ NativeModules.RNSound = {
   isWindows: jest.fn(),
 }
 
+NativeModules.NativeNotificationCenter = {
+  postAsyncActionNotification: jest.fn(),
+}
+
+NativeModules.TabBarItemCounts = {
+  updateUnreadMessageCount: jest.fn(),
+  updateTodoListCount: jest.fn(),
+}
+
+NativeModules.SettingsManager = {
+  settings: {
+    AppleLocale: 'en',
+  },
+}
+
+NativeModules.Helm = {
+  setScreenConfig: jest.fn(),
+  pushFrom: jest.fn(() => Promise.resolve()),
+  popFrom: jest.fn(() => Promise.resolve()),
+  present: jest.fn(() => Promise.resolve()),
+  dismiss: jest.fn(() => Promise.resolve()),
+  dismissAllModals: jest.fn(() => Promise.resolve()),
+  traitCollection: jest.fn(),
+}
+
+NativeModules.TabBarBadgeCounts = {
+  updateUnreadMessageCount: jest.fn(),
+  updateTodoListCount: jest.fn(),
+}
+
+NativeModules.CanvasWebViewManager = {
+  evaluateJavaScript: jest.fn(() => Promise.resolve()),
+}
+
+NativeModules.WebViewHacker = {
+  removeInputAccessoryView: jest.fn(),
+  setKeyboardDisplayRequiresUserAction: jest.fn(),
+}
+
+NativeModules.APIBridge = {
+  requestCompleted: jest.fn(),
+}
+
+jest.mock('NativeEventEmitter')
+
 jest.mock('NetInfo', () => ({
   addEventListener: jest.fn(),
   isConnected: {
@@ -77,6 +147,20 @@ jest.mock('Animated', () => {
   return {
     ...ActualAnimated,
     timing: (value, config) => {
+      return {
+        start: (callback) => {
+          callback && callback()
+        },
+      }
+    },
+    loop: (value, config) => {
+      return {
+        start: (callback) => {
+          callback && callback()
+        },
+      }
+    },
+    sequence: (value, config) => {
       return {
         start: (callback) => {
           callback && callback()
@@ -101,6 +185,7 @@ jest.mock('PickerIOS', () => {
 
 jest.mock('AccessibilityInfo', () => ({
   setAccessibilityFocus: jest.fn(),
+  announceForAccessibility: jest.fn(),
 }))
 
 jest.mock('LayoutAnimation', () => {
@@ -151,8 +236,20 @@ NativeModules.CameraManager = {
   BarCodeType: [],
 }
 
-// Fixes network calls in tests env.
-global.XMLHttpRequest = require('xhr2').XMLHttpRequest
+NativeModules.NativeFileSystem = {
+  pathForResource: jest.fn(() => Promise.resolve('/')),
+  convertToJPEG: jest.fn(() => Promise.resolve('/image.jpg')),
+}
+
 import './../../src/common/global-style'
 
 jest.mock('../../src/common/components/AuthenticatedWebView.js', () => 'AuthenticatedWebView')
+jest.mock('react-native-device-info', () => {
+  return {
+    getVersion: () => {
+      return '1.0'
+    },
+  }
+})
+
+jest.mock('../../src/canvas-api/httpClient')

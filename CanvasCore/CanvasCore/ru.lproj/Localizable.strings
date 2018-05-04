@@ -1,3 +1,5 @@
+"Inbox" = "Входящие";
+
 /* Error message component with the report id */
 " Error report ID: (reportID)" = " Идентификатор отчета об ошибках: (reportID)";
 
@@ -44,8 +46,14 @@
 /* all pages segmented control title */
 "All Pages" = "Все страницы";
 
-/* Title for push notification pre-authorization alert */
-"Allow Push Notifications?" = "Разрешить Push-уведомления?";
+/* No comment provided by engineer. */
+"All notifications are currently disabled." = "Все уведомления в настоящее время отключены.";
+
+/* No comment provided by engineer. */
+"All notifications are currently enabled." = "Все уведомления в настоящее время включены.";
+
+/* No comment provided by engineer. */
+"Allow Notifications in Settings" = "Разрешить уведомления в настройках";
 
 /* label for number of attempts that are allowed */
 "Allowed Attempts" = "Разрешенные попытки";
@@ -86,7 +94,8 @@
 /* Alert title when unable to parse JSON for notification preferences */
 "Can't Display Notification Preferences" = "Невозможно отобразить настройки уведомлений";
 
-/* Cancel button title
+/* Cancel Audio recording.
+   Cancel button title
    Cancel submission option
    Cancel upload */
 "Cancel" = "Отменить";
@@ -119,6 +128,9 @@
 "Choose your answers below" = "Выберите несколько из представленных ниже вариантов ответов";
 
 /* No comment provided by engineer. */
+"Collapse" = "Свернуть";
+
+/* No comment provided by engineer. */
 "Comments" = "Комментарии";
 
 /* File upload completed */
@@ -144,9 +156,6 @@
 
 /* Notification display name for course activities group */
 "Course Activities" = "Активность в рамках курса";
-
-/* Button for creating a note from text selection */
-"Create Note" = "Создать заметку";
 
 /* Header label for a screen that customizes a course */
 "Customize" = "Адаптировать";
@@ -237,11 +246,17 @@
 /* No comment provided by engineer. */
 "Error parsing the Roll Call response. Unexpected null value: (k)" = "Ошибка при анализе ответа проверки присутствия. Неожиданное нулевое значение: (k)";
 
+/* No comment provided by engineer. */
+"Error retrieving tool launch URL" = "Ошибка при запросе URL запуска инструмента";
+
 /* rollcall status error */
 "Error: No data returned from the rollcall api." = "Ошибка: Не получены данные от api проверки присутствия.";
 
 /* Exit button to leave the quiz */
 "Exit" = "Выход";
+
+/* No comment provided by engineer. */
+"Expand" = "Развернуть";
 
 /* Error message when the server returns a invalid response */
 "Expected a response in the 200-299 range. Got %@" = "Ожидался ответ в диапазоне 200-299. Получено %@";
@@ -288,15 +303,15 @@
 /* Hides the question list */
 "Hide Question List" = "Скрыть список вопросов";
 
-/* No comment provided by engineer. */
-"Inbox" = "Входящие";
-
 /* Indigo course color button */
 "Indigo" = "Индиго";
 
 /* Mark student late
    Student is present in class */
 "Late" = "Поздно";
+
+/* No comment provided by engineer. */
+"Launch External Tool" = "Запуск внешнего инструмента";
 
 /* Leave the quiz */
 "Leave" = "Оставить";
@@ -332,9 +347,6 @@
 /* Next button for advancing a quiz */
 "Next" = "Далее";
 
-/* Title for no button for push notification pre-authorization alert */
-"No" = "Нет";
-
 /* Alert title when unable to load communication channels */
 "No Communication Channels Found" = "Каналы связи не найдены";
 
@@ -361,9 +373,6 @@
 
 /* Title for alert showing when a quiz isn't takeable */
 "Not Takeable" = "Невозможно пройти";
-
-/* No comment provided by engineer. */
-"Note..." = "Заметка...";
 
 /* Error title for push notification registration error */
 "Notification Error" = "Ошибка уведомления";
@@ -442,10 +451,10 @@
 "Question %@" = "Вопрос %@";
 
 /* state for a question that has been flagged */
-"Question (questionNumber) Flagged" = "Вопрос (questionNumber) с флажком";
+"Question (number) Flagged" = "Вопрос (номер) с флажком";
 
 /* state for unflagged question */
-"Question (questionNumber) Unflagged" = "Вопрос (questionNumber) без флажка";
+"Question (number) Unflagged" = "Вопрос (номер) без флажка";
 
 /* label for the number of questions */
 "Questions" = "Вопросы";
@@ -705,10 +714,7 @@
 "Unable to display any notification preferences returned from the server at this time." = "Невозможно отобразить любые настройки уведомлений, возвращаемые с сервера в это время.";
 
 /* Alert message when unable to load communication channels */
-"Unable to load any Communication Channels at this time.  Error: (result.error?.localizedDescription)" = "Невозможно загрузить ни один канал связи в настоящее время.  Ошибка: (результат.ошибка?.localizedDescription)";
-
-/* Alert message when unable to load notification preferences */
-"Unable to load any notification preferences at this time.  Error: (result.error?.localizedDescription)" = "Невозможно загрузить ни одну настройку уведомления в настоящее время.  Ошибка: (результат.ошибка?.localizedDescription)";
+"Unable to load any Communication Channels at this time." = "Невозможно загрузить ни один канал связи в настоящее время.";
 
 /* Error message when parsing communication preferences */
 "Unable to parse JSON for communication channels" = "Невозможно провести синтаксический разбор JSON для каналов связи";
@@ -758,14 +764,8 @@
 /* Error message for being unable to update a push notification preference */
 "We were not able to update this value with the server" = "Мы не смогли обновить это значение с сервером";
 
-/* Message for push notification pre-authorization alert */
-"Would you like to allow Canvas to send you important notifications about announcements, course, assignments, etc?" = "Вы хотите позволить Canvas отправлять вам важные уведомления об объявлениях, курсах, заданиях и т.д.?";
-
 /* Yellow course color button */
 "Yellow" = "Желтый";
-
-/* Title for yes button for push notification pre-authorization alert */
-"Yes" = "Да";
 
 /* Description for Yo communication channel */
 "Yo" = "Привет";
@@ -796,4 +796,7 @@
 
 /* File upload in progress */
 "uploading..." = "выполняется отправка...";
+
+/* web content failed to load */
+"⚠️ Error Loading Content" = "⚠️ Ошибка при загрузке содержания";
 

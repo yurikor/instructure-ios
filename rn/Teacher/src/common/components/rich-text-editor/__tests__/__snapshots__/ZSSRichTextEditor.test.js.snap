@@ -42,39 +42,99 @@ Array [
 
 exports[`ZSSRichTextEditor notifies when editor focused 1`] = `Array []`;
 
+exports[`ZSSRichTextEditor paste catches error and pastes clipboard if network call fails 1`] = `
+Array [
+  Array [
+    "zss_editor.prepareInsert();",
+  ],
+  Array [
+    "zss_editor.insertHTML('https://canvas.instructure.com/files/1/download');",
+  ],
+]
+`;
+
+exports[`ZSSRichTextEditor paste downloads and embeds image files 1`] = `
+Array [
+  Array [
+    "zss_editor.prepareInsert();",
+  ],
+  Array [
+    "zss_editor.insertImage('https://verified-download-url.jpg');",
+  ],
+]
+`;
+
+exports[`ZSSRichTextEditor paste only matches file download urls 1`] = `
+Array [
+  Array [
+    "zss_editor.prepareInsert();",
+  ],
+  Array [
+    "zss_editor.insertHTML('https://one.com/files/1');",
+  ],
+]
+`;
+
+exports[`ZSSRichTextEditor paste pastes link when file is not an image 1`] = `
+Array [
+  Array [
+    "zss_editor.prepareInsert();",
+  ],
+  Array [
+    "zss_editor.insertHTML('https://canvas.instructure.com/files/1/download');",
+  ],
+]
+`;
+
+exports[`ZSSRichTextEditor paste pastes plain text 1`] = `
+Array [
+  Array [
+    "zss_editor.prepareInsert();",
+  ],
+  Array [
+    "zss_editor.insertHTML('plain text');",
+  ],
+]
+`;
+
+exports[`ZSSRichTextEditor paste will not be tricked by urls with spaces 1`] = `
+Array [
+  Array [
+    "zss_editor.prepareInsert();",
+  ],
+  Array [
+    "zss_editor.insertHTML('https://one.com/files/1/download https://two.com/files/2/download');",
+  ],
+]
+`;
+
 exports[`ZSSRichTextEditor renders 1`] = `
-<View
+<WebView
+  hideKeyboardAccessoryView={true}
+  onLoad={[Function]}
+  onMessage={[Function]}
+  scalesPageToFit={true}
+  scrollEnabled={true}
+  source={
+    Object {
+      "baseUrl": "file:///mainBundle",
+      "html": "",
+    }
+  }
   style={
     Object {
+      "backgroundColor": "transparent",
       "flex": 1,
       "flexDirection": "column",
     }
   }
->
-  <WebView
-    onLoad={[Function]}
-    onMessage={[Function]}
-    scalesPageToFit={true}
-    scrollEnabled={true}
-    source={Object {}}
-    style={
-      Object {
-        "backgroundColor": "transparent",
-      }
-    }
-  />
-</View>
+/>
 `;
 
-exports[`ZSSRichTextEditor responds when zss editor loads 1`] = `Array []`;
-
-exports[`ZSSRichTextEditor sends input changes 1`] = `
+exports[`ZSSRichTextEditor responds when zss editor loads 1`] = `
 Array [
   Array [
-    "
-      var height = $('#zss_editor_content').height();
-      postMessage(JSON.stringify({type: 'HEIGHT_UPDATE', data: height}));
-    ",
+    "zss_editor.setCustomCSS('');",
   ],
 ]
 `;
@@ -83,9 +143,6 @@ exports[`ZSSRichTextEditor sets custom css on web view loaded 1`] = `
 Array [
   Array [
     "zss_editor.init();",
-  ],
-  Array [
-    "zss_editor.setCustomCSS('img { max-width: 100%; } ');",
   ],
 ]
 `;
@@ -110,6 +167,22 @@ exports[`ZSSRichTextEditor triggers focus 1`] = `
 Array [
   Array [
     "zss_editor.focusEditor();",
+  ],
+]
+`;
+
+exports[`ZSSRichTextEditor triggers insertImage 1`] = `
+Array [
+  Array [
+    "zss_editor.insertImage('https://canvas.instructure.com/files/1/download');",
+  ],
+]
+`;
+
+exports[`ZSSRichTextEditor triggers insertVideoComment 1`] = `
+Array [
+  Array [
+    "zss_editor.insertVideoComment('1');",
   ],
 ]
 `;
@@ -184,10 +257,21 @@ Array [
 ]
 `;
 
-exports[`ZSSRichTextEditor updates html if not provided initially 1`] = `
+exports[`ZSSRichTextEditor updates html 1`] = `
 Array [
   Array [
-    "zss_editor.setHTML(\\"here it is\\");",
+    "zss_editor.setHTML(\\"<div>Hi<\\\\/div>\\");",
+  ],
+]
+`;
+
+exports[`ZSSRichTextEditor updates html 2`] = `
+Array [
+  Array [
+    "zss_editor.setHTML(\\"<div>Hi<\\\\/div>\\");",
+  ],
+  Array [
+    "zss_editor.setHTML(\\"\\");",
   ],
 ]
 `;

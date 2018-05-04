@@ -23,10 +23,9 @@ import {
   StyleSheet,
   TouchableHighlight,
   Image,
-  SectionList,
+  FlatList,
   ActionSheetIOS,
   AlertIOS,
-  LayoutAnimation,
   NativeModules,
 } from 'react-native'
 import i18n from 'format-message'
@@ -34,7 +33,7 @@ import DetailActions from './actions'
 import EditActions from '../edit/actions'
 import AssignmentSection from '../../assignment-details/components/AssignmentSection'
 import AssignmentDates from '../../assignment-details/components/AssignmentDates'
-import WebContainer from '../../../common/components/WebContainer'
+import CanvasWebView from '../../../common/components/CanvasWebView'
 import Avatar from '../../../common/components/Avatar'
 import PublishedIcon from '../../assignment-details/components/PublishedIcon'
 import SubmissionBreakdownGraphSection from '../../assignment-details/components/SubmissionBreakdownGraphSection'
@@ -42,6 +41,7 @@ import Images from '../../../images'
 import {
   Heading1,
   Text,
+  SubTitle,
   BOLD_FONT,
 } from '../../../common/text'
 import colors from '../../../common/colors'
@@ -51,18 +51,28 @@ import Reply from './Reply'
 import { replyFromLocalIndexPath } from '../reducer'
 import { type TraitCollection } from '../../../routing/Navigator'
 import { isRegularDisplayMode } from '../../../routing/utils'
+import { isTeacher } from '../../app'
+import { alertError } from '../../../redux/middleware/error-handler'
 
 type OwnProps = {
+  announcementID: string,
   discussionID: string,
-  courseID: string,
+  context: CanvasContext,
+  contextID: string,
 }
 
 type State = {
   discussion: ?Discussion,
   assignment: ?Assignment,
-  courseColor: string,
+  courseColor: ?string,
   courseName: string,
   unreadEntries: ?string[],
+  entryRatings: { [string]: number },
+  context: CanvasContext,
+  contextID: string,
+  courseName: string,
+  canRate: boolean,
+  initialPostRequired: boolean,
 }
 
 type ViewableReply = {
@@ -72,7 +82,13 @@ type ViewableReply = {
   item: DiscussionReply,
 }
 
-const { refreshDiscussionEntries, refreshSingleDiscussion, deleteDiscussionEntry, markAllAsRead, markEntryAsRead } = DetailActions
+const {
+  refreshDiscussionEntries,
+  refreshSingleDiscussion,
+  deleteDiscussionEntry,
+  markAllAsRead,
+  markEntryAsRead,
+} = DetailActions
 const { NativeAccessibility } = NativeModules
 const { deleteDiscussion } = EditActions
 
@@ -85,38 +101,56 @@ const Actions = {
   markEntryAsRead,
 }
 
-export type Props = State & OwnProps & RefreshProps & typeof Actions & NavigationProps & AsyncState & {
+export type Props
+  = State
+  & OwnProps
+  & RefreshProps
+  & typeof Actions
+  & NavigationProps
+  & AsyncState
+  & PushNotificationProps & {
   isAnnouncement?: boolean,
 }
 
 export class DiscussionDetails extends Component<Props, any> {
+
   constructor (props: Props) {
     super(props)
     this.state = {
       rootNodePath: [],
       deletePending: false,
       maxReplyNodeDepth: 2,
-      unread_entries: this.props.unreadEntries || [],
+      unread_entries: props.unreadEntries || [],
+      entry_ratings: props.entryRatings || {},
     }
-  }
-
-  componentWillUpdate () {
-    LayoutAnimation.easeInEaseOut()
+    this.state.flatReplies = this.rootRepliesData(props.discussion, [], this.state.maxReplyNodeDepth)
   }
 
   componentWillUnmount () {
     if (this.props.discussion) {
-      this.props.refreshSingleDiscussion(this.props.courseID, this.props.discussionID)
+      this.props.refreshSingleDiscussion(this.props.context, this.props.contextID, this.props.discussionID)
     }
   }
 
   componentWillReceiveProps (nextProps: Props) {
+    if (nextProps.error && nextProps.error !== this.props.error) {
+      alertError(nextProps.error)
+    }
+
     if (this.state.deletePending && !nextProps.pending && !nextProps.error && !nextProps.discussion) {
-      this.setState({ deletePending: false, unread_entries: nextProps.unreadEntries })
+      this.setState({
+        deletePending: false,
+        unread_entries: nextProps.unreadEntries,
+        entry_ratings: nextProps.entryRatings || {},
+      })
       this.props.navigator.pop()
       return
     }
-    this.setState({ unread_entries: nextProps.unreadEntries })
+    this.setState({
+      unread_entries: nextProps.unreadEntries,
+      entry_ratings: nextProps.entryRatings || {},
+      flatReplies: this.rootRepliesData(nextProps.discussion, this.state.rootNodePath, this.state.maxReplyNodeDepth),
+    })
   }
 
   onTraitCollectionChange () {
@@ -124,27 +158,29 @@ export class DiscussionDetails extends Component<Props, any> {
   }
 
   traitCollectionDidChange (traits: TraitCollection) {
+    const maxReplyNodeDepth = isRegularDisplayMode(traits) ? 4 : 2
     this.setState({
-      maxReplyNodeDepth: isRegularDisplayMode(traits) ? 4 : 2,
+      maxReplyNodeDepth,
+      flatReplies: this.rootRepliesData(this.props.discussion, this.state.rootNodePath, maxReplyNodeDepth),
     })
   }
 
   navigateToContextCard = () => {
     if (this.props.discussion) {
       this.props.navigator.show(
-        `/courses/${this.props.courseID}/users/${this.props.discussion.author.id}`,
+        `/${this.props.context}/${this.props.contextID}/users/${this.props.discussion.author.id}`,
         { modal: true },
       )
     }
   }
 
-  renderDetails = ({ item, index }: { item: Discussion, index: number }) => {
-    const discussion = item
+  renderDetails = (discussion: Discussion) => {
     const showReplies = discussion.replies && discussion.replies.length > 0
     const points = this._points(discussion)
     let user = discussion.author
     const assignmentID = this.props.assignment ? this.props.assignment.id : null
     const date = new Date(discussion.delayed_post_at || discussion.posted_at)
+    const sections = discussion.sections || []
     return (
       <View>
         <AssignmentSection isFirstRow={true} style={style.topContainer}>
@@ -152,12 +188,19 @@ export class DiscussionDetails extends Component<Props, any> {
             { !this.props.isAnnouncement &&
               <View style={style.pointsContainer}>
                 {Boolean(points) && <Text style={style.points}>{points}</Text>}
-                  <PublishedIcon published={discussion.published} />
+                  {isTeacher() && <PublishedIcon published={discussion.published} />}
               </View>
+            }
+            { discussion.is_section_specific &&
+              <SubTitle style={style.sectionsText}>
+                {i18n('Sections: {sections}', {
+                  sections: sections.map(section => section.name).join(', '),
+                })}
+              </SubTitle>
             }
         </AssignmentSection>
 
-        {this.props.assignment && <AssignmentSection
+        { isTeacher() && this.props.assignment && <AssignmentSection
           title={i18n('Due')}
           image={Images.assignments.calendar}
           showDisclosureIndicator={true}
@@ -165,12 +208,12 @@ export class DiscussionDetails extends Component<Props, any> {
           <AssignmentDates assignment={this.props.assignment} />
         </AssignmentSection>}
 
-        {assignmentID && <AssignmentSection
+        { isTeacher() && assignmentID && <AssignmentSection
           title={i18n('Submissions')}
           testID='discussions.submission-graphs'
           onPress={() => this.viewSubmissions()}
           showDisclosureIndicator>
-          <SubmissionBreakdownGraphSection onPress={this.onSubmissionDialPress} courseID={this.props.courseID} assignmentID={assignmentID} style={style.submission}/>
+          <SubmissionBreakdownGraphSection onPress={this.onSubmissionDialPress} courseID={this.props.contextID} assignmentID={assignmentID} style={style.submission}/>
         </AssignmentSection>}
 
         <View style={style.section} >
@@ -190,12 +233,25 @@ export class DiscussionDetails extends Component<Props, any> {
               { user && user.display_name && <Text style={style.authorName}>{user.display_name}</Text> }
                 <Text style={style.authorDate} testID='discussion.details.post-date-lbl'>{i18n("{ date, date, 'MMM d'} at { date, time, short }", { date })}</Text>
             </View>
+
+            {!discussion.locked_for_user &&
+              <View>
+                <TouchableHighlight
+                  underlayColor='transparent'
+                  onPress={this._onPressReply}
+                  testID='discussion.details-reply'
+                  accessibilityLabel={i18n('Reply')}
+                >
+                  <Image source={Images.rce.undo} style={{ width: 18, height: 18, tintColor: colors.secondaryButton }} />
+                </TouchableHighlight>
+              </View>
+            }
           </View>
 
           { (Boolean(discussion.message) || Boolean(discussion.attachments)) &&
              <View style={style.message}>
                 { Boolean(discussion.message) &&
-                   <WebContainer style={{ flex: 1 }} scrollEnabled={false} html={discussion.message} navigator={this.props.navigator}/>
+                   <CanvasWebView style={{ flex: 1 }} automaticallySetHeight html={discussion.message} navigator={this.props.navigator} />
                 }
                 { Boolean(discussion.attachments) && discussion.attachments && discussion.attachments.length === 1 &&
                 // should only ever have 1, blocked by UI, but API returns array of 1 :facepalm:
@@ -211,18 +267,19 @@ export class DiscussionDetails extends Component<Props, any> {
             </View>
           }
 
-          <View style={style.authorContainer}>
+          {!discussion.locked_for_user && <View style={style.authorContainer}>
             <TouchableHighlight
               underlayColor='white'
               onPress={this._onPressReply}
               testID='discussion-reply'
               accessibilityTraits='button'
             >
-                <View style={{ flex: 1, backgroundColor: 'white' }}>
-                  <Text style={style.link}>{i18n('Reply')}</Text>
+                <View style={[{ backgroundColor: colors.primaryButtonColor }, style.replyButtonWrapper]}>
+                  <Image source={Images.rce.undo} style={{ width: 18, height: 18, tintColor: colors.primaryButtonTextColor }} />
+                  <Text style={[{ color: colors.primaryButtonTextColor }, style.reply]}>{i18n('Reply')}</Text>
                 </View>
             </TouchableHighlight>
-          </View>
+          </View>}
         </View>
 
         { showReplies && this.state.rootNodePath.length === 0 &&
@@ -232,6 +289,14 @@ export class DiscussionDetails extends Component<Props, any> {
         }
 
         { showReplies && this.renderPopReplyStackButton() }
+
+        { this.props.initialPostRequired &&
+          <AssignmentSection>
+            <Text testID='discussions.details.require_initial_post.message'>
+              {i18n('Replies are only visible to those who have posted at least one reply.')}
+            </Text>
+          </AssignmentSection>
+        }
 
       </View>
     )
@@ -257,10 +322,12 @@ export class DiscussionDetails extends Component<Props, any> {
     } else return (<View/>)
   }
 
-  renderReply = (discussion: Discussion) => ({ item, index }: { item: any, index: number }) => {
+  renderReply = ({ item, index }: { item: any, index: number }) => {
+    const discussion = this.props.discussion || {}
     const reply = item
     let participants = discussion && discussion.participants || []
     let path = (this.state.rootNodePath.length > 1) ? this.state.rootNodePath.concat(reply.myPath.slice(1, reply.myPath.length)) : reply.myPath
+    const discussionLockedForUser = discussion.locked_for_user
 
     return (
       <View style={style.row}>
@@ -269,36 +336,43 @@ export class DiscussionDetails extends Component<Props, any> {
           deleteDiscussionEntry={this._confirmDeleteReply}
           replyToEntry={this._onPressReplyToEntry}
           navigator={this.props.navigator}
-          courseID={this.props.courseID}
+          context={this.props.context}
+          contextID={this.props.contextID}
           discussionID={discussion.id}
           reply={reply}
           readState={reply.readState}
           depth={reply.depth}
           myPath={path}
+          // $FlowFixMe
           participants={participants}
           onPressMoreReplies={this._onPressMoreReplies}
           isRootReply
+          discussionLockedForUser={discussionLockedForUser}
+          rating={reply.rating}
+          canRate={this.props.canRate}
+          showRating={discussion.allow_rating}
+          isLastReply={this.state.flatReplies.length - 1 === index}
         />
       </View>
     )
   }
 
-  rootRepliesData = () => {
-    const { discussion } = this.props
+  rootRepliesData = (discussion: ?Discussion, rootNodePath: number[], maxDepth: number) => {
+    if (!discussion) return []
     let replies = discussion && discussion.replies || []
 
-    if (this.state.rootNodePath.length === 0) return this.flattenRepliesData([], 0, replies, [])
+    if (rootNodePath.length === 0) return this.flattenRepliesData([], 0, replies, [], maxDepth)
 
-    let reply = replyFromLocalIndexPath(this.state.rootNodePath, replies, false)
+    let reply = replyFromLocalIndexPath(rootNodePath, replies, false)
     if (reply) {
-      return this.flattenRepliesData([], 0, [reply], [])
+      return this.flattenRepliesData([], 0, [reply], [], maxDepth)
     } else {
       return [reply]
     }
   }
 
-  flattenRepliesData (flatList: DiscussionReply[], depth: number, replies: DiscussionReply[], indexPath: number[]): DiscussionReply[] {
-    if (!replies || depth > this.state.maxReplyNodeDepth) return flatList
+  flattenRepliesData (flatList: DiscussionReply[], depth: number, replies: DiscussionReply[], indexPath: number[], maxDepth: number): DiscussionReply[] {
+    if (!replies || depth > maxDepth) return flatList
 
     for (let i = 0; i < replies.length; i++) {
       const readState = this.checkReadState(replies[i].id)
@@ -307,30 +381,22 @@ export class DiscussionDetails extends Component<Props, any> {
         depth: depth,
         myPath: [...indexPath, i],
         readState: readState,
+        rating: this.state.entry_ratings[replies[i].id],
       }
       flatList.push(reply)
-      flatList = this.flattenRepliesData(flatList, depth + 1, replies[i].replies, reply.myPath)
+      flatList = this.flattenRepliesData(flatList, depth + 1, replies[i].replies, reply.myPath, maxDepth)
     }
     return flatList
   }
 
   render () {
-    const { discussion } = this.props
-    let data = []
-    if (discussion) {
-      data.push({ data: [discussion], title: '', renderItem: this.renderDetails })
-      if (discussion.replies) {
-        data.push({ data: this.rootRepliesData() || [], title: '', renderItem: this.renderReply(discussion) })
-      }
-    }
-
     return (
       <Screen
         onTraitCollectionChange={this.onTraitCollectionChange.bind(this)}
         title={this.props.isAnnouncement ? i18n('Announcement Details') : i18n('Discussion Details')}
         navBarColor={this.props.courseColor}
         navBarStyle='dark'
-        rightBarButtons={[
+        rightBarButtons={ isTeacher() && [
           {
             image: Images.kabob,
             testID: 'discussions.details.edit.button',
@@ -340,15 +406,20 @@ export class DiscussionDetails extends Component<Props, any> {
         ]}
         subtitle={this.props.courseName}>
         <View style={style.sectionListContainer}>
-          <SectionList
+          <FlatList
             refreshing={this.props.refreshing}
             onRefresh={this.props.refresh}
-            renderItem={({ item }) => <View/>}
-            sections={data}
+            ListHeaderComponent={this.props.discussion ? this.renderDetails(this.props.discussion) : null}
+            data={this.state.flatReplies}
+            renderItem={this.renderReply}
             onViewableItemsChanged={this._markViewableAsRead}
             initialNumToRender={10}
-            extraData={this.state.unread_entries}
+            extraData={{
+              unread_entries: this.state.unread_entries,
+              entry_ratings: this.state.entry_ratings,
+            }}
             keyExtractor={this.keyExtractor}
+            windowSize={5}
           />
         </View>
       </Screen>
@@ -375,7 +446,8 @@ export class DiscussionDetails extends Component<Props, any> {
         break
       case 1:
         this.props.markAllAsRead(
-          this.props.courseID,
+          this.props.context,
+          this.props.contextID,
           this.props.discussionID,
           this.props.discussion && this.props.discussion.unread_count
         )
@@ -411,7 +483,7 @@ export class DiscussionDetails extends Component<Props, any> {
 
   viewDueDateDetails = () => {
     // $FlowFixMe
-    const route = `/courses/${this.props.courseID}/assignments/${this.props.assignment.id}/due_dates`
+    const route = `/courses/${this.props.contextID}/assignments/${this.props.assignment.id}/due_dates`
     this.props.navigator.show(route, { modal: false }, {
       onEditPressed: this._editDiscussion,
     })
@@ -422,12 +494,12 @@ export class DiscussionDetails extends Component<Props, any> {
   }
 
   viewSubmissions = (filterType: ?string) => {
-    const { courseID, assignment } = this.props
+    const { contextID, assignment } = this.props
     if (!assignment) return
     if (filterType) {
-      this.props.navigator.show(`/courses/${courseID}/assignments/${assignment.id}/submissions`, { modal: false }, { filterType })
+      this.props.navigator.show(`/courses/${contextID}/assignments/${assignment.id}/submissions`, { modal: false }, { filterType })
     } else {
-      this.props.navigator.show(`/courses/${courseID}/assignments/${assignment.id}/submissions`)
+      this.props.navigator.show(`/courses/${contextID}/assignments/${assignment.id}/submissions`)
     }
   }
 
@@ -460,6 +532,7 @@ export class DiscussionDetails extends Component<Props, any> {
   _onPressMoreReplies = (rootPath: number[]) => {
     this.setState({
       rootNodePath: rootPath,
+      flatReplies: this.rootRepliesData(this.props.discussion, rootPath, this.state.maxReplyNodeDepth),
     })
 
     setTimeout(function () { NativeAccessibility.focusElement('discussion.popToLastDiscussionList') }, 500)
@@ -470,17 +543,20 @@ export class DiscussionDetails extends Component<Props, any> {
     if (path.length === 1) path = []
     this.setState({
       rootNodePath: path,
+      flatReplies: this.rootRepliesData(this.props.discussion, path, this.state.maxReplyNodeDepth),
     })
   }
 
   _onPressReply = () => {
     let lastReplyAt = this.props.discussion && this.props.discussion.last_reply_at
-    this.props.navigator.show(`/courses/${this.props.courseID}/discussion_topics/${this.props.discussionID}/reply`, { modal: true }, { indexPath: [], lastReplyAt })
+    let permissions = this.props.discussion && this.props.discussion.permissions
+    this.props.navigator.show(`/${this.props.context}/${this.props.contextID}/discussion_topics/${this.props.discussionID}/reply`, { modal: true }, { indexPath: [], lastReplyAt, permissions })
   }
 
   _onPressReplyToEntry = (entryID: string, indexPath: number[]) => {
     let lastReplyAt = this.props.discussion && this.props.discussion.last_reply_at
-    this.props.navigator.show(`/courses/${this.props.courseID}/discussion_topics/${this.props.discussionID}/entries/${entryID}/replies`, { modal: true }, { indexPath: indexPath, entryID, lastReplyAt })
+    let permissions = this.props.discussion && this.props.discussion.permissions
+    this.props.navigator.show(`/${this.props.context}/${this.props.contextID}/discussion_topics/${this.props.discussionID}/entries/${entryID}/replies`, { modal: true }, { indexPath: indexPath, entryID, lastReplyAt, permissions })
   }
 
   _editDiscussion = () => {
@@ -488,16 +564,16 @@ export class DiscussionDetails extends Component<Props, any> {
       this._editAnnouncement()
       return
     }
-    this.props.navigator.show(`/courses/${this.props.courseID}/discussion_topics/${this.props.discussionID}/edit`, { modal: true, modalPresentationStyle: 'formsheet' })
+    this.props.navigator.show(`/${this.props.context}/${this.props.contextID}/discussion_topics/${this.props.discussionID}/edit`, { modal: true, modalPresentationStyle: 'formsheet' })
   }
 
   _editAnnouncement = () => {
-    this.props.navigator.show(`/courses/${this.props.courseID}/announcements/${this.props.discussionID}/edit`, { modal: true, modalPresentationStyle: 'formsheet' })
+    this.props.navigator.show(`/${this.props.context}/${this.props.contextID}/announcements/${this.props.discussionID}/edit`, { modal: true, modalPresentationStyle: 'formsheet' })
   }
 
   _deleteDiscussion = () => {
     this.setState({ deletePending: true })
-    this.props.deleteDiscussion(this.props.courseID, this.props.discussionID)
+    this.props.deleteDiscussion(this.props.context, this.props.contextID, this.props.discussionID)
   }
 
   checkReadState (id: string) {
@@ -506,7 +582,7 @@ export class DiscussionDetails extends Component<Props, any> {
   }
 
   _markViewableAsRead = (info: { viewableItems: Array<ViewableReply>, changed: Array<ViewableReply>}) => {
-    setTimeout(() => {
+    requestIdleCallback(() => {
       let dID = this.props.discussionID
       let inView = info.viewableItems
       let unread = [...this.state.unread_entries] || []
@@ -520,13 +596,13 @@ export class DiscussionDetails extends Component<Props, any> {
             let index = unread.indexOf(reply.id)
             if (index > -1) unread.splice(index, 1)
             if (this.props.discussion) {
-              this.props.markEntryAsRead(this.props.courseID, dID, reply.id)
+              this.props.markEntryAsRead(this.props.context, this.props.contextID, dID, reply.id)
             }
           }
         }
       }
       if (update) this.setState({ unread_entries: unread })
-    }, 1000)
+    })
   }
 }
 
@@ -571,8 +647,20 @@ const style = StyleSheet.create({
     color: colors.grey4,
     marginRight: 14,
   },
-  link: {
-    color: colors.link,
+  reply: {
+    color: 'white',
+    fontSize: 14,
+    marginLeft: 4,
+    fontWeight: '500',
+  },
+  replyButtonWrapper: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
   },
   submission: {
     marginRight: 40,
@@ -620,15 +708,38 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: global.style.defaultPadding,
   },
+  sectionsText: {
+    marginTop: 8,
+  },
 })
 
-export function mapStateToProps ({ entities }: AppState, { courseID, discussionID }: OwnProps): State {
+export function mapStateToProps ({ entities }: AppState, ownProps: OwnProps): State {
+  const contextID = ownProps.contextID
+  const context = ownProps.context
+  const discussionID = ownProps.announcementID || ownProps.discussionID
+  const isAnnouncement = ownProps.isAnnouncement || ownProps.announcementID != null
   let discussion: ?Discussion
   let pending = 0
   let error = null
-  let courseColor = entities.courses[courseID].color
-  let courseName = entities.courses[courseID].course.name
+  let courseColor
+  let courseName = ''
   let unreadEntries = []
+  let entryRatings = {}
+  let course: ?Course
+  let initialPostRequired = true
+
+  if (entities && entities.discussions) {
+    if (context === 'courses' && entities.courses[contextID]) {
+      const entity = entities.courses[contextID]
+      course = entities.courses[contextID].course
+      courseColor = entity.color
+      courseName = course.name
+    } else if (entities.groups[contextID]) {
+      let group = entities.groups[contextID]
+      courseName = group.group.name
+      courseColor = group.color
+    }
+  }
 
   if (entities.discussions &&
     entities.discussions[discussionID] &&
@@ -636,8 +747,10 @@ export function mapStateToProps ({ entities }: AppState, { courseID, discussionI
     const state = entities.discussions[discussionID]
     discussion = state.data
     unreadEntries = state.unread_entries || []
+    entryRatings = state.entry_ratings || {}
     pending = state.pending
     error = state.error
+    initialPostRequired = state.initialPostRequired ? discussion.require_initial_post : false
   }
 
   let assignment = null
@@ -646,16 +759,32 @@ export function mapStateToProps ({ entities }: AppState, { courseID, discussionI
     assignment = entity ? entity.data : null
   }
 
+  let canRate = false
+  if (discussion) {
+    if (discussion.allow_rating) {
+      if (discussion.only_graders_can_rate) {
+        const graders = ['teacher', 'teacherenrollment', 'ta']
+        canRate = Boolean(course && course.enrollments && course.enrollments.some(e => graders.includes(e.type.toLowerCase())))
+      } else {
+        canRate = true
+      }
+    }
+  }
   return {
     discussion,
     unreadEntries,
+    entryRatings,
     pending,
     error,
-    courseID,
+    context,
+    contextID,
     discussionID,
     courseName,
     courseColor,
     assignment,
+    isAnnouncement,
+    canRate,
+    initialPostRequired,
   }
 }
 
@@ -663,11 +792,15 @@ export function shouldRefresh (props: Props): boolean {
   return !props.discussion ||
          !props.discussion.replies ||
          (props.discussion.assignment_id && !props.assignment) ||
-         (!props.unreadEntries && props.discussion.unread_count > 0)
+         (!props.unreadEntries && props.discussion.unread_count > 0) ||
+         props.discussion.allow_rating
 }
 
 export function refreshData (props: Props): void {
-  props.refreshDiscussionEntries(props.courseID, props.discussionID, true)
+  props.refreshDiscussionEntries(props.context, props.contextID, props.discussionID, true)
+
+  // Must refresh single discussion in case user cant view replies.
+  props.refreshSingleDiscussion(props.context, props.contextID, props.discussionID)
 }
 
 let Refreshed = refresh(

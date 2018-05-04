@@ -13,15 +13,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
-    
-    
 
 import UIKit
 import Foundation
 import TechDebt
 import CanvasCore
-
-
 
 func NotificationsTab(session: Session) throws -> UIViewController {
     let title = NSLocalizedString("Notifications", comment: "Notifications tab title")
@@ -34,13 +30,13 @@ func NotificationsTab(session: Session) throws -> UIViewController {
     split.preferredDisplayMode = .allVisible
     let masterNav = UINavigationController(rootViewController: activityStream)
     let detailNav = UINavigationController()
+    masterNav.applyDefaultBranding()
+    detailNav.applyDefaultBranding()
     detailNav.view.backgroundColor = UIColor.white
     split.viewControllers = [masterNav, detailNav]
     
     activityStream.navigationItem.title = title
     split.tabBarItem.title = title
     split.tabBarItem.image = .icon(.notification)
-    split.tabBarItem.selectedImage = .icon(.notification, filled: true)
     return split
 }
-

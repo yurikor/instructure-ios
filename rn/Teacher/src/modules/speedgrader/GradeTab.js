@@ -34,16 +34,13 @@ import GradePicker from './components/GradePicker'
 import CommentInput from './comments/CommentInput'
 import DrawerState from './utils/drawer-state'
 
-export class GradeTab extends Component {
-  props: GradeTabProps
-  state: GradeTabState
+export class GradeTab extends Component<GradeTabProps, GradeTabState> {
+  scrollView: ?{ setNativeProps: (Object) => void }
 
-  constructor (props: GradeTabProps) {
-    super(props)
-    this.state = {
-      ratings: props.rubricAssessment || {},
-      criterionCommentInput: null,
-    }
+  state: GradeTabState = {
+    ratings: this.props.rubricAssessment || {},
+    criterionCommentInput: null,
+    scrollEnabled: true,
   }
 
   componentWillReceiveProps (nextProps: GradeTabProps) {
@@ -69,7 +66,7 @@ export class GradeTab extends Component {
   // This allows score and comments to be updated independently
   // When merged, overwrites new values with old ones
   // Also manages updating the state for whatever change there was to the assessment
-  updateAssessment = (id: string, assessment: RubricAssessment) => {
+  updateAssessment = (id: string, assessment: $Supertype<RubricAssessment>) => {
     this.setState((prevState) => {
       const current = this.state.ratings[id] || {}
       const updated = { ...current, ...assessment }
@@ -111,11 +108,18 @@ export class GradeTab extends Component {
     this.updateAssessment(criterionID, { comments: '' })
   }
 
+  setScrollEnabled = (value: boolean) => {
+    if (this.scrollView) {
+      this.scrollView.setNativeProps({ scrollEnabled: value })
+      this.props.setScrollEnabled(value)
+    }
+  }
+
   renderHeader = () => {
     let settings = this.props.rubricSettings
     return (
       <View>
-        <GradePicker {...this.props} useRubricForGrading={this.props.useRubricForGrading} rubricScore={this.getCurrentScore()}/>
+        <GradePicker {...this.props} setScrollEnabled={this.setScrollEnabled} useRubricForGrading={this.props.useRubricForGrading} rubricScore={this.getCurrentScore()}/>
         {this.props.rubricItems &&
           <View style={styles.rubricHeader}>
             <View>
@@ -183,6 +187,7 @@ export class GradeTab extends Component {
           renderItem={this.renderRubricItem}
           initialNumToRender={2}
           extraData={this.state}
+          ref={(e) => { this.scrollView = e }}
         />
         {this.renderCommentInput()}
       </View>
@@ -246,6 +251,7 @@ type RubricOwnProps = {
   isModeratedGrading: boolean,
   updateUnsavedChanges: Function,
   unsavedChanges: { [string]: RubricAssessment },
+  setScrollEnabled: (boolean) => void,
 }
 
 type RubricDataProps = {

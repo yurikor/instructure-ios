@@ -40,9 +40,13 @@ type Props = {
   setUnorderedList?: () => void,
   setOrderedList?: () => void,
   insertLink?: () => void,
-  insertImage?: () => void,
-  onTappedDone: () => void,
-  onColorPickerShown: (shown: boolean) => void,
+  insertImage?: ?(() => void),
+  onTappedDone?: () => void,
+  onColorPickerShown?: (shown: boolean) => void,
+}
+
+type State = {
+  colorPickerVisible: boolean,
 }
 
 type Item = {
@@ -82,19 +86,14 @@ const ColorPickerAnimation = {
 
 const { NativeAccessibility } = NativeModules
 
-export default class RichTextToolbar extends Component<Props, any> {
-  constructor (props: Props) {
-    super(props)
-
-    this.state = {
-      colorPickerVisible: false,
-    }
+export default class RichTextToolbar extends Component<Props, State> {
+  state: State = {
+    colorPickerVisible: false,
   }
 
   render () {
-    const height = this.state.colorPickerVisible ? 100 : 50
     return (
-      <View style={[styles.container, { height }]}>
+      <View style={styles.container}>
         { this.state.colorPickerVisible && this.props.setTextColor &&
           <ColorPicker pickedColor={this._pickColor} />
         }
@@ -134,8 +133,9 @@ export default class RichTextToolbar extends Component<Props, any> {
         return <View style={[styles.textColor, style]} />
       default:
         const isActive = (this.props.active || []).includes(image) && images.rce.active[image]
-        const icon = (isActive ? images.rce.active : images.rce)[image]
-        return <Image source={icon} />
+        const icon = images.rce[image]
+        const tintColor = isActive ? colors.primaryBrandColor : colors.secondaryButton
+        return <Image source={icon} style={{ tintColor }} />
     }
   }
 

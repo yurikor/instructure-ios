@@ -30,6 +30,7 @@ CanvasApp _Nonnull CanvasAppTeacher = @"teacher";
 @property (nonatomic) NSDictionary *injectedLoginInfo;
 @property (nonatomic) RACDisposable *loginObserver;
 @property (nonatomic) RACDisposable *logoutObserver;
+@property (nonatomic) RACDisposable *multipleLoginObserver;
 @property (nonatomic) RACDisposable *clientObserver;
 @property (nonatomic) UIViewController *domainPicker;
 @property (nonatomic) CKIClient *currentClient;
@@ -73,10 +74,46 @@ static NativeLogin *_sharedInstance;
 
 RCT_EXPORT_MODULE();
 
+- (NSDictionary *)constantsToExport
+{
+    return @{ @"isTesting": @(NSClassFromString(@"EarlGreyImpl") != nil) };
+}
+
 RCT_EXPORT_METHOD(logout)
 {
     [[NativeLoginManager shared] setShouldCleanupOnNextLogoutEvent:YES];
     [TheKeymaster logout];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"MasqueradeDidEnd" object:nil];
+}
+
+RCT_EXPORT_METHOD(switchUser)
+{
+    [[NativeLoginManager shared] setShouldCleanupOnNextLogoutEvent:YES];
+    [TheKeymaster switchUser];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"MasqueradeDidEnd" object:nil];
+}
+
+RCT_EXPORT_METHOD(masquerade:(NSString *)userID domain:(NSString *)domain resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+{
+    [[NativeLoginManager shared] setShouldCleanupOnNextLogoutEvent:YES];
+    [[TheKeymaster masqueradeAsUserWithID:userID domain:domain] subscribeNext:^(CKIUser *user) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            resolve(user.JSONDictionary);
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"MasqueradeDidStart" object:nil];
+        });
+    } error:^(NSError *error) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSString *code = [@(error.code) stringValue];
+            reject(code, error.localizedDescription, nil);
+        });
+    }];
+}
+
+RCT_EXPORT_METHOD(stopMasquerade)
+{
+    [[NativeLoginManager shared] setShouldCleanupOnNextLogoutEvent:YES];
+    [TheKeymaster stopMasquerading];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"MasqueradeDidEnd" object:nil];
 }
 
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(loginInformation)
@@ -138,39 +175,44 @@ RCT_EXPORT_METHOD(stopObserving)
     return manager;
 }
 
-- (instancetype)init {
-    
+- (id)init {
     self = [super init];
-    if (self) {
-        [self setup];
-    }
+    self.shouldCleanupOnNextLogoutEvent = NO;
     return self;
 }
 
 - (void)setup {
-    
-    self.shouldCleanupOnNextLogoutEvent = NO;
+    BOOL uiTesting = NSClassFromString(@"EarlGreyImpl") != nil;
+    self.shouldCleanupOnNextLogoutEvent = uiTesting; // UI tests always clean up on logout
     [self.logoutObserver dispose];
     [self.loginObserver dispose];
     [self.clientObserver dispose];
+    [self.multipleLoginObserver dispose];
     
-    __weak NativeLoginManager *weakSelf = self;
-    self.logoutObserver = [TheKeymaster.signalForLogout subscribeNext:^(UIViewController * _Nullable x) {
-        __strong NativeLoginManager *self = weakSelf;
+    @weakify(self);
+    void (^logoutHandler)(UIViewController *) = ^void(UIViewController * _Nullable x) {
+        @strongify(self);
         self.domainPicker = x;
-        if (self.injectedLoginInfo) { return; }
-        
+
         if (self.shouldCleanupOnNextLogoutEvent) {
-            [[HelmManager shared] showLoadingState];
+            [[HelmManager shared] cleanupWithCallback:^{
+                if (!self.injectedLoginInfo) {
+                    [self.delegate didLogout:x];
+                    [self sendLoginEvent:nil];
+                }
+            }];
             self.shouldCleanupOnNextLogoutEvent = NO;
+        } else {
+            [self.delegate didLogout:x];
+            [self sendLoginEvent:nil];
         }
-        
-        [self.delegate didLogout:x];
-        [self sendLoginEvent:nil];
-    }];
+    };
+    
+    self.logoutObserver = [TheKeymaster.signalForLogout subscribeNext:logoutHandler];
+    self.multipleLoginObserver = [TheKeymaster.signalForCannotLoginAutomatically subscribeNext:logoutHandler];
     
     self.loginObserver = [TheKeymaster.signalForLogin subscribeNext:^(CKIClient * _Nullable client) {
-        __strong NativeLoginManager *self = weakSelf;
+        @strongify(self);
         if (self.injectedLoginInfo) { return; }
         
         [self.delegate didLogin:client];
@@ -184,12 +226,15 @@ RCT_EXPORT_METHOD(stopObserving)
         return;
     }
     
+    NSLocale* locale = [NSLocale currentLocale];
     NSDictionary *body = @{
                            @"appId": self.app,
                            @"authToken": client.accessToken,
                            @"user": client.currentUser.JSONDictionary,
                            @"baseURL": client.baseURL.absoluteString,
                            @"branding": client.branding ? [client.branding JSONDictionary] : @{},
+                           @"actAsUserID": client.actAsUserID ?: [NSNull null],
+                           @"countryCode": [locale countryCode] ?: @"",
                            };
     
     [[NativeLogin sharedInstance] sendEventWithName:@"Login" body:body];
@@ -198,22 +243,39 @@ RCT_EXPORT_METHOD(stopObserving)
 #pragma MARK - CanvasKeymasterDelegate
 
 - (void)injectLoginInformation:(NSDictionary *)info {
-    
-    NSMutableDictionary *mutableInfo = [info mutableCopy];
-    mutableInfo[@"skipHydrate"] = @YES;
-    self.injectedLoginInfo = mutableInfo;
-    
     if (!info) {
-        UIViewController *controller = self.domainPicker ?: [UIViewController new];
-        [self.delegate didLogout:controller];
+        if (self.injectedLoginInfo) {
+            self.injectedLoginInfo = nil;
+            [[[HelmManager shared] bridge] reload];
+        }
     }
     else {
+        NSMutableDictionary *mutableInfo = [info mutableCopy];
+        mutableInfo[@"skipHydrate"] = @YES;
+        mutableInfo[@"appId"] = self.app;
+        self.injectedLoginInfo = mutableInfo;
         
         NSString *accessToken = info[@"authToken"];
         NSAssert(accessToken, @"You must provide an access token when injecting login information");
-        [self.delegate didLogin:self.currentClient];
+        NSDictionary *userDictionary = info[@"user"];
+        NSAssert(userDictionary, @"You must provide a user when injecting login information");
+        CKIUser *user = [CKIUser modelFromJSONDictionary:userDictionary];
+        NSAssert(user, @"You must provide a user when injecting login information");
+        NSString *baseURL = info[@"baseURL"];
+        NSAssert(baseURL, @"You must provide a base url when injecting login information");
+        
+        CKIClient *client = [[CKIClient alloc] initWithBaseURL:[NSURL URLWithString:baseURL]];
+        [client setValue:accessToken forKey:@"accessToken"];
+        [client setValue:user forKey:@"currentUser"];
+        self.currentClient = client;
+        [[CanvasKeymaster theKeymaster] setValue:client forKey:@"currentClient"];
+        [self.delegate didLogin:client];
         [[[HelmManager shared] bridge] reload];
     }
+}
+
+- (void)stopMasquerding {
+    [[NativeLogin sharedInstance] stopMasquerade];
 }
 
 @end

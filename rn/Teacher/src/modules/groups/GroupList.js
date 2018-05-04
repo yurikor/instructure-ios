@@ -50,7 +50,7 @@ type GroupActionsProps = {
 
 type GroupListProps = RouterProps & GroupActionsProps & NavigationProps & StateProps & RefreshProps
 
-export class GroupList extends Component<any, GroupListProps, any> {
+export class GroupList extends Component<GroupListProps, any> {
 
   constructor (props: GroupListProps) {
     super(props)
@@ -66,6 +66,10 @@ export class GroupList extends Component<any, GroupListProps, any> {
       `/courses/${this.props.courseID}/users/${userID}`,
       { modal: true }
     )
+  }
+
+  keyExtractor (item: Group) {
+    return item.id
   }
 
   _renderRow = ({ item, index }) => {
@@ -101,6 +105,7 @@ export class GroupList extends Component<any, GroupListProps, any> {
           ListEmptyComponent={this.state.pending ? null : empty}
           refreshing={this.state.pending}
           ItemSeparatorComponent={RowSeparator}
+          keyExtractor={this.keyExtractor}
         />
       </View>)
   }
@@ -109,24 +114,12 @@ export class GroupList extends Component<any, GroupListProps, any> {
     const title = this.props.group ? this.props.group.name : ''
     return (
       <Screen
-        navBarColor='#fff'
-        navBarStyle='light'
         drawUnderNavBar={false}
         title={title}
-        rightBarButtons={[{
-          style: 'done',
-          title: i18n('Done'),
-          testID: 'group-list.done',
-          action: this._onDone,
-        }]}
       >
         {this._renderComponent()}
       </Screen>
     )
-  }
-
-  _onDone = () => {
-    this.props.navigator.dismiss()
   }
 }
 

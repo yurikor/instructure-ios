@@ -17,8 +17,10 @@
     
 
 import UIKit
+import CanvasCore
 
-class CalendarDaysOfWeekView : UIStackView {
+class CalendarDaysOfWeekView : UIView {
+    let stack = UIStackView()
     
     fileprivate lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -42,15 +44,35 @@ class CalendarDaysOfWeekView : UIStackView {
     }
     
     required init(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        initialize()
+        fatalError("Not supported")
     }
     
     func initialize() {
-        backgroundColor = UIColor.calendarDaysOfWeekBackgroundColor
-        self.distribution = .fillEqually
-        self.axis = .horizontal
-        self.spacing = 2.0
+        let borderView = UIView()
+        borderView.translatesAutoresizingMaskIntoConstraints = false
+        borderView.backgroundColor = .white
+        borderView.layer.borderWidth = 1/UIScreen.main.scale
+        borderView.layer.borderColor = UIColor.lightGray.cgColor
+        addSubview(borderView)
+        
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.backgroundColor = .white
+        stack.distribution = .fillEqually
+        stack.axis = .horizontal
+        stack.spacing = 2.0
+        addSubview(stack)
+        
+        NSLayoutConstraint.activate([
+            stack.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stack.topAnchor.constraint(equalTo: topAnchor),
+            stack.trailingAnchor.constraint(equalTo: trailingAnchor),
+            stack.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
+            borderView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: -1),
+            borderView.topAnchor.constraint(equalTo: topAnchor, constant: -1),
+            borderView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 1),
+            borderView.bottomAnchor.constraint(equalTo: bottomAnchor),
+        ])
         initLabels()
     }
     
@@ -68,7 +90,8 @@ class CalendarDaysOfWeekView : UIStackView {
             } else {
                 weekdayLabel.textColor = UIColor.calendarDayOffTextColor
             }
-            addArrangedSubview(weekdayLabel)
+            stack.addArrangedSubview(weekdayLabel)
         }
     }
+    
 }

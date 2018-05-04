@@ -13,8 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
-    
-    
 
 import Foundation
 import UIKit
@@ -22,8 +20,9 @@ import CanvasCore
 import CanvasKit1
 import TechDebt
 import CanvasKeymaster
+import UserNotifications
 
-class SettingsViewController: UIViewController {
+class SettingsViewController: UIViewController, PageViewEventViewControllerLoggingProtocol {
     @IBOutlet weak var tableView: UITableView!
     
     var canvasAPI: CKCanvasAPI?
@@ -38,6 +37,13 @@ class SettingsViewController: UIViewController {
         tableView.estimatedRowHeight = 44.0
         
         dataSource = data()
+        
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(done))
+        self.modalPresentationStyle = .formSheet
+    }
+    
+    func done() {
+        presentingViewController?.dismiss(animated: true, completion: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -45,6 +51,12 @@ class SettingsViewController: UIViewController {
         if let selectedRowIndexPath = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: selectedRowIndexPath, animated: false)
         }
+        startTrackingTimeOnViewController()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        stopTrackingTimeOnViewController(eventName: "/profile/settings")
     }
 }
 
@@ -59,15 +71,13 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         let settingsRow = dataSource[indexPath.row] as SettingsRow
         let cell = settingsRow.cellForSettingsRow(tableView, indexPath: indexPath)
-        print(cell)
-        print(cell.contentView)
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
         let settingsRow = dataSource[indexPath.row] as SettingsRow
         settingsRow.action()
     }
@@ -75,46 +85,26 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
 
 
 // MARK: Settings Row Protocol
-private protocol SettingsRow: class {
+protocol SettingsRow: class {
     var action: () -> () { get }
     func cellForSettingsRow(_ tableView: UITableView, indexPath: IndexPath)  -> UITableViewCell
 }
 
 // MARK: Settings Row Types
-private class TextSettingsRow: SettingsRow {
-    fileprivate var title: String
-    fileprivate var action: () -> ()
+class TextSettingsRow: SettingsRow {
+    var title: String
+    var action: () -> ()
     
-    fileprivate static var identifier = "TextSettingsRow"
+    static var identifier = "TextSettingsRow"
     
     init(title: String, action: @escaping () -> ()) {
         self.title = title
         self.action = action
     }
     
-    fileprivate func cellForSettingsRow(_ tableView: UITableView, indexPath: IndexPath) -> UITableViewCell {
+    func cellForSettingsRow(_ tableView: UITableView, indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: TextSettingsRow.identifier, for: indexPath)
         cell.textLabel?.text = title
-        return cell
-    }
-}
-
-private class EnablePushSettingsRow: SettingsRow {
-    fileprivate var action: () -> ()
-    fileprivate var protocolHandler: PushNotificationPreauthorizationProtocol
-    
-    fileprivate static var identifier = "PushNotificationPreauthorizationCell"
-    
-    init(protocolHandler: PushNotificationPreauthorizationProtocol) {
-        // This item has no bearing on this cell, these are handled inside of the cell setup instead, this could possibly be an indicator that this is the wrong way to go about this
-        self.action = { }
-        
-        self.protocolHandler = protocolHandler
-    }
-    
-    fileprivate func cellForSettingsRow(_ tableView: UITableView, indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: EnablePushSettingsRow.identifier, for: indexPath) as! PushNotificationPreauthorizationCell
-        cell.setupCell(self.protocolHandler)
         return cell
     }
 }
@@ -123,6 +113,12 @@ private class EnablePushSettingsRow: SettingsRow {
 extension SettingsViewController {
     
     fileprivate func data() -> [SettingsRow] {
+        let profile = TextSettingsRow(title: NSLocalizedString("Profile", comment: "")) { () -> () in
+            if let session = CanvasKeymaster.the().currentClient?.authSession {
+                self.navigationController?.pushViewController(profileController(session), animated: true)
+            }
+        }
+
         let about = TextSettingsRow(title: NSLocalizedString("About", comment: "Settings entry title for About")) { () -> () in
             let aboutViewController = AboutViewController.init()
             aboutViewController.canvasAPI = self.canvasAPI
@@ -130,62 +126,23 @@ extension SettingsViewController {
         }
         
         let landingPage = TextSettingsRow(title: NSLocalizedString("Landing Page", comment: "Settings entry title for Choosing a Landing Page"), action: {
-            let currentUserID = CanvasKeymaster.the().currentClient.currentUser.id
+            let currentUserID = CanvasKeymaster.the().currentClient?.currentUser.id
             
             let viewController = LandingPageViewController(currentUserID: currentUserID!)
             self.navigationController?.pushViewController(viewController, animated: true)
         })
         
         let notificationPreferences = TextSettingsRow(title: NSLocalizedString("Notification Preferences", comment: "Settings entry title for Notification Preferences")) { () -> () in
-            let session = CanvasKeymaster.the().currentClient.authSession
-            let notificationDataController = NotificationKitController(session: session)
-            
-            let viewController = CommunicationChannelsViewController.new(notificationDataController)
-            self.navigationController?.pushViewController(viewController, animated: true)
-        }
-        
-        var dataSource: [SettingsRow] = [about, landingPage, notificationPreferences]
-        
-        if PushPreAuthStatus.currentPushPreAuthStatus() == .shownAndDeclined {
-            let enablePush = EnablePushSettingsRow(protocolHandler: self)
-            // TODO: I'd like to do something like this but compiler has issues
-//            dataSource.insert(enablePush, atIndex: find(dataSource, notificationPreferences))
-            dataSource.append(enablePush)
-        } else if (UIApplication.shared.currentUserNotificationSettings?.types.contains(.alert) != nil) { // if the user declined the user notifications
-            let systemSettingsLink = TextSettingsRow(title: NSLocalizedString("Allow Notifications in Settings", comment: "Allow Notifications in Settings")) { () -> () in
-                // Open the settings app and take it to our app where they can turn on notifications
-                if let url = URL(string: UIApplicationOpenSettingsURLString) { // should always succeed
-                    UIApplication.shared.openURL(url)
-                }
+            if let session = CanvasKeymaster.the().currentClient?.authSession {
+                let notificationDataController = NotificationKitController(session: session)
+                
+                let viewController = CommunicationChannelsViewController.new(notificationDataController)
+                self.navigationController?.pushViewController(viewController, animated: true)
             }
-            dataSource.append(systemSettingsLink)
         }
         
+        let dataSource: [SettingsRow] = [profile, about, landingPage, notificationPreferences]
         return dataSource
-    }
-}
-
-// MARK: PushNotificationPreauthorizationProtocol 
-extension SettingsViewController: PushNotificationPreauthorizationProtocol {
-    func showPreauthorizationPrompt() {
-        NotificationKitController.showPreauthorizationAlert(self, completion: { (result) -> () in
-            if let enablePushSettingsRow = self.dataSource.filter({ $0 is EnablePushSettingsRow }).first {
-                for (index, element) in self.dataSource.enumerated() {
-                    if element === enablePushSettingsRow {
-                        switch result {
-                        case true:
-                            self.dataSource.remove(at: index)
-                            self.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: UITableViewRowAnimation.automatic)
-                        default:
-                            if let _ = element as? EnablePushSettingsRow {
-                                self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: UITableViewRowAnimation.automatic)
-                            }
-                        }
-                    }
-                }
-            }
-            
-        })
     }
 }
 

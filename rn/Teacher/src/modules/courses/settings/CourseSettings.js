@@ -34,7 +34,7 @@ import i18n from 'format-message'
 import colors from '../../../common/colors'
 import { mapStateToProps } from './map-state-to-props'
 import CourseSettingsActions from './actions'
-import ModalActivityIndicator from '../../../common/components/ModalActivityIndicator'
+import ModalOverlay from '../../../common/components/ModalOverlay'
 import { alertError } from '../../../redux/middleware/error-handler'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { Text, TextInput } from '../../../common/text'
@@ -66,7 +66,7 @@ export class CourseSettings extends Component<Props, any> {
     super(props)
 
     this.state = {
-      name: this.props.course.name,
+      name: this.props.course.original_name ? this.props.course.original_name : this.props.course.name,
       home: this.props.course.default_view,
       pending: false,
     }
@@ -94,10 +94,6 @@ export class CourseSettings extends Component<Props, any> {
     this.props.updateCourse(this.course(), this.props.course)
   }
 
-  dismiss = () => {
-    this.props.navigator.dismiss()
-  }
-
   _togglePicker = () => {
     let animation = LayoutAnimation.create(250, LayoutAnimation.Types.linear, LayoutAnimation.Properties.opacity)
     LayoutAnimation.configureNext(animation)
@@ -111,7 +107,6 @@ export class CourseSettings extends Component<Props, any> {
       <Screen
         title={i18n('Course Settings')}
         drawUnderNavBar={false}
-        navBarStyle='light'
         navBarTitleColor={colors.darkText}
         navBarButtonColor={colors.link}
         rightBarButtons={[{
@@ -120,14 +115,10 @@ export class CourseSettings extends Component<Props, any> {
           title: i18n('Done'),
           action: this.done,
         }]}
-        leftBarButtons={[{
-          testID: 'course-settings.cancel-btn',
-          title: i18n('Cancel'),
-          action: this.dismiss,
-        }]}
+        dismissButtonTitle={i18n('Cancel')}
       >
         <View style={{ flex: 1 }}>
-          <ModalActivityIndicator text={i18n('Saving')} visible={this.state.pending} />
+          <ModalOverlay text={i18n('Saving')} visible={this.state.pending} />
           <KeyboardAwareScrollView
             style={styles.scrollView}>
             <View style={styles.header}>

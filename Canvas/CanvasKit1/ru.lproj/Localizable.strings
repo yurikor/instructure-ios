@@ -19,6 +19,9 @@
 /* 88 out of 100 points */
 "%@ out of %@" = "%1$@ из %2$@";
 
+/* {point range max} to > {point range min} pts */
+"%@ to > %@ pts" = "%1$@ до > %2$@ баллов";
+
 /* 83% (83 out of 100 points */
 "%@%% (%g out of %@)" = "%1$@%% (%2$g из %3$@)";
 
@@ -82,9 +85,6 @@
 /* No comment provided by engineer. */
 "Note: Media files are not immediately available for playback while they are processed on the server." = "Примечание: Медиа-файлы не сразу доступны для воспроизведения в то время, как они обрабатываются на сервере.";
 
-/* No comment provided by engineer. */
-"OK" = "OK";
-
 /* Short name for observer enrollment */
 "Observer" = "Наблюдатель";
 
@@ -99,6 +99,9 @@
 
 /* A button that records */
 "Record" = "Записать";
+
+/* No comment provided by engineer. */
+"Score" = "Оценка";
 
 /* Hint about the play button */
 "Starts playing your recording" = "Начинает воспроизведение Вашей записи";
@@ -146,7 +149,7 @@
 "Video" = "Видео";
 
 /* No comment provided by engineer. */
-"Video error" = "Ошибка видео";
+"Video Error" = "Ошибка видео";
 
 /* No comment provided by engineer. */
 "Warning" = "Warning";

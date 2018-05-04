@@ -54,16 +54,15 @@ open class EnrollmentsDataSource: NSObject {
         
         return producer(contextID)
             .flatMap(.latest) { (enrollment: Enrollment?) -> SignalProducer<UIColor, NoError> in
-                return enrollment?.color.producer.skipNil() ?? prettyGray
+                var course = enrollment
+                if let group = enrollment as? Group,
+                    group.color.value == nil ||
+                    group.color.value!.hex == UIColor.prettyGray().hex, // assumes gray is only ever default, never explicitly set
+                    let courseID = group.courseID {
+                    course = self.enrollmentsObserver[ContextID.course(withID: courseID)]
+                }
+                return course?.color.producer.skipNil() ?? prettyGray
             }
-    }
-    
-    open func fetchArcLTIToolID(for contextID: ContextID, inSession session: Session) throws -> SignalProducer<(), NSError> {
-        return try Enrollment.arcLTIToolID(session, for: contextID).observe(on: UIScheduler()).on(value: { [weak self] toolID in
-            let enrollment = self?.enrollmentsObserver[contextID]
-            enrollment?.arcLTIToolID = toolID
-            try? enrollment?.managedObjectContext?.saveFRD()
-        }).map { _ in }
     }
     
     @objc open func arcLTIToolId(forCanvasContext canvasContext: String) -> String? {

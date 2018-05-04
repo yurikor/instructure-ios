@@ -205,9 +205,6 @@
 /* (No Comment) */
 "All members" = "Alle Mitglieder";
 
-/* Allow Notifications in Settings */
-"Allow Notifications in Settings" = "Benachrichtigungen in den Einstellungen erlauben";
-
 /* (No Comment) */
 "An unknown error occurred" = "Es ist ein unbekannter Fehler aufgetreten.";
 
@@ -239,7 +236,7 @@
    Assignment module item type */
 "Assignment" = "Aufgabe";
 
-/* Title for Assignments view controller */
+/* (No Comment) */
 "Assignments" = "Aufgaben";
 
 /* (No Comment) */
@@ -275,6 +272,9 @@
 /* Calendar landing page title
    Calendar page title */
 "Calendar" = "Kalender";
+
+/* No comment provided by engineer. */
+"Calendar Event" = "Kalenderereignis";
 
 /* (No Comment) */
 "Can't load tool" = "Tool kann nicht geladen werden";
@@ -384,8 +384,7 @@
 /* (No Comment) */
 "Course Syllabus" = "Kursprogramm";
 
-/* Courses landing page title
-   Courses page title */
+/* Courses landing page title */
 "Courses" = "Kurse";
 
 /* (No Comment) */
@@ -402,6 +401,9 @@
 
 /* (No Comment) */
 "Customize" = "Anpassen";
+
+/* dashboard page title */
+"Dashboard" = "Dashboard";
 
 /* (No Comment) */
 "Delete" = "Löschen";
@@ -481,10 +483,10 @@
 /* (No Comment) */
 "Edit" = "Bearbeiten";
 
-/* Edit course list title */
+/* (No Comment) */
 "Edit Course List" = "Kursverzeichnis bearbeiten";
 
-/* Edit group list title */
+/* (No Comment) */
 "Edit Group List" = "Gruppenverzeichnis bearbeiten";
 
 /* (No Comment) */
@@ -496,7 +498,7 @@
 /* (No Comment) */
 "Email" = "E-Mail";
 
-/* Prompt asking user to enable push notifications */
+/* (No Comment) */
 "Enable Push Notifications" = "Push-Benachrichtigungen aktivieren";
 
 /* (No Comment) */
@@ -601,19 +603,19 @@
 /* (No Comment) */
 "Graded discussion. %g points possible." = "Benotete Diskussion. %g Punkte möglich.";
 
-/* Title for Grades view controller */
+/* (No Comment) */
 "Grades" = "Noten";
 
 /* (No Comment) */
 "Group conversation" = "Gruppengespräch";
 
-/* Groups page title */
+/* (No Comment) */
 "Groups" = "Gruppen";
 
 /* (No Comment) */
 "Help" = "Hilfe";
 
-/* Accessibility label for toggling grades to hidden */
+/* (No Comment) */
 "Hide Grades" = "Noten verbergen";
 
 /* (No Comment) */
@@ -667,7 +669,7 @@
 /* (No Comment) */
 "Large file" = "Große Datei";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Later" = "Später";
 
 /* (No Comment) */
@@ -862,7 +864,7 @@
 /* Nothing to see here. */
 "Nothing to see here." = "Hier gibt es nichts zu sehen.";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Notification" = "Benachrichtigung";
 
 /* Settings entry title for Notification Preferences */
@@ -955,7 +957,7 @@
 /* (No Comment) */
 "Privacy Policy" = "Datenschutz";
 
-/* (No Comment) */
+/* No comment provided by engineer. */
 "Profile" = "Profil";
 
 /* Quiz module item type */
@@ -1033,9 +1035,6 @@
 /* (No Comment) */
 "Search for recipients" = "Nach Empfängern suchen";
 
-/* Placeholder text for search bar on assignments page */
-"Search here..." = "Hier suchen ...";
-
 /* No comment provided by engineer. */
 "Select Option" = "Option auswählen";
 
@@ -1066,7 +1065,7 @@
 /* (No Comment) */
 "Settings" = "Einstellungen";
 
-/* Accessibility label for toggling grades to visible */
+/* (No Comment) */
 "Show Grades" = "Noten zeigen";
 
 /* (No Comment) */
@@ -1209,6 +1208,9 @@
 /* (No Comment) */
 "Text entry" = "Texteintrag";
 
+/* No comment provided by engineer. */
+"That page has been disabled for this course" = "Diese Seite wurde für diesen Kurs deaktiviert.";
+
 /* (No Comment) */
 "The recipients could not be added. Please try again. (%@)" = "Die Empfänger konnten nicht hinzugefügt werden. Bitte erneut versuchen. (%@)";
 
@@ -1308,7 +1310,7 @@
 /* Label read aloud to describe module item type */
 "Type: %@" = "Typ: %@";
 
-/* Notification over status bar that displays when not connected to the internet. */
+/* (No Comment) */
 "Uh-oh! No Internet Connection" = "Oh je! Keine Internetverbindung";
 
 /* (No Comment) */
@@ -1320,10 +1322,10 @@
 /* (No Comment) */
 "Unable to upload to server" = "Upload zum Server nicht möglich";
 
-/* Grade unavailable */
+/* (No Comment) */
 "Unavailable" = "Nicht vorhanden";
 
-/* Title for grade button when no grade is present */
+/* (No Comment) */
 "Ungraded" = "Unbenotet";
 
 /* (No Comment) */
@@ -1371,7 +1373,7 @@
 /* (No Comment) */
 "Video error" = "Videofehler";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "View" = "Ansicht";
 
 /* (No Comment) */

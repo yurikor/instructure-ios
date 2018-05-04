@@ -16,7 +16,7 @@
 
 // @flow
 
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import {
   View,
   Image,
@@ -28,14 +28,14 @@ import colors from '../colors'
 import Images from '../../images'
 
 type Props = {
-  avatarURL?: string,
+  avatarURL?: ?string,
   userName: string,
   height?: number, // Width will always be equal to the height
   border?: boolean,
   onPress?: Function,
 }
 
-export default class Avatar extends Component<Props, any> {
+export default class Avatar extends PureComponent<Props, any> {
 
   // Checks for the crappy default profile picture from canvas
   // If it's one of those things, returns null
@@ -111,7 +111,7 @@ export default class Avatar extends Component<Props, any> {
           .map((word) => word[0])
           .filter((c) => c)
           .reduce((m, c) => m + c, '')
-          .substring(0, 3)
+          .substring(0, 2)
           .toUpperCase()
         : ''
       comp = (

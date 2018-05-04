@@ -1,3 +1,5 @@
+"Inbox" = "Bwat Resepsyon";
+
 /* Error message component with the report id */
 " Error report ID: (reportID)" = " Erè rapò ID: (reportID)";
 
@@ -44,8 +46,14 @@
 /* all pages segmented control title */
 "All Pages" = "Tout Paj";
 
-/* Title for push notification pre-authorization alert */
-"Allow Push Notifications?" = "Pèmèt Notifikasyon Push?";
+/* No comment provided by engineer. */
+"All notifications are currently disabled." = "Tout avètisman yo dezaktive pou kounye a.";
+
+/* No comment provided by engineer. */
+"All notifications are currently enabled." = "Tout avètisman yo aktive pou kounye a.";
+
+/* No comment provided by engineer. */
+"Allow Notifications in Settings" = "Pèmèt Notifikasyon nan Reglaj";
 
 /* label for number of attempts that are allowed */
 "Allowed Attempts" = "Tantativ Otorize";
@@ -86,7 +94,8 @@
 /* Alert title when unable to parse JSON for notification preferences */
 "Can't Display Notification Preferences" = "Pa Kapab Afiche Preferans Kominikasyon yo";
 
-/* Cancel button title
+/* Cancel Audio recording.
+   Cancel button title
    Cancel submission option
    Cancel upload */
 "Cancel" = "Anile";
@@ -119,6 +128,9 @@
 "Choose your answers below" = "Chwazi repons ou yo pi ba a";
 
 /* No comment provided by engineer. */
+"Collapse" = "Redwi";
+
+/* No comment provided by engineer. */
 "Comments" = "Kòmantè";
 
 /* File upload completed */
@@ -144,9 +156,6 @@
 
 /* Notification display name for course activities group */
 "Course Activities" = "Aktivite Kou";
-
-/* Button for creating a note from text selection */
-"Create Note" = "Kreye Nòt";
 
 /* Header label for a screen that customizes a course */
 "Customize" = "Pèsonalize";
@@ -237,11 +246,17 @@
 /* No comment provided by engineer. */
 "Error parsing the Roll Call response. Unexpected null value: (k)" = "Erè pandan analiz repons Apèl Nominal la. Valè nil sanzatann: (k)";
 
+/* No comment provided by engineer. */
+"Error retrieving tool launch URL" = "Erè pandan rekiperasyon URL lansman enstriman";
+
 /* rollcall status error */
 "Error: No data returned from the rollcall api." = "Erè: Okenn done ranvwaye pa API apèl la.";
 
 /* Exit button to leave the quiz */
 "Exit" = "Soti";
+
+/* No comment provided by engineer. */
+"Expand" = "Elaji";
 
 /* Error message when the server returns a invalid response */
 "Expected a response in the 200-299 range. Got %@" = "Atann yon repons nan gam 200-299. Jwenn %@";
@@ -288,15 +303,15 @@
 /* Hides the question list */
 "Hide Question List" = "Kache Lis Kesyon";
 
-/* No comment provided by engineer. */
-"Inbox" = "Bwat resepsyon";
-
 /* Indigo course color button */
 "Indigo" = "Indigo";
 
 /* Mark student late
    Student is present in class */
 "Late" = "An reta";
+
+/* No comment provided by engineer. */
+"Launch External Tool" = "Lanse Zouti Eksteryè";
 
 /* Leave the quiz */
 "Leave" = "Sòti";
@@ -332,9 +347,6 @@
 /* Next button for advancing a quiz */
 "Next" = "Pwochen";
 
-/* Title for no button for push notification pre-authorization alert */
-"No" = "Non";
-
 /* Alert title when unable to load communication channels */
 "No Communication Channels Found" = "Paka Jwenn Okenn Kanal Kominikasyon";
 
@@ -361,9 +373,6 @@
 
 /* Title for alert showing when a quiz isn't takeable */
 "Not Takeable" = "Pa Prizab";
-
-/* No comment provided by engineer. */
-"Note..." = "Nòt...";
 
 /* Error title for push notification registration error */
 "Notification Error" = "Erè Notifikasyon";
@@ -442,10 +451,10 @@
 "Question %@" = "Kesyon %@";
 
 /* state for a question that has been flagged */
-"Question (questionNumber) Flagged" = "Kesyon (questionNumber) Siyale";
+"Question (number) Flagged" = "Kesyon (kantite) Make";
 
 /* state for unflagged question */
-"Question (questionNumber) Unflagged" = "Kesyon (questionNumber) Pa siyale";
+"Question (number) Unflagged" = "Kesyon (kantite) Pa Make";
 
 /* label for the number of questions */
 "Questions" = "Kesyon";
@@ -705,10 +714,7 @@
 "Unable to display any notification preferences returned from the server at this time." = "Enposib pou afiche tout preferans kominikasyon ki tounen sot nan sèvè a nan moman sa a.";
 
 /* Alert message when unable to load communication channels */
-"Unable to load any Communication Channels at this time.  Error: (result.error?.localizedDescription)" = "Enposib pou chaje Kanal Kominikasyon yo kounye a.  Erè: (result.error?.localizedDescription)";
-
-/* Alert message when unable to load notification preferences */
-"Unable to load any notification preferences at this time.  Error: (result.error?.localizedDescription)" = "Enposib pou chaje preferans notifikasyon yo kounye a  Erè: (result.error?.localizedDescription)";
+"Unable to load any Communication Channels at this time." = "Enposib pou chaje Kanal Kominikasyon yo kounye a.";
 
 /* Error message when parsing communication preferences */
 "Unable to parse JSON for communication channels" = "Enposib pou analize JSON pou kanal kominikasyon yo";
@@ -758,14 +764,8 @@
 /* Error message for being unable to update a push notification preference */
 "We were not able to update this value with the server" = "Nou pa t kapab aktyalize valè sa a ak sèvè a";
 
-/* Message for push notification pre-authorization alert */
-"Would you like to allow Canvas to send you important notifications about announcements, course, assignments, etc?" = "Eske w ta renmen otorize Canvas pou voye avètisman ki enpòtan konsènan anons, kou, sesyon elatriye pou ou?";
-
 /* Yellow course color button */
 "Yellow" = "Jòn";
-
-/* Title for yes button for push notification pre-authorization alert */
-"Yes" = "Wi";
 
 /* Description for Yo communication channel */
 "Yo" = "Yo";
@@ -796,4 +796,7 @@
 
 /* File upload in progress */
 "uploading..." = "transfè...";
+
+/* web content failed to load */
+"⚠️ Error Loading Content" = "⚠️ Erè Chajman Kontni";
 

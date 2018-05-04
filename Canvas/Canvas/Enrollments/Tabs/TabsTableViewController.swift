@@ -23,10 +23,6 @@ import TechDebt
 
 extension Tab {
     func routingURL(_ session: Session) -> URL? {
-        if isPages {
-            let path = contextID.apiPath + "/pages_home"
-            return URL(string: path)
-        }
         if isHome {
             guard let enrollment = session.enrollmentsDataSource[contextID] else { return url }
             return URL(string: enrollment.defaultViewPath)
@@ -45,8 +41,7 @@ extension ColorfulViewModel {
     }
 }
 
-class TabsTableViewController: FetchedTableViewController<Tab> {
-    
+class TabsTableViewController: FetchedTableViewController<Tab>, PageViewEventViewControllerLoggingProtocol {
     let route: (UIViewController, URL)->()
     let session: Session
     let contextID: ContextID
@@ -76,17 +71,16 @@ class TabsTableViewController: FetchedTableViewController<Tab> {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        super.viewWillAppear(animated)
         if let selectedTabURL = selectedTabURL, let tab = collection.filter({ $0.routingURL(session) == selectedTabURL }).first, let indexPath = collection.indexPath(forObject: tab), self.splitViewController?.isCollapsed == false {
             tableView.selectRow(at: indexPath, animated: true, scrollPosition: .top)
         }
-        
-        var courses = session.enrollmentsDataSource.enrollmentsObserver.collection.makeIterator()
-        while let course = courses.next() {
-            let contextID = ContextID(id: course.id, context: .course)
-            if self.contextID == contextID {
-                _ = try? session.enrollmentsDataSource.fetchArcLTIToolID(for: contextID, inSession: session).start()
-            }
-        }
+        startTrackingTimeOnViewController()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        stopTrackingTimeOnViewController(eventName: "/groups/\(contextID.id)")
     }
     
     override func handleError(_ error: NSError) {

@@ -27,6 +27,7 @@
 #import <CanvasKit1/CKCanvasAPI.h>
 #import <CanvasKit1/CKContextInfo.h>
 #import "CKCanvasAPI+CurrentAPI.h"
+#import "CKIClient+CBIClient.h"
 
 
 @interface UIViewController (Push)
@@ -35,7 +36,7 @@
 
 @implementation UIViewController (Push)
 - (UIViewController *)currentLeaf {
-    return self;
+    return self.presentedViewController ? self.presentedViewController.currentLeaf : self;
 }
 @end
 
@@ -112,7 +113,7 @@
     return _sharedRouter;
 }
 
-#pragma marks - Defining Routes
+#pragma mark - Defining Routes
 
 - (void)addRoute:(NSString *)route handler:(RouteHandler)handler {
     self.routes[route] = handler;
@@ -140,7 +141,7 @@
     }];
 }
 
-#pragma marks - Dispatching
+#pragma mark - Dispatching
 
 - (UIViewController *)controllerForClass:(Class)cls params:(NSDictionary *)params {
     UIViewController *viewController = [cls new];
@@ -175,7 +176,7 @@
     }];
 }
 
-#pragma marks - Primary iPad Routing Methods
+#pragma mark - Primary iPad Routing Methods
 - (UIViewController *)controllerForHandlingBlockFromURL:(NSURL *)url {
     __block UIViewController *returnedController;
     
@@ -200,7 +201,7 @@
     else {
         matchURL = [NSURL URLWithString:[viewModel.model.path realURLEncodedString]];
     }
-
+    
     [self matchURL:matchURL matchHandler:^(NSDictionary *params, id classOrBlock) {
         if (class_isMetaClass(object_getClass(classOrBlock))) { // it's a class
             returnedController = [self controllerForClass:classOrBlock params:params];
@@ -210,16 +211,53 @@
         }
     }];
 
+    if([returnedController conformsToProtocol:@protocol(PageViewEventLoggerLegacySupportProtocol)]) {
+        NSString *decodedUrl = [matchURL.absoluteString stringByRemovingPercentEncoding];
+        id<PageViewEventLoggerLegacySupportProtocol> controller = returnedController;
+        [controller setPageViewEventName: decodedUrl];
+    }
+    
     return returnedController;
 }
 
 - (UIViewController *)routeFromController:(UIViewController *)sourceController toURL:(NSURL *)url {
+    return [self routeFromController:sourceController toURL:url withOptions:nil];
+}
 
+- (UIViewController *)routeFromController:(UIViewController *)sourceController toURL:(NSURL *)url withOptions:(NSDictionary *)options {
     UIViewController *destinationViewController = [self controllerForHandlingBlockFromURL:url];
-    
+
     if (!destinationViewController && self.fallbackHandler) {
         self.fallbackHandler(url, sourceController);
         return nil;
+    }
+
+    if ([destinationViewController isKindOfClass:[UIAlertController class]]) {
+        if (((UIAlertController *)destinationViewController).preferredStyle == UIAlertControllerStyleAlert) {
+            [sourceController presentViewController:destinationViewController animated:YES completion:nil];
+            return nil;
+        }
+    }
+
+    if ([destinationViewController isKindOfClass:[HelmViewController class]]) {
+        HelmViewController *controller = (HelmViewController *)destinationViewController;
+        NSMutableDictionary *props = [controller.props mutableCopy];
+        NSMutableDictionary *navigatorOptions = [props[@"navigatorOptions"] mutableCopy] ?: [NSMutableDictionary new];
+        if ((navigatorOptions && navigatorOptions[@"modal"]) || (options && options[@"modal"])) {
+            navigatorOptions[@"modal"] = @(1);
+            props[@"navigatorOptions"] = navigatorOptions;
+            controller.props = props;
+            HelmNavigationController *navigation = [[HelmNavigationController alloc] initWithRootViewController:controller];
+            [sourceController presentViewController:navigation animated:YES completion:nil];
+            return destinationViewController;
+        }
+    }
+
+    if (destinationViewController && options && options[@"modal"]) {
+        HelmNavigationController *navigation = [[HelmNavigationController alloc] initWithRootViewController:destinationViewController];
+        [destinationViewController addModalDismissButtonWithButtonTitle:nil];
+        [sourceController presentViewController:navigation animated:YES completion:nil];
+        return destinationViewController;
     }
 
     [sourceController cbi_transitionToViewController:destinationViewController animated:YES];
@@ -236,16 +274,16 @@
     return destinationViewController;
 }
 
-- (void)openCanvasURL:(NSURL *)url {
+- (void)openCanvasURL:(NSURL *)url withOptions:(NSDictionary *)options {
     RACSignal *clientFromSuggestedDomain = [TheKeymaster signalForLoginWithDomain:url.host];
     
     [clientFromSuggestedDomain subscribeNext:^(CKIClient *client) {
         UIViewController *root = UIApplication.sharedApplication.windows[0].rootViewController;
-        [self routeFromController:root.currentLeaf toURL:url];
+        [self routeFromController:root.currentLeaf toURL:url withOptions:options];
     }];
 }
 
-# pragma marks - Parsing
+# pragma mark - Parsing
 
 - (NSDictionary *)parseURLQuery:(NSURL *)url
 {
@@ -275,7 +313,18 @@
         params[@"query"] = [self parseURLQuery:url];
         
         if (urlComponents.count != routeComponents.count) {
-            return; // can't possibly match
+            BOOL shouldContinue = NO;
+            // I introduced supporting the *, but that broke a lot of assumptions in this route matching
+            // This seems like a little bit of a hack, but it does work without messing up the way things used to work
+            for (NSUInteger i = 0; i < routeComponents.count; i++) {
+                if ([routeComponents[i] hasPrefix:@"*"]) {
+                    // it should only continue looking if the index of where the * is exists before the end of the incoming url
+                    shouldContinue = i < urlComponents.count;
+                }
+            }
+            if (!shouldContinue) {
+                return; // can't possibly match
+            }
         }
         
         for (NSUInteger i = 0; i < routeComponents.count; i++) {
@@ -289,8 +338,13 @@
                 else {
                     params[paramKey] = param;
                 }
+            } else if ([routeComponents[i] hasPrefix:@"*"]) {
+                NSString *paramKey = [routeComponents[i] substringFromIndex:1];
+                NSArray  *remaining = [urlComponents subarrayWithRange:NSMakeRange(i, urlComponents.count - i)];
+                params[paramKey] = [remaining componentsJoinedByString:@"/"];
+                break;
             }
-            else if (![urlComponents[i] isEqualToString:routeComponents[i]]) {
+            else if (i >= urlComponents.count || ![urlComponents[i] isEqualToString:routeComponents[i]]) {
                 return; // not a match, continue to next key
             }
         }

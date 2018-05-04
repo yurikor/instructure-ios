@@ -25,33 +25,57 @@ import {
   NativeModules,
   NativeEventEmitter,
   AppState,
+  PushNotificationIOS,
+  Linking,
 } from 'react-native'
 import store from './src/redux/store'
 import setupI18n from './i18n/setup'
-import { setSession } from './src/canvas-api'
+import { setSession, compareSessions, getSessionUnsafe, httpCache } from './src/canvas-api'
 import { registerScreens } from './src/routing/register-screens'
 import { setupBrandingFromNativeBrandingInfo } from './src/common/branding'
-import logout from './src/redux/logout-action'
+import logoutAction from './src/redux/logout-action'
 import loginVerify from './src/common/login-verify'
 import { hydrateStoreFromPersistedState } from './src/redux/middleware/persist'
 import hydrate from './src/redux/hydrate-action'
-import { beginUpdatingUnreadCount, stopUpdatingUnreadCount } from './src/modules/inbox/update-unread-count'
+import { beginUpdatingBadgeCounts, stopUpdatingBadgeCounts, updateBadgeCounts } from './src/modules/tabbar/badge-counts'
 import App, { type AppId } from './src/modules/app'
+import device from 'react-native-device-info'
+import Navigator from './src/routing/Navigator'
+import { featureFlagSetup } from './src/common/feature-flags'
+import APIBridge from './src/canvas-api/APIBridge'
 
-global.v12 = false
+import { Client, Configuration } from 'bugsnag-react-native'
+let shouldLogUserInfo = false
+const configuration = new Configuration()
+configuration.notifyReleaseStages = ['testflight', 'production']
+configuration.appVersion = `${device.getVersion()}-${device.getBuildNumber()}`
 
-const PushNotifications = NativeModules.PushNotifications
+configuration.beforeSendCallbacks.push((report) => {
+  const session = getSessionUnsafe()
+  if (shouldLogUserInfo && session) {
+    report.addMetadata('user', 'id', session.user.id)
+    report.addMetadata('user', 'baseURL', session.baseURL)
+  }
+  return true
+})
+
+global.crashReporter = new Client(configuration)
 
 // Useful for demos when you don't want that annoying yellow box showing up all over the place
 // such as, when demoing
 console.disableYellowBox = true
 setupI18n(NativeModules.SettingsManager.settings.AppleLocale)
-registerScreens(store)
 
-const NativeLogin = NativeModules.NativeLogin
-const Helm = NativeModules.Helm
+const {
+  NativeLogin,
+  Helm,
+} = NativeModules
 
-Helm.initLoadingStateIfRequired()
+function logout () {
+  setSession(null)
+  httpCache.clear()
+  store.dispatch(logoutAction)
+}
 
 const loginHandler = async ({
   appId,
@@ -59,17 +83,25 @@ const loginHandler = async ({
   baseURL,
   branding,
   user,
+  actAsUserID,
   skipHydrate,
+  countryCode,
 }: {
   appId: AppId,
   authToken: string,
   baseURL: string,
   branding: Object,
   user: SessionUser,
+  actAsUserID: ?string,
   skipHydrate: boolean,
+  countryCode: string,
 }) => {
   App.setCurrentApp(appId)
-  stopUpdatingUnreadCount()
+  stopUpdatingBadgeCounts()
+
+  if (!authToken || !baseURL) {
+    return logout()
+  }
 
   if (user) {
     // flow already thinks the id is a string but it's not so coerce ;)
@@ -80,25 +112,47 @@ const loginHandler = async ({
     setupBrandingFromNativeBrandingInfo(branding)
   }
 
-  if (!authToken) {
-    setSession(null)
-    store.dispatch(logout)
-  } else {
-    PushNotifications.requestPermissions()
-    setSession({ authToken, baseURL, user })
-    if (!skipHydrate) {
-      await hydrateStoreFromPersistedState(store)
-    } else {
-      store.dispatch(hydrate())
-    }
-    Helm.loginComplete()
-    loginVerify()
-    beginUpdatingUnreadCount()
+  const session = { authToken, baseURL, user, actAsUserID }
+  const previous = getSessionUnsafe()
+  if (previous && !compareSessions(session, previous)) {
+    logout()
   }
+
+  if (countryCode !== 'CA') {
+    global.crashReporter.setUser(user.id)
+    shouldLogUserInfo = true
+  }
+
+  PushNotificationIOS.addEventListener('notification', (notification) => {
+    const navigator = new Navigator('')
+    navigator.showNotification(notification)
+    notification.finish(PushNotificationIOS.FetchResult.NewData)
+  })
+
+  Linking.addEventListener('url', (event) => {
+    const navigator = new Navigator('')
+    navigator.show(event.url, {
+      modal: true,
+      embedInNavigationController: true,
+      deepLink: true,
+    })
+  })
+
+  setSession(session)
+  if (!skipHydrate) {
+    await hydrateStoreFromPersistedState(store)
+    await httpCache.hydrate()
+  } else {
+    store.dispatch(hydrate())
+  }
+  await featureFlagSetup()
+  registerScreens(store)
+  Helm.loginComplete()
+  loginVerify()
+  beginUpdatingBadgeCounts()
 }
 
-// Bug in rn .45 when trying to use sync methods in debug mode
-if (global.nativeCallSyncHook) {
+if (NativeLogin.isTesting) {
   const loginInfo = NativeLogin.loginInformation()
   if (loginInfo) {
     loginHandler(loginInfo)
@@ -111,5 +165,8 @@ emitter.addListener('Login', loginHandler)
 AppState.addEventListener('change', (nextAppState) => {
   if (nextAppState === 'active') {
     loginVerify()
+    updateBadgeCounts()
   }
 })
+
+APIBridge()

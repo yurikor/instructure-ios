@@ -34,7 +34,7 @@ export function formattedDueDateWithStatus (dueAt: ?Date, lockAt: ?Date): string
   return [i18n('Due {dateString}', { dateString })]
 }
 
-export function formatGradeText (grade: string, gradingType: GradingType, pointsPossible?: number): string {
+export function formatGradeText (grade: ?string, gradingType?: GradingType, pointsPossible?: number): ?string {
   if (!['points', 'percent'].includes(gradingType)) {
     switch (grade) {
       case 'pass':
@@ -47,18 +47,22 @@ export function formatGradeText (grade: string, gradingType: GradingType, points
         return i18n('Incomplete')
     }
 
-    return grade
+    if (isNaN(grade)) {
+      return grade
+    }
+
+    return String(Math.round(Number(grade) * Math.pow(10, 2)) / Math.pow(10, 2))
   }
 
   if (gradingType === 'percent') {
-    grade = +grade.split('%')[0]
-    return i18n.number(grade / 100, 'percent')
+    const percent = +(grade || '').split('%')[0]
+    return i18n.number(percent / 100, 'percent')
   }
-  grade = Math.round(Number(grade) * Math.pow(10, 2)) / Math.pow(10, 2)
+  const gradeNum = Math.round(Number(grade) * Math.pow(10, 2)) / Math.pow(10, 2)
 
   if (gradingType === 'points' && pointsPossible) {
-    return `${i18n.number(grade)}/${pointsPossible}`
+    return `${i18n.number(gradeNum)}/${i18n.number(pointsPossible)}`
   }
 
-  return i18n.number(grade)
+  return i18n.number(gradeNum)
 }

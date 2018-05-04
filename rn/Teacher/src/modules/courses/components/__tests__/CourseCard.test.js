@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-// @flow
+/* eslint-disable flowtype/require-valid-file-annotation */
 
 import 'react-native'
 import React from 'react'
@@ -50,7 +50,7 @@ it('it calls props.onPress when it is selected', () => {
     <CourseCard {...defaultProps} onPress={onPress} />
   ).toJSON()
 
-  let button: any = explore(tree).selectByID(defaultProps.course.course_code)
+  let button: any = explore(tree).selectByID('course-' + defaultProps.course.id)
   button.props.onPress()
 
   expect(onPress).toHaveBeenCalledWith(defaultProps.course)
@@ -91,6 +91,25 @@ it('renders with empty image url', () => {
   expect(
     renderer.create(
       <CourseCard {...defaultProps} course={course} />
+    ).toJSON()
+  ).toMatchSnapshot()
+})
+
+it('renders with a grade', () => {
+  let course = courseTemplate.course()
+  let grade = { currentDisplay: 'A-' }
+  expect(
+    renderer.create(
+      <CourseCard {...defaultProps} course={course} grade={grade} showGrade={true} />
+    ).toJSON()
+  ).toMatchSnapshot()
+})
+
+it('renders with a grade even if the grade does not exist', () => {
+  let course = courseTemplate.course()
+  expect(
+    renderer.create(
+      <CourseCard {...defaultProps} course={course} showGrade={true} />
     ).toJSON()
   ).toMatchSnapshot()
 })

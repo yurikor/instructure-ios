@@ -205,9 +205,6 @@
 /* (No Comment) */
 "All members" = "Alle medlemmer";
 
-/* Allow Notifications in Settings */
-"Allow Notifications in Settings" = "Tillad meddelelser i indstillinger";
-
 /* (No Comment) */
 "An unknown error occurred" = "En ukendt fjel opstod";
 
@@ -239,7 +236,7 @@
    Assignment module item type */
 "Assignment" = "Opgave";
 
-/* Title for Assignments view controller */
+/* (No Comment) */
 "Assignments" = "Opgaver";
 
 /* (No Comment) */
@@ -275,6 +272,9 @@
 /* Calendar landing page title
    Calendar page title */
 "Calendar" = "Kalender";
+
+/* No comment provided by engineer. */
+"Calendar Event" = "Kalenderbegivenhed";
 
 /* (No Comment) */
 "Can't load tool" = "Kan ikke indlæse værktøj";
@@ -384,8 +384,7 @@
 /* (No Comment) */
 "Course Syllabus" = "Kursuspensum";
 
-/* Courses landing page title
-   Courses page title */
+/* Courses landing page title */
 "Courses" = "Kurser";
 
 /* (No Comment) */
@@ -402,6 +401,9 @@
 
 /* (No Comment) */
 "Customize" = "Brugertilpasset";
+
+/* dashboard page title */
+"Dashboard" = "Oversigt";
 
 /* (No Comment) */
 "Delete" = "Slet";
@@ -481,10 +483,10 @@
 /* (No Comment) */
 "Edit" = "Rediger";
 
-/* Edit course list title */
+/* (No Comment) */
 "Edit Course List" = "Rediger kursusliste";
 
-/* Edit group list title */
+/* (No Comment) */
 "Edit Group List" = "Rediger gruppeliste";
 
 /* (No Comment) */
@@ -496,7 +498,7 @@
 /* (No Comment) */
 "Email" = "E-mail";
 
-/* Prompt asking user to enable push notifications */
+/* (No Comment) */
 "Enable Push Notifications" = "Aktiver push beskeder";
 
 /* (No Comment) */
@@ -601,19 +603,19 @@
 /* (No Comment) */
 "Graded discussion. %g points possible." = "Bedømt diskussion. %g mulige points.";
 
-/* Title for Grades view controller */
+/* (No Comment) */
 "Grades" = "Karakterer";
 
 /* (No Comment) */
 "Group conversation" = "Gruppe konversation";
 
-/* Groups page title */
+/* (No Comment) */
 "Groups" = "Grupper";
 
 /* (No Comment) */
 "Help" = "Hjælp";
 
-/* Accessibility label for toggling grades to hidden */
+/* (No Comment) */
 "Hide Grades" = "Skjul karakterer";
 
 /* (No Comment) */
@@ -667,7 +669,7 @@
 /* (No Comment) */
 "Large file" = "Stor fil";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Later" = "Senere";
 
 /* (No Comment) */
@@ -862,7 +864,7 @@
 /* Nothing to see here. */
 "Nothing to see here." = "Intet at se her.";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Notification" = "Notifikation";
 
 /* Settings entry title for Notification Preferences */
@@ -955,7 +957,7 @@
 /* (No Comment) */
 "Privacy Policy" = "Persondatabeskyttelse";
 
-/* (No Comment) */
+/* No comment provided by engineer. */
 "Profile" = "Profil";
 
 /* Quiz module item type */
@@ -1033,9 +1035,6 @@
 /* (No Comment) */
 "Search for recipients" = "Søg efter modtagere";
 
-/* Placeholder text for search bar on assignments page */
-"Search here..." = "Søg her ...";
-
 /* No comment provided by engineer. */
 "Select Option" = "Vælg indstilling";
 
@@ -1066,7 +1065,7 @@
 /* (No Comment) */
 "Settings" = "Indstillinger";
 
-/* Accessibility label for toggling grades to visible */
+/* (No Comment) */
 "Show Grades" = "Vis karakterer";
 
 /* (No Comment) */
@@ -1209,6 +1208,9 @@
 /* (No Comment) */
 "Text entry" = "Tekst indsendelse";
 
+/* No comment provided by engineer. */
+"That page has been disabled for this course" = "Den pågældende side er blevet deaktiveret for dette fag";
+
 /* (No Comment) */
 "The recipients could not be added. Please try again. (%@)" = "Modtagerne kunne ikke tilføjes. Prøv venligst igen. (%@)";
 
@@ -1308,7 +1310,7 @@
 /* Label read aloud to describe module item type */
 "Type: %@" = "Type: %@";
 
-/* Notification over status bar that displays when not connected to the internet. */
+/* (No Comment) */
 "Uh-oh! No Internet Connection" = "Åh nej! Ingen internetforbindelse";
 
 /* (No Comment) */
@@ -1320,10 +1322,10 @@
 /* (No Comment) */
 "Unable to upload to server" = "Ikke i stand til at uploade til server";
 
-/* Grade unavailable */
+/* (No Comment) */
 "Unavailable" = "Ikke tilgængelig";
 
-/* Title for grade button when no grade is present */
+/* (No Comment) */
 "Ungraded" = "ikke bedømt";
 
 /* (No Comment) */
@@ -1371,7 +1373,7 @@
 /* (No Comment) */
 "Video error" = "Video fejl";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "View" = "Se";
 
 /* (No Comment) */

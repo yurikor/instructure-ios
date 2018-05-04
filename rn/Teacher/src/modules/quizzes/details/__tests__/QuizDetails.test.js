@@ -19,7 +19,6 @@
 import React from 'react'
 import 'react-native'
 import renderer from 'react-test-renderer'
-import { setSession } from '../../../../canvas-api'
 
 import { QuizDetails, mapStateToProps } from '../QuizDetails'
 import explore from '../../../../../test/helpers/explore'
@@ -42,8 +41,6 @@ const template = {
 }
 
 describe('QuizDetails', () => {
-  beforeAll(() => setSession(template.session()))
-
   let props
   beforeEach(() => {
     jest.clearAllMocks()
@@ -56,6 +53,7 @@ describe('QuizDetails', () => {
       assignmentGroup: null,
       assignment: null,
       showSubmissionSummary: true,
+      courseColor: '#fff',
     }
   })
 
@@ -303,6 +301,7 @@ describe('mapStateToProps', () => {
               enrollments: [{ type: 'designer' }],
               name: 'CS1010',
             },
+            color: '#123456',
           },
         },
       },
@@ -319,6 +318,7 @@ describe('mapStateToProps', () => {
       quizID: '1',
       assignmentGroup: null,
       assignment: null,
+      courseColor: '#123456',
     })
   })
 

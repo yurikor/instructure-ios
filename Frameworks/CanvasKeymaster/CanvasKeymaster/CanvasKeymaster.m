@@ -18,6 +18,7 @@
 #import <objc/runtime.h>
 #import "FXKeychain+CKMKeyChain.h"
 #import "UIDevice+CKMHardware.h"
+#import "UIAlertController+Show.h"
 @import ReactiveObjC;
 
 #pragma mark - Mobile Verify
@@ -41,11 +42,12 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
 @interface CanvasKeymaster ()
 
 @property (nonatomic, strong) CKMDomainPickerViewController *domainPicker;
+@property (nonatomic, strong) UINavigationController *domainPickerNavigationController;
 
 @end
 
 @implementation CanvasKeymaster {
-    RACSubject *_subjectForClientLogout, *_subjectForClientLogin;
+    RACSubject *_subjectForClientLogout, *_subjectForClientLogin, *_subjectForClientCannotLogInAutomatically;
     CKIClient *_currentClient;
     dispatch_once_t _once;
 }
@@ -56,6 +58,7 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
     if (self) {
         _subjectForClientLogin = [RACSubject new];
         _subjectForClientLogout = [RACSubject new];
+        _subjectForClientCannotLogInAutomatically = [RACSubject new];
         self.fetchesBranding = NO;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(accessTokenExpired:) name:CKIClientAccessTokenExpiredNotification object:nil];
     }
@@ -77,7 +80,7 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
 
 - (CKIClient *)clientFromKeychain
 {
-    FXKeychain *keychain = [FXKeychain sharedCanvasKeychain];
+    FXKeychain *keychain = [FXKeychain sharedKeychain];
     NSArray *clients = [keychain clients];
     // if we only have 1 client, lets log them in automatically
     if (clients.count == 1) {
@@ -90,15 +93,32 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
 
 - (RACSignal *)clientForMobileVerifiedDomain:(CKIAccountDomain *)accountDomain
 {
+    @weakify(self)
     return [[self mobileVerify:[self domainify:accountDomain.domain]] map:^id(NSDictionary *mobileVerifyDetails) {
-        NSString *clientID = mobileVerifyDetails[CBIMobileVerifyAPIClientIDName];
-        NSString *clientSecret = mobileVerifyDetails[CBIMobileVerifyAPIClientSecretName];
-        NSString *baseURLString = mobileVerifyDetails[CBIMobileVerifyBaseURLName];
-        NSURL *baseURL = [NSURL URLWithString:baseURLString];
-        
-        CKIClient *client = [CKIClient clientWithBaseURL:baseURL clientID:clientID clientSecret:clientSecret authenticationProvider:accountDomain.authenticationProvider];
-        [client.requestSerializer setValue:[self userAgent] forHTTPHeaderField:@"User-Agent"];
-        return client;
+        @strongify(self)
+        return [self clientWithMobileVerifiedDetails:mobileVerifyDetails accountDomain:accountDomain];
+    }];
+}
+
+- (CKIClient *)clientWithMobileVerifiedDetails:(NSDictionary *)details accountDomain:(CKIAccountDomain *)domain {
+    NSString *clientID = details[CBIMobileVerifyAPIClientIDName];
+    NSString *clientSecret = details[CBIMobileVerifyAPIClientSecretName];
+    NSString *baseURLString = details[CBIMobileVerifyBaseURLName];
+    NSURL *baseURL = [NSURL URLWithString:baseURLString];
+    
+    CKIClient *client = [CKIClient clientWithBaseURL:baseURL clientID:clientID clientSecret:clientSecret authenticationProvider:domain.authenticationProvider];
+    [client.requestSerializer setValue:[self userAgent] forHTTPHeaderField:@"User-Agent"];
+    return client;
+}
+
+- (void)loginWithMobileVerifyDetails:(NSDictionary *)details {
+    CKIClient *client = [self clientWithMobileVerifiedDetails:details accountDomain:nil];
+    [[client login] subscribeNext:^(CKIClient *currentClient) {
+        [self setCurrentClient:currentClient];
+        [[FXKeychain sharedKeychain] addClient:currentClient];
+        [_subjectForClientLogin sendNext:currentClient];
+    } error:^(NSError *error) {
+        [self login];
     }];
 }
 
@@ -106,15 +126,16 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
 
 - (void)accessTokenExpired:(NSNotification *)note
 {
-    NSString *expiredAlertMessage = NSLocalizedString(@"Your login has expired or has been removed by the server. Please log in again.", @"when the access token has been revoked");
+    NSString *message = NSLocalizedString(@"Your login has expired or has been removed by the server. Please log in again.", @"when the access token has been revoked");
     NSString *dismissButtonTitle = NSLocalizedString(@"Dismiss", @"Dismiss login expired/revoked alert button");
     
-    [[[UIAlertView alloc] initWithTitle:@"" message:expiredAlertMessage delegate:nil cancelButtonTitle:dismissButtonTitle otherButtonTitles:nil] show];
-    
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:message preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:dismissButtonTitle style:UIAlertActionStyleDefault handler:nil]];
+    [alert show];
     [self logout];
 }
 
-- (CKIClient *)currentClient
+- (nullable CKIClient *)currentClient
 {
     return _currentClient;
 }
@@ -127,6 +148,11 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
     }
 }
 
+- (NSInteger)numberOfClients
+{
+    return [[FXKeychain sharedKeychain] clients].count;
+}
+
 - (void)removeExtraClientsIfNecessary {
     // Previously we were saving a new client in the keychain each time the app was open.
     // We are removing all clients that are not needed.
@@ -134,10 +160,10 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
     BOOL hasDeletedExtraClients = [[NSUserDefaults standardUserDefaults] boolForKey:DELETE_EXTRA_CLIENTS_USER_PREFS_KEY];
     if (!hasDeletedExtraClients) {
         NSMutableDictionary *deletedClients = [@{} mutableCopy];
-        [[[FXKeychain sharedCanvasKeychain] clients] enumerateObjectsUsingBlock:^(CKIClient *client, NSUInteger idx, BOOL *stop) {
+        [[[FXKeychain sharedKeychain] clients] enumerateObjectsUsingBlock:^(CKIClient *client, NSUInteger idx, BOOL *stop) {
             if ([deletedClients objectForKey:client.accessToken]) {
-                [[FXKeychain sharedCanvasKeychain] removeClient:client];        // removes all clients with same access token
-                [[FXKeychain sharedCanvasKeychain] addClient:client];           // adds a single client back
+                [[FXKeychain sharedKeychain] removeClient:client];        // removes all clients with same access token
+                [[FXKeychain sharedKeychain] addClient:client];           // adds a single client back
             }
             else if (client.accessToken != nil) {
                 [deletedClients setObject:client forKey:client.accessToken];
@@ -169,8 +195,13 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
                 [subscriber sendError:error];
             }
             else {
+                // No idea how long this has been happening, but if any requests are made before the mobile verify request, the json is returned with while(1); in front of it
+                // Need to strip that out before we parse the json
+                NSString *stringResponse = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                NSString *fixed = [stringResponse stringByReplacingOccurrencesOfString:@"while(1);" withString:@""];
+                NSData   *fixedData = [fixed dataUsingEncoding:NSUTF8StringEncoding] ?: data;
                 NSError *jsonError;
-                NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&jsonError];
+                NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:fixedData options:NSJSONReadingAllowFragments error:&jsonError];
                 if (jsonError) {
                     [subscriber sendError:jsonError];
                     return;
@@ -220,9 +251,10 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
 - (RACSignal *)clientForSuggestedDomain:(NSString *)host
 {
     self.domainPicker = [CKMDomainPickerViewController new];
-    [self.domainPicker prepopulateWithDomain:host];
+    self.domainPickerNavigationController = [[UINavigationController alloc] initWithRootViewController:self.domainPicker];
+    [self.domainPickerNavigationController setNavigationBarHidden:YES animated:NO];
     
-    RACSignal *signalForClientForUsersDomain =  [[self.domainPicker selectedADomainSignal] flattenMap:^__kindof RACStream * _Nullable(NSString *domain) {
+    RACSignal *signalForClientForUsersDomain =  [[self.domainPicker selectedADomainSignal] flattenMap:^__kindof RACStream * _Nullable(CKIAccountDomain *domain) {
         return [[self clientForMobileVerifiedDomain:domain] deliverOn:[RACScheduler mainThreadScheduler]];
     }];
     
@@ -232,7 +264,6 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
     
     return [[signalForLoggedInUser merge:[self.domainPicker selectUserSignal]] deliverOn:[RACScheduler mainThreadScheduler]];
 }
-
 
 - (void)login
 {
@@ -245,18 +276,22 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
     
     [signalForClientForUsersDomain subscribeNext:^(CKIClient *currentClient) {
         [self setCurrentClient:currentClient];
-        [[FXKeychain sharedCanvasKeychain] addClient:currentClient];
+        [[FXKeychain sharedKeychain] addClient:currentClient];
         [_subjectForClientLogin sendNext:currentClient];
     } error:^(NSError *error) {
         [self login];
     }];
     
-    [_subjectForClientLogout sendNext:self.domainPicker];
+    [_subjectForClientLogout sendNext:self.domainPickerNavigationController];
 }
 
 - (RACSignal *)signalForLogout
 {
     return [_subjectForClientLogout deliverOn:[RACScheduler mainThreadScheduler]];
+}
+
+- (RACSignal *)signalForCannotLoginAutomatically {
+    return [_subjectForClientCannotLogInAutomatically deliverOn:[RACScheduler mainThreadScheduler]];
 }
 
 - (RACSignal *)signalForLogin
@@ -268,6 +303,8 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
             [subscriber sendNext:self.currentClient];
         } else if (self.currentClient == nil) {
             [self login];
+        } else {
+            [_subjectForClientCannotLogInAutomatically sendNext:self.domainPickerNavigationController];
         }
         [subscriber sendCompleted];
         
@@ -290,13 +327,13 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
 - (RACSignal *)signalForLoginWithDomain:(NSString *)host
 {
     // logged into the correct domain
-    if ([self.currentClient.baseURL.host isEqualToString:host]) {
+    if ((!host && self.currentClient) || [self.currentClient.baseURL.host isEqualToString:host]) {
         //same domain, return current client as signal
         return [[RACSignal return:self.currentClient] deliverOn:[RACScheduler mainThreadScheduler]];
     }
     
     // check the keychain
-    FXKeychain *keychain = [FXKeychain sharedCanvasKeychain];
+    FXKeychain *keychain = [FXKeychain sharedKeychain];
     NSArray *clients = [keychain clients];
     NSArray *eligibleClients = [clients.rac_sequence filter:^BOOL(CKIClient *aClient) {
         return [aClient.baseURL.host isEqualToString:host];
@@ -316,7 +353,8 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
         
         if (eligibleClients.count == 0) {
             //enter domain and send to user credentials page
-            [self.domainPicker sendDomain];
+            CKIAccountDomain *account = [[CKIAccountDomain alloc] initWithDomain:host];
+            [self.domainPicker sendDomain:account];
         }
     }];
 
@@ -327,6 +365,7 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
 {
     [self setCurrentClient:nil];
     [self login];
+    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
 }
 
 - (void)logout
@@ -336,7 +375,7 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
     }];
 }
 
-- (void)logoutWithCompletionBlock:(void (^)())completionBlock
+- (void)logoutWithCompletionBlock:(void (^)(void))completionBlock
 {
     if (!self.currentClient) {
         if (completionBlock) {
@@ -347,7 +386,7 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
     }
     
     // remove from keychain here because removeClient is tied to access token
-    FXKeychain *keychain = [FXKeychain sharedCanvasKeychain];
+    FXKeychain *keychain = [FXKeychain sharedKeychain];
     [keychain removeClient:self.currentClient];
     
     [[self.currentClient logout] subscribeError:^(NSError *error) {
@@ -382,9 +421,11 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
         masqClient.actAsUserID = id;
         newClientSignal = [RACSignal return:masqClient];
     } else {
-        newClientSignal = [[self clientForMobileVerifiedDomain:domain] map:^CKIClient *(CKIClient *newClient) {
+        CKIAccountDomain *account = [[CKIAccountDomain alloc] initWithDomain:domain];
+        newClientSignal = [[self clientForMobileVerifiedDomain:account] map:^CKIClient *(CKIClient *newClient) {
             [newClient setValue:self.currentClient.accessToken forKey:@"accessToken"];
             newClient.actAsUserID = id;
+            newClient.originalBaseURL = self.currentClient.baseURL;
             return newClient;
         }];
     }
@@ -412,23 +453,26 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
         return;
     }
     
-    [[FXKeychain sharedCanvasKeychain] removeClient:self.currentClient];
+    [[FXKeychain sharedKeychain] removeClient:self.currentClient];
     
     CKIClient *plainOlClient = [self.currentClient copy];
     plainOlClient.actAsUserID = nil;
+    if (self.currentClient.originalBaseURL) {
+        [plainOlClient setValue:self.currentClient.originalBaseURL forKey:@"baseURL"];
+    }
     [[plainOlClient fetchCurrentUser] subscribeNext:^(id x) {
         [plainOlClient setValue:x forKeyPath:@"currentUser"];
         self.currentClient = plainOlClient;
-        [[FXKeychain sharedCanvasKeychain] addClient:plainOlClient];
+        [[FXKeychain sharedKeychain] addClient:plainOlClient];
         [_subjectForClientLogin sendNext:plainOlClient];
     }];
 }
 
 - (void)resetKeymasterForTesting {
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] removeCookiesSinceDate:[NSDate dateWithTimeIntervalSinceReferenceDate:0]];
-    BOOL shouldLogout = [[FXKeychain sharedCanvasKeychain].clients count] > 0;
-    for (CKIClient *client in [[FXKeychain sharedCanvasKeychain].clients copy]) {
-        [[FXKeychain sharedCanvasKeychain] removeClient:client];
+    BOOL shouldLogout = [[FXKeychain sharedKeychain].clients count] > 0;
+    for (CKIClient *client in [[FXKeychain sharedKeychain].clients copy]) {
+        [[FXKeychain sharedKeychain] removeClient:client];
     }
     if (shouldLogout) {
         [self logout];

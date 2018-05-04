@@ -51,12 +51,8 @@ type SubmissionSettingsProps =
   SubmissionSettingsDataProps &
   SubmissionSettingsActions
 
-export class SubmissionSettings extends PureComponent {
+export class SubmissionSettings extends PureComponent<SubmissionSettingsProps> {
   props: SubmissionSettingsProps
-
-  dismiss = () => {
-    this.props.navigator.dismiss()
-  }
 
   toggleAnonymousGrading = (value: boolean) => {
     this.props.anonymousGrading(
@@ -82,14 +78,8 @@ export class SubmissionSettings extends PureComponent {
       <Screen
         title={i18n('Submission Settings')}
         navBarButtonColor={branding.primaryButtonColor}
-        rightBarButtons={[{
-          title: i18n('Done'),
-          style: 'done',
-          testID: 'submission-settings.done',
-          action: this.dismiss,
-        }]}
       >
-        <ScrollView style={style.container1}>
+        <ScrollView style={style.container}>
           <RowSeparator />
           <RowWithSwitch
             title={i18n('Mute Grades')}
@@ -115,7 +105,7 @@ export class SubmissionSettings extends PureComponent {
   }
 }
 
-export function mapStateToProps (state: AppState, ownProps: SubmissionSettingsOwnProps): SubmissionSettingsDataProps {
+export function mapStateToProps (state: AppState, ownProps: SubmissionSettingsOwnProps) {
   let course = state.entities.courses[ownProps.courseID]
   let anonymousCourse = course && course.enabledFeatures.includes('anonymous_grading')
   let assignment = state.entities.assignments[ownProps.assignmentID].data

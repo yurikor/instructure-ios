@@ -20,17 +20,17 @@
 #import "UIViewController+AnalyticsTracking.h"
 #import <CanvasKit1/CKActionSheetWithBlocks.h>
 #import "WebBrowserViewController.h"
-#import "UIWebView+SafeAPIURL.h"
 #import "iCanvasConstants.h"
 #import "Analytics.h"
+#import "UIAlertController+TechDebt.h"
 
 @import CanvasCore;
 @import CanvasKit;
 
-@interface WebBrowserViewController() <UIWebViewDelegate, UIDocumentInteractionControllerDelegate, UITextFieldDelegate, NSURLConnectionDataDelegate, UIAlertViewDelegate> {
+@interface WebBrowserViewController () <WKNavigationDelegate, UIDocumentInteractionControllerDelegate, UITextFieldDelegate, NSURLConnectionDataDelegate>
+{
     __weak IBOutlet UINavigationBar *topToolbar;
     __weak IBOutlet UIToolbar *bottomToolbar;
-    __weak IBOutlet UIBarButtonItem *doneButton;
     __weak IBOutlet UIBarButtonItem *backButton;
     __weak IBOutlet UIBarButtonItem *forwardButton;
     __weak IBOutlet UIBarButtonItem *refreshButton;
@@ -45,7 +45,8 @@
 }
 
 @property (nonatomic, weak) IBOutlet UIActivityIndicatorView *activityIndicator;
-@property (nonatomic, weak) IBOutlet UIWebView *webView;
+@property (nonatomic, weak) IBOutlet UIView *webViewContainer;
+@property (nonatomic, strong) CanvasWebView *webView;
 @property (nonatomic, strong) NSString *mime;
 @property (nonatomic, strong) NSURL *fileURLPath;
 @property (weak, nonatomic) IBOutlet UITextField *titleField;
@@ -75,7 +76,7 @@
 }
 
 - (void)dealloc {
-    _webView.delegate = nil;
+    _webView.navigationDelegate = nil;
     dic.delegate = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     if (self.fileURLPath) {
@@ -100,8 +101,14 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    doneButton.title = NSLocalizedString(@"Close", @"Close the window");
+    [self configureWebView];
+
+    if ([self presentingViewController] || self.browserWillDismissBlock) {
+        self.doneButton.title = NSLocalizedString(@"Close", @"Close the window");
+    } else {
+        self.navigationItem.leftBarButtonItems = @[];
+    }
+
     topToolbar.topItem.title = @"";
     
     // Set up our two states of buttons for the bottom toolbar.
@@ -143,14 +150,7 @@
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(onKeyboardHide:) name:UIKeyboardWillHideNotification object:nil];
     
     [self.titleField setTintColor:Brand.current.tintColor];
-    [self.webView setScalesPageToFit:YES];
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    
-    [self.webView loadHTMLString:@"<body></body>" baseURL:nil];
-    [self.request loadRequestInWebView:self.webView];
+//    [self.webView setScalesPageToFit:YES];
 }
 
 - (void)onKeyboardHide:(NSNotification *)notification
@@ -181,6 +181,14 @@
     
     NSLog(@"TRACKING: %@", kGAIScreenWebBrowser);
     [Analytics logScreenView:kGAIScreenWebBrowser];
+}
+
+- (void)configureWebView
+{
+    self.webView = [CanvasWebView new];
+    self.webView.navigationDelegate = self;
+    [self.webViewContainer addSubview:self.webView];
+    [self.webView pinToAllSidesOfSuperview];
 }
 
 #pragma mark - Setters
@@ -246,7 +254,7 @@
 - (IBAction)refreshButtonTapped:(id)sender
 {
     networkOps = 0;
-    if (_webView.request && _webView.request.URL.absoluteString.length && ![_webView.request.URL.absoluteString isEqualToString:@"about:blank"]) {
+    if (self.webView.URL.absoluteString.length && ![self.webView.URL.absoluteString isEqualToString:@"about:blank"]) {
         [_webView reload];
     } else {
         [self.request loadRequestInWebView:self.webView];
@@ -261,8 +269,6 @@
 
 - (IBAction)actionButtonTapped:(id)sender
 {
-    BOOL addedAtLeastOneButton = NO;
-    
     if ([optionsActionSheet isVisible]) {
         [optionsActionSheet dismissWithClickedButtonIndex:[optionsActionSheet cancelButtonIndex] animated:NO];
     }
@@ -270,49 +276,52 @@
     if ([openInErrorSheet isVisible]) {
         [openInErrorSheet dismissWithClickedButtonIndex:[openInErrorSheet cancelButtonIndex] animated:NO];
     }
-    
-    optionsActionSheet = [[CKActionSheetWithBlocks alloc] initWithTitle:[_webView stringByEvaluatingJavaScriptFromString:@"document.title"]];
-    
-    // Present an action sheet.
-    // 1. Open in Safari
-    NSURL *theURL = [NSURL URLWithString:self.fullURL]; // Copy to a local variable to avoid a retain cycle
-    if (self.request.canOpenInSafari) {
-        [optionsActionSheet addButtonWithTitle:NSLocalizedString(@"Open in Safari", @"Open a document in the application Safari") handler:^{
-            [[UIApplication sharedApplication] openURL:theURL];
-        }];
-        addedAtLeastOneButton = YES;
-    }
-    
-    // 2. Open in another application
-    CKActionSheetWithBlocks *localOpenInErrorSheet = openInErrorSheet;
-    
-    if (self.fileURLPath) {
-        dic = [UIDocumentInteractionController interactionControllerWithURL:self.fileURLPath];
-        dic.delegate = self;
-        __weak UIDocumentInteractionController *weakDic = dic;
-        [optionsActionSheet addButtonWithTitle:NSLocalizedString(@"Open in...", @"Open file in another application") handler:^{
-            // Dismiss this action sheet and generate an OpenIn DIC display.
-            // If there are no apps to handle the URL, display an action sheet that says, "Nothing supports this document". This is required to be in the App Store.
-            BOOL presentedOpenInMenu = [weakDic presentOpenInMenuFromBarButtonItem:sender animated:YES];
-            
-            if (presentedOpenInMenu == NO) {
-                [localOpenInErrorSheet showFromBarButtonItem:sender animated:YES];
-            }
-        }];
-        addedAtLeastOneButton = YES;
-    }
-    
-    // 3. Print
-    // 4. Make a sandwich
-    // 5. Sudo make a sandwich
-    // 6. Cancel
-    [optionsActionSheet addCancelButtonWithTitle:NSLocalizedString(@"Cancel", nil)];;
-    
-    if (addedAtLeastOneButton == NO) {
-        optionsActionSheet.title = NSLocalizedString(@"There are no actions for this item", @"Error message");
-    }
-    
-    [optionsActionSheet showFromBarButtonItem:sender animated:YES];
+
+    [self.webView evaluateJavaScript:@"document.title" completionHandler:^(id result, NSError *error) {
+        BOOL addedAtLeastOneButton = NO;
+        optionsActionSheet = [[CKActionSheetWithBlocks alloc] initWithTitle:result];
+
+        // Present an action sheet.
+        // 1. Open in Safari
+        NSURL *theURL = [NSURL URLWithString:self.fullURL]; // Copy to a local variable to avoid a retain cycle
+        if (self.request.canOpenInSafari) {
+            [optionsActionSheet addButtonWithTitle:NSLocalizedString(@"Open in Safari", @"Open a document in the application Safari") handler:^{
+                [[UIApplication sharedApplication] openURL:theURL options:@{} completionHandler:nil];
+            }];
+            addedAtLeastOneButton = YES;
+        }
+
+        // 2. Open in another application
+        CKActionSheetWithBlocks *localOpenInErrorSheet = openInErrorSheet;
+
+        if (self.fileURLPath) {
+            dic = [UIDocumentInteractionController interactionControllerWithURL:self.fileURLPath];
+            dic.delegate = self;
+            __weak UIDocumentInteractionController *weakDic = dic;
+            [optionsActionSheet addButtonWithTitle:NSLocalizedString(@"Open in...", @"Open file in another application") handler:^{
+                // Dismiss this action sheet and generate an OpenIn DIC display.
+                // If there are no apps to handle the URL, display an action sheet that says, "Nothing supports this document". This is required to be in the App Store.
+                BOOL presentedOpenInMenu = [weakDic presentOpenInMenuFromBarButtonItem:sender animated:YES];
+
+                if (presentedOpenInMenu == NO) {
+                    [localOpenInErrorSheet showFromBarButtonItem:sender animated:YES];
+                }
+            }];
+            addedAtLeastOneButton = YES;
+        }
+
+        // 3. Print
+        // 4. Make a sandwich
+        // 5. Sudo make a sandwich
+        // 6. Cancel
+        [optionsActionSheet addCancelButtonWithTitle:NSLocalizedString(@"Cancel", nil)];;
+
+        if (addedAtLeastOneButton == NO) {
+            optionsActionSheet.title = NSLocalizedString(@"There are no actions for this item", @"Error message");
+        }
+
+        [optionsActionSheet showFromBarButtonItem:sender animated:YES];
+    }];
 }
 
 #pragma mark -
@@ -325,19 +334,19 @@
 #pragma mark -
 #pragma mark UIWebViewDelegate
 
-- (BOOL)webView:(UIWebView *)theWebView shouldStartLoadWithRequest:(NSURLRequest *)req navigationType:(UIWebViewNavigationType)navigationType
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
 {
-    self.fullURL = req.URL.description;
-    self.hostURL = req.URL.host.description;
-    
+    self.fullURL = webView.URL.description;
+    self.hostURL = webView.URL.host.description;
+
     if (self.isTitleAbreviated) {
         [self.titleField setText:self.hostURL];
     } else {
         [self.titleField setText:self.fullURL];
         [self toggleTitleDisplayState];
     }
-    
-    return YES;
+
+    decisionHandler(WKNavigationActionPolicyAllow);
 }
 
 - (void)downloadFileAtURL:(NSURL *)url
@@ -356,7 +365,7 @@
     [downloadTask resume];
 }
 
-- (void)webView:(UIWebView *)theWebView didFailLoadWithError:(NSError *)error
+- (void)webView:(WKWebView *)webView didFailNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error;
 {
     // Display an error page on the screen?
     if (networkOps > 0) networkOps--;
@@ -387,7 +396,7 @@
     }
 }
 
-- (void)webViewDidStartLoad:(UIWebView *)theWebView
+- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(null_unspecified WKNavigation *)navigation
 {
     networkOps++;
     
@@ -401,17 +410,20 @@
     }
 }
 
-- (void)webViewDidFinishLoad:(UIWebView *)theWebView
+- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
 {
     backButton.enabled = [_webView canGoBack];
-    [self setFullURL:theWebView.request.URL.description];
+    [self setFullURL:webView.URL.description];
     // Show the title of the document.
-    if ([theWebView.request.URL isFileURL]) {
-        topToolbar.topItem.title = [theWebView.request.URL lastPathComponent];
+    if ([webView.URL isFileURL]) {
+        topToolbar.topItem.title = [webView.URL lastPathComponent];
     }
     else {
-        [self.titleField setText:[self.webView stringByEvaluatingJavaScriptFromString:@"document.title"]];
-        [self setHostURL:[self.webView stringByEvaluatingJavaScriptFromString:@"document.title"]];
+        __weak typeof(self) weakself = self;
+        [webView evaluateJavaScript:@"document.title" completionHandler:^(id _Nullable result, NSError *_Nullable error) {
+            [weakself.titleField setText:result];
+            [weakself setHostURL:result];
+        }];
     }
     
     if (networkOps > 0) networkOps--;
@@ -427,21 +439,17 @@
             [self.titleField setFrame:CGRectMake((self.view.frame.size.width - roundf(size.width)) * 0.5, self.titleField.frame.origin.y, roundf(size.width), self.titleField.frame.size.height)];
         }
     }];
-    
-    NSString *html = [theWebView stringByEvaluatingJavaScriptFromString:@"document.body.innerHTML"];
-    if ([html isEqualToString:@"Could not find download URL"]) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error",nil) message:NSLocalizedString(@"There was an error loading your content. If it is an audio or video upload it may still be processing.", nil) delegate:self cancelButtonTitle:NSLocalizedString(@"OK",nil) otherButtonTitles:nil];
-        [alert show];
-    }
-    
-    [theWebView replaceHREFsWithAPISafeURLs];
-    [self.delegate webBrowser:self didFinishLoadingWebView:theWebView];
-}
 
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    // The only alertview shown will be for a 'Could not find download URL' error
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [webView evaluateJavaScript:@"document.body.innerHTML" completionHandler:^(id _Nullable html, NSError *_Nullable error) {
+        if ([html isEqualToString:@"Could not find download URL"]) {
+            [UIAlertController showAlertWithTitle:NSLocalizedString(@"Error", nil) message:NSLocalizedString(@"There was an error loading your content. If it is an audio or video upload it may still be processing.", nil) handler:^{
+                [self dismissViewControllerAnimated:YES completion:nil];
+            }];
+        }
+    }];
+
+    [webView replaceHREFsWithAPISafeURLs];
+    [self.delegate webBrowser:self didFinishLoadingWebView:webView];
 }
 
 - (void)toggleTitleDisplayState
@@ -484,8 +492,13 @@
 
 @implementation NSURLRequest (WebBrowser)
 
-- (void)loadRequestInWebView:(UIWebView *)webView {
-    [webView loadRequest:self];
+- (void)loadRequestInWebView:(WKWebView *)webView
+{
+    if (self.URL != nil && self.URL.isFileURL) {
+        [webView loadFileURL:self.URL allowingReadAccessToURL:self.URL];
+    } else {
+        [webView loadRequest:self];
+    }
 }
 
 - (BOOL)canOpenInSafari {
@@ -508,7 +521,8 @@
     return req;
 }
 
-- (void)loadRequestInWebView:(UIWebView *)webView {
+- (void)loadRequestInWebView:(WKWebView *)webView
+{
     [webView loadHTMLString:self.html baseURL:self.baseURL];
 }
 

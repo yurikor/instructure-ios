@@ -11,10 +11,17 @@
     "react",
     "import"
   ],
+  "settings": {
+    "import/resolver": {
+      "babel-module": {}
+    }
+  },
   "globals": {
     "fetch": true,
     "fail": true,
-    "FormData": true
+    "FormData": true,
+    "requestIdleCallback": true,
+    "requestAnimationFrame": true,
   },
   "rules": {
     "react/jsx-uses-vars": [2],

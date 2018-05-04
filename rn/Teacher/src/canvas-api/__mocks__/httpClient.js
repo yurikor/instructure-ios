@@ -16,9 +16,23 @@
 
 // @flow
 
-let client = {
-  get: jest.fn(() => Promise.resolve()),
-  post: jest.fn(() => Promise.resolve()),
+const fetching = () => {
+  const promise: ApiPromise<any> = Promise.resolve()
+  promise.request = { abort: jest.fn() }
+  return promise
 }
 
-export default () => client
+const client = {
+  get: jest.fn(fetching),
+  post: jest.fn(fetching),
+  put: jest.fn(fetching),
+  delete: jest.fn(fetching),
+}
+
+export default jest.fn(() => client)
+
+export function isAbort (error: Error) {
+  return error.message.includes('abort')
+}
+
+export const httpCache = require.requireActual('../httpClient').httpCache

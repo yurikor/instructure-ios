@@ -37,7 +37,7 @@ import { type Assignee } from '../../assignee-picker/map-state-to-props'
 import uuid from 'uuid/v1'
 import { cloneDeep } from 'lodash'
 import { Text } from '../../../common/text'
-import EditSectionHeader from './EditSectionHeader'
+import EditSectionHeader from '../../../common/components/EditSectionHeader'
 import Images from '../../../images'
 import DisclosureIndicator from '../../../common/components/DisclosureIndicator'
 import Navigator from '../../../routing/Navigator'
@@ -47,7 +47,7 @@ import RowWithDateInput from '../../../common/components/rows/RowWithDateInput'
 
 type Props = {
   assignment: Assignment,
-  scrollTo: Function,
+  scrollTo?: Function,
   navigator: Navigator,
   canEditAssignees?: boolean,
   canAddDates?: boolean,
@@ -507,7 +507,7 @@ export default class AssignmentDatesEditor extends Component<Props, any> {
         title={title}
         date={date[type]}
         onPress={modifyFunction}
-        showRemoveButton={date[type]}
+        showRemoveButton={!!date[type]}
         selected={selected}
         onRemoveDatePress={removeDateTypeFunction}/>
     )
@@ -529,7 +529,7 @@ export default class AssignmentDatesEditor extends Component<Props, any> {
                 <EditSectionHeader title={title} style={styles.headerText}>
                   {removeButton}
                 </EditSectionHeader>
-                <TouchableHighlight style={styles.row} onPress={canEditAssignees && (() => this.selectAssignees(date))}>
+                <TouchableHighlight style={styles.row} onPress={canEditAssignees ? () => this.selectAssignees(date) : undefined}>
                   <View style={styles.rowContainer}>
                     <Text style={styles.titleText}>{i18n('Assignees')}</Text>
                     <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>

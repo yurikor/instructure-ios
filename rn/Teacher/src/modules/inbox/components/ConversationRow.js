@@ -38,7 +38,7 @@ export type ConversationRowProps = {
   onPress: (string) => void,
 }
 
-export default class ConversationRow extends Component<any, ConversationRowProps, any> {
+export default class ConversationRow extends Component<ConversationRowProps, any> {
 
   _onPress = () => {
     this.props.onPress(this.props.conversation.id)
@@ -46,8 +46,7 @@ export default class ConversationRow extends Component<any, ConversationRowProps
 
   _participantNames = (): string[] => {
     const participants = this.props.conversation.participants || []
-    const session = getSession()
-    const myUserId = session ? session.user.id : ''
+    const myUserId = getSession().user.id
     return participants
     .filter((p) => p.id !== myUserId)
     .map((p) => p.name)
@@ -81,6 +80,7 @@ export default class ConversationRow extends Component<any, ConversationRowProps
       containerStyles.push(styles.topHairline)
     }
     const unread = c.workflow_state === 'unread'
+    // $FlowFixMe
     const date = new Date(ConversationRow.extractDate(c))
     const dateTitle = i18n.date(date, 'M/d/yyyy')
     const accessibilityDateTitle = i18n.date(date, 'long')

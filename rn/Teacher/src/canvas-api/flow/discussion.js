@@ -28,22 +28,23 @@ export type DiscussionView = {
   participants: UserDisplay[],
   view: DiscussionReply[],
   new_entries: string[],
+  entry_ratings: { [string]: number },
 }
 
 export type DiscussionReply = {
   created_at: string,
   id: string,
-  message: string,
+  message: ?string,
   parent_id: ?string,
   rating_count: ?number,
   rating_sum: ?number,
   replies: DiscussionReply[],
   updated_at: string,
   user_id: string,
-  deleted: boolean,
-  attachment: ?Attachment,
+  deleted?: boolean,
+  attachment?: ?Attachment,
   pendng?: boolean,
-  editor_id: string,
+  editor_id?: string,
 }
 
 export type DiscussionType = 'side_comment' | 'threaded'
@@ -63,28 +64,32 @@ export type Discussion = {
   user_can_see_posts: boolean,
   user_name: string,
   unread_count: number,
-  permissions: DiscussionPermissions[],
+  permissions: DiscussionPermissions,
   message: string,
-  assignment: ?Assignment,
+  assignment?: ?Assignment,
   discussion_subentry_count: number,
   last_reply_at: string,
-  replies: ?DiscussionReply[],
-  participants: ?{ [key: string]: UserDisplay },
+  replies?: ?DiscussionReply[],
+  participants?: ?{ [key: string]: UserDisplay },
   author: UserDisplay,
   allow_rating: boolean,
   only_graders_can_rate: boolean,
   require_initial_post: boolean,
-  delayed_post_at: ?string,
-  attachments: ?Attachment[],
+  delayed_post_at?: ?string,
+  attachments?: ?Attachment[],
   discussion_type: DiscussionType,
-  unlock_at: ?string,
+  unlock_at?: ?string,
   can_unpublish: boolean,
+  locked_for_user?: boolean,
+  locked?: boolean,
+  sections?: Section[],
+  is_section_specific: boolean,
 }
 
 // api params
 
 export type GetDiscussionsParameters = {
-  only_announcents?: boolean,
+  only_announcements?: boolean,
 }
 
 export type CreateDiscussionParameters = {
@@ -103,6 +108,9 @@ export type CreateDiscussionParameters = {
   subscribed?: boolean,
   attachment?: ?Attachment,
   remove_attachment?: boolean,
+  specific_sections?: string,
+  sections?: Section[],
+  group_topic_children?: DiscussionGroupTopicChildren[],
 }
 
 export type UpdateDiscussionParameters = CreateDiscussionParameters & {
@@ -111,5 +119,12 @@ export type UpdateDiscussionParameters = CreateDiscussionParameters & {
 
 export type CreateEntryParameters = {
   message: string,
-  attachment?: string,
+  attachment?: ?Attachement,
+}
+
+export type DiscussionOriginEntity = CourseState | GroupState
+
+export type DiscussionGroupTopicChildren = {
+  id: string,
+  group_id: string,
 }

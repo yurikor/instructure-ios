@@ -22,69 +22,113 @@ import Fabric
 import Crashlytics
 import CanvasCore
 import ReactiveSwift
+import BugsnagReactNative
+import UserNotifications
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    let loginConfig = LoginConfiguration(mobileVerifyName: "iCanvas", logo: #imageLiteral(resourceName: "login_logo"))
+    let loginConfig = LoginConfiguration(mobileVerifyName: "iCanvas", logo: UIImage(named: "student-logomark")!, fullLogo: UIImage(named: "student-logo")!)
     var session: Session?
     var window: UIWindow?
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        if unitTesting {
-            return true
+        if (uiTesting) {
+            BuddyBuildSDK.setup()
+        } else {
+            configureBugSnag()
+            setupCrashlytics()
         }
-
-        BuddyBuildSDK.setup()
         
-        makeAWindow()
-        postLaunchSetup()
-        TheKeymaster?.fetchesBranding = true
-        TheKeymaster?.delegate = loginConfig
+        ResetAppIfNecessary()
+        NotificationKitController.setupForPushNotifications(delegate: self)
+        TheKeymaster.fetchesBranding = true
+        TheKeymaster.delegate = loginConfig
+        
+        window = MasqueradableWindow(frame: UIScreen.main.bounds)
+        showLoadingState()
+        window?.makeKeyAndVisible()
+        
+        DispatchQueue.main.async {
+            self.postLaunchSetup()
+        }
         
         return true
     }
     
-    func application(_ application: UIApplication, handleOpen url: URL) -> Bool {
-        if url.scheme == "file" {
-            do {
-                try ReceivedFilesViewController.add(toReceivedFiles: url)
-                return true
-            } catch let e as NSError {
-                handleError(e)
-            }
-        } else if url.scheme == "canvas-courses" {
-            return openCanvasURL(url)
-        } else if handleDropboxOpenURL(url) {
-            return true
-        }
+    func showLoadingState() {
+        guard let window = self.window else { return }
+        if let root = window.rootViewController, let tag = root.tag, tag == "LaunchScreenPlaceholder" { return }
+        let placeholder = UIStoryboard(name: "LaunchScreen", bundle: nil).instantiateViewController(withIdentifier: "LaunchScreen")
+        placeholder.tag = "LaunchScreenPlaceholder"
         
-        return false
+        UIView.transition(with: window, duration: 0.5, options: .transitionCrossDissolve, animations: {
+            window.rootViewController = placeholder
+        }, completion:nil)
+    }
+    
+    func application(_ application: UIApplication, handleOpen url: URL) -> Bool {
+        return openCanvasURL(url)
     }
 
     func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
         return self.application(application, handleOpen: url)
     }
+
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        return openCanvasURL(url)
+    }
+    
+    func configureBugSnag() {
+        let configuration = BugsnagConfiguration()
+        configuration.add { (data, report) -> Bool in
+            var user = Dictionary<String, String>()
+            let region = Locale.current.regionCode
+            if let session = self.session, region != "CA" {
+                user["baseURL"] = session.baseURL.absoluteString
+                user["id"] = session.user.id
+                report.addMetadata(user, toTabWithName: "user")
+            }
+            return true
+        }
+        BugsnagReactNative.start(with: configuration)
+        NotificationCenter.default.addObserver(forName: Notification.Name(rawValue: "FakeCrash"), object: nil, queue: nil) { _  in
+            let exception = NSException(name:NSExceptionName(rawValue: "FakeException"),
+                                        reason:"The red coats are coming, the red coats are coming!",
+                                        userInfo:nil)
+            Bugsnag.notify(exception)
+        }
+    }
 }
 
 // MARK: Push notifications
-extension AppDelegate {
-
-    func application(_ application: UIApplication, didRegister notificationSettings: UIUserNotificationSettings) {
-        #if !arch(i386) && !arch(x86_64)
-            application.registerForRemoteNotifications()
-        #endif
-    }
-
+extension AppDelegate: UNUserNotificationCenterDelegate {
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        didRegisterForRemoteNotifications(deviceToken)
+        NotificationKitController.didRegisterForRemoteNotifications(deviceToken, errorHandler: handleError)
     }
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        didFailToRegisterForRemoteNotifications(error as NSError)
+        handleError((error as NSError).addingInfo())
     }
-    
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
-        app(application, didReceiveRemoteNotification: userInfo)
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        StartupManager.shared.enqueueTask { [weak self] in
+            PushNotifications.record(response.notification)
+            let userInfo = response.notification.request.content.userInfo
+
+            // Handle local notifications we know about first
+            if let assignmentURL = userInfo[CBILocalNotificationAssignmentURLKey] as? String,
+                let url = URL(string: assignmentURL) {
+                self?.openCanvasURL(url)
+                return
+            }
+
+            // Must be a push notification
+            self?.routeToPushNotificationPayloadURL(userInfo)
+        }
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert, .sound])
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
@@ -92,38 +136,20 @@ extension AppDelegate {
     }
 }
 
-// MARK: Local notifications
-extension AppDelegate {
-    func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
-        if let assignmentURL = (notification.userInfo?[CBILocalNotificationAssignmentURLKey] as? String).flatMap({ URL(string: $0) }) {
-            _ = openCanvasURL(assignmentURL)
-        }
-    }
-}
-
 // MARK: Post launch setup
 extension AppDelegate {
-    func makeAWindow() {
-        window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = UIStoryboard(name: "LaunchScreen", bundle: nil).instantiateViewController(withIdentifier: "LaunchScreen")
-        window?.makeKeyAndVisible()
-    }
     
     func postLaunchSetup() {
         PSPDFKit.license()
-        setupCrashlytics()
         prepareReactNative()
         Analytics.prepare()
         NetworkMonitor.engage()
         CBILogger.install(loginConfig.logFileManager)
-        Brand.current.apply(self.window!)
         excludeHelmInBranding()
-        UINavigationBar.appearance().barStyle = .black
-        if let w = window { Brand.current.apply(w) }
         Router.shared().addCanvasRoutes(handleError)
         setupDefaultErrorHandling()
         UIApplication.shared.reactive.applicationIconBadgeNumber
-            <~ UnreadMessages.count
+            <~ TabBarBadgeCounts.applicationIconBadgeNumber
     }
 }
 
@@ -198,68 +224,51 @@ extension AppDelegate {
             return
         }
         
-        Fabric.with([Crashlytics.self])
+        //Fabric.with([Crashlytics.self])
     }
 }
 
 
 // MARK: Launching URLS
 extension AppDelegate {
-    func openCanvasURL(_ url: URL) -> Bool {
-    
-        if url.scheme == "canvas-courses" {
-            Router.shared().openCanvasURL(url)
-            return true
-        }
-        
-        if url.scheme == "file" {
-            do {
-                try ReceivedFilesViewController.add(toReceivedFiles: url)
-                return true
-            } catch let e as NSError {
-                handleError(e)
-                return false
+    @discardableResult func openCanvasURL(_ url: URL) -> Bool {
+        // the student app doesn't have as predictable of a tab bar setup and for
+        // several views, does not have a route configured for them so for now we
+        // will hard code until we move more things over to helm
+        let tabRoutes = [["/", "", "/courses", "/groups"], ["/calendar"], ["/to-do"], ["/notifications"], ["/conversations", "/inbox"]]
+        StartupManager.shared.enqueueTask({
+            let path = url.path
+            var index: Int?
+            
+            for (i, element) in tabRoutes.enumerated() {
+                if let _ = element.index(of: path) {
+                    index = i
+                    break
+                }
             }
-        }
-        
-        if handleDropboxOpenURL(url) {
-            return true
-        }
-        
-        Router.shared().openCanvasURL(url)
+            
+            if let i = index {
+                guard let tabBarController = UIApplication.shared.keyWindow?.rootViewController as? UITabBarController else { return }
+                tabBarController.selectedIndex = i
+                tabBarController.resetSelectedViewController()
+            } else {
+                
+                if handleDropboxOpenURL(url) {
+                    return
+                }
+                
+                if url.scheme == "file" {
+                    do {
+                        try ReceivedFilesViewController.add(toReceivedFiles: url)
+                    } catch let e as NSError {
+                        self.handleError(e)
+                    }
+                } else {
+                    Router.shared().openCanvasURL(url, withOptions: ["modal": true])
+                }
+            }
+        })        
         return true
-    }
-}
-
-import React
-
-extension AppDelegate: RCTBridgeDelegate {
-    func prepareReactNative() {
-        NativeLoginManager.shared().delegate = self
-        NativeLoginManager.shared().app = .student
-        HelmManager.shared.showsLoadingState = false
-        HelmManager.shared.bridge = RCTBridge(delegate: self, launchOptions: nil)
-        HelmManager.shared.onReactLoginComplete = {
-            guard let session = self.session else {
-                return
-            }
-
-            let root = rootViewController(session)
-            self.addClearCacheGesture(root.view)
-            self.window?.rootViewController = root
-        }
-    }
-    
-    func excludeHelmInBranding() {
-        let appearance = UINavigationBar.appearance(whenContainedInInstancesOf: [HelmNavigationController.self])
-        appearance.barTintColor = nil
-        appearance.tintColor = nil
-        appearance.titleTextAttributes = nil
-    }
-    
-    func sourceURL(for bridge: RCTBridge!) -> URL! {
-        let url = RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index.ios", fallbackResource: nil)
-        return url
     }
 }
 
@@ -272,28 +281,15 @@ extension AppDelegate: NativeLoginManagerDelegate {
         ModuleItem.beginObservingProgress(session)
         CKCanvasAPI.updateCurrentAPI()
         
-        let b = Brand.current
-        guard let brand = CKIBrand() else {
-            fatalError("Why can't I init a brand?")
+        if let brandingInfo = client.branding?.jsonDictionary() as? [String: Any] {
+            Brand.setCurrent(Brand(webPayload: brandingInfo), applyInWindow: window)
         }
-        brand.navigationBackground = "#313640" // ask me why this value is hard-coded and I'll tell you a sad sad tale
-        brand.navigationButtonColor = b.navButtonColor.hex
-        brand.navigationTextColor = b.navTextColor.hex
-        brand.primaryColor = b.tintColor.hex
-        brand.primaryButtonTextColor = b.secondaryTintColor.hex
-        brand.linkColor = b.tintColor.hex
-        brand.primaryButtonBackgroundColor = b.tintColor.hex
-        brand.primaryButtonTextColor = "#FFFFFF"
-        brand.secondaryButtonBackgroundColor = b.secondaryTintColor.hex
-        brand.secondaryButtonTextColor = "#FFFFFF"
-        brand.fontColorDark = "#000000"
-        brand.fontColorLight = "#666666"
-        brand.headerImageURL = ""
-        
-        client.branding = brand
     }
     
     func didLogout(_ controller: UIViewController) {
-        self.window?.rootViewController = controller
+        guard let window = self.window else { return }
+        UIView.transition(with: window, duration: 0.5, options: .transitionCrossDissolve, animations: {
+            window.rootViewController = controller
+        }, completion:nil)
     }
 }

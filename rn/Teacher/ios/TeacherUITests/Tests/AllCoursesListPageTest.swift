@@ -14,20 +14,17 @@
 // limitations under the License.
 //
 
+import SoSeedySwift
+
 class AllCoursesListPageTest: TeacherTest {
 
     //TestRail ID = C3108901
     func testAllCoursesListPage_displaysPageObjects() {
-        logIn(self)
+        logIn2(SoSeedySwift.createTeacher())
+
         coursesListPage.openAllCoursesPage()
         allCoursesListPage.assertPageObjects()
+
     }
 
-//    //TestRail ID = C3108901
-//    func testAllCoursesListPage_displaysCourseList() {
-//        logIn(self)
-//        let courses = Data.getAllCourses(self)
-//        coursesListPage.openAllCoursesPage()
-//        allCoursesListPage.assertHasCourses(courses)
-//    }
 }

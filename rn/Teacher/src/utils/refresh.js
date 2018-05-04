@@ -32,21 +32,16 @@ export default function refresh (
     isFetchingData: IsFetchingData,
     ttl: ?number = 1000 * 60 * 60, // 1 hour
     ttlKeyExtractor: TtlKeyExtractor = (props) => DEFAULT_TTL_KEY,
-  ): * {
+  ) {
   let updates = {}
 
-  return function (TheirComponent) {
-    class Refreshed extends Component {
-      state: RefreshState
+  return function (TheirComponent: React$ElementType) {
+    class Refreshed extends Component<*, RefreshState> {
+      state: RefreshState = { refreshing: false }
 
       refreshFunction = refreshFunction
       shouldRefresh = shouldRefresh
       isFetchingData = isFetchingData
-
-      constructor (props) {
-        super(props)
-        this.state = { refreshing: false }
-      }
 
       componentWillReceiveProps (nextProps) {
         this.setState({
@@ -57,7 +52,7 @@ export default function refresh (
       }
 
       componentWillMount () {
-        if (shouldRefresh(this.props)) {
+        if (this.props.forceRefresh || shouldRefresh(this.props)) {
           this.setLastUpdate(Date.now())
           refreshFunction(this.props)
         } else if (!this.getLastUpdate() || Date.now() > this.getLastUpdate() + ttl) {
@@ -72,7 +67,7 @@ export default function refresh (
         })
       }
 
-      setLastUpdate = (date: Date) => {
+      setLastUpdate = (date: number) => {
         updates[ttlKeyExtractor(this.props)] = date
       }
 

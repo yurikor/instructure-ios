@@ -14,12 +14,14 @@
 // limitations under the License.
 //
 
-/* @flow */
+/* eslint-disable flowtype/require-valid-file-annotation */
 
+import { shallow } from 'enzyme'
 import React from 'react'
 import {
   ActionSheetIOS,
   AlertIOS,
+  NativeModules,
 } from 'react-native'
 import renderer from 'react-test-renderer'
 import AttachmentPicker from '../AttachmentPicker'
@@ -27,6 +29,7 @@ import ImagePicker from 'react-native-image-picker'
 import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker'
 import explore from '../../../../test/helpers/explore'
 import Permissions from '../../../common/permissions'
+import * as template from '../../../__templates__'
 
 jest
   .mock('Button', () => 'Button')
@@ -41,7 +44,12 @@ jest
         fileSize: 100,
       })),
     },
-    DocumentPickerUtil: {},
+    DocumentPickerUtil: {
+      allFiles: jest.fn(() => 'content'),
+      images: jest.fn(() => 'image'),
+      video: jest.fn(() => 'video'),
+      audio: jest.fn(() => 'audio'),
+    },
   }))
   .mock('../../../common/permissions')
 
@@ -54,23 +62,94 @@ describe('AttachmentPicker', () => {
 
   let picker
   beforeEach(() => {
-    picker = new AttachmentPicker({})
+    const fileTypes = ['all']
+    picker = new AttachmentPicker({ fileTypes })
   })
 
   it('shows an action sheet with attachment options', () => {
     const mock = jest.fn()
     // $FlowFixMe
     ActionSheetIOS.showActionSheetWithOptions = mock
-    picker.show(null, jest.fn())
+    const picker = shallow(<AttachmentPicker fileTypes={['all']} />)
+    picker.instance().show(null, jest.fn())
     expect(mock).toHaveBeenCalledWith({
       options: [
-        'Use Camera',
         'Record Audio',
-        'Choose From Library',
+        'Use Camera',
         'Upload File',
+        'Choose From Library',
         'Cancel',
       ],
       cancelButtonIndex: 4,
+    }, expect.any(Function))
+  })
+
+  it('shows an action sheet with user files option', () => {
+    const mock = jest.fn()
+    // $FlowFixMe
+    ActionSheetIOS.showActionSheetWithOptions = mock
+    const picker = shallow(<AttachmentPicker fileTypes={['all']} userFiles={true} />)
+    picker.instance().show(null, jest.fn())
+    expect(mock).toHaveBeenCalledWith({
+      options: [
+        'Record Audio',
+        'Use Camera',
+        'Upload File',
+        'Choose From Library',
+        'My Files',
+        'Cancel',
+      ],
+      cancelButtonIndex: 5,
+    }, expect.any(Function))
+  })
+
+  it('shows an action sheet with image attachment options', () => {
+    const mock = jest.fn()
+    const picker = shallow(<AttachmentPicker fileTypes={['image']} />)
+    // $FlowFixMe
+    ActionSheetIOS.showActionSheetWithOptions = mock
+    picker.instance().show(null, jest.fn())
+    expect(mock).toHaveBeenCalledWith({
+      options: [
+        'Use Camera',
+        'Upload File',
+        'Choose From Library',
+        'Cancel',
+      ],
+      cancelButtonIndex: 3,
+    }, expect.any(Function))
+  })
+
+  it('shows an action sheet with audio attachment options', () => {
+    const mock = jest.fn()
+    const picker = shallow(<AttachmentPicker fileTypes={['audio']} />)
+    // $FlowFixMe
+    ActionSheetIOS.showActionSheetWithOptions = mock
+    picker.instance().show(null, jest.fn())
+    expect(mock).toHaveBeenCalledWith({
+      options: [
+        'Record Audio',
+        'Upload File',
+        'Cancel',
+      ],
+      cancelButtonIndex: 2,
+    }, expect.any(Function))
+  })
+
+  it('shows an action sheet with video attachment options', () => {
+    const mock = jest.fn()
+    const picker = shallow(<AttachmentPicker fileTypes={['video']} />)
+    // $FlowFixMe
+    ActionSheetIOS.showActionSheetWithOptions = mock
+    picker.instance().show(null, jest.fn())
+    expect(mock).toHaveBeenCalledWith({
+      options: [
+        'Use Camera',
+        'Upload File',
+        'Choose From Library',
+        'Cancel',
+      ],
+      cancelButtonIndex: 3,
     }, expect.any(Function))
   })
 
@@ -91,15 +170,17 @@ describe('AttachmentPicker', () => {
     expect(ImagePicker.launchCamera).toHaveBeenCalledWith(options.imagePicker, expect.any(Function))
   })
 
-  it('returns attachment from ImagePicker image', () => {
+  it('returns attachment from ImagePicker image', async () => {
+    NativeModules.NativeFileSystem.convertToJPEG = jest.fn(() => Promise.resolve('/tmp/image.jpg'))
     const spy = jest.fn()
     const response = {
       uri: 'file://somewhere/on/disk.jpg',
     }
     ImagePicker.launchCamera = jest.fn((options, callback) => callback(response))
     picker.useCamera(null, spy)
+    await new Promise((resolve, reject) => process.nextTick(resolve))
     expect(spy).toHaveBeenCalledWith({
-      uri: response.uri,
+      uri: '/tmp/image.jpg',
       display_name: expect.stringMatching(/.jpg$/),
       size: undefined,
       mime_class: 'image',
@@ -109,16 +190,16 @@ describe('AttachmentPicker', () => {
   it('returns attachment from ImagePicker video', () => {
     const spy = jest.fn()
     const response = {
-      uri: 'file://somewhere/on/disk.MOV',
+      uri: 'file://somewhere/on/disk.mov',
     }
     ImagePicker.launchImageLibrary = jest.fn((options, callback) => callback(response))
     picker.useLibrary(null, spy)
     expect(spy).toHaveBeenCalledWith({
       uri: response.uri,
-      display_name: expect.stringMatching(/.MOV$/),
+      display_name: expect.stringMatching(/.mov/),
       size: undefined,
       mime_class: 'video',
-    }, 'photo_library')
+    }, 'photoLibrary')
   })
 
   it('does not return when ImagePicker cancels', () => {
@@ -155,11 +236,28 @@ describe('AttachmentPicker', () => {
     DocumentPickerUtil.allFiles = jest.fn()
     picker.pickDocument(null, jest.fn())
     expect(DocumentPicker.show).toHaveBeenCalledWith({
-      filetype: expect.any(Array),
+      filetype: [DocumentPickerUtil.allFiles()],
       top: 12,
       left: 70,
     }, expect.any(Function))
     expect(DocumentPickerUtil.allFiles).toHaveBeenCalled()
+  })
+
+  it('launches document picker with limited file types', () => {
+    const fileTypes = ['image', 'video', 'audio']
+    const picker = renderer.create(<AttachmentPicker fileTypes={fileTypes} />).getInstance()
+    picker.onLayout({ nativeEvent: { layout: { width: 100, height: 200 } } })
+    DocumentPicker.show = jest.fn()
+    picker.pickDocument(null, jest.fn())
+    expect(DocumentPicker.show).toHaveBeenCalledWith({
+      filetype: [
+        DocumentPickerUtil.images(),
+        DocumentPickerUtil.video(),
+        DocumentPickerUtil.audio(),
+      ],
+      top: 12,
+      left: 70,
+    }, expect.any(Function))
   })
 
   it('alerts document picker errors', () => {
@@ -185,7 +283,7 @@ describe('AttachmentPicker', () => {
       display_name: doc.fileName,
       size: doc.fileSize,
       mime_class: 'file',
-    }, 'file')
+    }, 'files')
   })
 
   it('shows audio recorder', async () => {
@@ -194,6 +292,71 @@ describe('AttachmentPicker', () => {
     expect(audioRecorder().props.visible).toBeFalsy()
     await view.getInstance().recordAudio(null, jest.fn())
     expect(audioRecorder().props.visible).toBeTruthy()
+  })
+
+  it('shows user files picker', () => {
+    const navigator = template.navigator({ show: jest.fn() })
+    const picker = renderer.create(<AttachmentPicker navigator={navigator} />).getInstance()
+    picker.userFiles(null, jest.fn())
+    expect(navigator.show).toHaveBeenCalledWith('/users/self/files', { modal: true }, {
+      onSelectFile: expect.any(Function),
+      canSelectFile: expect.any(Function),
+      canEdit: false,
+      canAdd: false,
+    })
+  })
+
+  it('calls callback when user file selected', async () => {
+    const callback = jest.fn()
+    const file = template.file()
+    const navigator = template.navigator({
+      show: jest.fn((route, options, props) => {
+        props.onSelectFile(template.file())
+      }),
+    })
+    const picker = renderer.create(<AttachmentPicker navigator={navigator} />).getInstance()
+    picker.userFiles(null, callback)
+    await navigator.dismiss()
+    expect(callback).toHaveBeenCalledWith(file, 'userFiles')
+  })
+
+  it('filters user files by file types', () => {
+    let canSelectFile
+    const navigator = template.navigator({
+      show: jest.fn((route, options, props) => {
+        canSelectFile = props.canSelectFile
+      }),
+    })
+    const picker = renderer.create(<AttachmentPicker navigator={navigator} fileTypes={['image', 'video']} />).getInstance()
+    picker.userFiles(null, jest.fn())
+
+    const image = template.file({ mime_class: 'image', 'content-type': 'image/jpeg' })
+    expect(canSelectFile(image)).toBeTruthy()
+
+    const video = template.file({ mime_class: 'movie', 'content-type': 'video/mpeg' })
+    expect(canSelectFile(video)).toBeTruthy()
+
+    const pdf = template.file({ mime_class: 'file', 'content-type': 'file/pdf' })
+    expect(canSelectFile(pdf)).toBeFalsy()
+  })
+
+  it('can select all files', () => {
+    let canSelectFile
+    const navigator = template.navigator({
+      show: jest.fn((route, options, props) => {
+        canSelectFile = props.canSelectFile
+      }),
+    })
+    const picker = renderer.create(<AttachmentPicker navigator={navigator} fileTypes={['all']} />).getInstance()
+    picker.userFiles(null, jest.fn())
+    const image = template.file({ mime_class: 'image', 'content-type': 'image/jpeg' })
+    expect(canSelectFile(image)).toBeTruthy()
+
+    const video = template.file({ mime_class: 'movie', 'content-type': 'video/mpeg' })
+    expect(canSelectFile(video)).toBeTruthy()
+
+    const pdf = template.file({ mime_class: 'file', 'content-type': 'file/pdf' })
+    expect(canSelectFile(pdf)).toBeTruthy()
   })
 
   it('hides audio recorder when it cancels', async () => {
@@ -251,5 +414,22 @@ describe('AttachmentPicker', () => {
     ImagePicker.launchImageLibrary = jest.fn((options, callback) => callback(response))
     picker.useLibrary(null, jest.fn())
     expect(spy).toHaveBeenCalledWith('Error', 'FAIL', expect.any(Array))
+  })
+
+  it('converts heic to jpg', async () => {
+    NativeModules.NativeFileSystem.convertToJPEG = jest.fn(() => Promise.resolve('/tmp/image.jpg'))
+    const spy = jest.fn()
+    const response = {
+      uri: 'file://somewhere/on/disk.heic',
+    }
+    ImagePicker.launchCamera = jest.fn((options, callback) => callback(response))
+    picker.useCamera(null, spy)
+    await new Promise((resolve, reject) => process.nextTick(resolve))
+    expect(spy).toHaveBeenCalledWith({
+      uri: '/tmp/image.jpg',
+      display_name: expect.stringMatching(/.jpg$/),
+      size: undefined,
+      mime_class: 'image',
+    }, 'camera')
   })
 })

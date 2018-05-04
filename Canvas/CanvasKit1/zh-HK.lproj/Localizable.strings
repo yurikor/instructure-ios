@@ -19,6 +19,9 @@
 /* 88 out of 100 points */
 "%@ out of %@" = "%1$@ 出自 %2$@";
 
+/* {point range max} to > {point range min} pts */
+"%@ to > %@ pts" = "%1$@至 > %2$@ 分";
+
 /* 83% (83 out of 100 points */
 "%@%% (%g out of %@)" = "%1$@%% (%2$g 出自 %3$@)";
 
@@ -82,9 +85,6 @@
 /* No comment provided by engineer. */
 "Note: Media files are not immediately available for playback while they are processed on the server." = "注意：媒體資料夾當前正在伺服器端進行處理中，暫時無法提供播放。";
 
-/* No comment provided by engineer. */
-"OK" = "是";
-
 /* Short name for observer enrollment */
 "Observer" = "觀察者";
 
@@ -99,6 +99,9 @@
 
 /* A button that records */
 "Record" = "錄製";
+
+/* No comment provided by engineer. */
+"Score" = "分數";
 
 /* Hint about the play button */
 "Starts playing your recording" = "開始播放您錄製的內容";
@@ -146,7 +149,7 @@
 "Video" = "視頻";
 
 /* No comment provided by engineer. */
-"Video error" = "視頻錯誤";
+"Video Error" = "視頻錯誤";
 
 /* No comment provided by engineer. */
 "Warning" = "警告";

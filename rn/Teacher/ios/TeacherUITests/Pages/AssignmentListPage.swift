@@ -16,6 +16,7 @@
 
 import SoGrey
 import EarlGrey
+import SoSeedySwift
 
 class AssignmentListPage  {
 
@@ -33,50 +34,51 @@ class AssignmentListPage  {
 
     // MARK: - Helpers
 
-    private func backButton(_ course: Course) -> GREYElementInteraction {
-        let backButtonElement = EarlGrey.select(
-            elementWithMatcher: grey_allOf([grey_accessibilityLabel(course.courseCode),
-                                            grey_accessibilityTrait(UIAccessibilityTraitButton)]))
-        return backButtonElement
-    }
+//    private func backButton(_ course: Course) -> GREYElementInteraction {
+//        let backButtonElement = EarlGrey.select(
+//            elementWithMatcher: grey_allOf([grey_accessibilityLabel(course.courseCode),
+//                                            grey_accessibilityTrait(UIAccessibilityTraitButton)]))
+//        return backButtonElement
+//    }
 
-    private func assignmentCell(_ assignment: Assignment) -> GREYElementInteraction {
+    private func assignmentCell(_ assignment: Soseedy_Assignment) -> GREYInteraction {
         return e.selectBy(id: "assignment-list.assignment-list-row.cell-\(assignment.id)")
     }
-    
-    private func assignmentCellSubtitleLabel(_ assignment: Assignment) -> GREYElementInteraction {
+
+    private func assignmentCellSubtitleLabel(_ assignment: Soseedy_Assignment) -> GREYInteraction {
         return e.selectBy(id: "assignment-list.assignment-list-row.cell-\(assignment.id)-subtitle-lbl")
     }
+
     // MARK: - Assertions
 
-    func assertPageObjects(_ course: Course, _ file: StaticString = #file, _ line: UInt = #line) {
-        grey_fromFile(file, line)
-        tabBarController.assertTabBarItems()
-        backButton(course).assertExists()
-        navBarTitleView.assertExists()
-        filterHeaderView.assertExists()
-        containerView.assertExists()
-        filterTitleLabel.assertExists()
-    }
+//    func assertPageObjects(_ course: Course, _ file: StaticString = #file, _ line: UInt = #line) {
+//        grey_fromFile(file, line)
+//        tabBarController.assertTabBarItems()
+//        backButton(course).assertExists()
+//        navBarTitleView.assertExists()
+//        filterHeaderView.assertExists()
+//        containerView.assertExists()
+//        filterTitleLabel.assertExists()
+//    }
 
-    func assertHasAssignment(_ assignment: Assignment, _ file: StaticString = #file, _ line: UInt = #line) {
+    func assertHasAssignment(_ assignment: Soseedy_Assignment, _ file: StaticString = #file, _ line: UInt = #line) {
         grey_fromFile(file, line)
         assignmentCell(assignment).assertExists()
     }
-    
-    func assertHasGradingPeriods(_ assignment: Assignment, _ file: StaticString = #file, _ line: UInt = #line) {
+
+    func assertHasDueDate(_ assignment: Soseedy_Assignment, _ file: StaticString = #file, _ line: UInt = #line) {
         grey_fromFile(file, line)
         assignmentCellSubtitleLabel(assignment).assertExists()
     }
 
     // MARK: - UI Actions
 
-    func dismissToCourseBrowserPage(_ course: Course, _ file: StaticString = #file, _ line: UInt = #line) {
-        grey_fromFile(file, line)
-        backButton(course).tapUntilHidden()
-    }
+//    func dismissToCourseBrowserPage(_ course: Course, _ file: StaticString = #file, _ line: UInt = #line) {
+//        grey_fromFile(file, line)
+//        backButton(course).tapUntilHidden()
+//    }
 
-    func openAssignmentDetailsPage(_ assignment: Assignment, _ file: StaticString = #file, _ line: UInt = #line) {
+    func openAssignmentDetailsPage(_ assignment: Soseedy_Assignment, _ file: StaticString = #file, _ line: UInt = #line) {
         grey_fromFile(file, line)
         assignmentCell(assignment).tapUntilHidden()
     }

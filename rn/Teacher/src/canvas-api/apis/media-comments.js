@@ -14,17 +14,21 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-/* @flow */
+// @flow
 
 import httpClient from '../httpClient'
-import axios from 'axios'
-import { DOMParser } from 'xmldom'
+import { type Progress } from './file-uploads'
 
-export async function uploadMedia (uri: string, type: string): Promise<string> {
+type MediaUploadOptions = {
+  onProgress?: (Progress) => void,
+  cancelUpload?: (() => void) => void,
+}
+
+export async function uploadMedia (uri: string, type: string, options: MediaUploadOptions = {}): Promise<string> {
   const domain = await getMediaServerDomain()
   const session = await getMediaSession()
   const token = await getUploadToken(domain, session)
-  await postUpload(uri, domain, session, token, type)
+  await postUpload(uri, domain, session, token, type, options)
   return getMediaID(domain, session, token, type)
 }
 
@@ -42,12 +46,17 @@ async function getMediaSession (): Promise<string> {
 
 async function getUploadToken (domain: string, session: string): Promise<string> {
   const url = uploadURL(domain, 'uploadtoken', 'add')
-  const response = await axios.post(url, { ks: session })
-  const doc = new DOMParser().parseFromString(response.data, 'text/xml')
-  return doc.getElementsByTagName('id')[0].textContent
+  const response = await httpClient().post(url, { ks: session }, {
+    responseType: 'text',
+    headers: { // remove default auth & accept
+      'Authorization': null,
+      'Accept': 'application/xml',
+    },
+  })
+  return response.data.match(/<id>([^<]+)<\/id>/)[1]
 }
 
-async function postUpload (uri: string, domain: string, session: string, token: string, type: string): Promise<string> {
+async function postUpload (uri: string, domain: string, session: string, token: string, type: string, options: MediaUploadOptions): Promise<string> {
   const url = `${uploadURL(domain, 'uploadtoken', 'upload')}&uploadTokenId=${token}&ks=${session}`
   const formdata = new FormData()
   // $FlowFixMe
@@ -56,18 +65,39 @@ async function postUpload (uri: string, domain: string, session: string, token: 
     name: type === 'video' ? 'videocomment.mp4' : 'audiocomment.wav',
     type: 'multipart/form-data',
   })
-  const response = await axios.post(url, formdata)
+
+  const uploading = httpClient().post(url, formdata, {
+    responseType: 'text',
+    headers: { // remove default auth & accept
+      'Authorization': null,
+      'Accept': null,
+    },
+  })
+  const request = uploading.request
+  if (request) {
+    request.upload.addEventListener('progress', ({ loaded, total }) => {
+      options.onProgress && options.onProgress({ loaded, total })
+    })
+    options.cancelUpload && options.cancelUpload(() => request.abort())
+  }
+  const response = await uploading
+
   return response.data
 }
 
 async function getMediaID (domain: string, session: string, token: string, type: string): Promise<string> {
   const url = `${uploadURL(domain, 'media', 'addFromUploadedFile')}&uploadTokenId=${token}&ks=${session}`
-  const response = await axios.post(url, {
+  const response = await httpClient().post(url, {
     'mediaEntry:name': 'Media Comment',
     'mediaEntry:mediaType': type === 'video' ? '1' : '5',
+  }, {
+    responseType: 'text',
+    headers: { // remove default auth & accept
+      'Authorization': null,
+      'Accept': 'application/xml',
+    },
   })
-  const doc = new DOMParser().parseFromString(response.data, 'text/xml')
-  return doc.getElementsByTagName('id')[0].textContent
+  return response.data.match(/<id>([^<]+)<\/id>/)[1]
 }
 
 // UTILS

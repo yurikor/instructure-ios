@@ -42,12 +42,19 @@ export type CourseContentState = {
   announcements: AsyncRefs,
   groups: AsyncRefs,
   attendanceTool: AttendanceToolState,
-  pages: AsyncRefs,
   gradingPeriods: AsyncRefs,
+  permissions: ?{ [string]: boolean },
+  enabledFeatures: string[],
 }
 
 export type GroupState = AsyncState & {
   group: Group,
+  color: ?string,
+}
+
+export type GroupContentState = {
+  discussions?: AsyncRefs,
+  announcements?: AsyncRefs,
 }
 
 export type GradingPeriodsState = {
@@ -55,6 +62,13 @@ export type GradingPeriodsState = {
     gradingPeriod: GradingPeriod,
     assignmentRefs: Array<string>,
   },
+}
+
+export type AccountNotificationState = {
+  pending: number,
+  list: AccountNotification[],
+  closing: string[],
+  error: string,
 }
 
 export type AssignmentGroupContentState = {
@@ -83,10 +97,6 @@ export type AsyncActionState = {
   total: number,
   lastResolvedDate?: date,
   lastError?: ?string,
-}
-
-export type PendingNewDiscussionState = {
-  new?: AsyncState & { id?: ?string },
 }
 
 export type SubmissionSummaryState = {
@@ -121,10 +131,6 @@ export type QuizState = AsyncState & {
   submissions: AsyncRefs,
 }
 
-export type PageState = {
-  data: Page,
-}
-
 export type QuizSubmissionState = AsyncState & {
   data: QuizSubmission,
 }
@@ -136,6 +142,8 @@ export type DiscussionState = AsyncState & {
     edit?: AsyncState,
   },
   unread_entries: string[],
+  entry_ratings: { [string]: number },
+  initialPostRequired?: boolean,
 }
 
 export type PendingDiscussionReply = {
@@ -152,7 +160,7 @@ export type CourseDetailsTabSelectedRowState = {
 }
 
 export type CoursesState = { [string]: CourseState & CourseContentState }
-export type GroupsState = { [string]: GroupState }
+export type GroupsState = { [string]: GroupState & GroupContentState }
 export type AssignmentGroupsState = { [string]: AssignmentGroupState & AssignmentGroupContentState }
 export type AssignmentsState = { [string]: AssignmentDetailState & AssignmentContentState }
 export type EnrollmentsState = { [string]: Enrollment }
@@ -162,9 +170,9 @@ export type SubmissionsState = { [string]: SubmissionState }
 export type QuizzesState = { [string]: QuizState }
 export type QuizSubmissionsState = { [string]: QuizSubmissionState }
 export type DiscussionsState = { [string]: DiscussionState & PendingDiscussionReplyState }
-export type PagesState = { [string]: PageState }
 
 export type Entities = {
+  accountNotifications: AccountNotificationState,
   courses: CoursesState,
   groups: GroupsState,
   assignmentGroups: AssignmentGroupsState,
@@ -178,11 +186,13 @@ export type Entities = {
   quizSubmissions: QuizSubmissionsState,
   discussions: DiscussionsState,
   courseDetailsTabSelectedRow: CourseDetailsTabSelectedRowState,
-  pages: PagesState,
 }
 
 export type FavoriteCoursesState = AsyncState
   & { courseRefs: EntityRefs }
+
+export type FavoriteGroupsState = AsyncState
+  & { groupRefs: EntityRefs, userHasFavoriteGroups: boolean }
 
 export type ConversationState = AsyncState & {
   data: Conversation,
@@ -197,14 +207,22 @@ export type InboxState = {
   archived: AsyncRefs,
 }
 
-export type ToDoState = {
-  items: ToDoItem[],
-}
-
 export type AppState = {
   favoriteCourses: FavoriteCoursesState,
+  favoriteGroups: FavoriteGroupsState,
   entities: Entities,
   inbox: InboxState,
-  toDo: ToDoState,
   asyncActions: { [string]: AsyncActionState },
+  userInfo: UserInfo,
+}
+
+export type UserInfo = {
+  canMasquerade: boolean,
+  showsGradesOnCourseCards: boolean,
+  externalTools: ExternalToolLaunchDefinitionGlobalNavigationItem[],
+}
+
+// I moved this to the bottom because something with it is making vscode syntax highlighting stop working in this file
+export type PendingNewDiscussionState = {
+  new?: AsyncState & { id?: ?string },
 }

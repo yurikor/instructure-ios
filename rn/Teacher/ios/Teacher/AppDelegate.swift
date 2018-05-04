@@ -23,49 +23,79 @@ import Fabric
 import Crashlytics
 import CanvasCore
 import React
-
-public let EarlGreyExists = NSClassFromString("EarlGreyImpl") != nil;
+import BugsnagReactNative
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
-    let loginConfig = LoginConfiguration(mobileVerifyName: "iCanvas", logo: #imageLiteral(resourceName: "logo"))
+    let loginConfig = LoginConfiguration(mobileVerifyName: "iosTeacher", logo: UIImage(named: "teacher-logomark")!, fullLogo: UIImage(named: "teacher-logo")!)
     var window: UIWindow?
+
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        NotificationKitController.didRegisterForRemoteNotifications(deviceToken) { [weak self] error in
+            ErrorReporter.reportError(error.addingInfo(), from: self?.window?.rootViewController)
+        }
+    }
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
         BuddyBuildSDK.uiTestsDidReceiveRemoteNotification(userInfo)
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        BuddyBuildSDK.setup()
-        prepareReactNative()
-        preparePSPDFKit()
-        createMainWindow()
-        initiateLoginProcess()
+        if (uiTesting) {
+            BuddyBuildSDK.setup()
+        } else {
+            BugsnagReactNative.start()
+            //Fabric.with([Crashlytics.self, Answers.self])
+        }
+        ResetAppIfNecessary()
         setupForPushNotifications()
-        //Fabric.with([Crashlytics.self, Answers.self])
+        preparePSPDFKit()
+        window = MasqueradableWindow(frame: UIScreen.main.bounds)
+        showLoadingState()
+        window?.makeKeyAndVisible()
+        UIApplication.shared.reactive.applicationIconBadgeNumber <~ TabBarBadgeCounts.applicationIconBadgeNumber
+        
+        DispatchQueue.main.async {
+            self.prepareReactNative()
+            self.initiateLoginProcess()
+        }
+        
         return true
-    }   
+    }
     
     func prepareReactNative() {
         HelmManager.shared.bridge = RCTBridge(delegate: self, launchOptions: nil)
         registerNativeRoutes()
         HelmManager.shared.onReactLoginComplete = {
-            self.window?.rootViewController = RootTabBarController()
+            guard let window = self.window else { return }
+            UIView.transition(with: window, duration: 0.25, options: .transitionCrossDissolve, animations: {
+                let loading = UIViewController()
+                loading.view.backgroundColor = .white
+                window.rootViewController = loading
+            }, completion: { _ in
+                window.rootViewController = RootTabBarController()
+            })
         }
+        HelmManager.shared.onReactReload = {
+            self.showLoadingState()
+        }
+    }
+    
+    func showLoadingState() {
+        guard let window = self.window else { return }
+        if let root = window.rootViewController, let tag = root.tag, tag == "LaunchScreenPlaceholder" { return }
+        let placeholder = UIStoryboard(name: "LaunchScreen", bundle: nil).instantiateViewController(withIdentifier: "LaunchScreen")
+        placeholder.tag = "LaunchScreenPlaceholder"
+        
+        UIView.transition(with: window, duration: 0.5, options: .transitionCrossDissolve, animations: {
+            window.rootViewController = placeholder
+        }, completion:nil)
     }
     
     func preparePSPDFKit() {
-        if let key = Secrets.fetch(.teacherPSPDFKit) {
-            PSPDFKit.setLicenseKey(key)
-            PSPDFScrollView.swizzleAllTehThings()
-        }
-    }
-    
-    func createMainWindow() {
-        window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = UIViewController()
-        window?.makeKeyAndVisible()
+        guard let key = Secrets.fetch(.teacherPSPDFKit) else { return }
+        PSPDFKit.setLicenseKey(key)
     }
     
     func initiateLoginProcess() {
@@ -76,18 +106,50 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     }
     
     func setupForPushNotifications() {
-        let center = UNUserNotificationCenter.current()
-        center.delegate = self
+        NotificationKitController.setupForPushNotifications(delegate: self)
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.alert,.sound])
+        completionHandler([.alert, .sound])
     }
-    
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        PushNotifications.record(response.notification)
+        StartupManager.shared.enqueueTask {
+            RCTPushNotificationManager.didReceiveRemoteNotification(response.notification.request.content.userInfo) { _ in
+                completionHandler()
+            }
+        }
+    }
+
     func applicationDidBecomeActive(_ application: UIApplication) {
-        if (!EarlGreyExists) {
+        if (!uiTesting) {
             AppStoreReview.requestReview()
         }
+    }
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        StartupManager.shared.enqueueTask {
+            guard let rootView = app.keyWindow?.rootViewController as? RootTabBarController, let tabViewControllers = rootView.viewControllers else { return }
+            for (index, vc) in tabViewControllers.enumerated() {
+                let navigationController: UINavigationController?
+                if let split = vc as? UISplitViewController {
+                    navigationController = split.viewControllers.first as? UINavigationController
+                } else {
+                    navigationController = vc as? UINavigationController
+                }
+                
+                guard let navController = navigationController, let helmVC = navController.viewControllers.first as? HelmViewController else { break }
+                if helmVC.moduleName == url.path {
+                    rootView.selectedIndex = index
+                    rootView.resetSelectedViewController()
+                    return
+                }
+            }
+            
+            RCTLinkingManager.application(app, open: url, options: options)
+        }
+        return true
     }
 }
 
@@ -103,13 +165,15 @@ extension AppDelegate: RCTBridgeDelegate {
 extension AppDelegate: NativeLoginManagerDelegate {
     func didLogin(_ client: CKIClient) {
         if let brandingInfo = client.branding?.jsonDictionary() as? [String: Any] {
-            Brand.setCurrent(Brand(webPayload: brandingInfo))
-            UITabBar.appearance().tintColor = Brand.current.primaryBrandColor
-            UITabBar.appearance().barTintColor = .white
+            Brand.setCurrent(Brand(webPayload: brandingInfo), applyInWindow: window)
         }
     }
     
     func didLogout(_ controller: UIViewController) {
-        self.window?.rootViewController = controller
+        guard let window = self.window else { return }
+        
+        UIView.transition(with: window, duration: 0.5, options: .transitionCrossDissolve, animations: {
+            window.rootViewController = controller
+        }, completion:nil)
     }
 }

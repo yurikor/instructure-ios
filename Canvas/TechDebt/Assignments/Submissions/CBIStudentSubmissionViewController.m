@@ -36,12 +36,10 @@
 #import "CKIClient+CBIClient.h"
 #import "MobileQuizInformationViewController.h"
 #import "Router.h"
-#import "ThreadedDiscussionViewController.h"
+#import "UIAlertController+TechDebt.h"
 
 @import CanvasKeymaster;
 @import CanvasCore;
-
-static const BOOL newSubmissionWorkflowFeatureEnabled = NO;
 
 typedef enum CBISubmissionState : NSUInteger {
     CBISubmissionStateNotAllowed,
@@ -79,6 +77,8 @@ typedef enum CBISubmissionState : NSUInteger {
 
 @implementation CBIStudentSubmissionViewController
 
+@dynamic viewModel;
+
 - (instancetype)init {
     self = [super initWithStyle:UITableViewStylePlain];
     DDLogVerbose(@"%@ - %@", NSStringFromClass(self.class), NSStringFromSelector(_cmd));
@@ -95,6 +95,10 @@ typedef enum CBISubmissionState : NSUInteger {
         } else {
             return [RACSignal return:assignment];
         }
+    }];
+    
+    [RACObserve(self, assignment) subscribeNext:^(id  _Nullable x) {
+        [self updateActions];
     }];
     
     RAC(self, legacyAssignment) = [RACObserve(self, viewModel.model) flattenMap:^(CKIAssignment *assignment) {
@@ -173,6 +177,9 @@ typedef enum CBISubmissionState : NSUInteger {
 - (void)viewDidLoad {
     DDLogVerbose(@"%@ - %@", NSStringFromClass(self.class), NSStringFromSelector(_cmd));
     [super viewDidLoad];
+    if (@available(iOS 11.0, *)) {
+        self.tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    }
     
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.backgroundColor = [UIColor prettyLightGray];
@@ -197,6 +204,14 @@ typedef enum CBISubmissionState : NSUInteger {
     }];
     
     self.refreshControl.tintColor = [UIColor whiteColor];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    //  url needs to be set before super call for logging
+    if(!self.url) {
+        self.url = [NSString stringWithFormat:@"%@/submissions", self.assignment.htmlURL.absoluteString];
+    }
+    [super viewWillDisappear:animated];
 }
 
 - (bool)isEnrollmentActiveForCourse {
@@ -302,17 +317,12 @@ typedef enum CBISubmissionState : NSUInteger {
 
 - (void)postUploadError {
     DDLogVerbose(@"%@ - %@", NSStringFromClass(self.class), NSStringFromSelector(_cmd));
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Submission Error", @"Title for file submission error") message:NSLocalizedString(@"There was a network problem while attempting to upload your submission", @"message for failed submission upload") delegate:nil cancelButtonTitle:NSLocalizedString(@"Dismiss", @"Dismiss button title") otherButtonTitles:nil];
-    
-    [alert show];
+    NSString *title = NSLocalizedString(@"Submission Error", @"Title for file submission error");
+    NSString *message = NSLocalizedString(@"There was a network problem while attempting to upload your submission", @"message for failed submission upload");
+    [UIAlertController showAlertWithTitle:title message:message];
 }
 
 - (IBAction)tappedTurnIn:(id)sender {
-    if (newSubmissionWorkflowFeatureEnabled) {
-        [self newSubmissionWorkflowFeature_tappedTurnIn];
-        return;
-    }
-
     DDLogVerbose(@"%@ - %@", NSStringFromClass(self.class), NSStringFromSelector(_cmd));
     SubmissionWorkflowController *controller = [[SubmissionWorkflowController alloc] initWithViewController:self];
     controller.allowsMediaSubmission = CKCanvasAPI.currentAPI.mediaServer.enabled;
@@ -368,65 +378,6 @@ typedef enum CBISubmissionState : NSUInteger {
     };
     self.workflow = controller;
     [controller present];
-}
-
-- (void)newSubmissionWorkflowFeature_tappedTurnIn
-{
-    if (self.legacyAssignment.type == CKAssignmentTypeQuiz) {
-        [self turnInQuiz];
-        return;
-    }
-
-    if (self.legacyAssignment.type == CKAssignmentTypeDiscussion) {
-        [self turnInDiscussion];
-        return;
-    }
-
-    Session *session = [CKIClient currentClient].authSession;
-    [self.submissionViewModel configureWithSession:session
-                                                id:self.assignment.id
-                                          courseID:self.assignment.courseID
-                                   submissionTypes:[self submissionTypes]
-                                 allowedExtensions:self.legacyAssignment.allowedExtensions
-                                        groupSetID:[self.legacyAssignment.groupCategoryID stringValue]];
-    self.submissionViewModel.delegate = self;
-    [self.submissionViewModel tappedTurnIn];
-}
-
-- (void)turnInQuiz
-{
-    CKAssignment *assignment = self.legacyAssignment;
-
-    NSString *title = NSLocalizedString(@"Quiz Alert", @"Title for alert notifying users that support for quizzes on mobile is limited.");
-    NSString *message = NSLocalizedString(@"Currently there is limited quiz support on mobile", @"Message telling users that quiz support on mobile is limited");
-    NSString *moreInfoButtonText = NSLocalizedString(@"More Info", @"Button title for selecting to view more info about the limitations of mobile quizzes");
-    NSString *continueButtonText = NSLocalizedString(@"Continue", @"Button title for selecting to continue on to quiz. The will appear in the alert view notfifying the user of mobile quiz limitations.");
-
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
-
-    UIAlertAction *moreInfoAction = [UIAlertAction actionWithTitle:moreInfoButtonText style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [MobileQuizInformationViewController presentFromViewController:self];
-    }];
-    [alert addAction:moreInfoAction];
-
-    UIAlertAction *continueToQuizAction = [UIAlertAction actionWithTitle:continueButtonText style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        NSURL *url = [TheKeymaster.currentClient.baseURL URLByAppendingPathComponent:[NSString stringWithFormat:@"api/v1/courses/%@/quizzes/%@", @(assignment.courseIdent), @(assignment.quizIdent)]];
-        [[Router sharedRouter] routeFromController:self toURL:url];
-    }];
-    [alert addAction:continueToQuizAction];
-
-    [self presentViewController:alert animated:YES completion:nil];
-}
-
-- (void)turnInDiscussion
-{
-    ThreadedDiscussionViewController *controller = [[ThreadedDiscussionViewController alloc] init];
-    controller.canvasAPI = CKCanvasAPI.currentAPI;
-    controller.topicIdent = (uint64_t)[self.assignment.discussionTopic.id integerValue];
-    controller.contextInfo = self.legacyContext;
-    [controller performSelector:@selector(fetchTopic:) withObject:@YES];
-
-    [self.navigationController pushViewController:controller animated:YES];
 }
 
 - (NSArray *)submissionTypes
@@ -523,7 +474,7 @@ typedef enum CBISubmissionState : NSUInteger {
     NSArray *submissionTypes = self.viewModel.model.submissionTypes;
     if (_submissionState == CBISubmissionStateAwaitingSubmission && submissionTypes.count > 0 && ![submissionTypes.firstObject isEqualToString:@"none"]) {
         [actions addObject:self.turnInButton];
-        self.turnInButton.enabled = [self isEnrollmentActiveForCourse];
+        self.turnInButton.enabled = [self isEnrollmentActiveForCourse] && !self.assignment.lockedForUser;
     }
 
     [actions addObject:self.turnInToAddCommentSpacing];
@@ -551,7 +502,7 @@ typedef enum CBISubmissionState : NSUInteger {
     [self updateActions];
 }
 
-- (void)submitComment:(NSString *)commentText onSuccess:(void (^)())success onFailure:(void (^)())failure {
+- (void)submitComment:(NSString *)commentText onSuccess:(void (^)(void))success onFailure:(void (^)(void))failure {
     DDLogVerbose(@"%@ - %@", NSStringFromClass(self.class), NSStringFromSelector(_cmd));
     CKISubmissionComment *comment = [CKISubmissionComment new];
     comment.context = self.viewModel.record;
@@ -641,9 +592,9 @@ typedef enum CBISubmissionState : NSUInteger {
         progress = nil;
         if (error) {
             DDLogVerbose(@"%@ - error=%@", NSStringFromSelector(_cmd), error);
-            
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Comment Error", @"title for media comment upload failure") message:NSLocalizedString(@"There was a network error posting your comment.", @"message for media comment upload failure") delegate:nil cancelButtonTitle:NSLocalizedString(@"Dismiss", @"Dismiss button title") otherButtonTitles:nil];
-            [alert show];
+            NSString *title = NSLocalizedString(@"Comment Error", @"title for media comment upload failure");
+            NSString *message = NSLocalizedString(@"There was a network error posting your comment.", @"message for media comment upload failure");
+            [UIAlertController showAlertWithTitle:title message:message];
         }
         else {
             DDLogVerbose(@"%@ - success!", NSStringFromSelector(_cmd));

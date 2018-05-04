@@ -1,9 +1,12 @@
 /* (No Comment) */
-"CFBundleDisplayName" = "Canvas";
+"NSCameraUsageDescription" = "Bifoga foton och videoklipp till meddelanden och diskussionsinlägg, eller skicka in dem som inlämningsuppgifter.";
 
 /* (No Comment) */
-"CFBundleName" = "${PRODUCT_NAME}";
+"NSLocationWhenInUseUsageDescription" = "Hjälp oss att hitta skolor i närheten av dig.";
 
 /* (No Comment) */
-"CFBundleShortVersionString" = "3.17.1";
+"NSMicrophoneUsageDescription" = "Anslut ljudinspelningar till meddelanden och diskussionsinställningar, eller skicka in dem som inlämningsuppgifter.";
+
+/* (No Comment) */
+"NSPhotoLibraryUsageDescription" = "Bifoga foton och videoklipp till meddelanden och diskussionsinlägg, eller skicka in dem som inlämningsuppgifter.";
 

@@ -15,13 +15,15 @@
 //
 
 // @flow
+
 import httpClient from '../httpClient'
 
-export function getAuthenticatedSessionURL (url: string): Promise<ApiResponse<any>> {
+export function getAuthenticatedSessionURL (url: string): ApiPromise<any> {
   const options = {
     params: {
       return_to: url,
     },
+    excludeVersion: true,
   }
-  return httpClient(null).get('login/session_token', options)
+  return httpClient().get('login/session_token', options)
 }

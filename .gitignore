@@ -46,3 +46,18 @@ dd/
 Derrick.xcworkspace
 translations/
 ios-open-source
+video.mp4
+
+# Generated data
+Parent/ParentEarlGreyTests/data/
+rn/Teacher/ios/TeacherUITests/data/
+fastlane/1
+bluepill/
+
+# rn
+rn/modules/instructure-canvas-api/build/
+package-lock.json
+yarn-error.log
+/rn/modules/instructure-canvas-api/package/
+*.tgz
+build

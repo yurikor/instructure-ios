@@ -26,7 +26,7 @@ import { Text, MEDIUM_FONT } from '../../common/text'
 import type {
   SubmissionDataProps,
 } from '../submissions/list/submission-prop-types'
-import WebContainer from '../../common/components/WebContainer'
+import CanvasWebView from '../../common/components/CanvasWebView'
 import Video from '../../common/components/Video'
 import AuthenticatedWebView from '../../common/components/AuthenticatedWebView'
 import URLSubmissionViewer from './submission-viewers/URLSubmissionViewer'
@@ -42,10 +42,10 @@ type SubmissionViewerProps = {
   size: { width: number, height: number },
   isModeratedGrading: boolean,
   drawerInset: number,
+  navigator: Navigator,
 }
 
-export default class SubmissionViewer extends Component {
-  props: SubmissionViewerProps
+export default class SubmissionViewer extends Component<SubmissionViewerProps> {
   videoPlayer: ?Video
 
   componentWillReceiveProps (newProps: SubmissionViewerProps) {
@@ -54,7 +54,7 @@ export default class SubmissionViewer extends Component {
     }
   }
 
-  captureVideoPlayer = (video: Video) => {
+  captureVideoPlayer = (video: ?Video) => {
     this.videoPlayer = video
   }
 
@@ -99,7 +99,7 @@ export default class SubmissionViewer extends Component {
             filename: attachment.filename,
             drawerInset: this.props.drawerInset,
           }}
-          style={[styles.container, { backgroundColor: '#A3ADB3' }]}
+          style={styles.pdfContainer}
         />
       }
     }
@@ -118,10 +118,11 @@ export default class SubmissionViewer extends Component {
           />
           break
         case 'online_text_entry':
-          body = <WebContainer
+          body = <CanvasWebView
             style={styles.webContainer}
-            html={submission.body}
+            html={submission.body || ''}
             contentInset={{ bottom: this.props.drawerInset }}
+            navigator={this.props.navigator}
           />
           break
         case 'online_quiz':
@@ -132,6 +133,7 @@ export default class SubmissionViewer extends Component {
             style={styles.webContainer}
             source={{ uri: submission.preview_url }}
             contentInset={{ bottom: this.props.drawerInset }}
+            navigator={this.props.navigator}
           />
           break
         case 'media_recording':
@@ -185,6 +187,13 @@ const styles = StyleSheet.create({
   },
   webContainer: {
     flex: 1,
+  },
+  pdfContainer: {
+    paddingTop: 16,
+    paddingLeft: 16,
+    paddingRight: 16,
+    flex: 1,
+    backgroundColor: '#A3ADB3',
   },
   centeredText: {
     height: 200,
