@@ -30,12 +30,12 @@ import i18n from 'format-message'
 
 export type CourseFilterProps = {
   courses: Array<Course>,
-  selectedCourse: Course,
+  selectedCourse?: ?Course | 'all',
   onClearFilter: () => void,
   onSelectFilter: (string) => void,
 }
 
-export default class CourseFilter extends Component<any, CourseFilterProps, any> {
+export default class CourseFilter extends Component<CourseFilterProps, any> {
   chooseFilter = () => {
     const options = this.props.courses.map((course) => course.name)
     options.push(i18n('Cancel'))

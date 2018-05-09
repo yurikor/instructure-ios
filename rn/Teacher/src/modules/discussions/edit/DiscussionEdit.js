@@ -41,7 +41,7 @@ import RowWithDateInput from '../../../common/components/rows/RowWithDateInput'
 import colors from '../../../common/colors'
 import RichTextEditor from '../../../common/components/rich-text-editor/RichTextEditor'
 import Images from '../../../images'
-import ModalActivityIndicator from '../../../common/components/ModalActivityIndicator'
+import ModalOverlay from '../../../common/components/ModalOverlay'
 import { default as EditDiscussionActions } from '../../discussions/edit/actions'
 import { default as DiscussionDetailsActions } from '../../discussions/details/actions'
 import { alertError } from '../../../redux/middleware/error-handler'
@@ -51,6 +51,7 @@ import { default as AssignmentsActions } from '../../assignments/actions'
 import UnmetRequirementBanner from '../../../common/components/UnmetRequirementBanner'
 import RequiredFieldSubscript from '../../../common/components/RequiredFieldSubscript'
 import { extractDateFromString } from '../../../utils/dateUtils'
+import { isTeacher } from '../../app'
 
 const { NativeAccessibility } = NativeModules
 
@@ -78,7 +79,8 @@ const PickerItem = PickerIOS.Item
 
 type OwnProps = {
   discussionID: ?string,
-  courseID: string,
+  context: CanvasContext,
+  contextID: string,
 }
 
 type State = {
@@ -101,7 +103,8 @@ export type Props = State & OwnProps & AsyncState & NavigationProps & typeof Act
 
 export class DiscussionEdit extends Component<Props, any> {
   scrollView: KeyboardAwareScrollView
-  datesEditor: AssignmentDatesEditor
+  datesEditor: ?AssignmentDatesEditor
+  editor: ?RichTextEditor
 
   constructor (props: Props) {
     super(props)
@@ -132,15 +135,16 @@ export class DiscussionEdit extends Component<Props, any> {
   }
 
   componentWillUnmount () {
-    this.props.deletePendingNewDiscussion(this.props.courseID)
+    this.props.deletePendingNewDiscussion(this.props.context, this.props.contextID)
     if (this.props.discussionID) {
-      this.props.refreshDiscussionEntries(this.props.courseID, this.props.discussionID, true)
+      this.props.refreshDiscussionEntries(this.props.context, this.props.contextID, this.props.discussionID, true)
     }
   }
 
   componentWillReceiveProps (props: Props) {
     const error = props.error
     if (error) {
+      this.setState({ pending: false })
       this._handleError(error)
       return
     }
@@ -194,17 +198,10 @@ export class DiscussionEdit extends Component<Props, any> {
             },
           },
         ]}
-        leftBarButtons={[
-          {
-            title: i18n('Cancel'),
-            testID: 'discussions.edit.cancelButton',
-            style: 'cancel',
-            action: this._cancelPressed,
-          },
-        ]}
+        dismissButtonTitle={i18n('Cancel')}
       >
         <View style={{ flex: 1 }}>
-          <ModalActivityIndicator text={i18n('Saving')} visible={this.state.pending}/>
+          <ModalOverlay text={i18n('Saving')} visible={this.state.pending}/>
           <UnmetRequirementBanner
             text={i18n('Invalid field')}
             visible={Boolean(Object.keys(this.state.errors).length)}
@@ -223,8 +220,13 @@ export class DiscussionEdit extends Component<Props, any> {
               border='both'
               onChangeText={this._valueChanged('title')}
               identifier='discussions.edit.titleInput'
-              placeholder={i18n('Add title')}
+              placeholder={i18n('Add title (required)')}
               onFocus={this._scrollToInput}
+            />
+            <RequiredFieldSubscript
+              title={this.state.errors.title}
+              visible={Boolean(this.state.errors.title)}
+              testID='discussions.edit.title.validation-error'
             />
 
             <Heading1 style={style.heading}>{i18n('Description')}</Heading1>
@@ -232,31 +234,28 @@ export class DiscussionEdit extends Component<Props, any> {
               style={style.description}
             >
               <RichTextEditor
-                onChangeValue={this._valueChanged('message')}
+                ref={(r) => { this.editor = r }}
                 defaultValue={this.props.message}
                 showToolbar='always'
                 keyboardAware={false}
                 scrollEnabled={true}
                 contentHeight={150}
-                placeholder={i18n('Add description (required)')}
+                placeholder={i18n('Add description')}
                 navigator={this.props.navigator}
+                attachmentUploadPath={isTeacher() ? `/${this.props.context}/${this.props.contextID}/files` : '/users/self/files'}
+                onFocus={this._scrollToRCE}
               />
             </View>
-            <RequiredFieldSubscript
-              title={this.state.errors.message}
-              visible={Boolean(this.state.errors.message)}
-              testID='discussions.edit.message.validation-error'
-            />
 
             <Heading1 style={style.heading}>{i18n('Options')}</Heading1>
-            { this.state.can_unpublish &&
-              <RowWithSwitch
+            { this.state.can_unpublish && isTeacher() &&
+               <RowWithSwitch
                 title={i18n('Publish')}
                 border='both'
                 value={this.state.published}
                 onValueChange={this._valueChanged('published')}
                 testID='discussions.edit.published.switch'
-              />
+            />
             }
             <RowWithSwitch
               title={i18n('Allow threaded replies')}
@@ -274,12 +273,12 @@ export class DiscussionEdit extends Component<Props, any> {
               identifier='discussions.edit.subscribed.switch'
             />
             }
-            <RowWithSwitch
-              title={i18n('Users must post before seeing replies')}
+            { isTeacher() && <RowWithSwitch
+              title={i18n('Students must post before seeing replies')}
               border='bottom'
               value={this.state.require_initial_post}
               onValueChange={this._valueChanged('require_initial_post')}
-            />
+            /> }
             { this.isGraded() &&
               <View>
                 <RowWithTextInput
@@ -296,7 +295,7 @@ export class DiscussionEdit extends Component<Props, any> {
                 <RowWithDetail
                   title={i18n('Display Grade as...')}
                   detailSelected={this.state.gradingTypePickerShown}
-                  detail={gradeDisplayOpts.get(this.state.grading_type)}
+                  detail={gradeDisplayOpts.get(this.state.grading_type) || ''}
                   disclosureIndicator={true}
                   border='bottom'
                   onPress={this._toggleGradingTypePicker}
@@ -332,7 +331,7 @@ export class DiscussionEdit extends Component<Props, any> {
               />
             }
 
-            { !this.isGraded() &&
+            { isTeacher() && !this.isGraded() &&
               <View>
                 <Heading1 style={style.heading}>{i18n('Availability')}</Heading1>
                 <RowWithDateInput
@@ -423,6 +422,12 @@ export class DiscussionEdit extends Component<Props, any> {
     this.scrollView.scrollToFocusedInput(input)
   }
 
+  _scrollToRCE = () => {
+    const input = ReactNative.findNodeHandle(this.editor)
+    // $FlowFixMe
+    this.scrollView.scrollToFocusedInput(input)
+  }
+
   _handleError (error: string) {
     setTimeout(() => {
       alertError(error)
@@ -465,17 +470,17 @@ export class DiscussionEdit extends Component<Props, any> {
   }
 
   _subscribe = (shouldSubscribe: boolean) => {
-    this.props.subscribeDiscussion(this.props.courseID, this.props.discussionID, shouldSubscribe)
+    this.props.subscribeDiscussion(this.props.context, this.props.contextID, this.props.discussionID, shouldSubscribe)
   }
 
   validate () {
     const errors = {}
-    if (this.state.assignment && !this.datesEditor.validate()) {
+    if (this.state.assignment && this.datesEditor && !this.datesEditor.validate()) {
       errors.dates = true
     }
 
-    if (!this.state.message) {
-      errors.message = i18n('A message is required')
+    if (!this.state.title) {
+      errors.title = i18n('A title is required')
     }
 
     if (this.state.assignment) {
@@ -493,19 +498,20 @@ export class DiscussionEdit extends Component<Props, any> {
   }
 
   updateAssignment () {
-    if (this.state.assignment) {
+    if (this.state.assignment && this.datesEditor) {
       const updatedAssignment = this.datesEditor.updateAssignment({ ...this.state.assignment })
       updatedAssignment.points_possible = this.state.points_possible || 0
       updatedAssignment.grading_type = this.state.grading_type
-      this.props.updateAssignment(this.props.courseID, updatedAssignment, this.props.assignment)
+      this.props.updateAssignment(this.props.contextID, updatedAssignment, this.props.assignment)
     }
   }
 
-  updateDiscussion () {
-    const params = {
+  async updateDiscussion () {
+    const message = this.editor ? await this.editor.getHTML() : ''
+    let params = {
       title: this.state.title || i18n('No Title'),
-      message: this.state.message,
-      published: this.state.published || false,
+      message: message,
+      published: !isTeacher() || this.state.published || false,
       discussion_type: this.state.discussion_type || 'side_comment',
       subscribed: this.state.subscribed || false,
       require_initial_post: this.state.require_initial_post || false,
@@ -513,6 +519,7 @@ export class DiscussionEdit extends Component<Props, any> {
       delayed_post_at: this.state.delayed_post_at,
       attachment: this.state.attachment,
     }
+
     if (this.props.discussionID) {
       // $FlowFixMe
       params.id = this.props.discussionID
@@ -521,9 +528,10 @@ export class DiscussionEdit extends Component<Props, any> {
       // $FlowFixMe
       params.remove_attachment = true
     }
+
     this.props.discussionID
-      ? this.props.updateDiscussion(this.props.courseID, params)
-      : this.props.createDiscussion(this.props.courseID, params)
+      ? this.props.updateDiscussion(this.props.context, this.props.contextID, params)
+      : this.props.createDiscussion(this.props.context, this.props.contextID, params)
   }
 
   isGraded = () => Boolean(this.state.assignment)
@@ -533,7 +541,7 @@ export class DiscussionEdit extends Component<Props, any> {
       attachments: this.state.attachment ? [this.state.attachment] : [],
       maxAllowed: 1,
       storageOptions: {
-        upload: false,
+        uploadPath: isTeacher() ? null : 'users/self/files',
       },
       onComplete: this._valueChanged('attachment', (as) => as[0]),
     })
@@ -564,19 +572,21 @@ const style = StyleSheet.create({
   },
 })
 
-export function mapStateToProps ({ entities }: AppState, { courseID, discussionID }: OwnProps): State {
+export function mapStateToProps ({ entities }: AppState, { context, contextID, discussionID }: OwnProps): State {
   let discussion = {}
   let error = null
   let pending = 0
   let assignment = null
   let attachment = null
 
+  let origin: DiscussionOriginEntity = context === 'courses' ? entities.courses : entities.groups
+
   if (!discussionID &&
-    entities.courses &&
-    entities.courses[courseID] &&
-    entities.courses[courseID].discussions &&
-    entities.courses[courseID].discussions.new) {
-    const newState = entities.courses[courseID].discussions.new
+    origin &&
+    origin[contextID] &&
+    origin[contextID].discussions &&
+    origin[contextID].discussions.new) {
+    const newState = origin[contextID].discussions.new
     error = newState.error
     pending = pending + (newState.pending || 0)
     discussionID = newState.id

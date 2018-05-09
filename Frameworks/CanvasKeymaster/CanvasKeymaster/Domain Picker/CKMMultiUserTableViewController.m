@@ -83,14 +83,15 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
         NSHTTPURLResponse *failingResponse = error.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];
         if (failingResponse.statusCode == 401) {
             __strong CKIClient *client = weakClient;
-            [FXKeychain.sharedCanvasKeychain removeClient:client];
+            [[FXKeychain sharedKeychain] removeClient:client];
             [self reloadClients];
         }
     }];
     
     cell.profileImage.clipsToBounds = YES;
     cell.profileImage.layer.cornerRadius = cell.profileImage.frame.size.height/2;
-    [cell.profileImage setImageWithURL:nil placeholderImage:[UIImage imageNamed:@"icon_profile" inBundle:[NSBundle bundleForClass:self.class] compatibleWithTraitCollection:nil]];
+    UIImage *placeholder = [UIImage imageNamed:@"icon_profile" inBundle:[NSBundle bundleForClass:self.class] compatibleWithTraitCollection:nil];
+    [cell.profileImage setImageWithURL:client.currentUser.avatarURL placeholderImage:placeholder];
     
     cell.deleteButton.tag = indexPath.row;
     [cell.deleteButton addTarget:self action:@selector(deleteClient:) forControlEvents:UIControlEventTouchUpInside];
@@ -133,18 +134,21 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
 - (void)deleteClient:(UIButton *)deleteBtn
 {
     CKIClient *clientToDelete = self.clients[deleteBtn.tag];
-    [[FXKeychain sharedCanvasKeychain] removeClient:clientToDelete];
+    [[FXKeychain sharedKeychain] removeClient:clientToDelete];
     [self reloadClients];
 }
 
-- (void)reloadClients {
-    
-    self.clients = [[[FXKeychain sharedCanvasKeychain] clients] sortedArrayUsingComparator:^NSComparisonResult(CKIClient *obj1, CKIClient *obj2) {
+- (void)prepareClients {
+    self.clients = [[[FXKeychain sharedKeychain] clients] sortedArrayUsingComparator:^NSComparisonResult(CKIClient *obj1, CKIClient *obj2) {
         return [obj1.currentUser.name compare:obj2.currentUser.name];
     }];
     for (CKIClient *client in self.clients) {
         client.ignoreUnauthorizedErrors = YES;
     }
+}
+
+- (void)reloadClients {
+    [self prepareClients];
     [self.tableView reloadData];
 }
 

@@ -16,24 +16,22 @@
 
 /* @flow */
 
-import { mapStateToProps, type AssignmentListProps } from '../map-state-to-props'
+import { mapStateToProps } from '../map-state-to-props'
+import * as templates from '../../../__templates__/index'
 
-const template = {
-  ...require('../../../__templates__/assignments'),
-  ...require('../../../__templates__/course'),
-  ...require('../../../__templates__/grading-periods'),
-  ...require('../../../__templates__/helm'),
-  ...require('../../../redux/__templates__/app-state'),
-}
+describe('AssignmentList mapStateToProps', () => {
+  let assignmentGroup = templates.assignmentGroup()
+  let assignment = templates.assignment()
+  let gradingPeriod = templates.gradingPeriod({ id: 1 })
+  let gradingPeriodTwo = templates.gradingPeriod({ id: 2 })
+  let course = templates.course({
+    enrollments: [
+      { type: 'teacher', current_grading_period_id: gradingPeriod.id },
+      { type: 'student', current_grading_period_id: gradingPeriodTwo.id },
+    ],
+  })
 
-test('map state to props should work', async () => {
-  let course = template.course()
-  let assignmentGroup = template.assignmentGroup()
-  let assignment = template.assignment()
-  let gradingPeriod = template.gradingPeriod({ id: 1 })
-  let gradingPeriodTwo = template.gradingPeriod({ id: 2 })
-
-  let state = template.appState({
+  let defaultState = templates.appState({
     entities: {
       courses: {
         [course.id]: {
@@ -64,115 +62,73 @@ test('map state to props should work', async () => {
     favoriteCourses: [],
   })
 
-  let props: AssignmentListProps = {
+  let defaultProps = {
+    navigator: templates.navigator(),
     courseID: course.id,
-    course: {
-      course,
-      color: '#fff',
-    },
-    assignmentGroups: [],
-    updateAssignment: jest.fn(),
-    refreshAssignmentList: jest.fn(),
-    refreshGradingPeriods: jest.fn(),
-    refreshAssignment: jest.fn(),
-    refreshAssignmentDetails: jest.fn(),
-    refresh: jest.fn(),
-    cancelAssignmentUpdate: jest.fn(),
-    updateCourseDetailsSelectedTabSelectedRow: jest.fn(),
-    refreshGradeableStudents: jest.fn(),
-    refreshing: false,
-    pending: 0,
-    navigator: template.navigator(),
-    gradingPeriods: [],
-    courseColor: 'greenish',
-    courseName: 'blah blah',
-    selectedRowID: '0',
-    anonymousGrading: jest.fn(),
   }
 
-  const result = mapStateToProps(state, props)
-  expect(result).toMatchObject({
-    assignmentGroups: [assignmentGroup],
-    gradingPeriods: [{
-      ...gradingPeriod,
-      assignmentRefs: [assignment.id],
-    }, {
-      ...gradingPeriodTwo,
-      assignmentRefs: [],
-    }],
-    courseColor: 'blueish',
+  it('map state to props should work', async () => {
+    const result = mapStateToProps(defaultState, defaultProps)
+    expect(result).toMatchObject({
+      assignmentGroups: [assignmentGroup],
+      gradingPeriods: [{
+        ...gradingPeriod,
+        assignmentRefs: [assignment.id],
+      }, {
+        ...gradingPeriodTwo,
+        assignmentRefs: [],
+      }],
+      currentGradingPeriodID: gradingPeriodTwo.id,
+      courseColor: 'blueish',
+    })
   })
-})
 
-test('returns default props when the course is not there', () => {
-  let state = template.appState()
+  it('returns default props when the course is not there', () => {
+    let state = templates.appState()
 
-  let props = {
-    courseID: '1',
-    refreshAssignmentList: jest.fn(),
-    refreshGradingPeriods: jest.fn(),
-    refresh: jest.fn(),
-    refreshing: false,
-    navigator: template.navigator(),
-    assignmentGroups: [],
-    course: {
-      course: template.course(),
-      color: '#fff',
-    },
-    gradingPeriods: [],
-    pending: 0,
-  }
-
-  let result = mapStateToProps(state, props)
-  expect(result).toMatchObject({
-    courseName: '',
-    courseColor: '',
-    assignmentGroups: [],
-    pending: 0,
+    let result = mapStateToProps(state, defaultProps)
+    expect(result).toMatchObject({
+      courseName: '',
+      courseColor: '',
+      assignmentGroups: [],
+      pending: 0,
+    })
   })
-})
 
-it('filters grading periods by course id', () => {
-  const one = template.gradingPeriod({ id: '1' })
-  const two = template.gradingPeriod({ id: '2' })
-  const three = template.gradingPeriod({ id: '3' })
-  const state = template.appState({
-    entities: {
-      courseDetailsTabSelectedRow: { rowID: '' },
-      courses: {
-        '1': {
-          course: template.course(),
-          gradingPeriods: {
-            refs: [one.id, two.id],
-          },
-          assignmentGroups: {
-            refs: [],
-            pending: 0,
-            error: null,
+  it('filters grading periods by course id', () => {
+    const three = templates.gradingPeriod({ id: '3' })
+    const state = {
+      ...defaultState,
+      entities: {
+        ...defaultState.entities,
+        gradingPeriods: {
+          ...defaultState.entities.gradingPeriods,
+          '3': {
+            gradingPeriod: three,
+            assignmentRefs: [],
           },
         },
       },
-      gradingPeriods: {
-        '1': {
-          gradingPeriod: one,
-          assignmentRefs: [],
-        },
-        '2': {
-          gradingPeriod: two,
-          assignmentRefs: [],
-        },
-        '3': {
-          gradingPeriod: three,
-          assignmentRefs: [],
-        },
-      },
-    },
+    }
+
+    expect(mapStateToProps(state, defaultProps)).toMatchObject({
+      gradingPeriods: [
+        { ...gradingPeriod, assignmentRefs: [assignment.id] },
+        { ...gradingPeriodTwo, assignmentRefs: [] },
+      ],
+    })
   })
 
-  expect(mapStateToProps(state, { courseID: '1' })).toMatchObject({
-    gradingPeriods: [
-      { ...one, assignmentRefs: [] },
-      { ...two, assignmentRefs: [] },
-    ],
+  it('returns static props for AssignmentList', () => {
+    let state = templates.appState()
+    expect(mapStateToProps(state, defaultProps)).toMatchObject({
+      screenTitle: 'Assignments',
+      showTotalScore: false,
+    })
+
+    expect(mapStateToProps(defaultState, defaultProps)).toMatchObject({
+      screenTitle: 'Assignments',
+      showTotalScore: false,
+    })
   })
 })

@@ -45,6 +45,7 @@ const template = {
   ...require('../../../__templates__/discussion'),
   ...require('../../../__templates__/file'),
   ...require('../../../__templates__/assignments'),
+  ...require('../../../__templates__/section'),
   ...require('../../../__templates__/error'),
   ...require('../../../__templates__/users'),
 }
@@ -558,13 +559,44 @@ describe('refreshSingleDiscussion', () => {
       },
     })
   })
+
+  it('doesnt overwrite data in the discussion that already exists', () => {
+    let section = template.section()
+    let discussion = template.discussion({ sections: [section] })
+    let state = {
+      [discussion.id]: {
+        data: discussion,
+      },
+    }
+
+    let actionRefresh = {
+      type: refreshSingleDiscussion.toString(),
+      payload: {
+        courseID: '1',
+        result: {
+          data: template.discussion(),
+        },
+        discussionID: discussion.id,
+      },
+    }
+    expect(discussions(state, actionRefresh)).toEqual({
+      [discussion.id]: {
+        data: discussion,
+      },
+    })
+  })
 })
 
 describe('refreshDiscussionEntries', () => {
-  it('handles resolved with existing disucssion', () => {
+  it('handles resolved with existing discussion', () => {
     let participantA = template.userDisplay({ id: '1', display_name: 'A' })
     let participantB = template.userDisplay({ id: '2', display_name: 'B' })
-    let view = template.discussionView({ participants: [participantA, participantB] })
+    let view = template.discussionView({
+      participants: [participantA, participantB],
+      entry_ratings: {
+        '4': 1,
+      },
+    })
     let stateDiscussion = template.discussion({})
     let expected = template.discussion({})
 
@@ -587,13 +619,23 @@ describe('refreshDiscussionEntries', () => {
     expected.participants = { [participantA.id]: participantA, [participantB.id]: participantB }
     expected.replies = view.view
 
-    expect(discussions({ [stateDiscussion.id]: { data: stateDiscussion, unread_entries: template.discussionView().unread_entries } }, resolved)).toEqual({
+    const initialState = {
+      [stateDiscussion.id]: {
+        data: stateDiscussion,
+        unread_entries: template.discussionView().unread_entries,
+        entry_ratings: {},
+      },
+    }
+
+    expect(discussions(initialState, resolved)).toEqual({
       '1': {
         data: expected,
         pendingReplies: {},
         unread_entries: template.discussionView().unread_entries,
+        entry_ratings: { '4': 1 },
         pending: 0,
         error: null,
+        initialPostRequired: false,
       },
     })
   })
@@ -636,6 +678,8 @@ describe('refreshDiscussionEntries', () => {
         error: null,
         pendingReplies: pending,
         unread_entries: template.discussionView().unread_entries,
+        entry_ratings: template.discussionView().entry_ratings,
+        initialPostRequired: false,
       },
     })
   })
@@ -678,6 +722,8 @@ describe('refreshDiscussionEntries', () => {
         error: null,
         pendingReplies: {},
         unread_entries: template.discussionView().unread_entries,
+        entry_ratings: template.discussionView().entry_ratings,
+        initialPostRequired: false,
       },
     })
   })
@@ -717,9 +763,28 @@ describe('refreshDiscussionEntries', () => {
         data: expected,
         pendingReplies: {},
         unread_entries: template.discussionView().unread_entries,
+        entry_ratings: template.discussionView().entry_ratings,
         pending: 0,
         error: null,
+        initialPostRequired: false,
       },
+    })
+  })
+
+  it('handles rejected when initial post required', () => {
+    const action = {
+      type: refreshDiscussionEntries.toString(),
+      error: true,
+      payload: {
+        discussionID: '1',
+        error: {
+          response: { status: 403 },
+        },
+      },
+    }
+    const result = discussions({}, action)
+    expect(result).toMatchObject({
+      '1': { initialPostRequired: true },
     })
   })
 
@@ -761,6 +826,8 @@ describe('refreshDiscussionEntries', () => {
         error: null,
         pendingReplies: pending,
         unread_entries: template.discussionView().unread_entries,
+        entry_ratings: template.discussionView().entry_ratings,
+        initialPostRequired: false,
       },
     })
   })
@@ -800,8 +867,10 @@ describe('refreshDiscussionEntries', () => {
         data: expected,
         pendingReplies: {},
         unread_entries: template.discussionView().unread_entries,
+        entry_ratings: template.discussionView().entry_ratings,
         pending: 0,
         error: null,
+        initialPostRequired: false,
       },
     })
   })
@@ -846,7 +915,7 @@ describe('createDiscussion', () => {
     const resolved = {
       type: createDiscussion.toString(),
       payload: {
-        result: { data: discussion },
+        result: { data: discussion, params: discussion },
         params: template.createDiscussionParams(),
       },
     }
@@ -861,6 +930,27 @@ describe('createDiscussion', () => {
         error: null,
       },
     })
+  })
+
+  it('attaches sections to the discussion', () => {
+    const sections = [template.section()]
+    const discussion = template.discussion({
+      id: '2',
+      is_section_specific: true,
+      sections,
+    })
+    const initialState = {}
+    const resolved = {
+      type: createDiscussion.toString(),
+      payload: {
+        result: { data: discussion },
+        params: template.createDiscussionParams({ sections }),
+      },
+    }
+
+    expect(
+      discussions(initialState, resolved)['2'].data.sections
+    ).toEqual(sections)
   })
 })
 
@@ -956,6 +1046,30 @@ describe('updateDiscussion', () => {
           pending: 0,
         },
       })
+  })
+
+  it('attaches sections to the discussion', () => {
+    let sections = [template.section()]
+    const discussion = template.discussion({ id: '35' })
+    const params = template.updateDiscussionParams({
+      id: '35',
+      is_section_specific: true,
+      sections,
+    })
+    const initialState = {}
+    const resolved = {
+      type: updateDiscussion.toString(),
+      payload: {
+        result: { data: discussion },
+        params,
+        handlesError: true,
+        courseID: '3',
+      },
+    }
+
+    expect(
+      discussions(initialState, resolved)['35'].data.sections
+    ).toEqual(sections)
   })
 })
 

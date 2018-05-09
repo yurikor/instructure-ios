@@ -28,6 +28,7 @@ class ModuleItemDetailViewController: UIViewController {
     let viewModel: ModuleItemViewModel
     let refresher: Refresher
     let route: (UIViewController, URL) -> Void
+    var embeddedVC: UIViewController?
 
     lazy var toolbar: UIToolbar = {
         let toolbar = UIToolbar()
@@ -84,10 +85,16 @@ class ModuleItemDetailViewController: UIViewController {
             guard let me = self else { return }
             ErrorReporter.reportError(error, from: me)
         }
+
+        NotificationCenter.default.addObserver(self, selector: #selector(handleBarButtonsChange), name: NSNotification.Name(rawValue: "FileViewControllerBarButtonItemsDidChange"), object: nil)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -137,18 +144,34 @@ class ModuleItemDetailViewController: UIViewController {
             view.addConstraint(NSLayoutConstraint(item: vc.view, attribute: .bottom, relatedBy: .equal, toItem: toolbar, attribute: .top, multiplier: 1, constant: 0))
             view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|[childView]|", options: [], metrics: nil, views: ["childView": vc.view]))
 
+            if let moduleProtocol = vc as? ModuleItemEmbeddedProtocol {
+                moduleProtocol.moduleItemID = self.viewModel.moduleItemID.value
+            }
+            
             viewModel.moduleItemBecameActive()
             updateNavigationBarButtonItems(vc)
+            toolbarItems = vc.toolbarItems
+
+            embeddedVC = vc
         }
     }
 
     func updateNavigationBarButtonItems(_ embeddedViewController: UIViewController) {
         var items = embeddedViewController.navigationItem.rightBarButtonItems ?? []
+        if let rightButtons = navigationItem.rightBarButtonItems, rightButtons.count > 0 {
+            items = items + rightButtons
+        }
 
         if viewModel.completionRequirement.value == .markDone {
             items = items + [markDoneButton]
         }
         
         navigationItem.rightBarButtonItems = items
+    }
+
+    func handleBarButtonsChange(sender: Any) {
+        if let current = embeddedVC {
+            updateNavigationBarButtonItems(current)
+        }
     }
 }

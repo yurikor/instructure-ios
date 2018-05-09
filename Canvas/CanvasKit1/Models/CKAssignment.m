@@ -25,7 +25,6 @@
 #import "CKDiscussionTopic.h"
 #import "ISO8601DateFormatter.h"
 #import "NSDictionary+CKAdditions.h"
-#import "CKDiscussionEntry.h"
 #import "CKSubmissionType.h"
 #import "NSDictionary+CKAdditions.h"
 #import "NSString+CKAdditions.h"
@@ -87,7 +86,7 @@
     
     self.assignmentGroupId = [info[@"assignment_group_id"] unsignedLongLongValue];
     NSNumber *positionNum = info[@"position"];
-    if (positionNum && (id)positionNum != [NSNull null]) {
+    if ([positionNum isKindOfClass:[NSNumber class]]) {
         self.position = [positionNum intValue];
     }
     
@@ -98,7 +97,7 @@
     }
     
     NSString *urlString = info[@"url"];
-    if (urlString) {
+    if ([urlString isKindOfClass:[NSString class]]) {
         self.url = [NSURL URLWithString:urlString];
     }
     
@@ -119,6 +118,11 @@
     _contentLock = [CKContentLock contentLockWithInfo:info];
     
     self.groupCategoryID = info[@"group_category_id"];
+
+    NSString *externalToolTagAttributesURL = [info valueForKeyPath:@"external_tool_tag_attributes.url"];
+    if ([externalToolTagAttributesURL isKindOfClass:[NSString class]]) {
+        self.externalToolTagAttributesURL = [NSURL URLWithString:externalToolTagAttributesURL];
+    }
 }
 
 
@@ -197,9 +201,9 @@
     return (NSUInteger)self.ident;
 }
 
-- (NSString *)gradeStringForSubmission:(CKSubmission *)submission
+- (NSString *)gradeStringForSubmission:(CKSubmission *)submission usingEnteredGrade:(BOOL)useEnteredGrade
 {
-    NSString *submissionGrade = submission.grade ?: @"—";
+    NSString *submissionGrade = useEnteredGrade ? submission.enteredGrade : submission.grade ?: @"—";
     
     switch (self.scoringType) {
         case CKAssignmentScoringTypePassFail: {
@@ -218,17 +222,36 @@
             break;
         }
         case CKAssignmentScoringTypeLetter:
-            [self setAccessibilityLabel:[NSString stringWithFormat:@"%@", submission.grade]];
-            return submission.grade;
+            [self setAccessibilityLabel:[NSString stringWithFormat:@"%@", submissionGrade]];
+            return submissionGrade;
             break;
         case CKAssignmentScoringTypePercentage:
             [self setAccessibilityLabel:[NSString stringWithFormat:@"%@%%", submissionGrade]];
             return [NSString stringWithFormat:@"%@%%", submissionGrade];
             break;
-        case CKAssignmentScoringTypePoints:
+        case CKAssignmentScoringTypePoints: {
             [self setAccessibilityLabel:[NSString stringWithFormat:@"%@ %@ %g", submissionGrade, NSLocalizedString(@"out of", @"Accessibility label for out or grading style"), self.pointsPossible]];
-            return [NSString stringWithFormat:@"%@/%g", submissionGrade, self.pointsPossible];
+
+            NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+            [formatter setMaximumFractionDigits:2];
+            formatter.numberStyle = NSNumberFormatterDecimalStyle;
+            
+            // all numbers come back from the api formated in EN so we need to parse it as
+            // en and then we can format with the users locale
+            [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en"]];
+            NSNumber *gradeNumber = [formatter numberFromString:submissionGrade];
+            [formatter setLocale:[NSLocale currentLocale]];
+
+            if (gradeNumber) {
+                return [NSString stringWithFormat:@"%@/%g", [formatter stringFromNumber:gradeNumber], self.pointsPossible];
+            } else {
+                // Grade is not a number
+                // Most likely because it is a letter and we are using a GPA scale.
+                return submissionGrade;
+            }
+
             break;
+        }
         default: {
             return submissionGrade;
             break;

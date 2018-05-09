@@ -38,10 +38,9 @@ import DisclosureIndicator from '../../common/components/DisclosureIndicator'
 import RowWithSwitch from '../../common/components/rows/RowWithSwitch'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import AutoGrowingTextInput from '../../common/components/AutoGrowingTextInput'
-import ModalActivityIndicator from '../../common/components/ModalActivityIndicator'
+import ModalOverlay from '../../common/components/ModalOverlay'
 import AddressBookToken from './components/AddressBookToken'
-import { createConversation, addMessage } from '../../canvas-api'
-import axios from 'axios'
+import { createConversation, addMessage, isAbort } from '../../canvas-api'
 import { Text } from '../../common/text'
 import throttle from 'lodash/throttle'
 
@@ -76,9 +75,7 @@ type ComposeState = {
   attachments: Attachment[],
 }
 
-export class Compose extends PureComponent {
-  props: ComposeProps & OwnProps
-  state: ComposeState
+export class Compose extends PureComponent<ComposeProps & OwnProps, ComposeState> {
   scrollView: KeyboardAwareScrollView
 
   static defaultProps = {
@@ -89,20 +86,16 @@ export class Compose extends PureComponent {
     onlySendIndividualMessages: false,
   }
 
-  constructor (props: ComposeProps) {
-    super(props)
-
-    this.state = {
-      sendDisabled: true,
-      sendToAll: props.onlySendIndividualMessages,
-      recipients: props.recipients || [],
-      contextCode: props.contextCode || null,
-      contextName: props.contextName || null,
-      body: null,
-      subject: props.subject || null,
-      pending: false,
-      attachments: [],
-    }
+  state: ComposeState = {
+    sendDisabled: true,
+    sendToAll: this.props.onlySendIndividualMessages,
+    recipients: this.props.recipients || [],
+    contextCode: this.props.contextCode || null,
+    contextName: this.props.contextName || null,
+    body: null,
+    subject: this.props.subject || null,
+    pending: false,
+    attachments: [],
   }
 
   cancelCompose = () => {
@@ -133,7 +126,7 @@ export class Compose extends PureComponent {
       group_conversation: true,
       included_messages: this.props.includedMessages && this.props.includedMessages.map(({ id }) => id),
       attachment_ids: this.state.attachments.map(a => a.id),
-      context_code: state.contextCode,
+      context_code: state.contextCode || undefined,
     }
 
     if (this.state.sendToAll) {
@@ -149,7 +142,7 @@ export class Compose extends PureComponent {
       this.setState({
         pending: false,
       })
-      if (!axios.isCancel(thrown)) {
+      if (!isAbort(thrown)) {
         setTimeout(() => {
           Alert.alert(i18n('An error occurred'), thrown.message)
         }, 1000)
@@ -239,10 +232,9 @@ export class Compose extends PureComponent {
   render () {
     return (
       <Screen
-        navBarColor='#fff'
-        navBarStyle='light'
-        drawUnderNavBar={true}
+        drawUnderNavBar
         title={this.props.navBarTitle || i18n('New Message')}
+        showDismissButton={false}
         leftBarButtons={[{
           title: i18n('Cancel'),
           testID: 'compose-message.cancel',
@@ -270,17 +262,17 @@ export class Compose extends PureComponent {
         ]}
       >
         <View style={{ flex: 1 }}>
-          <ModalActivityIndicator text={i18n('Sending...')} visible={this.state.pending}/>
+          <ModalOverlay text={i18n('Sending...')} visible={this.state.pending}/>
           <KeyboardAwareScrollView
             style={styles.compose}
             ref={e => { this.scrollView = e }}
             contentContainerStyle={{ flexGrow: 1, paddingBottom: 16 }}
           >
             { this.props.showCourseSelect &&
-              <TouchableHighlight testID='compose.course-select' underlayColor='#fff' style={styles.wrapper} onPress={this.props.canSelectCourse ? this.selectCourse : null}>
+              <TouchableHighlight testID='compose.course-select' underlayColor='#fff' style={styles.wrapper} onPress={this.props.canSelectCourse ? this.selectCourse : undefined}>
                 <View style={styles.courseSelect}>
                   <Text style={[styles.courseSelectText, this.state.contextName ? styles.courseSelectedText : undefined]}>
-                    { this.state.contextName || i18n('Select a course') }
+                    { this.state.contextName || i18n('Select a Course') }
                   </Text>
                   { this.props.canSelectCourse &&
                     <DisclosureIndicator />
@@ -311,13 +303,13 @@ export class Compose extends PureComponent {
               <TextInput
                 placeholder={i18n('Subject')}
                 value={this.props.canEditSubject ? this.state.subject : this.state.subject || i18n('(no subject)')}
-                style={styles.cell}
+                style={[styles.cell, styles.courseSelectText, styles.courseSelectedText]}
                 placeholderTextColor={colors.lightText}
                 onChangeText={this._subjectChanged}
                 editable={this.props.canEditSubject}
               />
             </View>
-            { !this.props.onlySendIndividualMessages &&
+            { !this.props.onlySendIndividualMessages && !this.props.conversationID &&
               <RowWithSwitch
                 border='bottom'
                 title={i18n('Send individual message to each recipient')}
@@ -328,7 +320,7 @@ export class Compose extends PureComponent {
             }
             <View style={[styles.message, styles.messageWrapper]}>
               <AutoGrowingTextInput
-                placeholder={i18n('Compose message')}
+                placeholder={i18n('Compose Message')}
                 style={styles.cell}
                 placeholderTextColor={colors.lightText}
                 defaultHeight={54}
@@ -366,8 +358,6 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   message: {
-    fontSize: 16,
-    lineHeight: 19,
     paddingTop: global.style.defaultPadding / 1.25,
     paddingBottom: global.style.defaultPadding / 1.25,
     paddingLeft: global.style.defaultPadding,
@@ -402,7 +392,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flex: 1,
     flexWrap: 'wrap',
-    paddingTop: 6,
+    paddingVertical: 8,
   },
   forwardedMessage: {
     paddingHorizontal: 16,
@@ -421,4 +411,4 @@ export function mapStateToProps (): any {
 }
 
 const Connected = connect(mapStateToProps, Actions)(Compose)
-export default (Connected: PureComponent<any, any, any>)
+export default (Connected: PureComponent<any, any>)

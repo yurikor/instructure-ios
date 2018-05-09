@@ -18,8 +18,10 @@ Array [
       },
       "color": "#fff",
       "course": Object {
+        "account_id": "1",
         "course_code": "rn 101",
         "default_view": "wiki",
+        "end_at": "2030-02-08T23:13:39Z",
         "enrollments": Array [
           Object {
             "enrollment_state": "active",
@@ -33,10 +35,20 @@ Array [
         "image_download_url": "https://farm3.staticflickr.com/2926/14690771011_945f91045a.jpg",
         "is_favorite": true,
         "name": "Learn React Native",
+        "permissions": Object {
+          "viewAllGrades": true,
+          "viewAnalytics": true,
+        },
         "short_name": "rn",
         "term": Object {
+          "created_at": "2018-02-08T23:13:39Z",
+          "end_at": "2030-02-08T23:13:39Z",
+          "id": "1",
           "name": "Default Term",
+          "start_at": "2018-02-08T23:13:39Z",
+          "workflow_state": "available",
         },
+        "workflow_state": "available",
       },
       "discussions": Object {
         "pending": 0,
@@ -55,11 +67,8 @@ Array [
         "pending": 0,
         "refs": Array [],
       },
-      "pages": Object {
-        "pending": 0,
-        "refs": Array [],
-      },
       "pending": 0,
+      "permissions": null,
       "quizzes": Object {
         "pending": 0,
         "refs": Array [],
@@ -81,19 +90,31 @@ Array [
       "attendanceTool": Object {
         "pending": 0,
       },
-      "color": "#ffc100",
+      "color": "#aaa",
       "course": Object {
+        "account_id": "1",
         "course_code": "rn 101",
         "default_view": "wiki",
+        "end_at": "2030-02-08T23:13:39Z",
         "enrollments": Array [],
         "id": 991,
         "image_download_url": "https://farm3.staticflickr.com/2926/14690771011_945f91045a.jpg",
         "is_favorite": true,
         "name": "Learn React Native",
+        "permissions": Object {
+          "viewAllGrades": true,
+          "viewAnalytics": true,
+        },
         "short_name": "rn",
         "term": Object {
+          "created_at": "2018-02-08T23:13:39Z",
+          "end_at": "2030-02-08T23:13:39Z",
+          "id": "1",
           "name": "Default Term",
+          "start_at": "2018-02-08T23:13:39Z",
+          "workflow_state": "available",
         },
+        "workflow_state": "available",
       },
       "discussions": Object {
         "pending": 0,
@@ -112,11 +133,8 @@ Array [
         "pending": 0,
         "refs": Array [],
       },
-      "pages": Object {
-        "pending": 0,
-        "refs": Array [],
-      },
       "pending": 0,
+      "permissions": null,
       "quizzes": Object {
         "pending": 0,
         "refs": Array [],

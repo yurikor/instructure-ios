@@ -24,7 +24,8 @@ import {
 import i18n from 'format-message'
 
 import Row from '../../../common/components/rows/Row'
-import PublishedIcon from '../../../common/components/PublishedIcon'
+import AccessIcon from '../../../common/components/AccessIcon'
+import AccessLine from '../../../common/components/AccessLine'
 import { formattedDueDateWithStatus } from '../../../common/formatters'
 import { extractDateFromString } from '../../../utils/dateUtils'
 import Images from '../../../images/'
@@ -43,7 +44,7 @@ export default class QuizRow extends Component<Props, any> {
     const { quiz, selected } = this.props
     return (
       <View>
-        <View style={{ marginLeft: -12 }}>
+        <View>
           <Row
             renderImage={this._renderIcon}
             title={quiz.title}
@@ -55,13 +56,13 @@ export default class QuizRow extends Component<Props, any> {
             height='auto'
             selected={selected}
           >
-            <DotSeparated style={style.subtitle} separated={this._dueDate(quiz)} />
+            <DotSeparated style={style.subtitle} separated={this._dueDate()} />
             <View style={style.details}>
               {this._details()}
             </View>
           </Row>
         </View>
-        {quiz.published ? <View style={style.publishedIndicatorLine} /> : <View />}
+        <AccessLine visible={quiz.published} />
       </View>
     )
   }
@@ -80,7 +81,7 @@ export default class QuizRow extends Component<Props, any> {
   _renderIcon = () => {
     return (
       <View style={style.icon}>
-        <PublishedIcon published={this.props.quiz.published} tintColor={this.props.tintColor} image={Images.course.quizzes} />
+        <AccessIcon entry={this.props.quiz} tintColor={this.props.tintColor} image={Images.course.quizzes} />
       </View>
     )
   }
@@ -93,7 +94,7 @@ export default class QuizRow extends Component<Props, any> {
         one {# pt}
         other {# pts}
       }`,
-      message: 'Number of points possible',
+      description: 'Number of points possible',
     }, { count: quiz.points_possible })
     const questionCount = i18n(`{
       count, plural,
@@ -105,14 +106,6 @@ export default class QuizRow extends Component<Props, any> {
 }
 
 const style = StyleSheet.create({
-  publishedIndicatorLine: {
-    backgroundColor: '#00AC18',
-    position: 'absolute',
-    top: 4,
-    bottom: 4,
-    left: 0,
-    width: 3,
-  },
   details: {
     flexDirection: 'row',
   },

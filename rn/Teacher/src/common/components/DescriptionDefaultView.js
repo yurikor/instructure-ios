@@ -16,7 +16,7 @@
 
 // @flow
 
-import React from 'react'
+import React, { PureComponent } from 'react'
 import {
     View,
     Text,
@@ -28,7 +28,10 @@ type Props = {
   testID: string,
 }
 
-export default class DescriptionDefaultView extends React.Component<Props, any> {
+export default class DescriptionDefaultView extends PureComponent<Props, any> {
+  static defaultProps = {
+    text: 'Help your students with this assignment by adding instructions.',
+  }
 
   render () {
     return (
@@ -37,10 +40,6 @@ export default class DescriptionDefaultView extends React.Component<Props, any> 
       </View>
     )
   }
-}
-
-DescriptionDefaultView.defaultProps = {
-  text: 'Help your students with this assignment by adding instructions.',
 }
 
 const styles = StyleSheet.create({

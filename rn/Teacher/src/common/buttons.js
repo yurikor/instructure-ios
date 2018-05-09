@@ -18,8 +18,8 @@
  * @flow
  */
 
-import React, { Component } from 'react'
-import ReactNative, {
+import React, { PureComponent } from 'react'
+import {
   View,
   StyleSheet,
   TouchableOpacity,
@@ -28,7 +28,7 @@ import BaseButton from 'react-native-button'
 import colors from './colors'
 import { Text, BOLD_FONT } from './text'
 
-export function Button ({ style, containerStyle, ...props }: Object): ReactNative.TouchableHighlight {
+export function Button ({ style, containerStyle, ...props }: Object) {
   let brandingContainerStyles = {
     backgroundColor: colors.primaryButtonColor,
   }
@@ -38,19 +38,19 @@ export function Button ({ style, containerStyle, ...props }: Object): ReactNativ
   return (<BaseButton style={[styles.textColor, brandingStyles, style]} containerStyle={[styles.container, brandingContainerStyles, containerStyle]} {...props} />)
 }
 
-export class LinkButton extends Component {
+export class LinkButton extends PureComponent<Object> {
   render () {
+    const {
+      textStyle,
+      ...props
+    } = this.props
     const brandingStyles = { color: colors.primaryButtonColor }
     const textAttributes = this.props.textAttributes || {}
-    const textStyles = [linkButtonStyles.textColor, linkButtonStyles.font, brandingStyles, textAttributes, this.props.textStyle].filter(Boolean)
-    const propsWithoutTextStyle = {
-      ...this.props,
-    }
-    delete propsWithoutTextStyle.textStyle
+    const textStyles = [linkButtonStyles.textColor, linkButtonStyles.font, brandingStyles, textAttributes, textStyle].filter(Boolean)
     return (
       <TouchableOpacity
         hitSlop={{ top: 15, left: 15, bottom: 15, right: 15 }}
-        {...propsWithoutTextStyle}
+        {...props}
         accessibilityTraits='button'
       >
         <View>

@@ -19,11 +19,11 @@
 import type {
   SubmissionDataProps,
   GradeProp,
-  SubmissionStatusProp,
   AsyncSubmissionsDataProps,
 } from './submission-prop-types'
 import localeSort from '../../../utils/locale-sort'
 import find from 'lodash/find'
+import { isTeacher } from '../../app'
 
 function getEnrollments (courseContent?: CourseContentState, enrollments: EnrollmentsState): Array<Enrollment> {
   if (!courseContent) { return [] }
@@ -41,7 +41,7 @@ function getSubmissionsByUserID (assignmentContent?: AssignmentContentState, sub
     }, {})
 }
 
-export function statusProp (submission: ?Submission, dueDate: ?string): SubmissionStatusProp {
+export function statusProp (submission: ?Submission, dueDate: ?string): SubmissionStatus {
   if (!submission || submission.workflow_state === 'unsubmitted' || !submission.attempt) {
     if (dueDate && (new Date(dueDate) < new Date())) {
       return 'missing'
@@ -72,14 +72,24 @@ export function gradeProp (submission: ?Submission): GradeProp {
     return 'not_submitted'
   }
 
-  if (submission.grade != null && submission.grade_matches_current_submission) {
-    return submission.grade
+  if (submission.grade != null) {
+    if (isTeacher()) {
+      // Teachers only see the grade for the current submission
+      if (submission.grade_matches_current_submission && submission.workflow_state !== 'pending_review') {
+        // $FlowFixMe - It has already forgotten that submission.grade must be defined
+        return submission.grade
+      }
+    } else {
+      // Students always see the latest available grade
+      // $FlowFixMe - It has already forgotten that submission.grade must be defined
+      return submission.grade
+    }
   }
 
   return 'ungraded'
 }
 
-function submissionProps (enrollment: Enrollment, submission: ?SubmissionWithHistory, dueDate: ?string, sectionIDs: { string: [string] }): SubmissionDataProps {
+function submissionProps (enrollment: Enrollment, submission: ?SubmissionWithHistory, dueDate: ?any, sectionIDs: { string: [string] }): SubmissionDataProps {
   let { user, course_section_id: sectionID } = enrollment
   const { id, name } = user
   const avatarURL = user.avatar_url
@@ -94,7 +104,7 @@ function submissionProps (enrollment: Enrollment, submission: ?SubmissionWithHis
   return { userID: id, avatarURL, name, status, grade, submissionID, submission, score, sectionID, allSectionIDs }
 }
 
-export function dueDate (assignment: Assignment, user: ?User): ?string {
+export function dueDate (assignment: Assignment, user: ?User | SessionUser): ?string {
   if (!assignment) {
     return null
   }
@@ -145,27 +155,34 @@ export function getSubmissionsProps (entities: Entities, courseID: string, assig
   const assignmentContent = entities.assignments[assignmentID]
   const submissionsByUserID = getSubmissionsByUserID(assignmentContent, entities.submissions)
 
-  const submissions = uniqueEnrollments(enrollments)
-    .filter(e => {
-      return e.type === 'StudentEnrollment' &&
-              (e.enrollment_state === 'active' ||
-              e.enrollment_state === 'invited')
-    })
-    .sort((e1, e2) => {
-      if (e1.type !== e2.type) {
-        if (e1.type === 'StudentEnrollment') {
-          return -1
-        } else if (e2.type === 'StudentEnrollment') {
-          return 1
+  // don't create the submissions unless we have submissions
+  // this fixes some issues we were having where deep linking
+  // wouldn't show the submission for the user
+  const submissions = Object.keys(submissionsByUserID).length
+    ? uniqueEnrollments(enrollments)
+      .filter(e => {
+        return e.type === 'StudentEnrollment' &&
+                (e.enrollment_state === 'active' ||
+                e.enrollment_state === 'invited')
+      })
+      .sort((e1, e2) => {
+        if (e1.type !== e2.type) {
+          if (e1.type === 'StudentEnrollment') {
+            return -1
+          } else if (e2.type === 'StudentEnrollment') {
+            return 1
+          }
         }
-      }
-      return localeSort(e1.user.sortable_name, e2.user.sortable_name)
-    })
-    .map(enrollment => {
-      const submission: ?SubmissionWithHistory = submissionsByUserID[enrollment.user_id]
-      const due = assignmentContent && dueDate(assignmentContent.data, enrollment.user)
-      return submissionProps(enrollment, submission, due, sectionIDs)
-    })
+        return localeSort(e1.user.sortable_name, e2.user.sortable_name)
+      })
+      .map(enrollment => {
+        const submission: ?SubmissionWithHistory = submissionsByUserID[enrollment.user_id]
+        const due = assignmentContent && dueDate(assignmentContent.data, enrollment.user)
+        // $FlowFixMe
+        let temp = submissionProps(enrollment, submission, due, sectionIDs)
+        return temp
+      })
+    : []
 
   const pending = pendingProp(assignmentContent, courseContent)
 

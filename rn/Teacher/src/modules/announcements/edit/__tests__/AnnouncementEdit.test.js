@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-/* @flow */
+// @flow
 
 import React from 'react'
 import {
@@ -22,10 +22,10 @@ import {
   NativeModules,
 } from 'react-native'
 import renderer from 'react-test-renderer'
+import { shallow } from 'enzyme'
 
 import { AnnouncementEdit, mapStateToProps, type Props } from '../AnnouncementEdit'
 import explore from '../../../../../test/helpers/explore'
-import setProps from '../../../../../test/helpers/setProps'
 import { defaultErrorTitle } from '../../../../redux/middleware/error-handler'
 
 jest
@@ -55,6 +55,7 @@ jest
 const template = {
   ...require('../../../../__templates__/discussion'),
   ...require('../../../../__templates__/attachment'),
+  ...require('../../../../__templates__/section'),
   ...require('../../../../__templates__/error'),
   ...require('../../../../__templates__/helm'),
   ...require('../../../../redux/__templates__/app-state'),
@@ -76,14 +77,18 @@ describe('AnnouncementEdit', () => {
     props = {
       ...formFields,
       announcementID: '1',
-      courseID: '1',
+      context: 'courses',
+      contextID: '1',
       pending: 0,
       error: null,
       navigator: template.navigator(),
       createDiscussion: jest.fn(),
       updateDiscussion: jest.fn(),
+      refreshSections: jest.fn(),
       deletePendingNewDiscussion: jest.fn(),
       defaultDate: new Date(0),
+      sections: [],
+      selectedSections: [],
     }
   })
 
@@ -103,37 +108,54 @@ describe('AnnouncementEdit', () => {
     expect(title).toEqual('Edit Announcement')
   })
 
-  it('uses title from input', () => {
+  it('calls refreshSections on mount', () => {
+    shallow(<AnnouncementEdit {...props} />)
+    expect(props.refreshSections).toHaveBeenCalled()
+  })
+
+  it('uses title from input', async () => {
     props.announcementID = null
     props.title = 'Hanamura'
     props.createDiscussion = jest.fn()
-    const component = render(props)
-    changeTitle(component, 'Haunted Mines')
-    tapDone(component)
+    const view = shallow(<AnnouncementEdit {...props} />)
+    view.find('RichTextEditor').getElement().ref({
+      getHTML: jest.fn(() => Promise.resolve(formFields.message)),
+    })
+    view.find('[identifier="announcements.edit.titleInput"]')
+      .simulate('ChangeText', 'Haunted Mines')
+    await view.prop('rightBarButtons')[0].action()
     expect(props.createDiscussion).toHaveBeenCalledWith(
-      props.courseID,
+      props.context, props.contextID,
       { ...formFields, is_announcement: true, title: 'Haunted Mines' },
     )
   })
 
-  it('sends is_announcement param on create', () => {
+  it('sends is_announcement param on create', async () => {
     props.announcementID = null
     props.createDiscussion = jest.fn()
-    tapDone(render(props))
+    const view = shallow(<AnnouncementEdit {...props} />)
+    view.find('RichTextEditor').getElement().ref({
+      getHTML: jest.fn(() => Promise.resolve(formFields.message)),
+    })
+    await view.prop('rightBarButtons')[0].action()
     expect(props.createDiscussion).toHaveBeenCalledWith(
-      props.courseID,
+      props.context, props.contextID,
       { ...formFields, is_announcement: true },
     )
   })
 
-  it('provides defaults for new announcement', () => {
+  it('provides defaults for new announcement', async () => {
     props.announcementID = null
     props.title = ''
     props.message = 'required'
     props.require_initial_post = null
     props.delayed_post_at = null
     props.createDiscussion = jest.fn()
-    tapDone(render(props))
+    const view = shallow(<AnnouncementEdit {...props} />)
+    view.find('RichTextEditor').getElement().ref({
+      getHTML: jest.fn(() => Promise.resolve('required')),
+    })
+    await view.prop('rightBarButtons')[0].action()
     expect(props.createDiscussion.mock.calls).toMatchSnapshot()
   })
 
@@ -169,24 +191,31 @@ describe('AnnouncementEdit', () => {
     expect(getDelayPostAtValueFromLabel(component)).toEqual('Dec 31 5:00 PM')
   })
 
-  it('shows modal when saving', () => {
-    const component = render(props)
-    tapDone(component)
-    const modal: any = explore(component.toJSON()).query(({ type }) => type === 'Modal')[0]
-    expect(modal.props.visible).toBeTruthy()
+  it('shows modal when saving', async () => {
+    const component = shallow(<AnnouncementEdit {...props} />)
+    component.find('RichTextEditor').getElement().ref({
+      getHTML: jest.fn(() => Promise.resolve('message')),
+    })
+    await component.prop('rightBarButtons')[0].action()
+    component.update()
+    const modal = component.find('ModalOverlay')
+    expect(modal.prop('visible')).toBeTruthy()
   })
 
-  it('alerts save errors', () => {
+  it('alerts save errors', async () => {
     props.announcementID = null
     jest.useFakeTimers()
     // $FlowFixMe
     Alert.alert = jest.fn()
-    const component = render(props)
+    const component = shallow(<AnnouncementEdit {...props} />)
     const createDiscussion = jest.fn(() => {
-      setProps(component, { error: 'ERROR WAS ALERTED' })
+      component.setProps({ error: 'ERROR WAS ALERTED' })
     })
-    component.update(<AnnouncementEdit {...props} createDiscussion={createDiscussion} />)
-    tapDone(component)
+    component.setProps({ createDiscussion })
+    component.find('RichTextEditor').getElement().ref({
+      getHTML: jest.fn(() => Promise.resolve('message')),
+    })
+    await component.prop('rightBarButtons')[0].action()
     jest.runAllTimers()
     expect(Alert.alert).toHaveBeenCalledWith(defaultErrorTitle(), 'ERROR WAS ALERTED')
   })
@@ -195,22 +224,22 @@ describe('AnnouncementEdit', () => {
     props.announcementID = null
     props.navigator.dismissAllModals = jest.fn()
     const component = render(props)
-    const createDiscussion = jest.fn(() => {
-      setProps(component, { pending: 0 })
-    })
-    component.update(<AnnouncementEdit {...props} createDiscussion={createDiscussion} />)
-    tapDone(component)
+    component.update(<AnnouncementEdit {...props} pending={1} />)
+    component.update(<AnnouncementEdit {...props} pending={0} />)
     expect(props.navigator.dismissAllModals).toHaveBeenCalled()
   })
 
-  it('updates with new props', () => {
-    const component = render(props)
+  it('updates with new props', async () => {
+    const component = shallow(<AnnouncementEdit {...props} />)
     const updateDiscussion = jest.fn(() => {
-      setProps(component, { title: 'component will receive this title prop' })
+      component.setProps({ title: 'component will receive this title prop' })
     })
-    component.update(<AnnouncementEdit {...props} updateDiscussion={updateDiscussion} />)
-    tapDone(component)
-    expect(component.toJSON()).toMatchSnapshot()
+    component.setProps({ updateDiscussion })
+    component.find('RichTextEditor').getElement().ref({
+      getHTML: jest.fn(() => Promise.resolve('message here')),
+    })
+    await component.prop('rightBarButtons')[0].action()
+    expect(component).toMatchSnapshot()
   })
 
   it('clears delay post at date', () => {
@@ -223,13 +252,7 @@ describe('AnnouncementEdit', () => {
   it('deletes pending new discussion on unmount', () => {
     props.deletePendingNewDiscussion = jest.fn()
     render(props).getInstance().componentWillUnmount()
-    expect(props.deletePendingNewDiscussion).toHaveBeenCalledWith(props.courseID)
-  })
-
-  it('calls dismiss on cancel', () => {
-    props.navigator.dismiss = jest.fn()
-    tapCancel(render(props))
-    expect(props.navigator.dismiss).toHaveBeenCalled()
+    expect(props.deletePendingNewDiscussion).toHaveBeenCalledWith(props.context, props.contextID)
   })
 
   it('sets message placeholder', () => {
@@ -255,14 +278,19 @@ describe('AnnouncementEdit', () => {
     expect(NativeModules.NativeAccessibility.focusElement).toHaveBeenCalledWith(`announcement.edit.unmet-requirement-banner`)
   })
 
-  it('calls updateDiscussion on done', () => {
+  it('calls updateDiscussion on done', async () => {
     props.updateDiscussion = jest.fn()
-    props.courseID = '1'
+    props.contextID = '1'
     props.announcementID = '2'
-    const component = render(props)
-    changeTitle(component, 'UPDATED TITLE')
-    tapDone(component)
+    const component = shallow(<AnnouncementEdit {...props} />)
+    component.find('[identifier="announcements.edit.titleInput"]')
+      .simulate('ChangeText', 'UPDATED TITLE')
+    component.find('RichTextEditor').getElement().ref({
+      getHTML: jest.fn(() => Promise.resolve(formFields.message)),
+    })
+    await component.prop('rightBarButtons')[0].action()
     expect(props.updateDiscussion).toHaveBeenCalledWith(
+      'courses',
       '1',
       { ...formFields, title: 'UPDATED TITLE', is_announcement: true, id: '2' },
     )
@@ -281,11 +309,52 @@ describe('AnnouncementEdit', () => {
         attachments: [props.attachment],
         maxAllowed: 1,
         storageOptions: {
-          upload: false,
+          uploadPath: undefined,
         },
         onComplete: expect.any(Function),
       },
     )
+  })
+
+  it('has a sections option', () => {
+    let view = shallow(<AnnouncementEdit {...props} />)
+    expect(view.find('RowWithDetail').props().title).toEqual('Sections')
+  })
+
+  it('sections row has All when no sections selected', () => {
+    let view = shallow(<AnnouncementEdit {...props} />)
+    expect(view.find('RowWithDetail').props().detail).toEqual('All')
+  })
+
+  it('will update the selected sections', () => {
+    let section = template.section()
+    let view = shallow(<AnnouncementEdit {...props} sections={[section]} />)
+    view.instance().updateSelectedSections([section.id])
+    view.update()
+    expect(view.find('RowWithDetail').props().detail).toEqual(section.name)
+  })
+
+  it('will open the section-selector screen with props when sections row is pressed', () => {
+    let section = template.section()
+    let view = shallow(<AnnouncementEdit {...props} sections={[section]} />)
+    view.instance().updateSelectedSections([section.id])
+    view.find('RowWithDetail').simulate('press')
+    expect(props.navigator.show).toHaveBeenCalledWith(
+      '/courses/1/section-selector',
+      {},
+      {
+        updateSelectedSections: view.instance().updateSelectedSections,
+        currentSelectedSections: view.state().selectedSections,
+      }
+    )
+  })
+
+  it('scrolls view when RichTextEditor receives focus', () => {
+    const spy = jest.fn()
+    const tree = shallow(<AnnouncementEdit {...props} />)
+    tree.find('KeyboardAwareScrollView').getElement().ref({ scrollToFocusedInput: spy })
+    tree.find('RichTextEditor').simulate('Focus')
+    expect(spy).toHaveBeenCalled()
   })
 
   function testRender (props: Props) {
@@ -298,17 +367,6 @@ describe('AnnouncementEdit', () => {
 
   function tapDone (component: any): any {
     getDoneButton(component).action()
-    return component
-  }
-
-  function tapCancel (component: any) {
-    const done: any = explore(component.toJSON()).selectLeftBarButton('announcements.edit.cancelButton')
-    done.action()
-  }
-
-  function changeTitle (component: any, value: string) {
-    const input: any = explore(component.toJSON()).selectByID('announcements.edit.titleInput')
-    input.props.onChangeText(value)
   }
 
   function getTitle (component: any): string {
@@ -376,7 +434,7 @@ describe('map state to props', () => {
       },
     })
     expect(
-      mapStateToProps(state, { courseID: '1', announcementID: null })
+      mapStateToProps(state, { context: 'courses', contextID: '1', announcementID: null })
     ).toMatchObject({
       pending: 14,
       error: 'Map this error',
@@ -414,7 +472,42 @@ describe('map state to props', () => {
       },
     })
     expect(
-      mapStateToProps(state, { courseID: '1', announcementID: null })
+      mapStateToProps(state, { context: 'courses', contextID: '1', announcementID: null })
+    ).toMatchObject({ title: 'IT WORKED' })
+  })
+
+  it('maps announcement state to props using new id group context', () => {
+    const announcement = template.discussion({ id: '45', title: 'IT WORKED' })
+    const state: AppState = template.appState({
+      entities: {
+        ...template.appState().entities,
+        groups: {
+          '1': {
+            pending: 0,
+            error: null,
+            discussions: {
+              pending: 0,
+              error: null,
+              refs: [],
+              new: {
+                id: '45',
+                pending: 14,
+                error: 'Map this error',
+              },
+            },
+          },
+        },
+        discussions: {
+          '45': {
+            pending: 0,
+            error: null,
+            data: announcement,
+          },
+        },
+      },
+    })
+    expect(
+      mapStateToProps(state, { context: 'groups', contextID: '1', announcementID: null })
     ).toMatchObject({ title: 'IT WORKED' })
   })
 
@@ -439,7 +532,7 @@ describe('map state to props', () => {
       },
     })
     expect(
-      mapStateToProps(state, { courseID: '10', announcementID: '1' })
+      mapStateToProps(state, { context: 'courses', contextID: '10', announcementID: '1' })
     ).toMatchObject({
       title: 'Infernal Shrines',
       message: 'THE ENEMY IS ATTACKING YOUR CORE!',
@@ -469,7 +562,7 @@ describe('map state to props', () => {
       },
     })
     expect(
-      mapStateToProps(state, { courseID: '1', announcementID: '1' })
+      mapStateToProps(state, { context: 'courses', contextID: '1', announcementID: '1' })
     ).toMatchObject({ attachment })
   })
 })

@@ -22,6 +22,8 @@
 
 @implementation CBITeacherSubmissionViewModel
 
+@dynamic model;
+
 - (instancetype)init
 {
     self = [super init];
@@ -37,6 +39,9 @@
 
 - (UIViewController *)createViewController {
     MLVCTableViewController *table = [MLVCTableViewController new];
+    if (@available(iOS 11.0, *)) {
+        table.tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    }
     table.viewModel = self;
     return table;
 }

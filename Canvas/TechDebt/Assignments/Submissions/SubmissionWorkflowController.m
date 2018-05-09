@@ -20,21 +20,20 @@
 #import "VideoRecorderController.h"
 #import "URLSubmissionPreviewViewController.h"
 #import "ReceivedFilesViewController.h"
-
+#import "UIAlertController+TechDebt.h"
 #import <CanvasKit1/CanvasKit1.h>
 #import <CanvasKit/CKIAssignment.h>
-#import "LTIViewController.h"
-#import "ThreadedDiscussionViewController.h"
 #import "CBISubmissionInputViewController.h"
 #import "Router.h"
 #import "CKIClient+CBIClient.h"
 #import "CKRichTextInputView.h"
 #import "MobileQuizInformationViewController.h"
+#import "UIAlertController+TechDebt.h"
 
 @import CanvasKeymaster;
 @import CanvasCore;
 
-@interface SubmissionWorkflowController () <CKRichTextInputViewDelegate, UIAlertViewDelegate>
+@interface SubmissionWorkflowController () <CKRichTextInputViewDelegate>
 @property (weak, nonatomic) UIViewController *viewController;
 @property CKAudioCommentRecorderView *audioRecorder;
 @property (copy, nonatomic, nullable) NSString *arcLTIToolID;
@@ -54,22 +53,6 @@
     return self;
 }
 
-- (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    if (buttonIndex == 0 && self.cancelAction) {
-        self.cancelAction();
-    }
-}
-
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    if (buttonIndex == 1 && self.continueToQuizAction) {
-        self.continueToQuizAction();
-    } else if (buttonIndex == 2) {
-        [MobileQuizInformationViewController presentFromViewController:self.viewController];
-    }
-}
-
 - (void)present {
     if (self.legacyAssignment.type == CKAssignmentTypeQuiz) {
         
@@ -87,18 +70,26 @@
         NSString *moreInfoButtonText = NSLocalizedString(@"More Info", @"Button title for selecting to view more info about the limitations of mobile quizzes");
         NSString *continueButtonText = NSLocalizedString(@"Continue", @"Button title for selecting to continue on to quiz. The will appear in the alert view notfifying the user of mobile quiz limitations.");
         NSString *cancelButtonText = NSLocalizedString(@"Cancel", @"Cancel button title");
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:alertTitle message:message delegate:self cancelButtonTitle:cancelButtonText otherButtonTitles:continueButtonText, moreInfoButtonText, nil];
         
-        [alert show];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:alertTitle message:message preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:moreInfoButtonText style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [MobileQuizInformationViewController presentFromViewController:self.viewController];
+        }]];
+        [alert addAction:[UIAlertAction actionWithTitle:continueButtonText style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            if (self.continueToQuizAction) {
+                self.continueToQuizAction();
+            }
+        }]];
+        [alert addAction:[UIAlertAction actionWithTitle:cancelButtonText style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+            self.cancelAction();
+        }]];
+        
+        [self.viewController presentViewController:alert animated:YES completion:nil];
+        
         return;
     } else if (self.legacyAssignment.type == CKAssignmentTypeDiscussion) {
-        ThreadedDiscussionViewController *controller = [[ThreadedDiscussionViewController alloc] init];
-        controller.canvasAPI = self.canvasAPI;
-        controller.topicIdent = (uint64_t)[self.assignment.discussionTopic.id integerValue];
-        controller.contextInfo = self.contextInfo;
-        [controller performSelector:@selector(fetchTopic:) withObject:@YES];
-        
-        [self.viewController.navigationController pushViewController:controller animated:YES];
+        NSURL *url = [TheKeymaster.currentClient.baseURL URLByAppendingPathComponent:[NSString stringWithFormat:@"api/v1/courses/%@/discussion_topics/%@", @(self.legacyAssignment.courseIdent), @([self.assignment.discussionTopic.id integerValue])]];
+        [[Router sharedRouter] routeFromController:self.viewController toURL:url];
         return;
     }
     
@@ -136,12 +127,9 @@
                     [self showMediaRecorderPicker];
                 }
                 else {
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Can't submit media", @"Setup only allows media but no Kaltura instance error title")
-                                                                    message:NSLocalizedString(@"Your school's configuration does not allow the type of submission selected for this assignment", @"Media submission type selected with no Kaltura set up")
-                                                                   delegate:nil
-                                                          cancelButtonTitle:NSLocalizedString(@"OK",nil)
-                                                          otherButtonTitles:nil];
-                    [alert show];
+                    NSString *title = NSLocalizedString(@"Can't submit media", @"Setup only allows media but no Kaltura instance error title");
+                    NSString *message = NSLocalizedString(@"Your school's configuration does not allow the type of submission selected for this assignment", @"Media submission type selected with no Kaltura set up");
+                    [UIAlertController showAlertWithTitle:title message:message];
                 }
                 break;
             }
@@ -154,22 +142,52 @@
                 break;
             case CKSubmissionTypeExternalTool:
             {
+                UIAlertController *errorAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Can't load tool", nil)
+                                                                                    message:NSLocalizedString(@"This assignment doesn't appear to be a valid external tool or is misconfigured.", nil)
+                                                                             preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *dismissAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Dismiss", nil) style:UIAlertActionStyleDefault handler:nil];
+                [errorAlert addAction:dismissAction];
                 if (self.legacyAssignment.url == nil) {
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Can't load tool", @"Invalid LTI tool error title")
-                                                                    message:NSLocalizedString(@"This assignment doesn't appear to be a valid external tool or is misconfigured.", @"Invalid LTI tool error message")
-                                                                   delegate:nil
-                                                          cancelButtonTitle:NSLocalizedString(@"Dismiss",nil)
-                                                          otherButtonTitles:nil];
-                    [alert show];
+                    [self.viewController presentViewController:errorAlert animated:YES completion:nil];
+                    break;
+                }
+
+                Session *currentSession = TheKeymaster.currentClient.authSession;
+
+                // Launch QuizzesNext in a WebView so that we can intercept the 'Return' button action.
+                NSURL *externalToolTagAttributesURL = self.assignment.externalToolTagAttributes.url;
+                if ([ExternalToolManager isQuizzesNext: externalToolTagAttributesURL] && self.legacyAssignment.courseIdent) {
+                    [[ExternalToolManager shared] getSessionlessLaunchURLForLaunchURL:self.legacyAssignment.url in:currentSession completionHandler:^(NSURL * _Nullable url, NSString* _Nullable pageViewPath, NSError * _Nullable error) {
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            if (error) {
+                                [self.viewController presentViewController:errorAlert animated:YES completion:nil];
+                                return;
+                            }
+                            if (url) {
+                                NSURLRequest *request = [NSURLRequest requestWithURL:url];
+                                CanvasWebView *webView = [[CanvasWebView alloc] init];
+                                CanvasWebViewController *controller = [[CanvasWebViewController alloc] initWithWebView:webView showDoneButton:YES];
+                                UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:controller];
+                                [self.viewController presentViewController:nav animated:YES completion:^{
+                                    [webView loadRequest:request];
+                                }];
+                                return;
+                            }
+
+                        });
+                    }];
+
                     break;
                 }
                 
-                LTIViewController *lti = [[LTIViewController alloc] init];
-                CKIExternalTool *externalTool = [CKIExternalTool modelWithID:[NSString stringWithFormat: @"%lld", self.legacyAssignment.ident]];
-                externalTool.name = self.legacyAssignment.name;
-                externalTool.url = self.legacyAssignment.url;
-                lti.externalTool = externalTool;
-                [self.viewController.navigationController pushViewController:lti animated:YES];
+                if (self.legacyAssignment.name && self.legacyAssignment.url && self.legacyAssignment.courseIdent) {
+                    NSString *courseID = [NSString stringWithFormat:@"%lld", self.legacyAssignment.courseIdent];
+                    [[ExternalToolManager shared] launch:self.legacyAssignment.url
+                                                      in:TheKeymaster.currentClient.authSession
+                                                    from:self.viewController
+                                                courseID:courseID
+                                       completionHandler:nil];
+                }
                 break;
             }
             default:
@@ -199,16 +217,13 @@ static void showErrorForAssignment(NSError *error, NSString *assignmentName) {
     NSString *template = NSLocalizedString(@"Upload to assignment \"%@\" failed", @"Error message");
     NSString *message = [NSString stringWithFormat:template, assignmentName];
     if (application.applicationState == UIApplicationStateBackground) {
-        UILocalNotification *note = [UILocalNotification new];
-        note.alertBody = message;
-        [application presentLocalNotificationNow:note];
+        UNMutableNotificationContent *content = [UNMutableNotificationContent new];
+        content.body = message;
+        UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:@"assignment-upload-failure" content:content trigger:nil];
+        [UNUserNotificationCenter.currentNotificationCenter addNotificationRequest:request withCompletionHandler:nil];
     }
     else {
-        
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[error localizedDescription]
-                                                        message:message
-                                                       delegate:nil cancelButtonTitle:NSLocalizedString(@"OK",nil) otherButtonTitles:nil];
-        [alert show];
+        [UIAlertController showAlertWithTitle:[error localizedDescription] message:message];
     }
 }
 
@@ -461,35 +476,27 @@ static void deleteFiles(NSArray *fileURLs) {
 
 - (void)showSubmissionLibrary {
     
-    ReceivedFilesViewController *controller = [[ReceivedFilesViewController alloc] init];
-    __weak typeof(self) weakSelf = self;
-    
-    [self.viewController presentViewController:controller animated:YES completion:nil];
-    
+    ReceivedFilesViewController *controller = [ReceivedFilesViewController presentReceivedFilesViewControllerFrom:self.viewController];
     UIApplication *application = [UIApplication sharedApplication];
     __block UIBackgroundTaskIdentifier backgroundTask = UIBackgroundTaskInvalid;
     backgroundTask = [application beginBackgroundTaskWithExpirationHandler:^{
         [application endBackgroundTask:backgroundTask];
     }];
     
+    __weak typeof(self) weakSelf = self;
     controller.onSubmitBlock = ^(NSArray *urls) {
         
-        CKAssignment *assignment = self.legacyAssignment;
+        CKAssignment *assignment = weakSelf.legacyAssignment;
         
         for (NSURL *url in urls) {
             if (![assignment allowsExtension:[url pathExtension]]) {
-                CKAlertViewWithBlocks *alert = [[CKAlertViewWithBlocks alloc] initWithTitle:[assignment notAllowedAlertTitle:[url pathExtension]]
-                                                                                    message:[assignment notAllowedAlertMessage]];
-                
-                [alert addCancelButtonWithTitle:NSLocalizedString(@"OK", nil)];
-                [alert show];
-                
+                [UIAlertController showAlertWithTitle:[assignment notAllowedAlertTitle:[url pathExtension]] message:[assignment notAllowedAlertMessage]];
                 [application endBackgroundTask:backgroundTask];
                 return;
             }
         }
         
-        CKCanvasAPI *canvasAPI = self.canvasAPI;
+        CKCanvasAPI *canvasAPI = weakSelf.canvasAPI;
         [weakSelf reportProgress:0.0];
         [canvasAPI postFileURLs:urls asSubmissionForAssignment:assignment
                   progressBlock:^(float progress) {

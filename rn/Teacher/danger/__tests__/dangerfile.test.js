@@ -22,7 +22,7 @@ import {
   untestedFiles,
   packages,
 } from '../../dangerfile'
-import { warn, danger } from 'danger'
+import { warn, danger, markdown } from 'danger'
 import path from 'path'
 
 jest
@@ -65,12 +65,13 @@ describe('annotations', () => {
       files[path.join('../../', p)] = MOCK_FILE_INFO[p]
     }
 
+    // $FlowFixMe
     require('fs').__setMockFiles(files)
   })
 
   it('warns if files are not annotated', () => {
     annotations()
-    const warning = 'These new JS files do not have Flow enabled: <a href=\'https://github.com/instructure/ios/blob/master/path/to/file3.js\'>/path/to/file3.js</a>'
+    const warning = 'Please add @flow to these files: <a href=\'https://github.com/instructure/ios/blob/master/path/to/file3.js\'>/path/to/file3.js</a>'
     expect(warn).toHaveBeenCalledWith(warning)
   })
 })
@@ -83,15 +84,17 @@ describe('jira', () => {
   })
 
   it('does not warn if there is a reference in the title', () => {
-    danger.__setGithub({ pr: { title: '[MBL-1234] Title', body: 'No reference' } })
+    danger.__setGithub({ pr: { title: '[Mbl-1234] Title', body: 'No reference' } })
     jira()
     expect(warn).not.toHaveBeenCalled()
+    expect(markdown).toHaveBeenCalledWith('[MBL-1234](https://instructure.atlassian.net/browse/MBL-1234)')
   })
 
   it('does not warn if there is a reference in the body', () => {
-    danger.__setGithub({ pr: { title: 'Title', body: 'Body MBL-1234' } })
+    danger.__setGithub({ pr: { title: 'Title', body: 'Body mbl-1234' } })
     jira()
     expect(warn).not.toHaveBeenCalled()
+    expect(markdown).toHaveBeenCalledWith('[MBL-1234](https://instructure.atlassian.net/browse/MBL-1234)')
   })
 })
 
@@ -108,7 +111,7 @@ describe('untestedFiles', () => {
 
   it('warns if file created without corresponding test file', () => {
     untestedFiles()
-    const warning = 'The following files were added without tests: <a href=\'https://github.com/instructure/ios/blob/master/src/path/to/file1.js\'>/src/path/to/file1.js</a>'
+    const warning = 'Please add tests for these files: <a href=\'https://github.com/instructure/ios/blob/master/src/path/to/file1.js\'>/src/path/to/file1.js</a>'
     expect(warn).toHaveBeenCalledWith(warning)
   })
 })

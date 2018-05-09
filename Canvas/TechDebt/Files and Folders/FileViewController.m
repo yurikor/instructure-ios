@@ -33,10 +33,11 @@
 #import "CBILog.h"
 #import "CKIClient+CBIClient.h"
 #import "CBIAssignmentDetailViewController.h"
+#import "UIAlertController+TechDebt.h"
 
 @import PSPDFKit;
+@import PSPDFKitUI;
 @import CanvasKeymaster;
-@import CanvasCore;
 
 // TODO: REMOVE
 
@@ -80,7 +81,7 @@
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
     if (error.code != NSURLErrorCancelled) {
         NSString *errorMessage = [NSString stringWithFormat:NSLocalizedString(@"There was a problem accessing the requested file.\n\nError: %@", "Error message when fetching a file fails"), error.localizedDescription];
-        [[[UIAlertView alloc] initWithTitle:nil message:errorMessage delegate:nil cancelButtonTitle:NSLocalizedString(@"Dismiss", @"Dismiss button title") otherButtonTitles:nil] show];
+        [UIAlertController showAlertWithTitle:nil message:errorMessage];
     }
 }
 
@@ -122,8 +123,6 @@
     if (self) {
         self.definesPresentationContext = YES;
         self.activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-        CGAffineTransform transform = CGAffineTransformMakeScale(1.5f, 1.5f);
-        self.activityView.transform = transform;
     }
     return self;
 }
@@ -166,18 +165,16 @@
 
     self.automaticallyAdjustsScrollViewInsets = NO;
     [self setEdgesForExtendedLayout:UIRectEdgeNone];
-    
+    self.pageViewEventLog = [PageViewEventLoggerLegacySupport new];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    self.activityView.center = self.view.center;
     [self.view addSubview:self.activityView];
-    
     [Analytics logScreenView:kGAIScreenFilePreview];
+    [self.pageViewEventLog start];
 }
-
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
@@ -187,10 +184,7 @@
         _progressToolbar.cancelBlock();
         [_progressToolbar cancel];
     }
-}
-
-- (UIStatusBarStyle)preferredStatusBarStyle {
-    return UIStatusBarStyleLightContent;
+    [self.pageViewEventLog stopWithEventName: self.pageViewEventName];
 }
 
 - (BOOL)prefersStatusBarHidden {
@@ -205,6 +199,10 @@
     if (fileIdent) {
         self.fileIdent = [fileIdent intValue];
     }
+    NSNumber *assignmentID = params[@"query"][@"assignmentID"];
+    if (assignmentID) {
+        self.assignmentID = [assignmentID intValue];
+    }
     [self fetchFile];
 }
 
@@ -217,7 +215,7 @@
 
             if (error.code != NSURLErrorCancelled) {
                 NSString *errorMessage = [NSString stringWithFormat:NSLocalizedString(@"There was a problem accessing the requested file.\n\nError: %@", "Error message when fetching a file fails"), error.localizedDescription];
-                [[[UIAlertView alloc] initWithTitle:nil message:errorMessage delegate:nil cancelButtonTitle:NSLocalizedString(@"Dismiss", @"Dismiss button title") otherButtonTitles:nil] show];
+                [UIAlertController showAlertWithTitle:nil message:errorMessage];
             }
             return;
         }
@@ -327,13 +325,25 @@
 }
 
 - (NSString * _Nullable)hackishlyGetDefaultAssignmentIfPossible {
+    if (self.assignmentID) {
+        return [@(self.assignmentID) stringValue];
+    }
+    
     CBIAssignmentDetailViewController *assignmentDeets = [self assignmentDeets];
     return assignmentDeets.viewModel.model.id;
 }
 
 - (NSString * _Nullable)hackishlyGetDefaultCourseIfPossible {
     CBIAssignmentDetailViewController *assignmentDeets = [self assignmentDeets];
-    return assignmentDeets.viewModel.model.courseID;
+    if (assignmentDeets.viewModel.model.courseID) {
+        return assignmentDeets.viewModel.model.courseID;
+    }
+    
+    if (self.contextInfo.contextType == CKContextTypeCourse) {
+        return [@(self.contextInfo.ident) stringValue];
+    }
+    
+    return nil;
 }
 
 - (CBIAssignmentDetailViewController * _Nullable)assignmentDeets {
@@ -384,13 +394,15 @@
         [self.view addSubview:childView];
         [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[childView]|" options:0 metrics:nil views:@{@"childView":childView}]];
         [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[childView]|" options:0 metrics:nil views:@{@"childView":childView}]];
-        [contentChildController didMoveToParentViewController:self];
 
         actionButton.enabled = YES;
 
         if ([contentChildController isKindOfClass:[PSPDFViewController class]]) {
             self.navigationItem.rightBarButtonItems = contentChildController.navigationItem.rightBarButtonItems;
+            [[NSNotificationCenter defaultCenter] postNotificationName: @"FileViewControllerBarButtonItemsDidChange" object:nil];
         }
+
+         [contentChildController didMoveToParentViewController:self];
     } else {
         actionButton.enabled = NO;
         
@@ -450,11 +462,7 @@
     BOOL presented = [interactionController presentOptionsMenuFromBarButtonItem:actionButton animated:YES];
     if (!presented) {
         NSString *title = NSLocalizedString(@"No actions available for this file", @"Text of alert when attempting to select a file that can't be printed or passed to any other app");
-        UIActionSheet *noActionsAvailableSheet = [[UIActionSheet alloc] initWithTitle:title
-                                                                             delegate:nil
-                                                                    cancelButtonTitle:NSLocalizedString(@"OK", nil)
-                                                               destructiveButtonTitle:nil otherButtonTitles:nil];
-        [noActionsAvailableSheet showFromBarButtonItem:actionButton animated:YES];
+        [UIAlertController showAlertWithTitle:title message:nil];
     }
     if (printController) {
         [printController dismissAnimated:NO];
@@ -463,6 +471,8 @@
 }
 
 - (void)viewWillLayoutSubviews {
+    [super viewWillLayoutSubviews];
+    self.activityView.center = CGPointMake(CGRectGetMidX(self.view.bounds), CGRectGetMidY(self.view.bounds));
     [self repositionToolbar];
     [self repositionContainer];
 }

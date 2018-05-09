@@ -205,9 +205,6 @@
 /* (No Comment) */
 "All members" = "Alla medlemmar";
 
-/* Allow Notifications in Settings */
-"Allow Notifications in Settings" = "Tillåt aviseringar i inställningar";
-
 /* (No Comment) */
 "An unknown error occurred" = "Ett okänt fel har inträffat.";
 
@@ -239,7 +236,7 @@
    Assignment module item type */
 "Assignment" = "Uppgift";
 
-/* Title for Assignments view controller */
+/* (No Comment) */
 "Assignments" = "Uppgifter";
 
 /* (No Comment) */
@@ -275,6 +272,9 @@
 /* Calendar landing page title
    Calendar page title */
 "Calendar" = "Kalender";
+
+/* No comment provided by engineer. */
+"Calendar Event" = "Kalenderhändelse";
 
 /* (No Comment) */
 "Can't load tool" = "Kan inte ladda verktyg";
@@ -384,8 +384,7 @@
 /* (No Comment) */
 "Course Syllabus" = "Antura tidsplan";
 
-/* Courses landing page title
-   Courses page title */
+/* Courses landing page title */
 "Courses" = "Kurser";
 
 /* (No Comment) */
@@ -402,6 +401,9 @@
 
 /* (No Comment) */
 "Customize" = "Anpassa";
+
+/* dashboard page title */
+"Dashboard" = "Översikt";
 
 /* (No Comment) */
 "Delete" = "Ta bort";
@@ -481,10 +483,10 @@
 /* (No Comment) */
 "Edit" = "Ändra";
 
-/* Edit course list title */
+/* (No Comment) */
 "Edit Course List" = "Ändra kurslista";
 
-/* Edit group list title */
+/* (No Comment) */
 "Edit Group List" = "Ändra grupplista";
 
 /* (No Comment) */
@@ -496,7 +498,7 @@
 /* (No Comment) */
 "Email" = "E-post";
 
-/* Prompt asking user to enable push notifications */
+/* (No Comment) */
 "Enable Push Notifications" = "Aktivera pushmeddelanden";
 
 /* (No Comment) */
@@ -601,19 +603,19 @@
 /* (No Comment) */
 "Graded discussion. %g points possible." = "Betygsatt diskussion. %g poäng möjliga.";
 
-/* Title for Grades view controller */
+/* (No Comment) */
 "Grades" = "Betyg";
 
 /* (No Comment) */
 "Group conversation" = "Gruppkonversation";
 
-/* Groups page title */
+/* (No Comment) */
 "Groups" = "Grupper";
 
 /* (No Comment) */
 "Help" = "Hjälp";
 
-/* Accessibility label for toggling grades to hidden */
+/* (No Comment) */
 "Hide Grades" = "Dölj betyg";
 
 /* (No Comment) */
@@ -667,7 +669,7 @@
 /* (No Comment) */
 "Large file" = "Stor fil";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Later" = "Senare";
 
 /* (No Comment) */
@@ -862,7 +864,7 @@
 /* Nothing to see here. */
 "Nothing to see here." = "Finns inget att se här.";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Notification" = "Avisering";
 
 /* Settings entry title for Notification Preferences */
@@ -955,7 +957,7 @@
 /* (No Comment) */
 "Privacy Policy" = "Sekretesspolicy";
 
-/* (No Comment) */
+/* No comment provided by engineer. */
 "Profile" = "Profil";
 
 /* Quiz module item type */
@@ -1033,9 +1035,6 @@
 /* (No Comment) */
 "Search for recipients" = "Sök efter mottagare";
 
-/* Placeholder text for search bar on assignments page */
-"Search here..." = "Sök här...";
-
 /* No comment provided by engineer. */
 "Select Option" = "Välj alternativ";
 
@@ -1066,7 +1065,7 @@
 /* (No Comment) */
 "Settings" = "Inställningar";
 
-/* Accessibility label for toggling grades to visible */
+/* (No Comment) */
 "Show Grades" = "Visa betyg";
 
 /* (No Comment) */
@@ -1209,6 +1208,9 @@
 /* (No Comment) */
 "Text entry" = "Textinlägg";
 
+/* No comment provided by engineer. */
+"That page has been disabled for this course" = "Sidan har avaktiverats för den här kursen";
+
 /* (No Comment) */
 "The recipients could not be added. Please try again. (%@)" = "Mottagarna kunde inte läggas till. Försök igen. (%@)";
 
@@ -1308,7 +1310,7 @@
 /* Label read aloud to describe module item type */
 "Type: %@" = "Typ: %@";
 
-/* Notification over status bar that displays when not connected to the internet. */
+/* (No Comment) */
 "Uh-oh! No Internet Connection" = "Oj då! Ingen internetuppkoppling";
 
 /* (No Comment) */
@@ -1320,10 +1322,10 @@
 /* (No Comment) */
 "Unable to upload to server" = "Kunde inte ladda upp till server";
 
-/* Grade unavailable */
+/* (No Comment) */
 "Unavailable" = "Otillgänglig";
 
-/* Title for grade button when no grade is present */
+/* (No Comment) */
 "Ungraded" = "Ej betygsatt";
 
 /* (No Comment) */
@@ -1371,7 +1373,7 @@
 /* (No Comment) */
 "Video error" = "Video-fel";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "View" = "Visa";
 
 /* (No Comment) */

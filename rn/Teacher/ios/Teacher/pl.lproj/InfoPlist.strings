@@ -1,1 +1,9 @@
-/* No Localized Strings */
+/* (No Comment) */
+"NSCameraUsageDescription" = "Załącz zdjęcia i filmy do komentarzy do przesyłanych materiałów.";
+
+/* (No Comment) */
+"NSMicrophoneUsageDescription" = "Załącz nagrania audio do komentarzy do przesyłanych materiałów.";
+
+/* (No Comment) */
+"NSPhotoLibraryUsageDescription" = "Prześlij zawartość do kursów.";
+

@@ -23,14 +23,12 @@ import KeyboardSpacer from 'react-native-keyboard-spacer'
 import {
   StyleSheet,
   View,
-  NativeModules,
   Dimensions,
+  NativeModules,
 } from 'react-native'
 
 export type Props = {
-  onChangeValue?: (value: string) => void,
-  onChangeHeight?: (height: number) => void,
-  defaultValue?: string,
+  defaultValue?: ?string,
   showToolbar?: 'never' | 'always' | 'onFocus',
   keyboardAware?: boolean,
   scrollEnabled?: boolean,
@@ -38,20 +36,30 @@ export type Props = {
   placeholder?: string,
   focusOnLoad?: boolean,
   navigator: Navigator,
+  attachmentUploadPath: ?string,
+  onFocus?: Function,
 }
 
-export default class RichTextEditor extends Component<Props, any> {
+type State = {
+  activeEditorItems: string[],
+  editorFocused: boolean,
+  topKeyboardSpace: number,
+  editorLoaded: boolean,
+}
+
+export default class RichTextEditor extends Component<Props, State> {
   editor: ZSSRichTextEditor
   container: View
 
-  constructor (props: Props) {
-    super(props)
+  state: State = {
+    activeEditorItems: [],
+    editorFocused: false,
+    topKeyboardSpace: 0,
+    editorLoaded: false,
+  }
 
-    this.state = {
-      activeEditorItems: [],
-      editorFocused: false,
-      topKeyboardSpace: 0,
-    }
+  getHTML = async () => {
+    return this.editor.getHTML()
   }
 
   onLayout = () => {
@@ -62,6 +70,12 @@ export default class RichTextEditor extends Component<Props, any> {
     this._setKeyboardSpace()
   }
 
+  componentWillReceiveProps (newProps: Props) {
+    if (newProps.defaultValue !== this.props.defaultValue) {
+      this.editor.updateHTML(newProps.defaultValue)
+    }
+  }
+
   render () {
     return (
       <View
@@ -69,20 +83,15 @@ export default class RichTextEditor extends Component<Props, any> {
         ref={this._captureContainer}
         onLayout={this.onLayout}
       >
-        <View style={styles.editor}>
-          <ZSSRichTextEditor
-            ref={(editor) => { this.editor = editor }}
-            html={this.props.defaultValue}
-            onLoad={this._onLoad}
-            onFocus={this._onFocus}
-            onBlur={this._onBlur}
-            editorItemsChanged={this._onEditorItemsChanged}
-            onInputChange={this.props.onChangeValue}
-            onHeightChange={this.props.onChangeHeight}
-            scrollEnabled={this.props.scrollEnabled === undefined || this.props.scrollEnabled}
-            navigator={this.props.navigator}
-          />
-        </View>
+        <ZSSRichTextEditor
+          ref={(editor: any) => { this.editor = editor }}
+          onLoad={this._onLoad}
+          onFocus={this._onFocus}
+          onBlur={this._onBlur}
+          editorItemsChanged={this._onEditorItemsChanged}
+          scrollEnabled={this.props.scrollEnabled === undefined || this.props.scrollEnabled}
+          navigator={this.props.navigator}
+        />
         { this.toolbarShown() &&
           <RichTextToolbar
             setBold={this._setBold}
@@ -95,6 +104,7 @@ export default class RichTextEditor extends Component<Props, any> {
             undo={this._undo}
             redo={this._redo}
             onColorPickerShown={this._handleColorPickerShown}
+            insertImage={this.props.attachmentUploadPath ? this._insertImage : null}
           />
         }
         { (this.props.keyboardAware === undefined || this.props.keyboardAware) &&
@@ -107,7 +117,7 @@ export default class RichTextEditor extends Component<Props, any> {
     )
   }
 
-  _captureContainer = (ref: View) => { this.container = ref }
+  _captureContainer = (ref: any) => { this.container = ref }
 
   _setKeyboardSpace = () => {
     this.container.measureInWindow((x, y, width, height) => {
@@ -131,6 +141,11 @@ export default class RichTextEditor extends Component<Props, any> {
     if (this.props.focusOnLoad) {
       this.editor.focusEditor()
     }
+    if (this.props.defaultValue) {
+      this.editor.updateHTML(this.props.defaultValue)
+    }
+
+    this.setState({ editorLoaded: true })
   }
 
   _onEditorItemsChanged = (activeEditorItems: string[]) => {
@@ -140,6 +155,7 @@ export default class RichTextEditor extends Component<Props, any> {
   _onFocus = () => {
     this._setKeyboardSpace()
     this.setState({ editorFocused: true })
+    this.props.onFocus && this.props.onFocus()
   }
 
   _onBlur = () => {
@@ -171,8 +187,37 @@ export default class RichTextEditor extends Component<Props, any> {
   _setTextColor = (color: string) => { this.editor.setTextColor(color) }
   _undo = () => { this.editor.undo() }
   _redo = () => { this.editor.redo() }
+  _insertImage = () => {
+    this.editor.prepareInsert()
+    this.props.navigator.show('/attachments', { modal: true }, {
+      storageOptions: {
+        uploadPath: this.props.attachmentUploadPath,
+        mediaServer: true,
+      },
+      onComplete: this.insertAttachments,
+      fileTypes: ['image', 'video'],
+      userFiles: true,
+    })
+  }
+
+  insertAttachments = (attachments: [Attachment]) => {
+    // images
+    const images = attachments.filter(a => a.mime_class === 'image')
+    images.reverse().forEach(a => this.editor.insertImage(a.url))
+
+    // videos
+    const videos = attachments.filter(a => a.mime_class === 'video')
+    videos
+      .filter(a => a.media_entry_id)
+      .reverse()
+      .forEach(a => this.editor.insertVideoComment(a.media_entry_id))
+  }
 
   toolbarShown (): boolean {
+    if (!this.state.editorLoaded) {
+      return false
+    }
+
     switch (this.props.showToolbar) {
       case 'always':
         return true
@@ -190,12 +235,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-  },
-  editor: {
-    flex: 1,
-    paddingTop: global.style.defaultPadding / 1.25,
-    paddingBottom: global.style.defaultPadding / 1.25,
-    paddingLeft: global.style.defaultPadding,
-    paddingRight: global.style.defaultPadding,
   },
 })

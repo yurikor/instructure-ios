@@ -16,7 +16,7 @@
 
 // @flow
 
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import {
   View,
   StyleSheet,
@@ -32,17 +32,17 @@ import { extractDateFromString } from '../../../utils/dateUtils'
 
 type DateRowProps = {
   title: string,
-  date: string,
+  date: ?string,
   showRemoveButton?: boolean,
-  onPress: Function,
-  onRemoveDatePress: Function,
+  onPress?: Function,
+  onRemoveDatePress?: Function,
   testID?: string,
   dateTestID?: string,
   removeButtonTestID?: string,
   selected?: boolean,
 }
 
-export default class RowWithDateInput extends Component<any, DateRowProps, any> {
+export default class RowWithDateInput extends PureComponent<DateRowProps, any> {
 
   render () {
     let detailTextStyle = this.props.selected ? { color: branding.primaryBrandColor } : styles.detailText
@@ -55,7 +55,7 @@ export default class RowWithDateInput extends Component<any, DateRowProps, any> 
             <TouchableHighlight style={{ flex: 1 }} onPress={this.props.onPress} testID={this.props.testID}>
               <View style={[styles.rowContainer, { paddingRight: paddingRightWhenEmpty }]}>
                 <View style={styles.titlesContainer}>
-                    <Text style={styles.titleText}>{this.props.title}</Text>
+                  <Text style={styles.titleText}>{this.props.title}</Text>
                 </View>
                 <View style={styles.detailsRowContainer}>
                   <Text style={detailTextStyle} testID={this.props.dateTestID}>{date}</Text>
@@ -101,13 +101,9 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 0.5,
     minWidth: 90,
   },
   titlesContainer: {
-    flex: 0.5,
-    flexDirection: 'column',
-    justifyContent: 'center',
     paddingRight: 32,
   },
   titleText: {

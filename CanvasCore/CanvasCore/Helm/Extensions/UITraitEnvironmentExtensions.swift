@@ -17,7 +17,7 @@
 import UIKit
 
 extension UITraitEnvironment {
-    func sizeClassInfoForJavascriptConsumption() -> [String: String] {
+    public func sizeClassInfoForJavascriptConsumption() -> [String: String] {
         let horizontalKey = "horizontal"
         let verticalKey = "vertical"
         var data = [String:String]()

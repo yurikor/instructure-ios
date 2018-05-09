@@ -14,7 +14,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-// @flow
+/* eslint-disable flowtype/require-valid-file-annotation */
 
 import React, { Component } from 'react'
 import {
@@ -23,6 +23,8 @@ import {
   ActivityIndicator,
   FlatList,
   Dimensions,
+  DeviceInfo,
+  NativeModules,
 } from 'react-native'
 import refresh from '../../utils/refresh'
 import { connect } from 'react-redux'
@@ -41,6 +43,7 @@ import type {
   AsyncSubmissionsDataProps,
   SubmissionDataProps,
 } from '../submissions/list/submission-prop-types'
+import { updateBadgeCounts } from '../tabbar/badge-counts'
 import Screen from '../../routing/Screen'
 import Navigator from '../../routing/Navigator'
 import DrawerState, { type DrawerPosition } from './utils/drawer-state'
@@ -48,27 +51,32 @@ import Tutorial from './components/Tutorial'
 import i18n from 'format-message'
 import Images from '../../images'
 import shuffle from 'knuth-shuffle-seeded'
-import A11yGroup from '../../common/components/A11yGroup'
+
+const { NativeAccessibility } = NativeModules
 
 type State = {
   size: { width: number, height: number },
   currentStudentID: ?string,
-  filteredIDs?: Array<string>,
   drawerInset: number,
   hasScrolledToInitialSubmission: boolean,
+  hasSetInitialDrawerPosition: boolean,
+  submissions: Array<SubmissionDataProps>,
 }
 
 const PAGE_GUTTER_HALF_WIDTH = 10.0
 const REFRESH_TTL = 1000 * 60 * 15 // 15 minutes
 
-export class SpeedGrader extends Component<any, SpeedGraderProps, State> {
+export class SpeedGrader extends Component<SpeedGraderProps, State> {
   props: SpeedGraderProps
   state: State
   _flatList: ?FlatList
+  scrollView: ?{ setNativeProps: (Object) => void }
+  hasRenderedBody = false
 
   static drawerState = new DrawerState()
   static defaultProps = {
     onDismiss: () => {},
+    drawerPosition: 0,
   }
 
   constructor (props: SpeedGraderProps) {
@@ -82,15 +90,51 @@ export class SpeedGrader extends Component<any, SpeedGraderProps, State> {
         height,
       },
       currentStudentID: props.userID,
+      currentPageIndex: props.studentIndex,
       drawerInset: SpeedGrader.drawerState.drawerHeight(position, height),
       hasScrolledToInitialSubmission: false,
+      hasSetInitialDrawerPosition: false,
+      submissions: [],
+      scrollEnabled: true,
     }
-    SpeedGrader.drawerState.registerDrawer(this)
-    this.currentPageIndex = props.studentIndex
   }
 
+  componentDidMount () {
+    this.setSubmissions(this.props)
+    SpeedGrader.drawerState.registerDrawer(this)
+  }
+
+  componentWillReceiveProps (nextProps: SpeedGraderProps) {
+    this.setSubmissions(nextProps)
+  }
+
+  // DrawerObserver
   snapTo = (position: DrawerPosition) => {
     this.setState({ drawerInset: SpeedGrader.drawerState.drawerHeight(position, this.state.size.height) })
+  }
+
+  setSubmissions (props: SpeedGraderProps) {
+    // We can only set submissions once because of filters.
+    if (this.state.submissions.length) return
+
+    const submissions = props.filter
+      ? props.filter(props.submissions)
+      : props.submissions
+    let currentPageIndex = this.state.currentPageIndex
+    // when enrollments came back before submissions this would get set and then
+    // not set again because of the if/return statements above
+    // don't set this unless we have submissions
+    if (submissions.length && currentPageIndex == null || currentPageIndex < 0) {
+      const index = submissions.findIndex(s => {
+        return s.userID === props.userID
+      })
+      currentPageIndex = Math.max(0, index)
+    }
+
+    this.setState({
+      submissions,
+      currentPageIndex,
+    })
   }
 
   componentWillUnmount () {
@@ -99,30 +143,43 @@ export class SpeedGrader extends Component<any, SpeedGraderProps, State> {
     this.props.refreshSubmissions(this.props.courseID, this.props.assignmentID, false)
     this.props.refreshSubmissionSummary(this.props.courseID, this.props.assignmentID)
     this.props.refreshAssignment(this.props.courseID, this.props.assignmentID)
+    updateBadgeCounts()
   }
 
   onLayout = (event: any) => {
+    let viewableAreaChanged = false
     const { width, height } = event.nativeEvent.layout
     if (height !== 0 && (width !== this.state.size.width || height !== this.state.size.height)) {
+      viewableAreaChanged = true
       this.setState({ size: { width, height } })
     }
 
     this.setState((prevState, props) => {
-      if (this._flatList == null || prevState.hasScrolledToInitialSubmission) {
-        return prevState
-      }
-      this._flatList.scrollToOffset({ animated: false, offset: this.state.size.width * this.props.studentIndex })
-      return { ...prevState, hasScrolledToInitialSubmission: true }
-    })
+      let nextState = prevState
 
-    this._flatList.scrollToOffset({ animated: false, offset: width * this.currentPageIndex })
+      if (this._flatList && !prevState.hasSetInitialDrawerPosition) {
+        if (this.getInitialTabIndex() >= 0) {
+          SpeedGrader.drawerState.snapTo(this.getInitialTabIndex(), false)
+        }
+        nextState = { ...nextState, hasSetInitialDrawerPosition: true }
+      }
+
+      const scrollToCurrentPageIndex = !prevState.hasScrolledToInitialSubmission || viewableAreaChanged
+
+      if (this._flatList && scrollToCurrentPageIndex) {
+        this._flatList.scrollToOffset({ animated: false, offset: nextState.size.width * this.state.currentPageIndex })
+        nextState = { ...nextState, hasScrolledToInitialSubmission: true }
+      }
+
+      return nextState
+    })
   }
 
   _captureFlatList = (list: FlatList) => {
     this._flatList = list
   }
 
-  renderItem = ({ item, index }: { item: SubmissionItem }) => {
+  renderItem = ({ item, index }: { item: SubmissionItem, index: number }) => {
     const submissionEntity = item.submission.submissionID != null
       ? this.props.submissionEntities[item.submission.submissionID]
       : null
@@ -137,7 +194,7 @@ export class SpeedGrader extends Component<any, SpeedGraderProps, State> {
       ? this.state.currentStudentID === item.submission.userID
       : index === 0
 
-    return <A11yGroup style={[styles.page, this.state.size]}>
+    return <View style={[styles.page, this.state.size]}>
       <SubmissionGrader
         isCurrentStudent={isCurrentStudent}
         drawerState={SpeedGrader.drawerState}
@@ -154,8 +211,12 @@ export class SpeedGrader extends Component<any, SpeedGraderProps, State> {
         navigator={this.props.navigator}
         drawerInset={this.state.drawerInset}
         gradeSubmissionWithRubric={this.props.gradeSubmissionWithRubric}
+        selectedTabIndex={this.getInitialTabIndex()}
+        setScrollEnabled={(value) => {
+          this.scrollView.setNativeProps({ scrollEnabled: value })
+        }}
       />
-    </A11yGroup>
+    </View>
   }
 
   dismiss = () => {
@@ -165,8 +226,8 @@ export class SpeedGrader extends Component<any, SpeedGraderProps, State> {
 
   scrollEnded = (event: Object) => {
     const index = event.nativeEvent.contentOffset.x / this.state.size.width
-    this.currentPageIndex = index
-    const submission = this.filteredSubmissions()[index]
+    this.setState({ currentPageIndex: index })
+    const submission = this.state.submissions[index]
     if (submission) {
       const currentStudentID = submission.userID
       if (currentStudentID !== this.state.currentStudentID) {
@@ -181,17 +242,32 @@ export class SpeedGrader extends Component<any, SpeedGraderProps, State> {
     index,
   })
 
-  filteredSubmissions (): Array<SubmissionItem> {
-    if (!this.props.filter) return this.props.submissions
-    return this.props.filter(this.props.submissions)
+  getInitialTabIndex = () => {
+    if (this.props.pushNotification && this.props.pushNotification.alert.toLowerCase().startsWith(i18n('submission comment'))) {
+      return 1
+    }
+    return -1
   }
 
   renderBody = () => {
-    if (this.props.refreshing || !this.props.submissions.length) {
-      return <View style={styles.loadingWrapper}><ActivityIndicator /></View>
+    if (this.props.pending || !this.state.submissions.length) {
+      return (
+        <View
+          accessible={true}
+          accessibilityLabel={i18n('In Progress')}
+          style={styles.loadingWrapper}
+        >
+          <ActivityIndicator />
+        </View>
+      )
     }
 
-    const items = this.filteredSubmissions()
+    if (!this.hasRenderedBody) {
+      this.hasRenderedBody = true
+      NativeAccessibility.refresh()
+    }
+
+    const items = this.state.submissions
       .map(submission => ({ key: submission.userID, submission }))
 
     return (
@@ -202,13 +278,15 @@ export class SpeedGrader extends Component<any, SpeedGraderProps, State> {
         data={items}
         renderItem={this.renderItem}
         windowSize={5}
+        initialNumToRender={null}
         horizontal
         pagingEnabled
         getItemLayout={this.getItemLayout}
         showsHorizontalScrollIndicator={false}
         onMomentumScrollEnd={this.scrollEnded}
-        contentOffset={{ x: this.state.size.width * this.props.studentIndex }}
+        initialScrollIndex={this.state.currentPageIndex}
         style={{ marginLeft: -PAGE_GUTTER_HALF_WIDTH, marginRight: -PAGE_GUTTER_HALF_WIDTH }}
+        ref={(e) => { this.scrollView = e }}
       />
     )
   }
@@ -230,9 +308,9 @@ export class SpeedGrader extends Component<any, SpeedGraderProps, State> {
 
     return (
       <Screen
-        navBarHidden={true}
-        statusBarHidden={true}
-        noRotationInVerticallyCompact={true}
+        navBarHidden
+        statusBarHidden={!DeviceInfo.isIPhoneX_deprecated}
+        noRotationInVerticallyCompact
       >
         <View style={styles.speedGrader}>
           { this.renderBody() }
@@ -267,9 +345,8 @@ export function mapStateToProps (state: AppState, ownProps: RoutingProps): Speed
 
   const assignmentContent = entities.assignments[assignmentID]
   const assignmentData = assignmentContent && assignmentContent.data
-  const quiz = assignmentData && assignmentData.quiz_id && entities.quizzes[assignmentData.quiz_id].data
+  const quiz = assignmentData && assignmentData.quiz_id && entities.quizzes[assignmentData.quiz_id] && entities.quizzes[assignmentData.quiz_id].data
   const courseContent = state.entities.courses[courseID]
-
   let anonymous = (
     assignmentContent && assignmentContent.anonymousGradingOn ||
     quiz && quiz.anonymous_submissions ||
@@ -279,7 +356,10 @@ export function mapStateToProps (state: AppState, ownProps: RoutingProps): Speed
   let groupAssignment = null
   if (assignmentContent && assignmentContent.data) {
     const a = assignmentContent.data
-    if (a.group_category_id) {
+    const groupExists = a.group_category_id && courseContent.groups.refs
+      .filter(ref => entities.groups[ref].group.group_category_id === a.group_category_id)
+      .length > 0
+    if (groupExists) {
       groupAssignment = {
         groupCategoryID: a.group_category_id,
         gradeIndividually: a.grade_group_students_individually,
@@ -383,4 +463,5 @@ type SpeedGraderProps
   & SpeedGraderActionProps
   & SpeedGraderDataProps
   & RefreshProps
+  & PushNotificationProps
   & { navigator: Navigator, onDismiss: Function }

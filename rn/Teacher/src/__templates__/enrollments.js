@@ -21,10 +21,20 @@ import { user } from './users'
 
 export const enrollment: Template<Enrollment> = template({
   id: '32',
+  course_id: '1',
+  role: '',
+  role_id: '',
   user_id: '5123',
   user: user(),
   type: 'StudentEnrollment',
   enrollment_state: 'active',
   last_activity_at: '2017-04-05T15:12:45Z',
   course_section_id: '1',
+  grades: {
+    html_url: 'https://mobiledev.instructure.com/courses/1/grades/5123',
+    current_score: 99,
+    final_score: 99,
+    current_grade: null,
+    final_grade: null,
+  },
 })

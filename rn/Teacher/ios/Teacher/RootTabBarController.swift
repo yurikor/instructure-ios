@@ -16,6 +16,8 @@
 
 import UIKit
 import CanvasCore
+import ReactiveSwift
+import UserNotifications
 
 class RootTabBarController: UITabBarController {
     
@@ -33,20 +35,40 @@ class RootTabBarController: UITabBarController {
         configureTabs()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        DispatchQueue.main.async {
+            StartupManager.shared.markStartupFinished()
+        }
+
+        NotificationKitController.registerForPushNotifications()
+    }
+    
     func configureTabs() {
-        var controllers = [coursesTab(), toDoTab(), inboxTab()]
-        #if DEBUG
-        controllers.append(stagingTab())
-        #endif
-        viewControllers = controllers
+        viewControllers = [coursesTab(),  toDoTab(), inboxTab()]
     }
     
     func coursesTab() -> UIViewController {
+        let split = EnrollmentSplitViewController()
+        let emptyNav = HelmNavigationController(rootViewController: EmptyViewController())
+        
         let enrollmentsVC = HelmViewController(moduleName: "/", props: [:])
-        enrollmentsVC.view.accessibilityIdentifier = "favorited-course-list.view"
+        enrollmentsVC.view.accessibilityIdentifier = "favorited-course-list.view1"
         enrollmentsVC.tabBarItem = UITabBarItem(title: NSLocalizedString("Courses", comment: ""), image: UIImage(named: "courses"), selectedImage: nil)
         enrollmentsVC.tabBarItem.accessibilityIdentifier = "tab-bar.courses-btn"
-        return HelmNavigationController(rootViewController: enrollmentsVC)
+        enrollmentsVC.navigationItem.titleView = Brand.current.navBarTitleView()
+        
+        let masterNav = HelmNavigationController(rootViewController: enrollmentsVC)
+        masterNav.view.backgroundColor = .white
+        masterNav.delegate = split
+        masterNav.applyDefaultBranding()
+        emptyNav.applyDefaultBranding()
+        split.viewControllers = [masterNav, emptyNav]
+        split.view.accessibilityIdentifier = "favorited-course-list.view2"
+        split.tabBarItem = UITabBarItem(title: NSLocalizedString("Courses", comment: ""), image: UIImage(named: "courses"), selectedImage: nil)
+        split.tabBarItem.accessibilityIdentifier = "tab-bar.courses-btn"
+        split.preferredDisplayMode = .allVisible
+        return split
     }
 
     func toDoTab() -> UIViewController {
@@ -54,20 +76,11 @@ class RootTabBarController: UITabBarController {
         toDoVC.view.accessibilityIdentifier = "to-do-list.view"
         toDoVC.tabBarItem = UITabBarItem(title: NSLocalizedString("To Do", comment: ""), image: UIImage(named: "todo"), selectedImage: nil)
         toDoVC.tabBarItem.accessibilityIdentifier = "tab-bar.to-do-btn"
-        return HelmNavigationController(rootViewController: toDoVC)
-    }
-    func profileTab() -> UIViewController {
-        let profileVC = HelmViewController(moduleName: "/profile", props: [:])
-        profileVC.tabBarItem = UITabBarItem(title: NSLocalizedString("Profile", comment: ""), image: UIImage(named: "profile"), selectedImage: nil)
-        profileVC.tabBarItem.accessibilityIdentifier = "tab-bar.profile-btn"
-        return HelmNavigationController(rootViewController: profileVC)
-    }
-    
-    func stagingTab() -> UIViewController {
-        let stagingVC = HelmViewController(moduleName: "/staging", props: [:])
-        stagingVC.tabBarItem = UITabBarItem(title: "Staging", image: UIImage(named: "link"), selectedImage: nil)
-        stagingVC.tabBarItem.accessibilityIdentifier = "tab-bar.staging-btn"
-        return HelmNavigationController(rootViewController: stagingVC)
+        toDoVC.tabBarItem.reactive.badgeValue <~ TabBarBadgeCounts.todoListCountString
+        toDoVC.navigationItem.titleView = Brand.current.navBarTitleView()
+        let navigation = HelmNavigationController(rootViewController: toDoVC)
+        navigation.applyDefaultBranding()
+        return navigation
     }
 }
 
@@ -77,5 +90,10 @@ class RootTabBarController: UITabBarController {
 extension RootTabBarController: UITabBarControllerDelegate {
     func tabBarController(_ tabBarController: UITabBarController, animationControllerForTransitionFrom fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return NoAnimatedTransitioning()
+    }
+    
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        tabBarController.resetViewControllerIfSelected(viewController)
+        return true
     }
 }

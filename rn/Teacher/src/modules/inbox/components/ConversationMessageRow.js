@@ -36,7 +36,9 @@ import { getSession } from '../../../canvas-api'
 import i18n from 'format-message'
 import find from 'lodash/find'
 import Images from '../../../images'
+import Video from '../../../common/components/Video'
 import { LinkButton } from '../../../common/buttons'
+import Hyperlink from 'react-native-hyperlink'
 
 export type ConversationMessageProps = {
   conversation: Conversation,
@@ -47,7 +49,7 @@ export type ConversationMessageProps = {
   navigator: Navigator,
 }
 
-export default class ConversationMessageRow extends Component<any, ConversationMessageProps, any> {
+export default class ConversationMessageRow extends Component<ConversationMessageProps, any> {
 
   constructor (props: ConversationMessageProps) {
     super(props)
@@ -64,6 +66,7 @@ export default class ConversationMessageRow extends Component<any, ConversationM
       subject: this.props.conversation.subject,
       canSelectCourse: false,
       canEditSubject: false,
+      navBarTitle: i18n('Reply'),
     })
   }
 
@@ -73,6 +76,10 @@ export default class ConversationMessageRow extends Component<any, ConversationM
       `/courses/${courseID}/users/${this.props.message.author_id}`,
       { modal: true, modalPresentationStyle: 'currentContext' }
     )
+  }
+
+  handleLink = (link: string) => {
+    this.props.navigator.show(link, { deepLink: true })
   }
 
   _showAttachment = (attachment: Attachment) => {
@@ -104,7 +111,7 @@ export default class ConversationMessageRow extends Component<any, ConversationM
 
   // The count of participants minus the author and me
   _extraParicipipantCount = (): number => {
-    const me = (getSession() || {}).user
+    const me = getSession().user
     const author = this._author()
     const participants = this.props.conversation.participants
     return participants.filter((p) => {
@@ -113,7 +120,7 @@ export default class ConversationMessageRow extends Component<any, ConversationM
   }
 
   _renderHeader = () => {
-    const me = (getSession() || {}).user
+    const me = getSession().user
     const message = this.props.message
     const author = this._author()
     let authorName = author.name
@@ -143,7 +150,7 @@ export default class ConversationMessageRow extends Component<any, ConversationM
                       height={32}
                       avatarURL={author.avatar_url}
                       userName={author.name}
-                      onPress={this.props.conversation.context_code && this.onAvatarPress}
+                      onPress={this.props.conversation.context_code ? this.onAvatarPress : undefined}
                     />
                   </View>
                 <View>
@@ -166,7 +173,9 @@ export default class ConversationMessageRow extends Component<any, ConversationM
           { this._renderHeader() }
           <TouchableWithoutFeedback onPress={this._toggleExpanded}>
             <View style={styles.body}>
-              <Text style={styles.bodyText} numberOfLines={this.state.expanded ? 0 : 2}>{message.body}</Text>
+              <Hyperlink linkStyle={ { color: '#2980b9' } } onPress={this.handleLink}>
+                <Text style={styles.bodyText} numberOfLines={this.state.expanded ? 0 : 2}>{message.body}</Text>
+              </Hyperlink>
             </View>
           </TouchableWithoutFeedback>
           { this.props.message.attachments &&
@@ -183,6 +192,13 @@ export default class ConversationMessageRow extends Component<any, ConversationM
               </TouchableOpacity>)
             })
           }
+          { this.props.message.media_comment &&
+              <View style={{ flex: 1, height: 160 }}>
+                <Video
+                  source={{ uri: this.props.message.media_comment.url }}
+                  style={{ flex: 1 }}
+                />
+              </View>}
           { this.props.firstMessage &&
             <LinkButton
               testID='inbox.conversation-message-row.reply-button'

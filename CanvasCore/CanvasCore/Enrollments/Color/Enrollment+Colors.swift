@@ -22,46 +22,65 @@ import Marshal
 
 import CoreData
 
+typealias CustomColors = [ContextID: UIColor]
 
 extension Enrollment {
-    static func parseColors(_ json: JSONObject) -> SignalProducer<[ContextID: UIColor], NSError> {
-        return attemptProducer {
-            let customColors: JSONObject = try json <| "custom_colors"
-            var contexts: [ContextID: UIColor] = [:]
+    static func parseColors(_ json: JSONObject) throws -> CustomColors {
+        let customColors: JSONObject = try json <| "custom_colors"
+        var contexts: [ContextID: UIColor] = [:]
+        
+        for (context, hex) in customColors {
+            guard let contextID = ContextID(canvasContext: context) else { continue }
+            guard let hex = hex as? String, let color = UIColor.colorFromHexString(hex) else { continue }
             
-            for (context, hex) in customColors {
-                guard let contextID = ContextID(canvasContext: context) else { continue }
-                guard let hex = hex as? String, let color = UIColor.colorFromHexString(hex) else { continue }
-                
-                contexts[contextID] = color
-            }
-            
-            return contexts
+            contexts[contextID] = color
         }
+        
+        return contexts
     }
     
-    static func getCustomColors(_ session: Session) -> SignalProducer<[ContextID: UIColor], NSError> {
+    static func getCustomColors(_ session: Session) -> SignalProducer<JSONObject, NSError> {
         let path = "/api/v1/users/self/colors"
         
         return attemptProducer { try session.GET(path) }
             .flatMap(.merge, transform: session.JSONSignalProducer)
-            .flatMap(.merge, transform: parseColors)
     }
     
     static func syncFavoriteColors(_ session: Session, inContext context: NSManagedObjectContext) -> SignalProducer<(), NSError> {
-        let sync = context.syncContext
-        return getCustomColors(session)
-            .observe(on: ManagedObjectContextScheduler(context: sync))
-            .flatMap(.merge) { colors in
-                return attemptProducer {
-                    for (contextID, color) in colors {
-                        let enrollment = try Enrollment.findOne(contextID, inContext: sync)
-                        enrollment?.color.value = color
+        return getCustomColors(session).flatMap(.merge) { writeFavoriteColors($0, inContext: context) }
+    }
+
+    static func writeFavoriteColors(_ colors: JSONObject, inContext context: NSManagedObjectContext) -> SignalProducer<(), NSError> {
+        let write = { customColors in
+            return SignalProducer<Void, NSError> { observer, _ in
+                writeFavoriteColors(customColors, inContext: context.syncContext) { error in
+                    if let error = error {
+                        observer.send(error: error)
+                        return
                     }
-                    
-                    try sync.save()
+                    observer.send(value: ())
+                    observer.sendCompleted()
                 }
             }
+            .observe(on: ManagedObjectContextScheduler(context: context.syncContext))
+        }
+        return attemptProducer { try parseColors(colors) }.flatMap(.latest, transform: write)
+    }
+    
+    static func writeFavoriteColors(_ colors: CustomColors, inContext context: NSManagedObjectContext, completion: @escaping (NSError?) -> Void) {
+        context.perform {
+            do {
+                for (contextID, color) in colors {
+                    let enrollment = try Enrollment.findOne(contextID, inContext: context)
+                    enrollment?.color.value = color
+                }
+                
+                try context.saveFRD()
+                completion(nil)
+            } catch let e as NSError {
+                completion(e)
+            }
+        }
     }
 }
 

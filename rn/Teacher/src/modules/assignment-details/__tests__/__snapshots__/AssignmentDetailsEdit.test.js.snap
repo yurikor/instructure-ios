@@ -12,7 +12,6 @@ exports[`error occurs when done pressed 1`] = `
     ]
   }
   navBarButtonColor="#008EE2"
-  navBarStyle="light"
   navBarTitleColor="#2D3B45"
   rightBarButtons={
     Array [
@@ -24,6 +23,7 @@ exports[`error occurs when done pressed 1`] = `
       },
     ]
   }
+  showDismissButton={false}
   title="Edit Assignment"
 >
   <View
@@ -498,7 +498,7 @@ exports[`error occurs when done pressed 1`] = `
           </Text>
         </View>
         <TouchableHighlight
-          accessibilityLabel={undefined}
+          accessibilityLabel="Points, "
           accessibilityTraits={
             Array [
               "button",
@@ -538,11 +538,16 @@ exports[`error occurs when done pressed 1`] = `
           >
             <View
               style={
-                Object {
-                  "flex": 1,
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                }
+                Array [
+                  Object {
+                    "flex": 1,
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                  },
+                  Object {
+                    "marginLeft": 0,
+                  },
+                ]
               }
             >
               <Text
@@ -563,7 +568,6 @@ exports[`error occurs when done pressed 1`] = `
                       Object {
                         "fontWeight": "600",
                       },
-                      undefined,
                     ],
                     Object {
                       "fontFamily": ".SFUIDisplay-semibold",
@@ -594,7 +598,7 @@ exports[`error occurs when done pressed 1`] = `
                 <View
                   style={
                     Object {
-                      "height": 50,
+                      "height": 30,
                       "width": 200,
                     }
                   }
@@ -617,12 +621,14 @@ exports[`error occurs when done pressed 1`] = `
                       ]
                     }
                     testID="assignmentDetails.edit.points_possible.input"
+                    value={undefined}
                   />
                 </View>
               </View>
             </View>
           </View>
         </TouchableHighlight>
+        <View />
         <TouchableHighlight
           accessibilityLabel="Display Grade As, Points"
           accessibilityTraits={
@@ -664,11 +670,16 @@ exports[`error occurs when done pressed 1`] = `
           >
             <View
               style={
-                Object {
-                  "flex": 1,
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                }
+                Array [
+                  Object {
+                    "flex": 1,
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                  },
+                  Object {
+                    "marginLeft": 0,
+                  },
+                ]
               }
             >
               <Text
@@ -689,7 +700,6 @@ exports[`error occurs when done pressed 1`] = `
                       Object {
                         "fontWeight": "600",
                       },
-                      undefined,
                     ],
                     Object {
                       "fontFamily": ".SFUIDisplay-semibold",
@@ -756,7 +766,7 @@ exports[`error occurs when done pressed 1`] = `
         </TouchableHighlight>
         <View />
         <TouchableHighlight
-          accessibilityLabel="Publish, Off"
+          accessibilityLabel="Publish, On"
           accessibilityTraits={
             Array [
               "button",
@@ -796,11 +806,16 @@ exports[`error occurs when done pressed 1`] = `
           >
             <View
               style={
-                Object {
-                  "flex": 1,
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                }
+                Array [
+                  Object {
+                    "flex": 1,
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                  },
+                  Object {
+                    "marginLeft": 0,
+                  },
+                ]
               }
             >
               <Text
@@ -821,7 +836,6 @@ exports[`error occurs when done pressed 1`] = `
                       Object {
                         "fontWeight": "600",
                       },
-                      undefined,
                     ],
                     Object {
                       "fontFamily": ".SFUIDisplay-semibold",
@@ -868,15 +882,14 @@ exports[`error occurs when done pressed 1`] = `
                     ]
                   }
                   testID="published"
-                  tintColor="#374A59"
+                  tintColor={null}
                   title="Publish"
-                  value={false}
+                  value={true}
                 />
               </View>
             </View>
           </View>
         </TouchableHighlight>
-        <View />
         <AssignmentDatesEditor
           assignment={
             Object {
@@ -886,16 +899,24 @@ exports[`error occurs when done pressed 1`] = `
               "created_at": "2017-03-17T19:15:25Z",
               "description": "a course that can take any beginner to professional in a matter of microseconds.  Harness the power of your favorite languages like PHP and Cold Fusion.",
               "due_at": "2037-06-01T05:59:00Z",
+              "grade_group_students_individually": false,
               "grading_type": "points",
+              "group_category_id": null,
+              "has_overrides": false,
               "html_url": "http://hostname.tld/whatever",
               "id": "123456789",
               "lock_at": "2037-06-01T05:59:59Z",
               "name": "learn to write code",
               "needs_grading_count": 0,
+              "only_visible_to_overrides": false,
               "overrides": Array [],
               "peer_reviews": false,
               "points_possible": 20,
               "position": 1,
+              "published": true,
+              "rubric": null,
+              "rubric_assessment": Object {},
+              "rubric_settings": null,
               "submission_types": Array [
                 "online_text_entry",
                 "online_url",
@@ -903,6 +924,7 @@ exports[`error occurs when done pressed 1`] = `
                 "online_upload",
               ],
               "unlock_at": "2017-03-17T06:00:00Z",
+              "unpublishable": true,
               "updated_at": "2017-03-17T19:15:25Z",
             }
           }
@@ -911,6 +933,7 @@ exports[`error occurs when done pressed 1`] = `
             Object {
               "dismiss": [Function],
               "dismissAllModals": [Function],
+              "isModal": false,
               "pop": [Function],
               "show": [Function],
               "traitCollection": [Function],
@@ -935,7 +958,6 @@ exports[`modal saving is shown on assignment update 1`] = `
     ]
   }
   navBarButtonColor="#008EE2"
-  navBarStyle="light"
   navBarTitleColor="#2D3B45"
   rightBarButtons={
     Array [
@@ -947,6 +969,7 @@ exports[`modal saving is shown on assignment update 1`] = `
       },
     ]
   }
+  showDismissButton={false}
   title="Edit Assignment"
 >
   <View
@@ -1421,7 +1444,7 @@ exports[`modal saving is shown on assignment update 1`] = `
           </Text>
         </View>
         <TouchableHighlight
-          accessibilityLabel={undefined}
+          accessibilityLabel="Points, "
           accessibilityTraits={
             Array [
               "button",
@@ -1461,11 +1484,16 @@ exports[`modal saving is shown on assignment update 1`] = `
           >
             <View
               style={
-                Object {
-                  "flex": 1,
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                }
+                Array [
+                  Object {
+                    "flex": 1,
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                  },
+                  Object {
+                    "marginLeft": 0,
+                  },
+                ]
               }
             >
               <Text
@@ -1486,7 +1514,6 @@ exports[`modal saving is shown on assignment update 1`] = `
                       Object {
                         "fontWeight": "600",
                       },
-                      undefined,
                     ],
                     Object {
                       "fontFamily": ".SFUIDisplay-semibold",
@@ -1517,7 +1544,7 @@ exports[`modal saving is shown on assignment update 1`] = `
                 <View
                   style={
                     Object {
-                      "height": 50,
+                      "height": 30,
                       "width": 200,
                     }
                   }
@@ -1540,12 +1567,14 @@ exports[`modal saving is shown on assignment update 1`] = `
                       ]
                     }
                     testID="assignmentDetails.edit.points_possible.input"
+                    value={undefined}
                   />
                 </View>
               </View>
             </View>
           </View>
         </TouchableHighlight>
+        <View />
         <TouchableHighlight
           accessibilityLabel="Display Grade As, Points"
           accessibilityTraits={
@@ -1587,11 +1616,16 @@ exports[`modal saving is shown on assignment update 1`] = `
           >
             <View
               style={
-                Object {
-                  "flex": 1,
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                }
+                Array [
+                  Object {
+                    "flex": 1,
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                  },
+                  Object {
+                    "marginLeft": 0,
+                  },
+                ]
               }
             >
               <Text
@@ -1612,7 +1646,6 @@ exports[`modal saving is shown on assignment update 1`] = `
                       Object {
                         "fontWeight": "600",
                       },
-                      undefined,
                     ],
                     Object {
                       "fontFamily": ".SFUIDisplay-semibold",
@@ -1679,7 +1712,7 @@ exports[`modal saving is shown on assignment update 1`] = `
         </TouchableHighlight>
         <View />
         <TouchableHighlight
-          accessibilityLabel="Publish, Off"
+          accessibilityLabel="Publish, On"
           accessibilityTraits={
             Array [
               "button",
@@ -1719,11 +1752,16 @@ exports[`modal saving is shown on assignment update 1`] = `
           >
             <View
               style={
-                Object {
-                  "flex": 1,
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                }
+                Array [
+                  Object {
+                    "flex": 1,
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                  },
+                  Object {
+                    "marginLeft": 0,
+                  },
+                ]
               }
             >
               <Text
@@ -1744,7 +1782,6 @@ exports[`modal saving is shown on assignment update 1`] = `
                       Object {
                         "fontWeight": "600",
                       },
-                      undefined,
                     ],
                     Object {
                       "fontFamily": ".SFUIDisplay-semibold",
@@ -1791,15 +1828,14 @@ exports[`modal saving is shown on assignment update 1`] = `
                     ]
                   }
                   testID="published"
-                  tintColor="#374A59"
+                  tintColor={null}
                   title="Publish"
-                  value={false}
+                  value={true}
                 />
               </View>
             </View>
           </View>
         </TouchableHighlight>
-        <View />
         <AssignmentDatesEditor
           assignment={
             Object {
@@ -1809,16 +1845,24 @@ exports[`modal saving is shown on assignment update 1`] = `
               "created_at": "2017-03-17T19:15:25Z",
               "description": "a course that can take any beginner to professional in a matter of microseconds.  Harness the power of your favorite languages like PHP and Cold Fusion.",
               "due_at": "2037-06-01T05:59:00Z",
+              "grade_group_students_individually": false,
               "grading_type": "points",
+              "group_category_id": null,
+              "has_overrides": false,
               "html_url": "http://hostname.tld/whatever",
               "id": "123456789",
               "lock_at": "2037-06-01T05:59:59Z",
               "name": "learn to write code",
               "needs_grading_count": 0,
+              "only_visible_to_overrides": false,
               "overrides": Array [],
               "peer_reviews": false,
               "points_possible": 20,
               "position": 1,
+              "published": true,
+              "rubric": null,
+              "rubric_assessment": Object {},
+              "rubric_settings": null,
               "submission_types": Array [
                 "online_text_entry",
                 "online_url",
@@ -1826,6 +1870,7 @@ exports[`modal saving is shown on assignment update 1`] = `
                 "online_upload",
               ],
               "unlock_at": "2017-03-17T06:00:00Z",
+              "unpublishable": true,
               "updated_at": "2017-03-17T19:15:25Z",
             }
           }
@@ -1834,6 +1879,7 @@ exports[`modal saving is shown on assignment update 1`] = `
             Object {
               "dismiss": [Function],
               "dismissAllModals": [Function],
+              "isModal": false,
               "pop": [Function],
               "show": [Function],
               "traitCollection": [Function],
@@ -1858,7 +1904,6 @@ exports[`renders 1`] = `
     ]
   }
   navBarButtonColor="#008EE2"
-  navBarStyle="light"
   navBarTitleColor="#2D3B45"
   rightBarButtons={
     Array [
@@ -1870,6 +1915,7 @@ exports[`renders 1`] = `
       },
     ]
   }
+  showDismissButton={false}
   title="Edit Assignment"
 >
   <View
@@ -2344,7 +2390,7 @@ exports[`renders 1`] = `
           </Text>
         </View>
         <TouchableHighlight
-          accessibilityLabel={undefined}
+          accessibilityLabel="Points, "
           accessibilityTraits={
             Array [
               "button",
@@ -2384,11 +2430,16 @@ exports[`renders 1`] = `
           >
             <View
               style={
-                Object {
-                  "flex": 1,
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                }
+                Array [
+                  Object {
+                    "flex": 1,
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                  },
+                  Object {
+                    "marginLeft": 0,
+                  },
+                ]
               }
             >
               <Text
@@ -2409,7 +2460,6 @@ exports[`renders 1`] = `
                       Object {
                         "fontWeight": "600",
                       },
-                      undefined,
                     ],
                     Object {
                       "fontFamily": ".SFUIDisplay-semibold",
@@ -2440,7 +2490,7 @@ exports[`renders 1`] = `
                 <View
                   style={
                     Object {
-                      "height": 50,
+                      "height": 30,
                       "width": 200,
                     }
                   }
@@ -2463,12 +2513,14 @@ exports[`renders 1`] = `
                       ]
                     }
                     testID="assignmentDetails.edit.points_possible.input"
+                    value={undefined}
                   />
                 </View>
               </View>
             </View>
           </View>
         </TouchableHighlight>
+        <View />
         <TouchableHighlight
           accessibilityLabel="Display Grade As, Points"
           accessibilityTraits={
@@ -2510,11 +2562,16 @@ exports[`renders 1`] = `
           >
             <View
               style={
-                Object {
-                  "flex": 1,
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                }
+                Array [
+                  Object {
+                    "flex": 1,
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                  },
+                  Object {
+                    "marginLeft": 0,
+                  },
+                ]
               }
             >
               <Text
@@ -2535,7 +2592,6 @@ exports[`renders 1`] = `
                       Object {
                         "fontWeight": "600",
                       },
-                      undefined,
                     ],
                     Object {
                       "fontFamily": ".SFUIDisplay-semibold",
@@ -2602,7 +2658,7 @@ exports[`renders 1`] = `
         </TouchableHighlight>
         <View />
         <TouchableHighlight
-          accessibilityLabel="Publish, Off"
+          accessibilityLabel="Publish, On"
           accessibilityTraits={
             Array [
               "button",
@@ -2642,11 +2698,16 @@ exports[`renders 1`] = `
           >
             <View
               style={
-                Object {
-                  "flex": 1,
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                }
+                Array [
+                  Object {
+                    "flex": 1,
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                  },
+                  Object {
+                    "marginLeft": 0,
+                  },
+                ]
               }
             >
               <Text
@@ -2667,7 +2728,6 @@ exports[`renders 1`] = `
                       Object {
                         "fontWeight": "600",
                       },
-                      undefined,
                     ],
                     Object {
                       "fontFamily": ".SFUIDisplay-semibold",
@@ -2714,15 +2774,14 @@ exports[`renders 1`] = `
                     ]
                   }
                   testID="published"
-                  tintColor="#374A59"
+                  tintColor={null}
                   title="Publish"
-                  value={false}
+                  value={true}
                 />
               </View>
             </View>
           </View>
         </TouchableHighlight>
-        <View />
         <AssignmentDatesEditor
           assignment={
             Object {
@@ -2732,16 +2791,24 @@ exports[`renders 1`] = `
               "created_at": "2017-03-17T19:15:25Z",
               "description": "a course that can take any beginner to professional in a matter of microseconds.  Harness the power of your favorite languages like PHP and Cold Fusion.",
               "due_at": "2037-06-01T05:59:00Z",
+              "grade_group_students_individually": false,
               "grading_type": "points",
+              "group_category_id": null,
+              "has_overrides": false,
               "html_url": "http://hostname.tld/whatever",
               "id": "123456789",
               "lock_at": "2037-06-01T05:59:59Z",
               "name": "learn to write code",
               "needs_grading_count": 0,
+              "only_visible_to_overrides": false,
               "overrides": Array [],
               "peer_reviews": false,
               "points_possible": 20,
               "position": 1,
+              "published": true,
+              "rubric": null,
+              "rubric_assessment": Object {},
+              "rubric_settings": null,
               "submission_types": Array [
                 "online_text_entry",
                 "online_url",
@@ -2749,6 +2816,7 @@ exports[`renders 1`] = `
                 "online_upload",
               ],
               "unlock_at": "2017-03-17T06:00:00Z",
+              "unpublishable": true,
               "updated_at": "2017-03-17T19:15:25Z",
             }
           }
@@ -2757,6 +2825,7 @@ exports[`renders 1`] = `
             Object {
               "dismiss": [Function],
               "dismissAllModals": [Function],
+              "isModal": false,
               "pop": [Function],
               "show": [Function],
               "traitCollection": [Function],
@@ -2781,7 +2850,6 @@ exports[`saving invalid dates displays banner 1`] = `
     ]
   }
   navBarButtonColor="#008EE2"
-  navBarStyle="light"
   navBarTitleColor="#2D3B45"
   rightBarButtons={
     Array [
@@ -2793,6 +2861,7 @@ exports[`saving invalid dates displays banner 1`] = `
       },
     ]
   }
+  showDismissButton={false}
   title="Edit Assignment"
 >
   <View
@@ -3267,7 +3336,7 @@ exports[`saving invalid dates displays banner 1`] = `
           </Text>
         </View>
         <TouchableHighlight
-          accessibilityLabel={undefined}
+          accessibilityLabel="Points, "
           accessibilityTraits={
             Array [
               "button",
@@ -3307,11 +3376,16 @@ exports[`saving invalid dates displays banner 1`] = `
           >
             <View
               style={
-                Object {
-                  "flex": 1,
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                }
+                Array [
+                  Object {
+                    "flex": 1,
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                  },
+                  Object {
+                    "marginLeft": 0,
+                  },
+                ]
               }
             >
               <Text
@@ -3332,7 +3406,6 @@ exports[`saving invalid dates displays banner 1`] = `
                       Object {
                         "fontWeight": "600",
                       },
-                      undefined,
                     ],
                     Object {
                       "fontFamily": ".SFUIDisplay-semibold",
@@ -3363,7 +3436,7 @@ exports[`saving invalid dates displays banner 1`] = `
                 <View
                   style={
                     Object {
-                      "height": 50,
+                      "height": 30,
                       "width": 200,
                     }
                   }
@@ -3386,12 +3459,14 @@ exports[`saving invalid dates displays banner 1`] = `
                       ]
                     }
                     testID="assignmentDetails.edit.points_possible.input"
+                    value={undefined}
                   />
                 </View>
               </View>
             </View>
           </View>
         </TouchableHighlight>
+        <View />
         <TouchableHighlight
           accessibilityLabel="Display Grade As, Points"
           accessibilityTraits={
@@ -3433,11 +3508,16 @@ exports[`saving invalid dates displays banner 1`] = `
           >
             <View
               style={
-                Object {
-                  "flex": 1,
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                }
+                Array [
+                  Object {
+                    "flex": 1,
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                  },
+                  Object {
+                    "marginLeft": 0,
+                  },
+                ]
               }
             >
               <Text
@@ -3458,7 +3538,6 @@ exports[`saving invalid dates displays banner 1`] = `
                       Object {
                         "fontWeight": "600",
                       },
-                      undefined,
                     ],
                     Object {
                       "fontFamily": ".SFUIDisplay-semibold",
@@ -3525,7 +3604,7 @@ exports[`saving invalid dates displays banner 1`] = `
         </TouchableHighlight>
         <View />
         <TouchableHighlight
-          accessibilityLabel="Publish, Off"
+          accessibilityLabel="Publish, On"
           accessibilityTraits={
             Array [
               "button",
@@ -3565,11 +3644,16 @@ exports[`saving invalid dates displays banner 1`] = `
           >
             <View
               style={
-                Object {
-                  "flex": 1,
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                }
+                Array [
+                  Object {
+                    "flex": 1,
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                  },
+                  Object {
+                    "marginLeft": 0,
+                  },
+                ]
               }
             >
               <Text
@@ -3590,7 +3674,6 @@ exports[`saving invalid dates displays banner 1`] = `
                       Object {
                         "fontWeight": "600",
                       },
-                      undefined,
                     ],
                     Object {
                       "fontFamily": ".SFUIDisplay-semibold",
@@ -3637,15 +3720,14 @@ exports[`saving invalid dates displays banner 1`] = `
                     ]
                   }
                   testID="published"
-                  tintColor="#374A59"
+                  tintColor={null}
                   title="Publish"
-                  value={false}
+                  value={true}
                 />
               </View>
             </View>
           </View>
         </TouchableHighlight>
-        <View />
         <AssignmentDatesEditor
           assignment={
             Object {
@@ -3659,16 +3741,24 @@ exports[`saving invalid dates displays banner 1`] = `
               "created_at": "2017-03-17T19:15:25Z",
               "description": "a course that can take any beginner to professional in a matter of microseconds.  Harness the power of your favorite languages like PHP and Cold Fusion.",
               "due_at": "2037-06-01T05:59:00Z",
+              "grade_group_students_individually": false,
               "grading_type": "points",
+              "group_category_id": null,
+              "has_overrides": false,
               "html_url": "http://hostname.tld/whatever",
               "id": "123456789",
               "lock_at": "2037-06-01T05:59:59Z",
               "name": "learn to write code",
               "needs_grading_count": 0,
+              "only_visible_to_overrides": false,
               "overrides": Array [],
               "peer_reviews": false,
               "points_possible": 20,
               "position": 1,
+              "published": true,
+              "rubric": null,
+              "rubric_assessment": Object {},
+              "rubric_settings": null,
               "submission_types": Array [
                 "online_text_entry",
                 "online_url",
@@ -3676,6 +3766,7 @@ exports[`saving invalid dates displays banner 1`] = `
                 "online_upload",
               ],
               "unlock_at": "2017-03-17T06:00:00Z",
+              "unpublishable": true,
               "updated_at": "2017-03-17T19:15:25Z",
             }
           }
@@ -3684,6 +3775,7 @@ exports[`saving invalid dates displays banner 1`] = `
             Object {
               "dismiss": [Function],
               "dismissAllModals": [Function],
+              "isModal": false,
               "pop": [Function],
               "show": [Function],
               "traitCollection": [Function],
@@ -3708,7 +3800,6 @@ exports[`saving invalid name displays banner 1`] = `
     ]
   }
   navBarButtonColor="#008EE2"
-  navBarStyle="light"
   navBarTitleColor="#2D3B45"
   rightBarButtons={
     Array [
@@ -3720,6 +3811,7 @@ exports[`saving invalid name displays banner 1`] = `
       },
     ]
   }
+  showDismissButton={false}
   title="Edit Assignment"
 >
   <View
@@ -4232,7 +4324,7 @@ exports[`saving invalid name displays banner 1`] = `
           </Text>
         </View>
         <TouchableHighlight
-          accessibilityLabel={undefined}
+          accessibilityLabel="Points, "
           accessibilityTraits={
             Array [
               "button",
@@ -4272,11 +4364,16 @@ exports[`saving invalid name displays banner 1`] = `
           >
             <View
               style={
-                Object {
-                  "flex": 1,
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                }
+                Array [
+                  Object {
+                    "flex": 1,
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                  },
+                  Object {
+                    "marginLeft": 0,
+                  },
+                ]
               }
             >
               <Text
@@ -4297,7 +4394,6 @@ exports[`saving invalid name displays banner 1`] = `
                       Object {
                         "fontWeight": "600",
                       },
-                      undefined,
                     ],
                     Object {
                       "fontFamily": ".SFUIDisplay-semibold",
@@ -4328,7 +4424,7 @@ exports[`saving invalid name displays banner 1`] = `
                 <View
                   style={
                     Object {
-                      "height": 50,
+                      "height": 30,
                       "width": 200,
                     }
                   }
@@ -4351,12 +4447,14 @@ exports[`saving invalid name displays banner 1`] = `
                       ]
                     }
                     testID="assignmentDetails.edit.points_possible.input"
+                    value={undefined}
                   />
                 </View>
               </View>
             </View>
           </View>
         </TouchableHighlight>
+        <View />
         <TouchableHighlight
           accessibilityLabel="Display Grade As, Points"
           accessibilityTraits={
@@ -4398,11 +4496,16 @@ exports[`saving invalid name displays banner 1`] = `
           >
             <View
               style={
-                Object {
-                  "flex": 1,
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                }
+                Array [
+                  Object {
+                    "flex": 1,
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                  },
+                  Object {
+                    "marginLeft": 0,
+                  },
+                ]
               }
             >
               <Text
@@ -4423,7 +4526,6 @@ exports[`saving invalid name displays banner 1`] = `
                       Object {
                         "fontWeight": "600",
                       },
-                      undefined,
                     ],
                     Object {
                       "fontFamily": ".SFUIDisplay-semibold",
@@ -4490,7 +4592,7 @@ exports[`saving invalid name displays banner 1`] = `
         </TouchableHighlight>
         <View />
         <TouchableHighlight
-          accessibilityLabel="Publish, Off"
+          accessibilityLabel="Publish, On"
           accessibilityTraits={
             Array [
               "button",
@@ -4530,11 +4632,16 @@ exports[`saving invalid name displays banner 1`] = `
           >
             <View
               style={
-                Object {
-                  "flex": 1,
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                }
+                Array [
+                  Object {
+                    "flex": 1,
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                  },
+                  Object {
+                    "marginLeft": 0,
+                  },
+                ]
               }
             >
               <Text
@@ -4555,7 +4662,6 @@ exports[`saving invalid name displays banner 1`] = `
                       Object {
                         "fontWeight": "600",
                       },
-                      undefined,
                     ],
                     Object {
                       "fontFamily": ".SFUIDisplay-semibold",
@@ -4602,15 +4708,14 @@ exports[`saving invalid name displays banner 1`] = `
                     ]
                   }
                   testID="published"
-                  tintColor="#374A59"
+                  tintColor={null}
                   title="Publish"
-                  value={false}
+                  value={true}
                 />
               </View>
             </View>
           </View>
         </TouchableHighlight>
-        <View />
         <AssignmentDatesEditor
           assignment={
             Object {
@@ -4620,16 +4725,24 @@ exports[`saving invalid name displays banner 1`] = `
               "created_at": "2017-03-17T19:15:25Z",
               "description": "a course that can take any beginner to professional in a matter of microseconds.  Harness the power of your favorite languages like PHP and Cold Fusion.",
               "due_at": "2037-06-01T05:59:00Z",
+              "grade_group_students_individually": false,
               "grading_type": "points",
+              "group_category_id": null,
+              "has_overrides": false,
               "html_url": "http://hostname.tld/whatever",
               "id": "123456789",
               "lock_at": "2037-06-01T05:59:59Z",
               "name": "",
               "needs_grading_count": 0,
+              "only_visible_to_overrides": false,
               "overrides": Array [],
               "peer_reviews": false,
               "points_possible": 20,
               "position": 1,
+              "published": true,
+              "rubric": null,
+              "rubric_assessment": Object {},
+              "rubric_settings": null,
               "submission_types": Array [
                 "online_text_entry",
                 "online_url",
@@ -4637,6 +4750,7 @@ exports[`saving invalid name displays banner 1`] = `
                 "online_upload",
               ],
               "unlock_at": "2017-03-17T06:00:00Z",
+              "unpublishable": true,
               "updated_at": "2017-03-17T19:15:25Z",
             }
           }
@@ -4645,6 +4759,7 @@ exports[`saving invalid name displays banner 1`] = `
             Object {
               "dismiss": [Function],
               "dismissAllModals": [Function],
+              "isModal": false,
               "pop": [Function],
               "show": [Function],
               "traitCollection": [Function],
@@ -4669,7 +4784,6 @@ exports[`saving invalid points possible displays banner 1`] = `
     ]
   }
   navBarButtonColor="#008EE2"
-  navBarStyle="light"
   navBarTitleColor="#2D3B45"
   rightBarButtons={
     Array [
@@ -4681,6 +4795,7 @@ exports[`saving invalid points possible displays banner 1`] = `
       },
     ]
   }
+  showDismissButton={false}
   title="Edit Assignment"
 >
   <View
@@ -5158,7 +5273,7 @@ exports[`saving invalid points possible displays banner 1`] = `
           </Text>
         </View>
         <TouchableHighlight
-          accessibilityLabel={undefined}
+          accessibilityLabel="Points, "
           accessibilityTraits={
             Array [
               "button",
@@ -5198,11 +5313,16 @@ exports[`saving invalid points possible displays banner 1`] = `
           >
             <View
               style={
-                Object {
-                  "flex": 1,
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                }
+                Array [
+                  Object {
+                    "flex": 1,
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                  },
+                  Object {
+                    "marginLeft": 0,
+                  },
+                ]
               }
             >
               <Text
@@ -5223,7 +5343,6 @@ exports[`saving invalid points possible displays banner 1`] = `
                       Object {
                         "fontWeight": "600",
                       },
-                      undefined,
                     ],
                     Object {
                       "fontFamily": ".SFUIDisplay-semibold",
@@ -5254,7 +5373,7 @@ exports[`saving invalid points possible displays banner 1`] = `
                 <View
                   style={
                     Object {
-                      "height": 50,
+                      "height": 30,
                       "width": 200,
                     }
                   }
@@ -5277,261 +5396,9 @@ exports[`saving invalid points possible displays banner 1`] = `
                       ]
                     }
                     testID="assignmentDetails.edit.points_possible.input"
+                    value={undefined}
                   />
                 </View>
-              </View>
-            </View>
-          </View>
-        </TouchableHighlight>
-        <TouchableHighlight
-          accessibilityLabel="Display Grade As, Points"
-          accessibilityTraits={
-            Array [
-              "button",
-            ]
-          }
-          onPress={[Function]}
-          style={
-            Array [
-              undefined,
-              Object {
-                "borderBottomColor": "#C7CDD1",
-                "borderBottomWidth": 0.5,
-              },
-            ]
-          }
-          testID="assignment-details.toggle-display-grade-as-picker"
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "alignItems": "center",
-                  "backgroundColor": "white",
-                  "flex": 1,
-                  "flexDirection": "row",
-                  "minHeight": 54,
-                  "paddingBottom": 12,
-                  "paddingLeft": 16,
-                  "paddingRight": 16,
-                  "paddingTop": 12,
-                },
-                Object {
-                  "backgroundColor": "white",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Object {
-                  "flex": 1,
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                }
-              }
-            >
-              <Text
-                accessible={true}
-                allowFontScaling={true}
-                ellipsizeMode="tail"
-                numberOfLines={0}
-                style={
-                  Array [
-                    Object {
-                      "fontFamily": ".SFUIDisplay",
-                    },
-                    Object {
-                      "color": "#2D3B45",
-                      "fontSize": 16,
-                    },
-                    Array [
-                      Object {
-                        "fontWeight": "600",
-                      },
-                      undefined,
-                    ],
-                    Object {
-                      "fontFamily": ".SFUIDisplay-semibold",
-                    },
-                  ]
-                }
-              >
-                Display Grade As
-              </Text>
-            </View>
-            <View
-              style={
-                Object {
-                  "flex": 0,
-                }
-              }
-            >
-              <View
-                style={
-                  Object {
-                    "alignItems": "center",
-                    "flex": 1,
-                    "flexDirection": "row",
-                    "justifyContent": "flex-end",
-                  }
-                }
-              >
-                <View
-                  style={
-                    Object {
-                      "alignItems": "center",
-                      "flexDirection": "row",
-                    }
-                  }
-                >
-                  <Text
-                    accessible={true}
-                    allowFontScaling={true}
-                    ellipsizeMode="tail"
-                    numberOfLines={1}
-                    style={
-                      Array [
-                        Object {
-                          "fontFamily": ".SFUIDisplay",
-                        },
-                        Object {
-                          "color": "#2D3B45",
-                          "fontSize": 16,
-                        },
-                        Object {},
-                        Object {
-                          "fontFamily": ".SFUIDisplay",
-                        },
-                      ]
-                    }
-                    testID={undefined}
-                  >
-                    Points
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </View>
-        </TouchableHighlight>
-        <View />
-        <TouchableHighlight
-          accessibilityLabel="Publish, Off"
-          accessibilityTraits={
-            Array [
-              "button",
-            ]
-          }
-          onPress={[Function]}
-          style={
-            Array [
-              undefined,
-              Object {
-                "borderBottomColor": "#C7CDD1",
-                "borderBottomWidth": 0.5,
-              },
-            ]
-          }
-          testID={undefined}
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "alignItems": "center",
-                  "backgroundColor": "white",
-                  "flex": 1,
-                  "flexDirection": "row",
-                  "minHeight": 54,
-                  "paddingBottom": 12,
-                  "paddingLeft": 16,
-                  "paddingRight": 16,
-                  "paddingTop": 12,
-                },
-                Object {
-                  "backgroundColor": "white",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Object {
-                  "flex": 1,
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                }
-              }
-            >
-              <Text
-                accessible={true}
-                allowFontScaling={true}
-                ellipsizeMode="tail"
-                numberOfLines={0}
-                style={
-                  Array [
-                    Object {
-                      "fontFamily": ".SFUIDisplay",
-                    },
-                    Object {
-                      "color": "#2D3B45",
-                      "fontSize": 16,
-                    },
-                    Array [
-                      Object {
-                        "fontWeight": "600",
-                      },
-                      undefined,
-                    ],
-                    Object {
-                      "fontFamily": ".SFUIDisplay-semibold",
-                    },
-                  ]
-                }
-              >
-                Publish
-              </Text>
-            </View>
-            <View
-              style={
-                Object {
-                  "flex": 0,
-                }
-              }
-            >
-              <View
-                style={
-                  Object {
-                    "alignItems": "center",
-                    "flex": 1,
-                    "flexDirection": "row",
-                    "justifyContent": "flex-end",
-                  }
-                }
-              >
-                <RCTSwitch
-                  border="bottom"
-                  disabled={false}
-                  identifier="published"
-                  onChange={[Function]}
-                  onResponderTerminationRequest={[Function]}
-                  onStartShouldSetResponder={[Function]}
-                  onTintColor="#374A59"
-                  onValueChange={[Function]}
-                  style={
-                    Array [
-                      Object {
-                        "height": 31,
-                        "width": 51,
-                      },
-                      undefined,
-                    ]
-                  }
-                  testID="published"
-                  tintColor="#374A59"
-                  title="Publish"
-                  value={false}
-                />
               </View>
             </View>
           </View>
@@ -5572,6 +5439,267 @@ exports[`saving invalid points possible displays banner 1`] = `
             Points possible must be a number
           </Text>
         </View>
+        <TouchableHighlight
+          accessibilityLabel="Display Grade As, Points"
+          accessibilityTraits={
+            Array [
+              "button",
+            ]
+          }
+          onPress={[Function]}
+          style={
+            Array [
+              undefined,
+              Object {
+                "borderBottomColor": "#C7CDD1",
+                "borderBottomWidth": 0.5,
+              },
+            ]
+          }
+          testID="assignment-details.toggle-display-grade-as-picker"
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "backgroundColor": "white",
+                  "flex": 1,
+                  "flexDirection": "row",
+                  "minHeight": 54,
+                  "paddingBottom": 12,
+                  "paddingLeft": 16,
+                  "paddingRight": 16,
+                  "paddingTop": 12,
+                },
+                Object {
+                  "backgroundColor": "white",
+                },
+              ]
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "flex": 1,
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                  },
+                  Object {
+                    "marginLeft": 0,
+                  },
+                ]
+              }
+            >
+              <Text
+                accessible={true}
+                allowFontScaling={true}
+                ellipsizeMode="tail"
+                numberOfLines={0}
+                style={
+                  Array [
+                    Object {
+                      "fontFamily": ".SFUIDisplay",
+                    },
+                    Object {
+                      "color": "#2D3B45",
+                      "fontSize": 16,
+                    },
+                    Array [
+                      Object {
+                        "fontWeight": "600",
+                      },
+                    ],
+                    Object {
+                      "fontFamily": ".SFUIDisplay-semibold",
+                    },
+                  ]
+                }
+              >
+                Display Grade As
+              </Text>
+            </View>
+            <View
+              style={
+                Object {
+                  "flex": 0,
+                }
+              }
+            >
+              <View
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "flex": 1,
+                    "flexDirection": "row",
+                    "justifyContent": "flex-end",
+                  }
+                }
+              >
+                <View
+                  style={
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                    }
+                  }
+                >
+                  <Text
+                    accessible={true}
+                    allowFontScaling={true}
+                    ellipsizeMode="tail"
+                    numberOfLines={1}
+                    style={
+                      Array [
+                        Object {
+                          "fontFamily": ".SFUIDisplay",
+                        },
+                        Object {
+                          "color": "#2D3B45",
+                          "fontSize": 16,
+                        },
+                        Object {},
+                        Object {
+                          "fontFamily": ".SFUIDisplay",
+                        },
+                      ]
+                    }
+                    testID={undefined}
+                  >
+                    Points
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </TouchableHighlight>
+        <View />
+        <TouchableHighlight
+          accessibilityLabel="Publish, On"
+          accessibilityTraits={
+            Array [
+              "button",
+            ]
+          }
+          onPress={[Function]}
+          style={
+            Array [
+              undefined,
+              Object {
+                "borderBottomColor": "#C7CDD1",
+                "borderBottomWidth": 0.5,
+              },
+            ]
+          }
+          testID={undefined}
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "backgroundColor": "white",
+                  "flex": 1,
+                  "flexDirection": "row",
+                  "minHeight": 54,
+                  "paddingBottom": 12,
+                  "paddingLeft": 16,
+                  "paddingRight": 16,
+                  "paddingTop": 12,
+                },
+                Object {
+                  "backgroundColor": "white",
+                },
+              ]
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "flex": 1,
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                  },
+                  Object {
+                    "marginLeft": 0,
+                  },
+                ]
+              }
+            >
+              <Text
+                accessible={true}
+                allowFontScaling={true}
+                ellipsizeMode="tail"
+                numberOfLines={0}
+                style={
+                  Array [
+                    Object {
+                      "fontFamily": ".SFUIDisplay",
+                    },
+                    Object {
+                      "color": "#2D3B45",
+                      "fontSize": 16,
+                    },
+                    Array [
+                      Object {
+                        "fontWeight": "600",
+                      },
+                    ],
+                    Object {
+                      "fontFamily": ".SFUIDisplay-semibold",
+                    },
+                  ]
+                }
+              >
+                Publish
+              </Text>
+            </View>
+            <View
+              style={
+                Object {
+                  "flex": 0,
+                }
+              }
+            >
+              <View
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "flex": 1,
+                    "flexDirection": "row",
+                    "justifyContent": "flex-end",
+                  }
+                }
+              >
+                <RCTSwitch
+                  border="bottom"
+                  disabled={false}
+                  identifier="published"
+                  onChange={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
+                  onTintColor="#374A59"
+                  onValueChange={[Function]}
+                  style={
+                    Array [
+                      Object {
+                        "height": 31,
+                        "width": 51,
+                      },
+                      undefined,
+                    ]
+                  }
+                  testID="published"
+                  tintColor={null}
+                  title="Publish"
+                  value={true}
+                />
+              </View>
+            </View>
+          </View>
+        </TouchableHighlight>
         <AssignmentDatesEditor
           assignment={
             Object {
@@ -5581,16 +5709,24 @@ exports[`saving invalid points possible displays banner 1`] = `
               "created_at": "2017-03-17T19:15:25Z",
               "description": "a course that can take any beginner to professional in a matter of microseconds.  Harness the power of your favorite languages like PHP and Cold Fusion.",
               "due_at": "2037-06-01T05:59:00Z",
+              "grade_group_students_individually": false,
               "grading_type": "points",
+              "group_category_id": null,
+              "has_overrides": false,
               "html_url": "http://hostname.tld/whatever",
               "id": "123456789",
               "lock_at": "2037-06-01T05:59:59Z",
               "name": "learn to write code",
               "needs_grading_count": 0,
+              "only_visible_to_overrides": false,
               "overrides": Array [],
               "peer_reviews": false,
               "points_possible": "D",
               "position": 1,
+              "published": true,
+              "rubric": null,
+              "rubric_assessment": Object {},
+              "rubric_settings": null,
               "submission_types": Array [
                 "online_text_entry",
                 "online_url",
@@ -5598,6 +5734,7 @@ exports[`saving invalid points possible displays banner 1`] = `
                 "online_upload",
               ],
               "unlock_at": "2017-03-17T06:00:00Z",
+              "unpublishable": true,
               "updated_at": "2017-03-17T19:15:25Z",
             }
           }
@@ -5606,6 +5743,7 @@ exports[`saving invalid points possible displays banner 1`] = `
             Object {
               "dismiss": [Function],
               "dismissAllModals": [Function],
+              "isModal": false,
               "pop": [Function],
               "show": [Function],
               "traitCollection": [Function],
@@ -5630,7 +5768,6 @@ exports[`saving negative points possible displays banner 1`] = `
     ]
   }
   navBarButtonColor="#008EE2"
-  navBarStyle="light"
   navBarTitleColor="#2D3B45"
   rightBarButtons={
     Array [
@@ -5642,6 +5779,7 @@ exports[`saving negative points possible displays banner 1`] = `
       },
     ]
   }
+  showDismissButton={false}
   title="Edit Assignment"
 >
   <View
@@ -6119,7 +6257,7 @@ exports[`saving negative points possible displays banner 1`] = `
           </Text>
         </View>
         <TouchableHighlight
-          accessibilityLabel={undefined}
+          accessibilityLabel="Points, "
           accessibilityTraits={
             Array [
               "button",
@@ -6159,11 +6297,16 @@ exports[`saving negative points possible displays banner 1`] = `
           >
             <View
               style={
-                Object {
-                  "flex": 1,
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                }
+                Array [
+                  Object {
+                    "flex": 1,
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                  },
+                  Object {
+                    "marginLeft": 0,
+                  },
+                ]
               }
             >
               <Text
@@ -6184,7 +6327,6 @@ exports[`saving negative points possible displays banner 1`] = `
                       Object {
                         "fontWeight": "600",
                       },
-                      undefined,
                     ],
                     Object {
                       "fontFamily": ".SFUIDisplay-semibold",
@@ -6215,7 +6357,7 @@ exports[`saving negative points possible displays banner 1`] = `
                 <View
                   style={
                     Object {
-                      "height": 50,
+                      "height": 30,
                       "width": 200,
                     }
                   }
@@ -6238,12 +6380,49 @@ exports[`saving negative points possible displays banner 1`] = `
                       ]
                     }
                     testID="assignmentDetails.edit.points_possible.input"
+                    value={undefined}
                   />
                 </View>
               </View>
             </View>
           </View>
         </TouchableHighlight>
+        <View
+          style={
+            Object {
+              "alignItems": "stretch",
+              "backgroundColor": "#F5F5F5",
+              "flex": 1,
+              "flexDirection": "row",
+              "justifyContent": "flex-start",
+            }
+          }
+        >
+          <Text
+            accessible={true}
+            allowFontScaling={true}
+            ellipsizeMode="tail"
+            style={
+              Array [
+                Object {
+                  "fontFamily": ".SFUIDisplay",
+                },
+                Object {
+                  "color": "#EE0612",
+                  "fontFamily": ".SFUIDisplay",
+                  "fontSize": 14,
+                },
+                Object {
+                  "marginHorizontal": 16,
+                  "marginTop": 4,
+                },
+              ]
+            }
+            testID={undefined}
+          >
+            The value of possible points must be zero or greater
+          </Text>
+        </View>
         <TouchableHighlight
           accessibilityLabel="Display Grade As, Points"
           accessibilityTraits={
@@ -6285,11 +6464,16 @@ exports[`saving negative points possible displays banner 1`] = `
           >
             <View
               style={
-                Object {
-                  "flex": 1,
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                }
+                Array [
+                  Object {
+                    "flex": 1,
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                  },
+                  Object {
+                    "marginLeft": 0,
+                  },
+                ]
               }
             >
               <Text
@@ -6310,7 +6494,6 @@ exports[`saving negative points possible displays banner 1`] = `
                       Object {
                         "fontWeight": "600",
                       },
-                      undefined,
                     ],
                     Object {
                       "fontFamily": ".SFUIDisplay-semibold",
@@ -6377,7 +6560,7 @@ exports[`saving negative points possible displays banner 1`] = `
         </TouchableHighlight>
         <View />
         <TouchableHighlight
-          accessibilityLabel="Publish, Off"
+          accessibilityLabel="Publish, On"
           accessibilityTraits={
             Array [
               "button",
@@ -6417,11 +6600,16 @@ exports[`saving negative points possible displays banner 1`] = `
           >
             <View
               style={
-                Object {
-                  "flex": 1,
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                }
+                Array [
+                  Object {
+                    "flex": 1,
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                  },
+                  Object {
+                    "marginLeft": 0,
+                  },
+                ]
               }
             >
               <Text
@@ -6442,7 +6630,6 @@ exports[`saving negative points possible displays banner 1`] = `
                       Object {
                         "fontWeight": "600",
                       },
-                      undefined,
                     ],
                     Object {
                       "fontFamily": ".SFUIDisplay-semibold",
@@ -6489,50 +6676,14 @@ exports[`saving negative points possible displays banner 1`] = `
                     ]
                   }
                   testID="published"
-                  tintColor="#374A59"
+                  tintColor={null}
                   title="Publish"
-                  value={false}
+                  value={true}
                 />
               </View>
             </View>
           </View>
         </TouchableHighlight>
-        <View
-          style={
-            Object {
-              "alignItems": "stretch",
-              "backgroundColor": "#F5F5F5",
-              "flex": 1,
-              "flexDirection": "row",
-              "justifyContent": "flex-start",
-            }
-          }
-        >
-          <Text
-            accessible={true}
-            allowFontScaling={true}
-            ellipsizeMode="tail"
-            style={
-              Array [
-                Object {
-                  "fontFamily": ".SFUIDisplay",
-                },
-                Object {
-                  "color": "#EE0612",
-                  "fontFamily": ".SFUIDisplay",
-                  "fontSize": 14,
-                },
-                Object {
-                  "marginHorizontal": 16,
-                  "marginTop": 4,
-                },
-              ]
-            }
-            testID={undefined}
-          >
-            The value of possible points must be zero or greater
-          </Text>
-        </View>
         <AssignmentDatesEditor
           assignment={
             Object {
@@ -6542,16 +6693,24 @@ exports[`saving negative points possible displays banner 1`] = `
               "created_at": "2017-03-17T19:15:25Z",
               "description": "a course that can take any beginner to professional in a matter of microseconds.  Harness the power of your favorite languages like PHP and Cold Fusion.",
               "due_at": "2037-06-01T05:59:00Z",
+              "grade_group_students_individually": false,
               "grading_type": "points",
+              "group_category_id": null,
+              "has_overrides": false,
               "html_url": "http://hostname.tld/whatever",
               "id": "123456789",
               "lock_at": "2037-06-01T05:59:59Z",
               "name": "learn to write code",
               "needs_grading_count": 0,
+              "only_visible_to_overrides": false,
               "overrides": Array [],
               "peer_reviews": false,
               "points_possible": -1,
               "position": 1,
+              "published": true,
+              "rubric": null,
+              "rubric_assessment": Object {},
+              "rubric_settings": null,
               "submission_types": Array [
                 "online_text_entry",
                 "online_url",
@@ -6559,6 +6718,7 @@ exports[`saving negative points possible displays banner 1`] = `
                 "online_upload",
               ],
               "unlock_at": "2017-03-17T06:00:00Z",
+              "unpublishable": true,
               "updated_at": "2017-03-17T19:15:25Z",
             }
           }
@@ -6567,6 +6727,7 @@ exports[`saving negative points possible displays banner 1`] = `
             Object {
               "dismiss": [Function],
               "dismissAllModals": [Function],
+              "isModal": false,
               "pop": [Function],
               "show": [Function],
               "traitCollection": [Function],

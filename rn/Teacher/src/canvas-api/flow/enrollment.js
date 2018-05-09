@@ -15,6 +15,7 @@
 //
 
 // @flow
+
 export type EnrollmentType =
   'StudentEnrollment' |
   // I believe `StudentViewEnrollment` is a legacy thing which
@@ -29,6 +30,8 @@ export type EnrollmentState = 'active' | 'invited' | 'inactive'
 
 export type Enrollment = {
   id: string,
+  role: string,
+  role_id: string,
   user_id: string,
   user: User,
   type: EnrollmentType,
@@ -36,8 +39,27 @@ export type Enrollment = {
   course_id: string,
   last_activity_at: string,
   course_section_id: string,
-  computed_current_grade: string,
+  computed_current_grade?: string,
+  current_grading_period_id?: ?string,
+  current_period_computed_current_grade?: string,
+  current_period_computed_current_score?: string,
+  current_period_computed_final_grade?: string,
+  current_period_computed_final_score?: string,
+  grades: Grades,
 }
+
+export type Grades = {
+  html_url: string,
+  current_score: ?number,
+  final_score: ?number,
+  current_grade: ?string,
+  final_grade: ?string,
+}
+
+export type Invite = {
+  displayState?: string,
+  hidden?: boolean,
+} & Enrollment
 
 export type CreateEnrollment = {
   user_id: string,

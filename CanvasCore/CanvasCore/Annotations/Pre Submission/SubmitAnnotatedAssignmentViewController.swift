@@ -18,8 +18,6 @@
 
 import UIKit
 import PSPDFKit
-import CanvasCore
-
 import ReactiveSwift
 import ReactiveCocoa
 
@@ -193,7 +191,7 @@ class SubmitAnnotatedAssignmentViewController: UITableViewController {
 
             do {
                 let outputURL = URL(fileURLWithPath: outputPath)
-                try PSPDFProcessor.generatePDF(from: configuration, saveOptions: nil, outputFileURL: outputURL, progressBlock: nil)
+                try PSPDFProcessor.generatePDF(from: configuration, securityOptions: nil, outputFileURL: outputURL, progressBlock: nil)
                 DispatchQueue.main.async {
                     completion(outputURL)
                 }

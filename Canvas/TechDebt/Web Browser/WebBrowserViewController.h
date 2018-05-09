@@ -16,17 +16,18 @@
     
     
 
-#import <UIKit/UIKit.h>
+@import UIKit;
+@import WebKit;
 
 @protocol WebBrowserRequest <NSObject>
-- (void)loadRequestInWebView:(UIWebView *)webView;
+- (void)loadRequestInWebView:(WKWebView *)webView;
 @property (nonatomic, readonly) BOOL canOpenInSafari;
 @end
 
 @class WebBrowserViewController;
 
 @protocol WebBrowserViewControllerDelegate <NSObject>
-- (void)webBrowser:(WebBrowserViewController *)webBrowser didFinishLoadingWebView:(UIWebView *)webView;
+- (void)webBrowser:(WebBrowserViewController *)webBrowser didFinishLoadingWebView:(WKWebView *)webView;
 @end
 
 @interface NSURLRequest (WebBrowser) <WebBrowserRequest>
@@ -38,6 +39,8 @@
 
 @interface WebBrowserViewController : UIViewController
 
+@property (nonatomic, weak) IBOutlet UIBarButtonItem *doneButton;
+
 - (instancetype)initWithURL:(NSURL *)url;
 - (instancetype)initWithURL:(NSURL *)url delegate:(id<WebBrowserViewControllerDelegate>)delegate;
 
@@ -48,7 +51,7 @@
 // OR
 - (void)setContentHTML:(NSString *)html baseURL:(NSURL *)baseURL;
 
-@property (nonatomic, copy) void (^browserWillDismissBlock)();
+@property (nonatomic, copy) void (^browserWillDismissBlock)(void);
 
 @property (nonatomic, weak) id<WebBrowserViewControllerDelegate> delegate;
 

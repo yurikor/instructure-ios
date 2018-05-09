@@ -14,7 +14,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-// @flow
+/* eslint-disable flowtype/require-valid-file-annotation */
 
 import React, { Component } from 'react'
 import {
@@ -39,7 +39,7 @@ const anonymousSubtitle = i18n('Anonymous grading')
 const mutedSubtitle = i18n('Grades muted')
 const bothSubtitle = i18n('Grades muted, Anonymous grading')
 
-export default class SubmissionsHeader extends Component<any, SubmissionsHeaderProps, any> {
+export default class SubmissionsHeader extends Component<SubmissionsHeaderProps, any> {
 
   navigateToFilter = () => {
     this.props.navigator.show('/filter', {
@@ -80,7 +80,7 @@ export default class SubmissionsHeader extends Component<any, SubmissionsHeaderP
 
     let selected = this.props.filterOptions.filter(option => option.selected)
     if (selected.length > 0) {
-      title = i18n('Filter ({numSelected})', { numSelected: selected.length })
+      title = i18n('Filter ({numSelected, number})', { numSelected: selected.length })
     }
 
     return (<LinkButton

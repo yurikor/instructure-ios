@@ -22,13 +22,9 @@ import { connect } from 'react-redux'
 import i18n from 'format-message'
 import Navigator from '../../routing/Navigator'
 import Screen from '../../routing/Screen'
-import WebContainer from '../../common/components/WebContainer'
+import CanvasWebView from '../../common/components/CanvasWebView'
 
-export class RubricDescription extends Component {
-
-  dismiss = () => {
-    this.props.navigator.dismiss()
-  }
+export class RubricDescription extends Component<*> {
 
   renderLongDescription () {
     if (!this.props.description || this.props.description.length === 0) {
@@ -41,7 +37,7 @@ export class RubricDescription extends Component {
     return (
       <View style={styles.container}>
         <ScrollView bounces={false}>
-          <WebContainer html={this.props.description} scrollEnabled={false} navigator={this.props.navigator}/>
+          <CanvasWebView html={this.props.description} scrollEnabled={false} navigator={this.props.navigator}/>
         </ScrollView>
       </View>
     )
@@ -52,12 +48,7 @@ export class RubricDescription extends Component {
     return (
       <Screen
         title={i18n('Long Description')}
-        rightBarButtons={[{
-          title: i18n('Done'),
-          style: 'done',
-          testID: 'rubric-description.done',
-          action: this.dismiss,
-        }]}>
+      >
         { description }
       </Screen>
     )

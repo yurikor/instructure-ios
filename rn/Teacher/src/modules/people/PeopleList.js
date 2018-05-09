@@ -32,8 +32,7 @@ import { default as TypeAheadSearch, type TypeAheadSearchResults } from '../../c
 import ListEmptyComponent from '../../common/components/ListEmptyComponent'
 import { Heading1 } from '../../common/text'
 import { LinkButton } from '../../common/buttons'
-import { httpClient } from '../../canvas-api'
-import axios from 'axios'
+import { httpClient, isAbort } from '../../canvas-api'
 import RowSeparator from '../../common/components/rows/RowSeparator'
 
 export type Props = NavigationProps & {
@@ -43,6 +42,7 @@ export type Props = NavigationProps & {
   courseColor: string,
   course: Course,
   showFilter?: boolean,
+  courseID: string,
 }
 
 function isBranch (id: string): boolean {
@@ -73,7 +73,7 @@ export async function fetch (url: string, params: { [string]: any } = {}, callba
     let response = await httpClient().get(url, options)
     callback(response.data, null)
   } catch (thrown) {
-    if (!axios.isCancel(thrown)) {
+    if (!isAbort(thrown)) {
       callback(null, thrown.message)
     }
   }
@@ -177,6 +177,7 @@ export class PeopleList extends Component<Props, any> {
     search: query,
     per_page: 15,
     type: 'user',
+    skip_visibility_checks: 1,
   })
 
   _onSelectItem = (item: AddressBookResult) => {
@@ -205,6 +206,10 @@ export class PeopleList extends Component<Props, any> {
     return [...values].join()
   }
 
+  keyExtractor (item: AddressBookResult) {
+    return item.id
+  }
+
   _renderRow = ({ item, index }) => {
     let border = 'bottom'
     if (index === 0) {
@@ -229,7 +234,7 @@ export class PeopleList extends Component<Props, any> {
   _renderSearchBar = () => {
     return <View>
       <TypeAheadSearch
-            ref={r => { this.typeAhead = r }}
+            ref={(r: any) => { this.typeAhead = r }}
             endpoint='/search/recipients'
             parameters={this._buildParams}
             onRequestStarted={this._requestStarted}
@@ -318,17 +323,19 @@ export class PeopleList extends Component<Props, any> {
                 refreshing={this.state.pending}
                 onEndReached={() => this.typeAhead.next()}
                 ItemSeparatorComponent={RowSeparator}
+                keyExtractor={this.keyExtractor}
               />
             </View>)
   }
 
   render () {
-    let screenProps = { navBarStyle: 'dark', title: this.props.name || i18n('People'), subtitle: (this.props.course && this.props.course.name) || '' }
     return (
       <Screen
         navBarColor={this.props.courseColor}
-        drawUnderNavBar={true}
-        {...screenProps}
+        navBarStyle='dark'
+        drawUnderNavBar
+        title={this.props.name || i18n('People')}
+        subtitle={(this.props.course && this.props.course.name) || ''}
       >
         { this._renderComponent() }
       </Screen>

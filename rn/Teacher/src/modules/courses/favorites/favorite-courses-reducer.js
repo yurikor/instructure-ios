@@ -25,7 +25,7 @@ import { parseErrorMessage } from '../../../redux/middleware/error-handler'
 import App from '../../app'
 
 let { refreshCourses } = CourseListActions
-let { toggleFavorite } = FavoritesActions
+let { toggleCourseFavorite } = FavoritesActions
 
 export let defaultState: FavoriteCoursesState = {
   courseRefs: [],
@@ -56,7 +56,9 @@ function toggleFavoriteCourse (
 
 export const favoriteCourses: Reducer<FavoriteCoursesState, any> = handleActions({
   [refreshCourses.toString()]: handleAsync({
-    pending: (state) => ({ ...state, pending: state.pending + 1 }),
+    pending: (state) => {
+      return { ...state, pending: state.pending + 1, error: undefined }
+    },
     resolved: (state, { result: [coursesResponse] }) => {
       const favorites: EntityRefs = coursesResponse.data
         .filter(App.current().filterCourse)
@@ -67,6 +69,7 @@ export const favoriteCourses: Reducer<FavoriteCoursesState, any> = handleActions
         ...state,
         courseRefs: favorites,
         pending: state.pending - 1,
+        error: undefined,
       }
     },
     rejected: (state, { error: response }) => {
@@ -78,7 +81,7 @@ export const favoriteCourses: Reducer<FavoriteCoursesState, any> = handleActions
     },
   }),
 
-  [toggleFavorite.toString()]: handleAsync({
+  [toggleCourseFavorite.toString()]: handleAsync({
     pending: (state, { courseID, markAsFavorite }) => toggleFavoriteCourse(state, courseID, markAsFavorite, +1),
     resolved: (state) => ({ ...state, pending: state.pending - 1 }),
     rejected: (state, { courseID, markAsFavorite, error }) => {

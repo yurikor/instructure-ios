@@ -18,7 +18,9 @@
  * @flow
  */
 
-const colors: { [name: string]: string } = {
+import { processColor } from 'react-native'
+
+const colors = {
   link: '#008EE2',
   tabBarBg: '#fff',
   tabBarTab: '#73818C',
@@ -29,11 +31,15 @@ const colors: { [name: string]: string } = {
   grey2: '#C7CDD1',   //  tiara
   grey3: '#A5AFB5',   //  heather
   grey4: '#8B969E',   //  ash
+  grey5: '#73818C', // some dark grey color
   primaryButton: '#368BD8',
   primaryButtonText: '#fff',
   secondaryButton: '#73818C',
   checkmarkGreen: '#00AC18',
   seperatorColor: '#C7CDD1',
+  errorAnnouncementBg: '#EE0612',
+  inviteAnnouncementBg: '#00AC18',
+  warningAnnouncementBg: '#FC5E13',
 //  branding properties
   navBarColor: '#374A59',
   navBarButtonColor: '#374A59',
@@ -41,6 +47,18 @@ const colors: { [name: string]: string } = {
   primaryButtonTextColor: 'white',
   primaryButtonColor: '#374A59',
   primaryBrandColor: '#374A59',
+  destructiveButtonColor: '#EE0612',
+  statusBarStyle: 'light', // set to contrast with navBarColor
 }
 
 export default colors
+
+export function isDark (color: string): boolean {
+  const c = processColor(color) || 0
+  const yiq = (
+    ((c >> 16) & 0xFF) * 299 +
+    ((c >> 8) & 0xFF) * 587 +
+    (c & 0xFF) * 114
+  ) / 1000
+  return yiq < 128
+}

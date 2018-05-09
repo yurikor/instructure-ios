@@ -14,24 +14,27 @@
 // limitations under the License.
 //
 
-// @flow
+/* eslint-disable flowtype/require-valid-file-annotation */
 
-import { ActionSheetIOS, AlertIOS, AppState } from 'react-native'
+import { shallow } from 'enzyme'
+import { ActionSheetIOS, AlertIOS, AppState, FlatList } from 'react-native'
 import React from 'react'
 import renderer from 'react-test-renderer'
 import { CommentsTab, mapStateToProps } from '../CommentsTab'
-import { setSession } from '../../../../canvas-api'
+import { setSession } from '@canvas-api'
 import DrawerState from '../../utils/drawer-state'
-import explore from '../../../../../test/helpers/explore'
-import setProps from '../../../../../test/helpers/setProps'
-import Permissions from '../../../../common/permissions'
+import explore from '@test/helpers/explore'
+import setProps from '@test/helpers/setProps'
+import Permissions from '@common/permissions'
 
 const templates = {
-  ...require('../../../../redux/__templates__/app-state'),
-  ...require('../../../../__templates__/submissions'),
-  ...require('../../../../__templates__/session'),
-  ...require('../../../../__templates__/attachment'),
-  ...require('../../../../__templates__/mediaComment'),
+  ...require('@redux/__templates__/app-state'),
+  ...require('@templates/submissions'),
+  ...require('@templates/session'),
+  ...require('@templates/attachment'),
+  ...require('@templates/mediaComment'),
+  ...require('@templates/assignments'),
+  ...require('@templates/quiz'),
 }
 
 jest
@@ -39,6 +42,24 @@ jest
   .mock('../CommentInput', () => 'CommentInput')
   .mock('../../../../common/components/MediaComment', () => 'MediaComment')
   .mock('../../../../common/permissions')
+  .mock('FlatList', () => {
+    return ({
+      ListEmptyComponent,
+      data,
+      renderItem,
+    }) => (
+      <view>
+        {data.length > 0
+          ? data.map((item, index) => (
+            <view key={index}>
+              {renderItem({ item, index })}
+            </view>
+          ))
+          : <ListEmptyComponent />
+        }
+      </view>
+    )
+  })
 
 const comments = [
   {
@@ -93,7 +114,15 @@ const comments = [
     date: new Date('2017-03-17T19:40:25Z'),
     avatarURL: 'http://fillmurray.com/220/400',
     from: 'them',
-    contents: { type: 'submission', items: [] },
+    contents: {
+      type: 'submission',
+      items: [{
+        contentID: '1',
+        icon: 0,
+        title: 'Item 1',
+        subtitle: 'Item 1 Subtitle',
+      }],
+    },
   },
 ]
 
@@ -112,6 +141,14 @@ test('comments render properly', () => {
   expect(tree).toMatchSnapshot()
 })
 
+test('empty state renders properly', () => {
+  const tree = shallow(<CommentsTab commentRows={[]} drawerState={new DrawerState()}/>)
+  let flatlist = tree.find('Component').first()
+  let props = flatlist.props().children[0].props
+  expect(props['ListEmptyComponent'].props.title).toBe('There are no comments to display.')
+  expect(props['contentContainerStyle'].justifyContent).toBe('center')
+})
+
 test('calling switchFile will call the correct actions', () => {
   let actions = {
     selectSubmissionFromHistory: jest.fn(),
@@ -125,6 +162,26 @@ test('calling switchFile will call the correct actions', () => {
   instance.switchFile('1', '2', '3')
   expect(actions.selectSubmissionFromHistory).toHaveBeenCalledWith('1', '2')
   expect(actions.selectFile).toHaveBeenCalledWith('1', '3')
+})
+
+test('selecting file closes drawer', () => {
+  const props = {
+    commentRows: comments,
+    drawerState: {
+      snapTo: jest.fn(),
+    },
+    selectSubmissionFromHistory: jest.fn(),
+    selectFile: jest.fn(),
+  }
+  const tree = shallow(<CommentsTab {...props} />)
+  const row = tree
+    .find(FlatList)
+    .dive()
+    .find('[testID="submission-comment-submission"]')
+    .dive()
+    .find('SubmittedContent')
+  row.simulate('Press')
+  expect(props.drawerState.snapTo).toHaveBeenCalledWith(0, true)
 })
 
 test('adding media shows action sheet', () => {
@@ -279,6 +336,11 @@ test('mapStateToProps returns no comments for no submissionID', () => {
   }
 
   let state = templates.appState()
+  state.entities.courses = {
+    '123': {
+      enabledFeatures: [],
+    },
+  }
   state.entities.assignments = {
     '245': {
       data: {},
@@ -414,4 +476,98 @@ test('mapStateToProps returns comment and submission rows', () => {
 
   expect(mapStateToProps(appState, ownProps))
   .toMatchSnapshot()
+})
+
+test('mapStateToProps returns anonymous true when anonymous grading is turned on', () => {
+  const props = {
+    courseID: '123',
+    assignmentID: '245',
+    userID: '55',
+    submissionID: undefined,
+    drawerState: new DrawerState(),
+    gradeIndividually: true,
+    navigator: {},
+  }
+
+  let state = templates.appState()
+  state.entities.assignments = {
+    '245': {
+      data: {},
+      anonymousGradingOn: true,
+      pendingComments: {},
+      submissions: { refs: [], pending: 0 },
+      submissionSummary: { data: {}, pending: 0, error: null },
+      gradeableStudents: { refs: [], pending: 0 },
+      pending: 0,
+      groups: { refs: [], pending: 0 },
+    },
+  }
+
+  expect(mapStateToProps(state, props).anonymous).toEqual(true)
+})
+
+test('mapStateToProps returns true when the assignment is a quiz that is an anonymous survey', () => {
+  const props = {
+    courseID: '123',
+    assignmentID: '245',
+    userID: '55',
+    submissionID: undefined,
+    drawerState: new DrawerState(),
+    gradeIndividually: true,
+    navigator: {},
+  }
+
+  let state = templates.appState()
+  state.entities.assignments = {
+    '245': {
+      data: templates.assignment({ id: '245', quiz_id: '678' }),
+      anonymousGradingOn: false,
+      pendingComments: {},
+      submissions: { refs: [], pending: 0 },
+      submissionSummary: { data: {}, pending: 0, error: null },
+      gradeableStudents: { refs: [], pending: 0 },
+      pending: 0,
+      groups: { refs: [], pending: 0 },
+    },
+  }
+  state.entities.quizzes = {
+    '678': {
+      data: templates.quiz({ id: '678', anonymous_submissions: true }),
+    },
+  }
+
+  expect(mapStateToProps(state, props).anonymous).toEqual(true)
+})
+
+test('mapSTateToProps returns true when the course has anonymous grading turned on', () => {
+  const props = {
+    courseID: '123',
+    assignmentID: '245',
+    userID: '55',
+    submissionID: undefined,
+    drawerState: new DrawerState(),
+    gradeIndividually: true,
+    navigator: {},
+  }
+
+  let state = templates.appState()
+  state.entities.courses = {
+    '123': {
+      enabledFeatures: ['anonymous_grading'],
+    },
+  }
+  state.entities.assignments = {
+    '245': {
+      data: {},
+      anonymousGradingOn: false,
+      pendingComments: {},
+      submissions: { refs: [], pending: 0 },
+      submissionSummary: { data: {}, pending: 0, error: null },
+      gradeableStudents: { refs: [], pending: 0 },
+      pending: 0,
+      groups: { refs: [], pending: 0 },
+    },
+  }
+
+  expect(mapStateToProps(state, props).anonymous).toEqual(true)
 })

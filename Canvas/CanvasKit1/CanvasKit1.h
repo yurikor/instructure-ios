@@ -34,13 +34,10 @@ FOUNDATION_EXPORT const unsigned char CanvasKit1VersionString[];
 #import <CanvasKit1/CKRemoteImageView.h>
 #import <CanvasKit1/CKSubmission.h>
 #import <CanvasKit1/CKActionSheetWithBlocks.h>
-#import <CanvasKit1/CKAlertViewWithBlocks.h>
 #import <CanvasKit1/CKCanvasAPI.h>
 #import <CanvasKit1/CKAudioCommentRecorderView.h>
 #import <CanvasKit1/CKOverlayViewController.h>
 #import <CanvasKit1/CKContextInfo.h>
-#import <CanvasKit1/CKDiscussionEntry.h>
-#import <CanvasKit1/CKDiscussionTopic.h>
 #import <CanvasKit1/NSFileManager+CKAdditions.h>
 #import <CanvasKit1/CKModelObject.h>
 #import <CanvasKit1/CKCrossfadingImageView.h>

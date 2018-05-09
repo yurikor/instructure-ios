@@ -1,3 +1,5 @@
+"Inbox" = "Postbus";
+
 /* Error message component with the report id */
 " Error report ID: (reportID)" = " Foutrapport-ID: (reportID)";
 
@@ -44,8 +46,14 @@
 /* all pages segmented control title */
 "All Pages" = "Alle pagina's";
 
-/* Title for push notification pre-authorization alert */
-"Allow Push Notifications?" = "Push berichtgevingen toestaan?";
+/* No comment provided by engineer. */
+"All notifications are currently disabled." = "Alle meldingen zijn momenteel uitgeschakeld.";
+
+/* No comment provided by engineer. */
+"All notifications are currently enabled." = "Alle meldingen zijn momenteel ingeschakeld.";
+
+/* No comment provided by engineer. */
+"Allow Notifications in Settings" = "Berichtgevingen toestaan in instellingen";
 
 /* label for number of attempts that are allowed */
 "Allowed Attempts" = "Toegestaan aantal pogingen";
@@ -86,7 +94,8 @@
 /* Alert title when unable to parse JSON for notification preferences */
 "Can't Display Notification Preferences" = "Kan voorkeuren berichtgeving niet weergeven";
 
-/* Cancel button title
+/* Cancel Audio recording.
+   Cancel button title
    Cancel submission option
    Cancel upload */
 "Cancel" = "Annuleren";
@@ -119,6 +128,9 @@
 "Choose your answers below" = "Kies je antwoorden hieronder";
 
 /* No comment provided by engineer. */
+"Collapse" = "Invouwen";
+
+/* No comment provided by engineer. */
 "Comments" = "Opmerkingen";
 
 /* File upload completed */
@@ -144,9 +156,6 @@
 
 /* Notification display name for course activities group */
 "Course Activities" = "Cursusactiviteiten";
-
-/* Button for creating a note from text selection */
-"Create Note" = "Aantekening maken";
 
 /* Header label for a screen that customizes a course */
 "Customize" = "Aanpassen";
@@ -237,11 +246,17 @@
 /* No comment provided by engineer. */
 "Error parsing the Roll Call response. Unexpected null value: (k)" = "Fout bij het parseren van de Roll Call-reactie. Onverwachte null-waarde: (k)";
 
+/* No comment provided by engineer. */
+"Error retrieving tool launch URL" = "Fout bij ophalen van tool voor starten van URL";
+
 /* rollcall status error */
 "Error: No data returned from the rollcall api." = "Fout: Geen gegevens geretourneerd door de Roll Call-API.";
 
 /* Exit button to leave the quiz */
 "Exit" = "Afsluiten";
+
+/* No comment provided by engineer. */
+"Expand" = "Uitvouwen";
 
 /* Error message when the server returns a invalid response */
 "Expected a response in the 200-299 range. Got %@" = "Een reactie verwacht in het bereik 200-299. Werd %@";
@@ -288,15 +303,15 @@
 /* Hides the question list */
 "Hide Question List" = "Vragenlijst verbergen";
 
-/* No comment provided by engineer. */
-"Inbox" = "Inbox";
-
 /* Indigo course color button */
 "Indigo" = "Indigo";
 
 /* Mark student late
    Student is present in class */
 "Late" = "Te laat";
+
+/* No comment provided by engineer. */
+"Launch External Tool" = "Extern hulpmiddel lanceren";
 
 /* Leave the quiz */
 "Leave" = "Verlaten";
@@ -332,9 +347,6 @@
 /* Next button for advancing a quiz */
 "Next" = "Volgende";
 
-/* Title for no button for push notification pre-authorization alert */
-"No" = "Nee";
-
 /* Alert title when unable to load communication channels */
 "No Communication Channels Found" = "Geen communicatiekanalen aangetroffen";
 
@@ -361,9 +373,6 @@
 
 /* Title for alert showing when a quiz isn't takeable */
 "Not Takeable" = "Niet beschikbaar";
-
-/* No comment provided by engineer. */
-"Note..." = "Aantekening...";
 
 /* Error title for push notification registration error */
 "Notification Error" = "Meldingsfout";
@@ -442,10 +451,10 @@
 "Question %@" = "Vraag %@";
 
 /* state for a question that has been flagged */
-"Question (questionNumber) Flagged" = "Vraag (questionNumber) gevlagd";
+"Question (number) Flagged" = "Vraag (nummer) gemarkeerd";
 
 /* state for unflagged question */
-"Question (questionNumber) Unflagged" = "Vraag (questionNumber) ontvlagd";
+"Question (number) Unflagged" = "Vraag (nummer) ongemarkeerd";
 
 /* label for the number of questions */
 "Questions" = "Vragen";
@@ -564,7 +573,7 @@
 "Submitting" = "In te leveren";
 
 /* Label for indication of submitting quiz */
-"Submitting Quiz" = "Toets aan het inleveren...";
+"Submitting Quiz" = "Toets inleveren";
 
 /* TA role */
 "TA" = "Onderwijsassistent";
@@ -705,10 +714,7 @@
 "Unable to display any notification preferences returned from the server at this time." = "Momenteel niet in staat om voorkeuren berichtgevingen te tonen die terugkwamen van de server.";
 
 /* Alert message when unable to load communication channels */
-"Unable to load any Communication Channels at this time.  Error: (result.error?.localizedDescription)" = "Momenteel niet in staat om communicatiekanalen te laden.  Fout: (result.error?.localizedDescription)";
-
-/* Alert message when unable to load notification preferences */
-"Unable to load any notification preferences at this time.  Error: (result.error?.localizedDescription)" = "Momenteel niet in staat om meldingsvoorkeuringen te laden.  Fout: (result.error?.localizedDescription)";
+"Unable to load any Communication Channels at this time." = "Momenteel niet in staat om communicatiekanalen te laden.";
 
 /* Error message when parsing communication preferences */
 "Unable to parse JSON for communication channels" = "Kan JSON niet parseren voor communicatiekanalen";
@@ -758,14 +764,8 @@
 /* Error message for being unable to update a push notification preference */
 "We were not able to update this value with the server" = "We konden deze waarden niet bijwerken met de server";
 
-/* Message for push notification pre-authorization alert */
-"Would you like to allow Canvas to send you important notifications about announcements, course, assignments, etc?" = "Wil je dat Canvas je belangrijke berichtgevingen stuurt over aankondigingen, cursussen, opdrachten, enz.?";
-
 /* Yellow course color button */
 "Yellow" = "Geel";
-
-/* Title for yes button for push notification pre-authorization alert */
-"Yes" = "Ja";
 
 /* Description for Yo communication channel */
 "Yo" = "Yo";
@@ -796,4 +796,7 @@
 
 /* File upload in progress */
 "uploading..." = "bezig met uploaden...";
+
+/* web content failed to load */
+"⚠️ Error Loading Content" = "⚠️ Fout bij laden van inhoud";
 

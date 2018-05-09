@@ -21,10 +21,10 @@ extension XCTestCase {
     var allCoursesListPage: AllCoursesListPage { return AllCoursesListPage.sharedInstance }
     var assignmentDetailsPage: AssignmentDetailsPage { return AssignmentDetailsPage.sharedInstance }
     var assignmentListPage: AssignmentListPage { return AssignmentListPage.sharedInstance }
-    var domainPickerPage: DomainPickerPage { return DomainPickerPage.sharedInstance }
+    var loginPage: LoginPage { return LoginPage.sharedInstance }
     var canvasLoginPage: CanvasLoginPage { return CanvasLoginPage.sharedInstance }
     var coursesListPage: CoursesListPage { return CoursesListPage.sharedInstance }
-    var editCoursesListPage: EditCoursesListPage { return EditCoursesListPage.sharedInstance }
+    var editDashboardPage: EditDashboardPage { return EditDashboardPage.sharedInstance }
     var courseBrowserPage: CourseBrowserPage { return CourseBrowserPage.sharedInstance }
     var courseSettingsPage: CourseSettingsPage { return CourseSettingsPage.sharedInstance }
     var inboxPage: InboxPage { return InboxPage.sharedInstance }

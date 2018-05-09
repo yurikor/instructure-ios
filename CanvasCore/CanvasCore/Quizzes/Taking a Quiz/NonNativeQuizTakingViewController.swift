@@ -13,16 +13,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-    
-    
 
 import UIKit
 import WebKit
 import Cartography
-
-
-
-
 
 class NonNativeQuizTakingViewController: UIViewController {
     
@@ -34,8 +28,11 @@ class NonNativeQuizTakingViewController: UIViewController {
     fileprivate let webView: UIWebView = UIWebView()
     fileprivate var quizHostName = ""
     fileprivate var loggingIn: Bool = false
+    fileprivate var urlForTakingQuiz: URL {
+        return quiz.mobileURL.appending(URLQueryItem(name: "platform", value: "ios")) ?? quiz.mobileURL
+    }
     fileprivate var requestForTakingQuiz: URLRequest {
-        return URLRequest(url: quiz.mobileURL.appending(URLQueryItem(name: "platform", value: "ios")) ?? quiz.mobileURL)
+        return URLRequest(url: urlForTakingQuiz)
     }
     
     init(session: Session, contextID: ContextID, quiz: Quiz, baseURL: URL) {
@@ -76,10 +73,18 @@ class NonNativeQuizTakingViewController: UIViewController {
     }
     
     func beginTakingQuiz() {
-        if let host = requestForTakingQuiz.url?.host {
+        if let host = urlForTakingQuiz.host {
             quizHostName = host
         }
-        webView.loadRequest(requestForTakingQuiz)
+        APIBridge.shared().call("getAuthenticatedSessionURL", args: [urlForTakingQuiz.absoluteString]) { [weak self] response, error in
+            if let data = response as? [String: Any],
+                let sessionURL = data["session_url"] as? String,
+                let url = URL(string: sessionURL) {
+                self?.webView.loadRequest(URLRequest(url: url))
+            } else if let url = self?.urlForTakingQuiz {
+                self?.webView.loadRequest(URLRequest(url: url))
+            }
+        }
     }
     
     func exitQuiz(_ button: UIBarButtonItem?) {
@@ -115,7 +120,7 @@ class NonNativeQuizTakingViewController: UIViewController {
     
     fileprivate func dispatchHeadlessVersionOfRequest(_ request: URLRequest) {
         if let queryString = request.url?.query {
-            if let urlAsAString = request.url?.absoluteString.appendingFormat("%@%@", queryString.characters.count > 0 ? "&" : "?", "persist_headless=1") {
+            if let urlAsAString = request.url?.absoluteString.appendingFormat("%@%@", queryString.count > 0 ? "&" : "?", "persist_headless=1") {
                 let updatedRequest = (request as NSURLRequest).mutableCopy() as! NSMutableURLRequest
                 if let newURL =  URL(string: urlAsAString) {
                     updatedRequest.url = newURL
@@ -132,7 +137,7 @@ extension NonNativeQuizTakingViewController: UIWebViewDelegate {
         
         if !webView.isLoading {
             if let currentUserID = webView.stringByEvaluatingJavaScript(from: "ENV.current_user_id") {
-                let isValidUserID = currentUserID.characters.count > 0 && (currentUserID as NSString).longLongValue > 0
+                let isValidUserID = currentUserID.count > 0 && (currentUserID as NSString).longLongValue > 0
                 
                 if loggingIn {
                     if isValidUserID {
@@ -145,7 +150,7 @@ extension NonNativeQuizTakingViewController: UIWebViewDelegate {
                     }
                 } else {
                     if let query = webView.request?.url?.query {
-                        if !isValidUserID && (query.characters.count == 0 || query.range(of: "cross_domain_login") == nil) {
+                        if !isValidUserID && (query.count == 0 || query.range(of: "cross_domain_login") == nil) {
                             beginLoggingIn()
                             return
                         }
@@ -177,7 +182,7 @@ extension NonNativeQuizTakingViewController: UIWebViewDelegate {
         } else if navigationType == .linkClicked {
             // TODO: maybe open a native in app browser?
             if let URL = request.url {
-                UIApplication.shared.openURL(URL)
+                UIApplication.shared.open(URL, options: [:], completionHandler: nil)
             }
             return false
         }

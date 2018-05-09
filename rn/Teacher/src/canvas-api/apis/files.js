@@ -19,18 +19,7 @@
 import { paginate, exhaust } from '../utils/pagination'
 import httpClient from '../httpClient'
 
-export function getCourseFiles (courseID: string): Promise<ApiResponse<Array<File>>> {
-  const files = paginate(`courses/${courseID}/files`, {
-    params: {
-      per_page: 99,
-      include: ['usage_rights'],
-    },
-  })
-
-  return exhaust(files)
-}
-
-export function getFolderFiles (folderID: string): Promise<ApiResponse<Array<File>>> {
+export function getFolderFiles (folderID: string): ApiPromise<File[]> {
   const files = paginate(`folders/${folderID}/files`, {
     params: {
       per_page: 99,
@@ -42,7 +31,7 @@ export function getFolderFiles (folderID: string): Promise<ApiResponse<Array<Fil
 }
 
 // Get folders contains with folder
-export function getFolderFolders (folderID: string): Promise<ApiResponse<Array<File>>> {
+export function getFolderFolders (folderID: string): ApiPromise<Folder[]> {
   const files = paginate(`folders/${folderID}/folders`, {
     params: {
       per_page: 99,
@@ -53,21 +42,10 @@ export function getFolderFolders (folderID: string): Promise<ApiResponse<Array<F
   return exhaust(files)
 }
 
-export function getCourseFolders (courseID: string): Promise<ApiResponse<Array<Folder>>> {
-  const folders = paginate(`courses/${courseID}/folders`, {
-    params: {
-      per_page: 99,
-      include: ['usage_rights'],
-    },
-  })
-
-  return exhaust(folders)
-}
-
-// Get a single folder for a course by id
+// Get a single folder for a context by id
 // To get the root folder, pass `root` for `folderID`
-export function getCourseFolder (courseID: string, folderID: string): Promise<ApiResponse<Array<Folder>>> {
-  const url = `courses/${courseID}/folders/${folderID}`
+export function getContextFolder (context: CanvasContext, contextID: string, folderID: string): ApiPromise<Folder[]> {
+  const url = `${context}/${contextID}/folders/${folderID}`
   const options = {
     params: {
       include: ['usage_rights'],
@@ -76,7 +54,7 @@ export function getCourseFolder (courseID: string, folderID: string): Promise<Ap
   return httpClient().get(url, options)
 }
 
-export function getFolder (folderID: string): Promise<ApiResponse<Folder>> {
+export function getFolder (folderID: string): ApiPromise<Folder> {
   const url = `folders/${folderID}`
   const options = {
     params: {
@@ -86,10 +64,33 @@ export function getFolder (folderID: string): Promise<ApiResponse<Folder>> {
   return httpClient().get(url, options)
 }
 
-export function createFolder (courseID: string, folder: NewFolder): Promise<ApiResponse<Folder>> {
-  return httpClient().post(`courses/${courseID}/folders`, folder)
+export function getFile (fileID: string): ApiPromise<File> {
+  return httpClient().get(`files/${fileID}`)
 }
 
-export function updateFile (file: File) {
-  return httpClient().put(`files/${file.id}`, file)
+export function createFolder (context: CanvasContext, contextID: string, folder: NewFolder): ApiPromise<Folder> {
+  return httpClient().post(`${context}/${contextID}/folders`, folder)
+}
+
+export function updateFolder (folderID: string, folder: UpdateFolderParameters): ApiPromise<Folder> {
+  return httpClient().put(`folders/${folderID}`, folder)
+}
+
+export function deleteFolder (folderID: string, force?: boolean): ApiPromise<null> {
+  return httpClient().delete(`folders/${folderID}`, { params: { force } })
+}
+
+export function updateFile (fileID: string, file: UpdateFileParameters): ApiPromise<File> {
+  return httpClient().put(`files/${fileID}`, file)
+}
+
+export function deleteFile (fileID: string): ApiPromise<null> {
+  return httpClient().delete(`files/${fileID}`)
+}
+
+export function updateCourseFileUsageRights (courseID: string, fileID: string, params: UpdateUsageRightsParameters): ApiPromise<UsageRights> {
+  return httpClient().put(`courses/${courseID}/usage_rights`, {
+    file_ids: [ fileID ],
+    usage_rights: params,
+  })
 }

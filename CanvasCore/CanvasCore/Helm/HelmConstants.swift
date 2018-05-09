@@ -42,4 +42,14 @@ struct PropKeys {
     static let leftBarButtons = "leftBarButtons"
     static let rightBarButtons = "rightBarButtons"
     static let backButtonTitle = "backButtonTitle"
+    static let dismissButtonTitle = "dismissButtonTitle"
+    static let showDismissButton = "showDismissButton"
+    static let navigatorOptions = "navigatorOptions"
+    
+    static let modal = "modal"
+    static let modalPresentationStyle = "modalPresentationStyle"
+    static let modalTransitionStyle = "modalTransitionStyle"
+    
+    //  page view stuff
+    static let customPageViewPath = "customPageViewPath"
 }

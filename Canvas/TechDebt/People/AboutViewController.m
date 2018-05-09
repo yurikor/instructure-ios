@@ -20,12 +20,11 @@
 #import <CanvasKit1/CanvasKit1.h>
 #import "UIViewController+AnalyticsTracking.h"
 #import <CanvasKit1/CKActionSheetWithBlocks.h>
-#import <CanvasKit1/CKAlertViewWithBlocks.h>
+#import "UIAlertController+TechDebt.h"
 
 #import "AboutViewController.h"
 #import "WebBrowserViewController.h"
 #import "Analytics.h"
-@import CanvasCore;
 @import CanvasCore;
 #import "CBILog.h"
 
@@ -52,6 +51,7 @@ typedef NS_ENUM(NSInteger, LegalRows) {
 @property (strong, nonatomic) IBOutlet UILabel *EULALabel;
 @property (strong, nonatomic) IBOutlet UILabel *privacyPolicyLabel;
 @property (strong, nonatomic) IBOutlet UILabel *termsOfUseLabel;
+@property (strong, nonatomic) IBOutlet UILabel *openSourceLabel;
 
 @property (weak, nonatomic) IBOutlet UILabel *nameField;
 @property (weak, nonatomic) IBOutlet UILabel *emailField;
@@ -100,6 +100,7 @@ typedef NS_ENUM(NSInteger, LegalRows) {
     [self.EULALabel setText:NSLocalizedString(@"EULA", @"Link to the End User License Agreement document")];
     [self.privacyPolicyLabel setText:NSLocalizedString(@"Privacy Policy", @"Link to the privacy policy")];
     [self.termsOfUseLabel setText:NSLocalizedString(@"Terms of Use", @"Link to the Terms of Use")];
+    [self.openSourceLabel setText:NSLocalizedString(@"Open Source Components", @"Link to Open Source Components")];
     [self.subscribeCalendarLabel setText:NSLocalizedString(@"Subscribe to calendar feed", @"Subscribe to calendar feed allows the user to export their calendar events to a 3rd party calendar")];
 }
 
@@ -264,14 +265,18 @@ typedef NS_ENUM(NSInteger, LegalRows) {
         
         NSString *urlAddress = @"";
         
+        if (indexPath.row == TermsRow) {
+            return [[HelmManager shared] present:@"/terms-of-use" withProps:@{} options:@{
+                                                                                          @"modal": @YES,
+                                                                                          @"embedInNavigationController": @YES
+                                                                                          } callback:nil];
+        }
+        
         if (indexPath.row == EULARow) {
             urlAddress = @"http://www.canvaslms.com/policies/end-user-license-agreement";
         }
         if (indexPath.row == PrivacyRow) {
             urlAddress = @"http://www.canvaslms.com/policies/privacy-policy";
-        }
-        if (indexPath.row == TermsRow) {
-            urlAddress = @"http://www.canvaslms.com/policies/terms-of-use";
         }
         
         NSURL *url = [NSURL URLWithString:urlAddress];
@@ -317,8 +322,7 @@ typedef NS_ENUM(NSInteger, LegalRows) {
     [mutableURLStr replaceOccurrencesOfString:@"http://" withString:@"caldav://" options:0 range:NSMakeRange(0, mutableURLStr.length)];
     
     NSURL *caldavURL = [NSURL URLWithString:mutableURLStr];
-    
-    [[UIApplication sharedApplication] openURL:caldavURL];
+    [[UIApplication sharedApplication] openURL:caldavURL options:@{} completionHandler:nil];
 }
 
 @end

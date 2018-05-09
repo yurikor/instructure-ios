@@ -16,31 +16,32 @@
 
 // @flow
 
-import find from 'lodash/find'
-import { type Course } from '../../canvas-api'
-
 export type AppId = 'student' | 'teacher'
 export type App = {
+  appId: AppId,
   filterCourse: (course: Course) => boolean,
 }
 
 const teacher = {
+  appId: 'teacher',
   filterCourse: (course: Course): boolean => {
+    if (course.access_restricted_by_date) return false
     const enrollments = course.enrollments
     if (!enrollments) return false
-    return !!find(enrollments, (e) => {
-      return [
+    return enrollments.some((e) =>
+      [
         'teacher',
         'teacherenrollment',
         'designer',
         'ta',
       ].includes(e.type.toLowerCase())
-    })
+    )
   },
 }
 
 const student = {
-  filterCourse: (course: Course): boolean => true,
+  appId: 'student',
+  filterCourse: (course: Course): boolean => !course.access_restricted_by_date,
 }
 
 let current: App = teacher
@@ -59,4 +60,11 @@ const app = {
   current: (): App => current,
 }
 
-export default (app: *)
+export function isTeacher (): boolean {
+  return app.current().appId === 'teacher'
+}
+export function isStudent (): boolean {
+  return app.current().appId === 'student'
+}
+
+export default app

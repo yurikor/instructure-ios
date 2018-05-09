@@ -38,17 +38,14 @@ type State = {
   size: { width: number, height: number },
 }
 
-export default class URLSubmissionViewer extends Component {
-  props: Props
-  state: State
+export default class URLSubmissionViewer extends Component<Props, State> {
+  state: State = {
+    aspectRatio: 4.0 / 3.0,
+    size: { width: 375, height: 667 },
+  }
 
   constructor (props: Props) {
     super(props)
-
-    this.state = {
-      aspectRatio: 4.0 / 3.0,
-      size: { width: 375, height: 667 },
-    }
     this.fetchImageSize(this.previewImageURL(props))
   }
 
@@ -90,7 +87,7 @@ export default class URLSubmissionViewer extends Component {
 
   render () {
     const previewUnavailable = i18n('Preview Unavailable')
-    const submissionExplaination = i18n('This submission is a URL to an external page. We\'ve included a snapshot of what the page looked like when it was submitted.')
+    const submissionExplanation = i18n('This submission is a URL to an external page. We\'ve included a snapshot of what the page looked like when it was submitted.')
     const preview = i18n('URL Preview Image')
 
     const { submission } = this.props
@@ -125,7 +122,7 @@ export default class URLSubmissionViewer extends Component {
         <Text
           testID='url-submission-viewer.explanation'
         >
-          {submissionExplaination}
+          {submissionExplanation}
         </Text>
         <LinkButton
           testID='url-submission-viewer.url'

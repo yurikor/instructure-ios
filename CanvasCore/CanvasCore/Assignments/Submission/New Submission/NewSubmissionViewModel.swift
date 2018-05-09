@@ -180,8 +180,6 @@ public class NewSubmissionViewModel: NSObject, NewSubmissionViewModelType, NewSu
 }
 
 private func apiPathForFileSubmissions(in session: Session, for assignment: AssignmentProtocol) -> SignalProducer<String, NSError> {
-    let id = assignment.id
-    let courseID = assignment.courseID
     let groupSetID = assignment.groupSetID
 
     let singleSubmissionPath = SignalProducer<String, NSError>(value: "/api/v1/courses/\(assignment.courseID)/assignments/\(assignment.id)/submissions/self/files")
@@ -219,8 +217,8 @@ private func insertBatch(in session: Session, fileTypes: [String], apiPath: Stri
     var batch: FileUploadBatch!
     context.performAndWait {
         batch = FileUploadBatch(session: session, fileTypes: fileTypes, apiPath: apiPath)
-        FileUpload(inContext: context, uploadable: uploadable, path: apiPath, batch: batch)
+        _ = FileUpload(inContext: context, uploadable: uploadable, path: apiPath, batch: batch)
     }
-    context.saveOrRollback()
+    _ = context.saveOrRollback()
     return batch
 }

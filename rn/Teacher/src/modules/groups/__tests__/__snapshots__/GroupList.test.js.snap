@@ -3,18 +3,6 @@
 exports[`GroupList renders empty list 1`] = `
 <Screen
   drawUnderNavBar={false}
-  navBarColor="#fff"
-  navBarStyle="light"
-  rightBarButtons={
-    Array [
-      Object {
-        "action": [Function],
-        "style": "done",
-        "testID": "group-list.done",
-        "title": "Done",
-      },
-    ]
-  }
   title="Red Squadron"
 >
   <View
@@ -110,18 +98,6 @@ exports[`GroupList renders empty list 1`] = `
 exports[`GroupList renders properly 1`] = `
 <Screen
   drawUnderNavBar={false}
-  navBarColor="#fff"
-  navBarStyle="light"
-  rightBarButtons={
-    Array [
-      Object {
-        "action": [Function],
-        "style": "done",
-        "testID": "group-list.done",
-        "title": "Done",
-      },
-    ]
-  }
   title="Red Squadron"
 >
   <View
@@ -145,6 +121,7 @@ exports[`GroupList renders properly 1`] = `
             "bio": "my bio is yuuuuuuuge",
             "id": "1",
             "name": "Donald Trump",
+            "primary_email": "donald@trump.com",
             "short_name": "The Donald",
             "sortable_name": "Mr. President",
           },
@@ -317,11 +294,16 @@ exports[`GroupList renders properly 1`] = `
               </View>
               <View
                 style={
-                  Object {
-                    "flex": 1,
-                    "flexDirection": "column",
-                    "justifyContent": "center",
-                  }
+                  Array [
+                    Object {
+                      "flex": 1,
+                      "flexDirection": "column",
+                      "justifyContent": "center",
+                    },
+                    Object {
+                      "marginLeft": 12,
+                    },
+                  ]
                 }
               >
                 <Text
@@ -342,7 +324,6 @@ exports[`GroupList renders properly 1`] = `
                         Object {
                           "fontWeight": "600",
                         },
-                        undefined,
                       ],
                       Object {
                         "fontFamily": ".SFUIDisplay-semibold",
@@ -365,18 +346,6 @@ exports[`GroupList renders properly 1`] = `
 exports[`GroupList renders without a group 1`] = `
 <Screen
   drawUnderNavBar={false}
-  navBarColor="#fff"
-  navBarStyle="light"
-  rightBarButtons={
-    Array [
-      Object {
-        "action": [Function],
-        "style": "done",
-        "testID": "group-list.done",
-        "title": "Done",
-      },
-    ]
-  }
   title=""
 >
   <View

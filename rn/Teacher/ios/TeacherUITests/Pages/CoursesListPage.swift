@@ -16,6 +16,7 @@
 
 import SoGrey
 import EarlGrey
+import SoSeedySwift
 
 class CoursesListPage {
 
@@ -28,23 +29,23 @@ class CoursesListPage {
     // MARK: Elements
 
     private let feedbackButton = e.selectBy(id: "favorited-course-list.feedback-btn")
-    private let editButton = e.selectBy(id: "favorited-course-list.edit-btn")
+    private let editButton = e.selectBy(id: "dashboard.edit-btn")
     private let headerStarImage = e.selectBy(id: "favorited-course-list.header-star-img")
     private let headerCoursesLabel = e.selectBy(id: "favorited-course-list.header-courses-lbl")
-    private let seeAllCoursesButton = e.selectBy(id: "favorited-course-list.see-all-btn")
-    private let pageView = e.selectBy(id: "favorited-course-list.view")
+    private let seeAllCoursesButton = e.selectBy(id: "dashboard.courses.see-all-btn")
+    private let pageView = e.selectBy(id: "favorited-course-list.view1")
     private let emptyStateWelcomeLabel = e.selectBy(id: "no-courses.welcome-lbl")
     private let emptyStateDescriptionLabel = e.selectBy(id: "no-courses.description-lbl")
     private let emptyStateAddCourseButton = e.selectBy(id: "no-courses.add-courses-btn")
 
     // MARK: - Helpers
 
-    private func courseId(_ course: Course) -> String {
-        return "course-card.kabob-\(course.id)"
-    }
+//    private func courseId(_ course: Course) -> String {
+//        return "course-card.kabob-\(course.id)"
+//    }
 
-    private func courseCard(_ course: Course) -> GREYElementInteraction {
-        return e.selectBy(id: course.courseCode)
+    private func courseCard(_ course: Soseedy_Course) -> GREYInteraction {
+        return e.selectBy(id: "course-\(course.id)")
     }
 
     // MARK: - Assertions
@@ -71,20 +72,20 @@ class CoursesListPage {
         seeAllCoursesButton.assertExists()
     }
 
-    func assertCourseExists(_ course: Course, _ file: StaticString = #file, _ line: UInt = #line) {
+    func assertCourseExists(_ course: Soseedy_Course, _ file: StaticString = #file, _ line: UInt = #line) {
         grey_fromFile(file, line)
-        e.selectBy(id: courseId(course)).assertExists()
+        e.selectBy(id: "course-\(course.id)").assertExists()
     }
 
-    func assertCourseDoesNotExist(_ course: Course, _ file: StaticString = #file, _ line: UInt = #line) {
-        grey_fromFile(file, line)
-        e.selectBy(id: courseId(course)).assertHidden()
-    }
-
-    func assertCourseHidden(_ course: Course, _ file: StaticString = #file, _ line: UInt = #line) {
-        grey_fromFile(file, line)
-        e.selectBy(id: courseId(course)).assertHidden()
-    }
+//    func assertCourseDoesNotExist(_ course: Course, _ file: StaticString = #file, _ line: UInt = #line) {
+//        grey_fromFile(file, line)
+//        e.selectBy(id: courseId(course)).assertHidden()
+//    }
+//
+//    func assertCourseHidden(_ course: Course, _ file: StaticString = #file, _ line: UInt = #line) {
+//        grey_fromFile(file, line)
+//        e.selectBy(id: courseId(course)).assertHidden()
+//    }
 
     // MARK: - UI Actions
 
@@ -102,7 +103,7 @@ class CoursesListPage {
         seeAllCoursesButton.tap()
     }
 
-    func openCourseDetailsPage(_ course: Course, _ file: StaticString = #file, _ line: UInt = #line) {
+    func openCourseDetailsPage(_ course: Soseedy_Course, _ file: StaticString = #file, _ line: UInt = #line) {
         grey_fromFile(file, line)
         courseCard(course).tap()
     }

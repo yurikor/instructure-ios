@@ -33,7 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        Fabric.with([Crashlytics.self])
+        //Fabric.with([Crashlytics.self])
         BuddyBuildSDK.setup()
         
         let notificationSettings = UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
@@ -76,6 +76,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationDidBecomeActive(_ application: UIApplication) {
         AppStoreReview.requestReview()
+
+        if let session = Keymaster.sharedInstance.currentSession {
+            AirwolfAPI.validateSessionAndLogout(session, parentID: session.user.id)
+        }
+    }
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        return route(url)
     }
     
     func application(_ application: UIApplication, handleActionWithIdentifier identifier: String?, for notification: UILocalNotification, withResponseInfo responseInfo: [AnyHashable: Any], completionHandler: @escaping () -> Void) {
@@ -102,6 +110,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
+        return route(url)
+    }
+
+    func route(_ url: URL) -> Bool {
         if url.scheme == "canvas-parent" {
             if let _ = Keymaster.sharedInstance.currentSession {
                 Router.sharedInstance.route(self.topViewController, toURL: url, modal: false)
@@ -110,11 +122,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             } else {
                 // should never get here... should either have a session or a window!
             }
+            
+            return true
         }
-
+        
         return false
     }
-
+    
     fileprivate func routeToRemindable(from notification: UILocalNotification) {
         if let urlString = notification.userInfo?[RemindableActionURLKey] as? String, let url = URL(string: urlString) {
             Router.sharedInstance.route(topViewController, toURL: url, modal: true)

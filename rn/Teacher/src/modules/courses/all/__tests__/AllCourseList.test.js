@@ -14,110 +14,57 @@
 // limitations under the License.
 //
 
-/* @flow */
+/* eslint-disable flowtype/require-valid-file-annotation */
 
-import 'react-native'
+import { shallow } from 'enzyme'
 import React from 'react'
-import { AllCourseList } from '../AllCourseList.js'
-import explore from '../../../../../test/helpers/explore'
-import type { CourseProps } from '../../course-prop-types'
-
-// Note: test renderer must be required after react-native.
-import renderer from 'react-test-renderer'
-
-jest.mock('TouchableHighlight', () => 'TouchableHighlight')
-jest.mock('../../../../routing')
+import { Refreshed } from '../AllCourseList'
 
 const template = {
   ...require('../../../../__templates__/course'),
-  ...require('../../../../__templates__/helm'),
-}
-
-const colors = {
-  '1': '#27B9CD',
-  '2': '#8F3E97',
-  '3': '#8F3E99',
-}
-
-const courses: Array<CourseProps> = [
-  template.course({
-    name: 'Biology 101',
-    course_code: 'BIO 101',
-    short_name: 'BIO 101',
-    id: '1',
-    is_favorite: true,
-  }),
-  template.course({
-    name: 'American Literature Psysicks foobar hello world 401',
-    course_code: 'LIT 401',
-    short_name: 'LIT 401',
-    id: '2',
-    is_favorite: false,
-  }),
-  template.course({
-    name: 'Foobar 102',
-    course_code: 'FOO 102',
-    id: '3',
-    short_name: 'FOO 102',
-    is_favorite: true,
-  }),
-].map(course => ({ ...course, color: colors[course.id] }))
-
-let defaultProps = {
-  navigator: template.navigator(),
-  courses,
-  pending: 0,
-  refresh: jest.fn(),
-  refreshing: false,
 }
 
 describe('AllCourseList', () => {
-  beforeEach(() => jest.resetAllMocks())
+  it('refreshes courses when empty', () => {
+    const refreshCourses = jest.fn()
+    const refreshProps = {
+      courses: [],
+      refreshCourses,
+    }
 
-  it('render', () => {
-    let tree = renderer.create(
-      <AllCourseList {...defaultProps} />
-    ).toJSON()
+    const tree = shallow(<Refreshed {...refreshProps} />)
     expect(tree).toMatchSnapshot()
+    expect(refreshCourses).toHaveBeenCalled()
   })
 
-  it('select course', () => {
-    const course: CourseProps = { ...template.course(), color: '#112233' }
-    const props = {
-      ...defaultProps,
-      courses: [course],
-      navigator: template.navigator({
-        push: jest.fn(),
-      }),
+  it('no refresh when at least one course exists', () => {
+    const refreshCourses = jest.fn()
+    const refreshProps = {
+      courses: [],
+      refreshCourses,
     }
-    let tree = renderer.create(
-      <AllCourseList {...props} />
-    ).toJSON()
+    const course = template.course()
 
-    const courseCard = explore(tree).selectByID(course.course_code) || {}
-    courseCard.props.onPress()
-    expect(props.navigator.show).toHaveBeenCalledWith('/courses/1', { modal: true })
+    const tree = shallow(<Refreshed {...refreshProps} />)
+    expect(tree).toMatchSnapshot()
+    expect(refreshCourses).toHaveBeenCalledTimes(1)
+    expect(tree.refreshing).toBeFalsy()
+    refreshProps.courses[0] = course
+    tree.setProps(refreshProps)
+    expect(refreshCourses).toHaveBeenCalledTimes(1)
   })
 
-  it('open course user prefs', () => {
-    const showModal = jest.fn()
-    const course: CourseProps = { ...template.course(), color: '#112233' }
-    const props = {
-      ...defaultProps,
-      courses: [course],
-      navigator: template.navigator({
-        showModal,
-      }),
+  it('refreshes with new props', () => {
+    const refreshCourses = jest.fn()
+    const refreshProps = {
+      courses: [],
+      refreshCourses,
     }
-    let tree = renderer.create(
-      <AllCourseList {...props} />
-    ).getInstance()
 
-    tree.openUserPreferences(course.id)
-    expect(props.navigator.show).toHaveBeenCalledWith(
-      `/courses/${course.id}/user_preferences`,
-      { modal: true }
-    )
+    let tree = shallow(<Refreshed {...refreshProps} />)
+    expect(tree).toMatchSnapshot()
+    tree.instance().refresh()
+    tree.setProps(refreshProps)
+    expect(refreshCourses).toHaveBeenCalledTimes(2)
   })
 })
-

@@ -14,14 +14,13 @@
 // limitations under the License.
 //
 
-// @flow
+/* eslint-disable flowtype/require-valid-file-annotation */
 
 import 'react-native'
 import React from 'react'
 import SubmissionRow from '../SubmissionRow'
 import type {
   SubmissionDataProps,
-  SubmissionStatusProp,
   GradeProp,
 } from '../submission-prop-types'
 import explore from '../../../../../test/helpers/explore'
@@ -31,7 +30,7 @@ jest
   .mock('TouchableHighlight', () => 'TouchableHighlight')
   .mock('../../../../common/components/Avatar', () => 'Avatar')
 
-const mockSubmission = (status: SubmissionStatusProp = 'none', grade: ?GradeProp = null): SubmissionDataProps => {
+const mockSubmission = (status: SubmissionStatus = 'none', grade: ?GradeProp = null): SubmissionDataProps => {
   return {
     userID: '1',
     avatarURL: 'https://cats.pajamas/',
@@ -71,6 +70,15 @@ test('late graded row renders correctly', () => {
 
 test('submitted ungraded row renders correctly', () => {
   const submission = mockSubmission('submitted', 'ungraded')
+  let tree = renderer.create(
+    <SubmissionRow {...submission} onPress={jest.fn()} />
+  ).toJSON()
+  expect(tree).toMatchSnapshot()
+})
+
+test('submitted not_graded row renders correctly', () => {
+  const submission = mockSubmission('submitted', 'ungraded')
+  submission.gradingType = 'not_graded'
   let tree = renderer.create(
     <SubmissionRow {...submission} onPress={jest.fn()} />
   ).toJSON()

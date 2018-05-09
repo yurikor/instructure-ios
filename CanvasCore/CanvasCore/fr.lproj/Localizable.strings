@@ -1,3 +1,5 @@
+"Inbox" = "Boîte de réception";
+
 /* Error message component with the report id */
 " Error report ID: (reportID)" = " ID du rapport d’erreur : (reportID)";
 
@@ -34,7 +36,6 @@
 
 /* URL submission option */
 "Add Website Address" = "Ajouter une adresse de site internet";
-
 /* Shows the number questions */
 "All %@ Questions" = "Toutes les %@ questions";
 
@@ -44,8 +45,14 @@
 /* all pages segmented control title */
 "All Pages" = "Toutes les pages";
 
-/* Title for push notification pre-authorization alert */
-"Allow Push Notifications?" = "Autoriser les notifications Push ?";
+/* No comment provided by engineer. */
+"All notifications are currently disabled." = "Toutes les notifications sont actuellement désactivées.";
+
+/* No comment provided by engineer. */
+"All notifications are currently enabled." = "Toutes les notifications sont actuellement activées.";
+
+/* No comment provided by engineer. */
+"Allow Notifications in Settings" = "Autoriser les notifications dans les paramètres";
 
 /* label for number of attempts that are allowed */
 "Allowed Attempts" = "Tentatives autorisées";
@@ -86,7 +93,8 @@
 /* Alert title when unable to parse JSON for notification preferences */
 "Can't Display Notification Preferences" = "Affichage des préférences de notification impossible";
 
-/* Cancel button title
+/* Cancel Audio recording.
+   Cancel button title
    Cancel submission option
    Cancel upload */
 "Cancel" = "Annuler";
@@ -119,6 +127,9 @@
 "Choose your answers below" = "Choisissez vos réponses ci-dessous";
 
 /* No comment provided by engineer. */
+"Collapse" = "Réduire";
+
+/* No comment provided by engineer. */
 "Comments" = "Commentaires";
 
 /* File upload completed */
@@ -144,9 +155,6 @@
 
 /* Notification display name for course activities group */
 "Course Activities" = "Activités du cours";
-
-/* Button for creating a note from text selection */
-"Create Note" = "Créer une note";
 
 /* Header label for a screen that customizes a course */
 "Customize" = "Personnaliser";
@@ -237,11 +245,17 @@
 /* No comment provided by engineer. */
 "Error parsing the Roll Call response. Unexpected null value: (k)" = "Erreur d'analyse de la réponse de Roll Call. Valeur null inattendue : (k)";
 
+/* No comment provided by engineer. */
+"Error retrieving tool launch URL" = "Erreur lors de la récupération de l’URL de lancement de l’outil";
+
 /* rollcall status error */
 "Error: No data returned from the rollcall api." = "Erreur : Aucune donnée retournée par l’api rollcall.";
 
 /* Exit button to leave the quiz */
 "Exit" = "Sortir";
+
+/* No comment provided by engineer. */
+"Expand" = "Développer";
 
 /* Error message when the server returns a invalid response */
 "Expected a response in the 200-299 range. Got %@" = "Nous attendions une réponse dans la plage 200-299. Avons reçu %@";
@@ -288,15 +302,15 @@
 /* Hides the question list */
 "Hide Question List" = "Masquer la liste de questions";
 
-/* No comment provided by engineer. */
-"Inbox" = "Boîte de réception";
-
 /* Indigo course color button */
 "Indigo" = "Indigo";
 
 /* Mark student late
    Student is present in class */
 "Late" = "En retard";
+
+/* No comment provided by engineer. */
+"Launch External Tool" = "Lancer l'outil externe";
 
 /* Leave the quiz */
 "Leave" = "Quitter";
@@ -332,9 +346,6 @@
 /* Next button for advancing a quiz */
 "Next" = "Suivant";
 
-/* Title for no button for push notification pre-authorization alert */
-"No" = "Non";
-
 /* Alert title when unable to load communication channels */
 "No Communication Channels Found" = "Aucun canal de communication trouvé";
 
@@ -361,9 +372,6 @@
 
 /* Title for alert showing when a quiz isn't takeable */
 "Not Takeable" = "Ne peut être pris";
-
-/* No comment provided by engineer. */
-"Note..." = "Note...";
 
 /* Error title for push notification registration error */
 "Notification Error" = "Erreur de notification";
@@ -442,10 +450,10 @@
 "Question %@" = "Question %@";
 
 /* state for a question that has been flagged */
-"Question (questionNumber) Flagged" = "Question (questionNumber) marquée";
+"Question (number) Flagged" = "Question (numéro) marquée";
 
 /* state for unflagged question */
-"Question (questionNumber) Unflagged" = "Marquage de la question (questionNumber) retiré";
+"Question (number) Unflagged" = "Question (nombre) non marquée";
 
 /* label for the number of questions */
 "Questions" = "Questions";
@@ -705,10 +713,7 @@
 "Unable to display any notification preferences returned from the server at this time." = "Impossible d'afficher, en ce moment, quelconque préférence de notification retournée du serveur.";
 
 /* Alert message when unable to load communication channels */
-"Unable to load any Communication Channels at this time.  Error: (result.error?.localizedDescription)" = "Impossible de charger un canal de communication pour le moment.  Erreur : (erreur de résultat?.localizedDescription)";
-
-/* Alert message when unable to load notification preferences */
-"Unable to load any notification preferences at this time.  Error: (result.error?.localizedDescription)" = "Impossible de charger des préférences de notification pour le moment.  Erreur : (erreur de résultat?.localizedDescription)";
+"Unable to load any Communication Channels at this time." = "Impossible de charger un canal de communication pour le moment.";
 
 /* Error message when parsing communication preferences */
 "Unable to parse JSON for communication channels" = "Impossible d'analyser JSON pour les canaux de communication";
@@ -758,14 +763,8 @@
 /* Error message for being unable to update a push notification preference */
 "We were not able to update this value with the server" = "Nous n'avons pu mettre cette valeur à jour avec le serveur";
 
-/* Message for push notification pre-authorization alert */
-"Would you like to allow Canvas to send you important notifications about announcements, course, assignments, etc?" = "Désirez-vous permettre à Canvas de vous envoyer des notifications importantes à propos d'annonces, de cours, de travaux assignés, etc... ?";
-
 /* Yellow course color button */
 "Yellow" = "Jaune";
-
-/* Title for yes button for push notification pre-authorization alert */
-"Yes" = "Oui";
 
 /* Description for Yo communication channel */
 "Yo" = "Yo";
@@ -796,4 +795,7 @@
 
 /* File upload in progress */
 "uploading..." = "envoi en cours...";
+
+/* web content failed to load */
+"⚠️ Error Loading Content" = "⚠️ Erreur pendant le chargement du contenu";
 

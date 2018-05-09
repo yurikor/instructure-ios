@@ -15,8 +15,11 @@
 //
 
 // @flow
-import { NativeModules } from 'react-native'
+import { NativeModules, type PushNotificationIOS, Linking } from 'react-native'
 import { route } from './index'
+import SFSafariViewController from 'react-native-sfsafariviewcontroller'
+import { getAuthenticatedSessionURL } from '../canvas-api'
+import { recordRoute } from '../modules/developer-menu/DeveloperMenu'
 
 type ShowOptions = {
   modal: boolean,
@@ -25,17 +28,33 @@ type ShowOptions = {
 }
 
 export type TraitCollectionType = 'compact' | 'regular' | 'unspecified'
-export type TraitCollection = { [scope: string]: { [key: string]: TraitCollectionType} }
+export type TraitCollection = {
+  ['screen' | 'window']: {
+    horizontal: TraitCollectionType,
+    vertical: TraitCollectionType,
+  },
+}
 
 export default class Navigator {
   moduleName = ''
+  isModal = false
 
-  constructor (moduleName: string) {
+  constructor (moduleName: string, options: { [string]: any } = {}) {
     this.moduleName = moduleName
+    // options consists of any option that was passed into show when
+    // routing so we can add other options here as needed
+    this.isModal = options.modal
   }
 
-  show (url: string, options: Object = { modal: false, modalPresentationStyle: 'formsheet' }, additionalProps: Object = {}): void {
+  show (url: string, options: Object = { modal: false, modalPresentationStyle: 'formsheet', deepLink: false }, additionalProps: Object = {}) {
+    recordRoute(url, options, additionalProps)
     const r = route(url, additionalProps)
+    if (!r) {
+      return this.showWebView(url)
+    }
+    if (r.config.showInWebView || (options.deepLink && !r.config.deepLink)) {
+      return this.showWebView(url)
+    }
 
     let canBecomeMaster = false
     if (r.config && r.config.canBecomeMaster) {
@@ -43,34 +62,69 @@ export default class Navigator {
     }
     if (options.modal) {
       const embedInNavigationController = options.embedInNavigationController == null || options.embedInNavigationController
-      this.present(r, { modal: options.modal, modalPresentationStyle: options.modalPresentationStyle || 'formsheet', embedInNavigationController, canBecomeMaster: canBecomeMaster, modalTransitionStyle: options.modalTransitionStyle })
+      return this.present(r, { modal: options.modal, modalPresentationStyle: options.modalPresentationStyle || 'formsheet', embedInNavigationController, canBecomeMaster: canBecomeMaster, modalTransitionStyle: options.modalTransitionStyle })
     } else {
-      this.push(r)
+      return this.push(r)
     }
   }
 
+  async showWebView (url: string) {
+    if (url.startsWith('http') || url.startsWith('https')) {
+      try {
+        let { data: { session_url: authenticatedURL } } = await getAuthenticatedSessionURL(url)
+        SFSafariViewController.open(authenticatedURL)
+      } catch (err) {
+        SFSafariViewController.open(url)
+      }
+    } else {
+      Linking.openURL(url)
+    }
+  }
+
+  replace (url: string, options: Object = { modal: false, modalPresentationStyle: 'formsheet' }, additionalProps: Object = {}) {
+    const r = route(url, additionalProps)
+    if (r) NativeModules.Helm.pushFrom(this.moduleName, r.screen, r.passProps, { ...r.config, replace: true })
+  }
+
   push (route: RouteOptions) {
-    NativeModules.Helm.pushFrom(this.moduleName, route.screen, route.passProps, route.config)
+    return NativeModules.Helm.pushFrom(this.moduleName, route.screen, route.passProps, route.config)
   }
 
   pop () {
-    NativeModules.Helm.popFrom(this.moduleName)
+    return NativeModules.Helm.popFrom(this.moduleName)
   }
 
   present (route: RouteOptions, options: ShowOptions) {
-    NativeModules.Helm.present(route.screen, route.passProps, options)
+    return NativeModules.Helm.present(route.screen, route.passProps, options)
   }
 
-  async dismiss () {
-    await NativeModules.Helm.dismiss({})
+  dismiss () {
+    return NativeModules.Helm.dismiss({})
   }
 
   dismissAllModals () {
-    NativeModules.Helm.dismissAllModals({})
+    return NativeModules.Helm.dismissAllModals({})
   }
 
   traitCollection (handler: (traits: TraitCollection) => void): any {
     return NativeModules.Helm.traitCollection(this.moduleName, handler)
   }
-}
 
+  showNotification (notification: PushNotificationIOS) {
+    const data = notification.getData()
+    if (data && data.html_url) {
+      this.show(data.html_url, {
+        modal: true,
+        modalPresentationStyle: 'fullscreen',
+        embedInNavigationController: true,
+        deepLink: true,
+      }, {
+        forceRefresh: true,
+        pushNotification: {
+          alert: notification.getAlert(),
+          data,
+        },
+      })
+    }
+  }
+}

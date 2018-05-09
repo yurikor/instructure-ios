@@ -28,6 +28,7 @@ import CourseActions from '../courses/actions'
 import GroupActions from '../groups/actions'
 import Row from '../../common/components/rows/Row'
 import SectionHeader from '../../common/components/rows/SectionHeader'
+import App from '../app'
 
 type CourseSelectSection = {
   key: number,
@@ -49,12 +50,7 @@ type CourseSelectProps = {
   onSelect: (course: Course) => void,
 } & CourseSelectDataProps
 
-export class CourseSelect extends PureComponent {
-  props: CourseSelectProps
-
-  goBack = () => {
-    this.props.navigator.pop()
-  }
+export class CourseSelect extends PureComponent<CourseSelectProps> {
 
   onCourseSelect = (course: Course) => {
     this.props.onSelect(course)
@@ -78,23 +74,21 @@ export class CourseSelect extends PureComponent {
               border={section.key === 0 ? 'top' : 'none'} />
   }
 
+  keyExtractor (item: Course) {
+    return item.id
+  }
+
   render () {
     return (
       <Screen
         title={i18n('Select a Course')}
-        navBarColor='#fff'
-        navBarStyle='light'
         drawUnderNavBar
-        leftBarButtons={[{
-          title: i18n('Cancel'),
-          testID: 'inbox.course-select.cancel',
-          action: this.goBack,
-        }]}
       >
         <SectionList
           sections={this.props.sections}
           renderItem={this.renderItem}
           renderSectionHeader={this.renderSectionHeader}
+          keyExtractor={this.keyExtractor}
         />
       </Screen>
     )
@@ -116,6 +110,7 @@ const Refreshed = refresh(
 export function mapStateToProps (state: AppState): CourseSelectDataProps {
   let courses = Object.keys(state.entities.courses)
     .map(id => state.entities.courses[id].course)
+    .filter(App.current().filterCourse)
   let pending = !!state.favoriteCourses.pending
 
   const favoriteCourses = courses.filter((course) => course.is_favorite)
@@ -138,4 +133,4 @@ export function mapStateToProps (state: AppState): CourseSelectDataProps {
 }
 
 const Connected = connect(mapStateToProps, { ...CourseActions, ...GroupActions })(Refreshed)
-export default (Connected: PureComponent<any, CourseSelectDataProps, any>)
+export default (Connected: PureComponent<CourseSelectDataProps, any>)

@@ -205,9 +205,6 @@
 /* (No Comment) */
 "All members" = "Alle leden";
 
-/* Allow Notifications in Settings */
-"Allow Notifications in Settings" = "Berichtgevingen toestaan in instellingen";
-
 /* (No Comment) */
 "An unknown error occurred" = "An unknown error occurred";
 
@@ -239,7 +236,7 @@
    Assignment module item type */
 "Assignment" = "Opdracht";
 
-/* Title for Assignments view controller */
+/* (No Comment) */
 "Assignments" = "Opdrachten";
 
 /* (No Comment) */
@@ -275,6 +272,9 @@
 /* Calendar landing page title
    Calendar page title */
 "Calendar" = "Kalender";
+
+/* No comment provided by engineer. */
+"Calendar Event" = "Gebeurtenis op kalender";
 
 /* (No Comment) */
 "Can't load tool" = "Kan hulpmiddel niet loaden";
@@ -384,8 +384,7 @@
 /* (No Comment) */
 "Course Syllabus" = "Cursus Syllabus";
 
-/* Courses landing page title
-   Courses page title */
+/* Courses landing page title */
 "Courses" = "Cursussen";
 
 /* (No Comment) */
@@ -402,6 +401,9 @@
 
 /* (No Comment) */
 "Customize" = "Aanpassen";
+
+/* dashboard page title */
+"Dashboard" = "Dashboard";
 
 /* (No Comment) */
 "Delete" = "Verwijderen";
@@ -481,10 +483,10 @@
 /* (No Comment) */
 "Edit" = "Bewerken";
 
-/* Edit course list title */
+/* (No Comment) */
 "Edit Course List" = "Cursuslijst bewerken";
 
-/* Edit group list title */
+/* (No Comment) */
 "Edit Group List" = "Groepslijst bewerken";
 
 /* (No Comment) */
@@ -496,7 +498,7 @@
 /* (No Comment) */
 "Email" = "E-mail";
 
-/* Prompt asking user to enable push notifications */
+/* (No Comment) */
 "Enable Push Notifications" = "Push berichtgevingen inschakelen";
 
 /* (No Comment) */
@@ -601,19 +603,19 @@
 /* (No Comment) */
 "Graded discussion. %g points possible." = "Beoordeelde discussie. %g punten mogelijk.";
 
-/* Title for Grades view controller */
+/* (No Comment) */
 "Grades" = "Cijfers";
 
 /* (No Comment) */
 "Group conversation" = "Groepsgesprek";
 
-/* Groups page title */
+/* (No Comment) */
 "Groups" = "Groepen";
 
 /* (No Comment) */
 "Help" = "Help";
 
-/* Accessibility label for toggling grades to hidden */
+/* (No Comment) */
 "Hide Grades" = "Cijfers verbergen";
 
 /* (No Comment) */
@@ -667,7 +669,7 @@
 /* (No Comment) */
 "Large file" = "Groot bestand";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Later" = "Later";
 
 /* (No Comment) */
@@ -862,7 +864,7 @@
 /* Nothing to see here. */
 "Nothing to see here." = "Niets te zien hier.";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Notification" = "Berichtgeving";
 
 /* Settings entry title for Notification Preferences */
@@ -955,7 +957,7 @@
 /* (No Comment) */
 "Privacy Policy" = "Privacybeleid";
 
-/* (No Comment) */
+/* No comment provided by engineer. */
 "Profile" = "Profiel";
 
 /* Quiz module item type */
@@ -1033,9 +1035,6 @@
 /* (No Comment) */
 "Search for recipients" = "Geadresseerden zoeken";
 
-/* Placeholder text for search bar on assignments page */
-"Search here..." = "Hier zoeken...";
-
 /* No comment provided by engineer. */
 "Select Option" = "Selecteer optie";
 
@@ -1066,7 +1065,7 @@
 /* (No Comment) */
 "Settings" = "Instellingen";
 
-/* Accessibility label for toggling grades to visible */
+/* (No Comment) */
 "Show Grades" = "Cijfers tonen";
 
 /* (No Comment) */
@@ -1209,6 +1208,9 @@
 /* (No Comment) */
 "Text entry" = "Tekst invoer";
 
+/* No comment provided by engineer. */
+"That page has been disabled for this course" = "Die pagina is uitgeschakeld voor deze cursus";
+
 /* (No Comment) */
 "The recipients could not be added. Please try again. (%@)" = "De geadresseerden konden niet worden toegevoegd. Probeer het nogmaals (%@)";
 
@@ -1308,7 +1310,7 @@
 /* Label read aloud to describe module item type */
 "Type: %@" = "Type: %@";
 
-/* Notification over status bar that displays when not connected to the internet. */
+/* (No Comment) */
 "Uh-oh! No Internet Connection" = "O nee! Geen internetverbinding";
 
 /* (No Comment) */
@@ -1320,10 +1322,10 @@
 /* (No Comment) */
 "Unable to upload to server" = "Kan niet naar server uploaden";
 
-/* Grade unavailable */
+/* (No Comment) */
 "Unavailable" = "Niet beschikbaar";
 
-/* Title for grade button when no grade is present */
+/* (No Comment) */
 "Ungraded" = "Niet beoordeeld";
 
 /* (No Comment) */
@@ -1371,7 +1373,7 @@
 /* (No Comment) */
 "Video error" = "Fout in video";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "View" = "Bekijken";
 
 /* (No Comment) */

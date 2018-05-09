@@ -37,7 +37,7 @@ import Screen from '../../../routing/Screen'
 import Navigator from '../../../routing/Navigator'
 import colors from '../../../common/colors'
 import { alertError } from '../../../redux/middleware/error-handler'
-import ModalActivityIndicator from '../../../common/components/ModalActivityIndicator'
+import ModalOverlay from '../../../common/components/ModalOverlay'
 
 const HapticFeedback = NativeModules.HapticFeedback
 
@@ -55,25 +55,16 @@ type Props = {
   course: Course,
   color: string,
   updateCourseColor: (string, string) => void,
-  updateCourse: (Course, Course) => Course,
+  updateCourseNickname: (Course, string) => Course,
   pending: number,
   error: ?string,
 } & RefreshProps
 
-export class UserCoursePreferences extends Component {
-  props: Props
-  state: any
-
-  constructor (props: Props) {
-    super(props)
-
-    const { width } = Dimensions.get('window')
-
-    this.state = {
-      name: this.props.course ? this.props.course.name : '',
-      pending: false,
-      width,
-    }
+export class UserCoursePreferences extends Component<Props, any> {
+  state = {
+    name: this.props.course ? this.props.course.name : '',
+    pending: false,
+    width: Dimensions.get('window').width,
   }
 
   onLayout = (event: any) => {
@@ -112,7 +103,7 @@ export class UserCoursePreferences extends Component {
   dismiss = () => {
     if (this.props.course.name !== this.state.name) {
       this.setState({ pending: true })
-      this.props.updateCourse(this.course(), this.props.course)
+      this.props.updateCourseNickname(this.props.course, this.state.name)
     } else {
       this.props.navigator.dismiss()
     }
@@ -155,7 +146,7 @@ export class UserCoursePreferences extends Component {
 
   _renderComponent () {
     return (<View style={{ flex: 1 }} onLayout={this.onLayout}>
-          <ModalActivityIndicator text={i18n('Saving')} visible={this.state.pending} />
+          <ModalOverlay text={i18n('Saving')} visible={this.state.pending} />
           <RefreshableScrollView
             style={{ flex: 1 }}
             refreshing={this.props.refreshing}
@@ -211,7 +202,6 @@ export class UserCoursePreferences extends Component {
         title={i18n('Customize Course')}
         subtitle={this.state.name}
         drawUnderNavBar={false}
-        navBarStyle='light'
         navBarButtonColor={colors.link}
         navBarTitleColor={colors.darkText}
         navBarSubtitleColor={this.props.color}
@@ -221,6 +211,7 @@ export class UserCoursePreferences extends Component {
           testID: 'done_button',
           action: this.dismiss,
         }]}
+        showDismissButton={false}
       >
       { this._renderComponent() }
       </Screen>

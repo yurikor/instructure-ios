@@ -17,18 +17,17 @@
 /* @flow */
 
 import api from '../apis/index'
-import { getSession, setSession } from '../session'
-
-let client = {
-  get: jest.fn(() => Promise.resolve()),
-  post: jest.fn(() => Promise.resolve()),
-}
+import { getSession, setSession, getSessionUnsafe } from '../session'
+import { default as httpClient, isAbort, httpCache } from './httpClient'
 
 const moduleExports = {
   default: api,
-  httpClient: () => client,
+  httpClient,
+  httpCache,
+  isAbort,
   getSession,
   setSession,
+  getSessionUnsafe,
 }
 
 Object.keys(api).forEach((functionName) => {

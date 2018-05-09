@@ -17,7 +17,7 @@
     
 
 #import <CanvasKit1/CanvasKit1.h>
-#import <CanvasKit1/CKAlertViewWithBlocks.h>
+#import "UIAlertController+TechDebt.h"
 #import <CanvasKit/CKIConversationRecipient.h>
 #import "CBIPeopleDetailViewController.h"
 #import "CBIPeopleViewModel.h"
@@ -25,11 +25,13 @@
 #import "UIView+Circular.h"
 @import CanvasKeymaster;
 #import "CBILog.h"
+@import CanvasCore;
 
 @interface CBIPeopleDetailViewController () <UIGestureRecognizerDelegate>
 @property (nonatomic, weak) IBOutlet UIImageView *avatarImageView;
 @property (nonatomic, weak) IBOutlet UILabel *nameLabel;
 @property (nonatomic, weak) IBOutlet UIButton *messageButton;
+@property (nonatomic) PageViewEventLoggerLegacySupport * pageViewEventLog;
 @end
 
 @implementation CBIPeopleDetailViewController
@@ -37,6 +39,9 @@
 - (id)init
 {
     self = [[UIStoryboard storyboardWithName:@"CBIPeopleDetail" bundle:[NSBundle bundleForClass:[self class]]] instantiateInitialViewController];
+    if(self) {
+        _pageViewEventLog = [PageViewEventLoggerLegacySupport new];
+    }
     return self;
 }
 
@@ -54,6 +59,16 @@
     doubleTwoFingerTap.numberOfTouchesRequired = 2;
     
     [self.view addGestureRecognizer:doubleTwoFingerTap];
+}
+
+-(void) viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self.pageViewEventLog start];
+}
+
+-(void) viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self.pageViewEventLog stopWithEventName:[self.viewModel.model path]];
 }
 
 - (IBAction)sendMessagePressed
@@ -99,15 +114,14 @@
     if (masqueradeAs.length > 0) {
         [[TheKeymaster masqueradeAsUserWithID:masqueradeAs] subscribeNext:^(id client) {
             DDLogVerbose(@"masqueradeAsUserSuccess : %@", [CKIClient currentClient].currentUser.id);
-            CKAlertViewWithBlocks *alert = [[CKAlertViewWithBlocks alloc] initWithTitle:NSLocalizedString(@"Success!", @"Masquerade success title") message:[NSString stringWithFormat:NSLocalizedString(@"You are now masquerading as %@. To Stop Masquerading go to your Profile.", @"Masquerade success message"), [CKIClient currentClient].currentUser.name]];
-            [alert addCancelButtonWithTitle:NSLocalizedString(@"OK", nil)];
-            [alert show];
+            NSString *title = NSLocalizedString(@"Success!", @"Masquerade success title");
+            NSString *message = [NSString stringWithFormat:NSLocalizedString(@"You are now masquerading as %@. To Stop Masquerading go to your Profile.", @"Masquerade success message"), [CKIClient currentClient].currentUser.name];
+            [UIAlertController showAlertWithTitle:title message:message];
         } error:^(NSError *error) {
             DDLogVerbose(@"masqueradeAsUserError : %@", [error localizedDescription]);
-            
-            CKAlertViewWithBlocks *alert = [[CKAlertViewWithBlocks alloc] initWithTitle:NSLocalizedString(@"Oops!", @"Title for an error alert") message:NSLocalizedString(@"You don't have permission to masquerade as this user or there is no user with that ID", @"Masquerade error message")];
-            [alert addCancelButtonWithTitle:NSLocalizedString(@"OK", nil)];
-            [alert show];
+            NSString *title = NSLocalizedString(@"Oops!", @"Title for an error alert");
+            NSString *message = NSLocalizedString(@"You don't have permission to masquerade as this user or there is no user with that ID", @"Masquerade error message");
+            [UIAlertController showAlertWithTitle:title message:message];
         }];
     }
 }

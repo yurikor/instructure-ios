@@ -20,6 +20,7 @@ import { Reducer, Action, combineReducers } from 'redux'
 import { handleActions } from 'redux-actions'
 import CourseListActions, { UPDATE_COURSE_DETAILS_SELECTED_TAB_SELECTED_ROW_ACTION } from './actions'
 import CourseSettingsActions from './settings/actions'
+import EnrollmentsActions from '../enrollments/actions'
 import handleAsync from '../../utils/handleAsync'
 import { parseErrorMessage } from '../../redux/middleware/error-handler'
 import groupCustomColors from '../../utils/group-custom-colors'
@@ -32,7 +33,6 @@ import { refs as discussions } from '../discussions/reducer'
 import { refs as announcements } from '../announcements/reducer'
 import attendanceTool from '../external-tools/attendance-tool-reducer'
 import groups from '../groups/group-refs-reducer'
-import { refs as pages } from '../pages/reducer'
 import { refs as gradingPeriods } from '../assignments/grading-periods-reducer'
 
 // dummy's to appease combineReducers
@@ -41,6 +41,7 @@ const color = (state) => (state || '#FFFFFF00')
 const pending = (state) => (state || 0)
 const error = (state) => (state || null)
 const enabledFeatures = (state) => (state || [])
+const permissions = (state) => (state || {})
 
 const courseContents: Reducer<CourseState, Action> = combineReducers({
   course,
@@ -56,12 +57,11 @@ const courseContents: Reducer<CourseState, Action> = combineReducers({
   announcements,
   groups,
   attendanceTool,
-  pages,
   enabledFeatures,
   gradingPeriods,
+  permissions,
 })
-
-const { refreshCourses, updateCourseColor, getCourseEnabledFeatures } = CourseListActions
+const { refreshCourses, refreshCourse, updateCourseColor, getCourseEnabledFeatures, getCoursePermissions, updateCourseNickname } = CourseListActions
 const { updateCourse } = CourseSettingsActions
 
 export const defaultState: { [courseID: string]: CourseState & CourseContentState } = {}
@@ -75,14 +75,14 @@ const emptyCourseState: CourseContentState = {
   announcements: { pending: 0, refs: [] },
   groups: { pending: 0, refs: [] },
   attendanceTool: { pending: 0 },
-  pages: { pending: 0, refs: [] },
   enabledFeatures: [],
   gradingPeriods: { pending: 0, refs: [] },
+  permissions: null,
 }
 
 export const normalizeCourse = (course: Course, colors: { [courseId: string]: string } = {}, prevState: CourseContentState = emptyCourseState): CourseState => {
   const { id } = course
-  const color = colors[(id || 'none')] || '#ffc100'
+  const color = colors[id] || '#aaa'
   return {
     ...prevState,
     course,
@@ -149,10 +149,12 @@ const coursesData: Reducer<CoursesState, any> = handleActions({
       }
     },
     resolved: (state, { result, course }) => {
+      let originalName = result.data.original_name || result.data.name
       return {
         ...state,
         [course.id]: {
           ...state[course.id],
+          course: { ...course, name: result.data.name, original_name: originalName },
           pending: state[course.id].pending - 1,
           error: null,
         },
@@ -166,6 +168,43 @@ const coursesData: Reducer<CoursesState, any> = handleActions({
           course: oldCourse,
           error: parseErrorMessage(error),
           pending: state[oldCourse.id].pending - 1,
+        },
+      }
+    },
+  }),
+  [updateCourseNickname.toString()]: handleAsync({
+    pending: (state, { course }) => {
+      return {
+        ...state,
+        [course.id]: {
+          ...state[course.id],
+          pending: state[course.id].pending + 1,
+          error: null,
+        },
+      }
+    },
+    resolved: (state, { result, course, nickname }) => {
+      let courseState = state[course.id] || {}
+      course = { ...courseState.course || {} }
+      course.name = nickname
+      course.original_name = result.data.name
+      return {
+        ...state,
+        [course.id]: {
+          ...courseState,
+          course,
+          pending: state[course.id].pending - 1,
+          error: null,
+        },
+      }
+    },
+    rejected: (state, { course, error }) => {
+      return {
+        ...state,
+        [course.id]: {
+          ...state[course.id],
+          pending: state[course.id].pending - 1,
+          error: parseErrorMessage(error),
         },
       }
     },
@@ -201,12 +240,56 @@ const coursesData: Reducer<CoursesState, any> = handleActions({
       }
     },
   }),
+  [getCoursePermissions.toString()]: handleAsync({
+    resolved: (state, { result, courseID }) => {
+      return {
+        ...state,
+        [courseID]: {
+          ...state[courseID],
+          permissions: result.data,
+        },
+      }
+    },
+  }),
+  [EnrollmentsActions.refreshUserEnrollments.toString()]: handleAsync({
+    resolved: (state, { result }) => {
+      let enrollments = result.data
+      if (!enrollments) return state
+
+      return enrollments.reduce((nextState, enrollment) => {
+        let courseID = enrollment.course_id
+        // it's possible for this call to happen before courses are available
+        let course = nextState[courseID] || courseContents(undefined, {})
+        let refs = new Set(course && course.enrollments && course.enrollments.refs || [])
+        refs.add(enrollment.id)
+        nextState[courseID] = {
+          ...course,
+          enrollments: {
+            ...course.enrollments,
+            refs: [...refs],
+          },
+        }
+        return nextState
+      }, { ...state })
+    },
+  }),
+  [refreshCourse.toString()]: handleAsync({
+    resolved: (state, { result, courseID }) => {
+      return {
+        ...state,
+        [courseID]: {
+          ...state[courseID],
+          permissions: { ...(state[courseID] && state[courseID].permissions || {}), ...result.data.permissions },
+        },
+      }
+    },
+  }),
 }, defaultState)
 
 export function courses (state: CoursesState = defaultState, action: Action): CoursesState {
   let newState = state
-  if (action.payload && action.payload.courseID) {
-    const courseID = action.payload.courseID
+  if (action.payload && (action.payload.courseID || action.payload.context === 'courses' && action.payload.contextID)) {
+    const courseID = action.payload.courseID || action.payload.contextID
     const currentCourseState: CourseState = state[courseID]
     const courseState = courseContents(currentCourseState, action)
     newState = {

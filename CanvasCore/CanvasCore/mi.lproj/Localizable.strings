@@ -1,3 +1,5 @@
+"Inbox" = "Pouakauru";
+
 /* Error message component with the report id */
 " Error report ID: (reportID)" = " Rīpoata hapa ID: (reportID)";
 
@@ -44,8 +46,14 @@
 /* all pages segmented control title */
 "All Pages" = "Whārangi Katoa";
 
-/* Title for push notification pre-authorization alert */
-"Allow Push Notifications?" = "Tukua Whakamōhiotanga Pana?";
+/* No comment provided by engineer. */
+"All notifications are currently disabled." = "Kua monokia ngā whakamōhiotanga katoa i tēnei wā.";
+
+/* No comment provided by engineer. */
+"All notifications are currently enabled." = "Kua whakahohehia ngā whakamōhiotanga katoa i tēnei wā.";
+
+/* No comment provided by engineer. */
+"Allow Notifications in Settings" = "Tukua Ngā Whakamōhiotanga i roto i Tautuhinga";
 
 /* label for number of attempts that are allowed */
 "Allowed Attempts" = "Ngā tarai e whakaaetia ana";
@@ -86,7 +94,8 @@
 /* Alert title when unable to parse JSON for notification preferences */
 "Can't Display Notification Preferences" = "Kāore e taea te Whakaatu Manakohanga Whakamōhiotanga";
 
-/* Cancel button title
+/* Cancel Audio recording.
+   Cancel button title
    Cancel submission option
    Cancel upload */
 "Cancel" = "Whakakore";
@@ -119,6 +128,9 @@
 "Choose your answers below" = "Whiriwhiri ō whakautu i raro";
 
 /* No comment provided by engineer. */
+"Collapse" = "Hinga";
+
+/* No comment provided by engineer. */
 "Comments" = "Ngā kōrero";
 
 /* File upload completed */
@@ -144,9 +156,6 @@
 
 /* Notification display name for course activities group */
 "Course Activities" = "Ngā mahi ākoranga";
-
-/* Button for creating a note from text selection */
-"Create Note" = "Waihanga Tuhipoka";
 
 /* Header label for a screen that customizes a course */
 "Customize" = "Whakaritea";
@@ -237,11 +246,17 @@
 /* No comment provided by engineer. */
 "Error parsing the Roll Call response. Unexpected null value: (k)" = "Hapa e poroporo ana te whakautu a te Roll Call Uarakore kaore e tūmanakohia (k)";
 
+/* No comment provided by engineer. */
+"Error retrieving tool launch URL" = "He hapa i te wā e tiki ana i te taputapu whakarewatanga URL";
+
 /* rollcall status error */
 "Error: No data returned from the rollcall api." = "Hapa: Kaore he raraunga i whakahokia mai i rollcall";
 
 /* Exit button to leave the quiz */
 "Exit" = "Puta";
+
+/* No comment provided by engineer. */
+"Expand" = "Whakawhānui";
 
 /* Error message when the server returns a invalid response */
 "Expected a response in the 200-299 range. Got %@" = "Te whakahoki i tūmanakohia i roto i te  200-299 tawhititanga. I whiwhia %@";
@@ -288,15 +303,15 @@
 /* Hides the question list */
 "Hide Question List" = "Huna Rārangi Pātai";
 
-/* No comment provided by engineer. */
-"Inbox" = "Pouakaroto";
-
 /* Indigo course color button */
 "Indigo" = "Indigo";
 
 /* Mark student late
    Student is present in class */
 "Late" = "Tūreiti";
+
+/* No comment provided by engineer. */
+"Launch External Tool" = "Whakarewa Taputapu Waho";
 
 /* Leave the quiz */
 "Leave" = "Wehe atu";
@@ -332,9 +347,6 @@
 /* Next button for advancing a quiz */
 "Next" = "E haere ake nei";
 
-/* Title for no button for push notification pre-authorization alert */
-"No" = "Kāo";
-
 /* Alert title when unable to load communication channels */
 "No Communication Channels Found" = "Kāore he Teihana Kōrero Kitea";
 
@@ -361,9 +373,6 @@
 
 /* Title for alert showing when a quiz isn't takeable */
 "Not Takeable" = "e kore e taaketia ana";
-
-/* No comment provided by engineer. */
-"Note..." = "Mōhio ...";
 
 /* Error title for push notification registration error */
 "Notification Error" = "Hapa whakamōhiotanga";
@@ -442,10 +451,10 @@
 "Question %@" = "Pātai %@";
 
 /* state for a question that has been flagged */
-"Question (questionNumber) Flagged" = "Pātai (questionNumber) Kua tohua";
+"Question (number) Flagged" = "Pātai (nama) Kua tohua";
 
 /* state for unflagged question */
-"Question (questionNumber) Unflagged" = "Pātai (questionNumber) Kaore i tohua";
+"Question (number) Unflagged" = "Pātai (nama) Kaore i tohua";
 
 /* label for the number of questions */
 "Questions" = "Ngā pātai";
@@ -705,10 +714,7 @@
 "Unable to display any notification preferences returned from the server at this time." = "Kāore e taea te whakaatu i tetahi manakohanga whakamōhiotanga hoki i te tūmau i tenei wa.";
 
 /* Alert message when unable to load communication channels */
-"Unable to load any Communication Channels at this time.  Error: (result.error?.localizedDescription)" = "Kaore e taea te uta Awakeri Kōrero i tēnei wā.  Hapa: (hua.hapa?.localizedDescription)";
-
-/* Alert message when unable to load notification preferences */
-"Unable to load any notification preferences at this time.  Error: (result.error?.localizedDescription)" = "Kaore e taea te uta ngā whakamōhiotanga manakohanga i tēnei wā.  Hapa: (hua.hapar?.localizedDescription)";
+"Unable to load any Communication Channels at this time." = "Kaore e taea te uta Awakeri Kōrero i tēnei wā.";
 
 /* Error message when parsing communication preferences */
 "Unable to parse JSON for communication channels" = "Kaore i taea te porporo JSON mo ngā awakeri kōrero";
@@ -758,14 +764,8 @@
 /* Error message for being unable to update a push notification preference */
 "We were not able to update this value with the server" = "kihai i taea e ki te whakahōu i tenei uara ki te tūmau tatou";
 
-/* Message for push notification pre-authorization alert */
-"Would you like to allow Canvas to send you important notifications about announcements, course, assignments, etc?" = "E rite koe ki te tuku Canvas ki tonoa koutou whakamōhiotanga nui e pā ana ki fanongonongó, akoranga, mau ohipa, etc?";
-
 /* Yellow course color button */
 "Yellow" = "Kōwhai";
-
-/* Title for yes button for push notification pre-authorization alert */
-"Yes" = "Āe";
 
 /* Description for Yo communication channel */
 "Yo" = "Yo";
@@ -796,4 +796,7 @@
 
 /* File upload in progress */
 "uploading..." = "E tukuake ana...";
+
+/* web content failed to load */
+"⚠️ Error Loading Content" = "⚠️ He hapa i te wā e uta ana Ihirangi";
 

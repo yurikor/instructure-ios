@@ -14,6 +14,7 @@
 // limitations under the License.
 //
 
+
 #import <Foundation/Foundation.h>
 
 //! Project version number for CanvasKeymaster
@@ -26,6 +27,8 @@ FOUNDATION_EXPORT const unsigned char CanvasKeymasterVersionString[];
 
 #import <CanvasKeymaster/CKMDomainPickerViewController.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @import CanvasKit;
 
 @class CanvasKeymaster;
@@ -34,7 +37,8 @@ FOUNDATION_EXPORT const unsigned char CanvasKeymasterVersionString[];
 @property (nonatomic, readonly) NSString *appNameForMobileVerify;
 @property (nonatomic, readonly) UIView *backgroundViewForDomainPicker;
 @property (nonatomic, readonly) UIImage *logoForDomainPicker;
-@property (nonatomic, readonly) NSString *logFilePath;
+@property (nonatomic, readonly) UIImage *fullLogoForDomainPicker;
+@property (nonatomic, readonly, nullable) NSString *logFilePath;
 @end
 
 @protocol CKMAnalyticsProvider
@@ -59,6 +63,11 @@ FOUNDATION_EXPORT const unsigned char CanvasKeymasterVersionString[];
 @property (nonatomic, readonly) RACSignal<UIViewController *> *signalForLogout;
 
 /**
+    Signal for "can't login because we have more than one logged in user"
+ */
+@property (nonatomic, readonly) RACSignal<UIViewController *> *signalForCannotLoginAutomatically;
+
+/**
  If set to YES, branding information is fetches as part of the login process.
  Defaults to NO
  */
@@ -69,10 +78,12 @@ FOUNDATION_EXPORT const unsigned char CanvasKeymasterVersionString[];
  `signalForCurrentClient`) or nil if not logged
  in
  */
-@property (nonatomic, readonly) CKIClient *currentClient;
+@property (nonatomic, readonly, nullable) CKIClient *currentClient;
 
 
 @property (nonatomic, readonly) NSString *logFilePath;
+
+@property (nonatomic, readonly) NSInteger numberOfClients;
 
 /**
  Logout
@@ -101,23 +112,25 @@ FOUNDATION_EXPORT const unsigned char CanvasKeymasterVersionString[];
 
 - (void)resetKeymasterForTesting;
 
+- (CKIClient *)clientWithMobileVerifiedDetails:(NSDictionary *)details accountDomain:(nullable CKIAccountDomain *)domain;
+
+- (void)loginWithMobileVerifyDetails:(NSDictionary *)details;
+
 @end
 
 @interface CKIClient (CanvasKeymaster)
 + (instancetype)currentClient;
 @end
 
+NS_ASSUME_NONNULL_END
 
 #define TheKeymaster ([CanvasKeymaster theKeymaster])
 
-
 #import <CanvasKeymaster/CKMMultiUserTableViewController.h>
 #import <CanvasKeymaster/CKMDomainPickerViewController.h>
-#import <CanvasKeymaster/CKMDomainSuggestionTableViewCell.h>
 #import <CanvasKeymaster/CKMLocationManager.h>
 #import <CanvasKeymaster/SupportTicketViewController.h>
 #import <CanvasKeymaster/CKMDomainSuggestionTableViewController.h>
-#import <CanvasKeymaster/CKMSchool.h>
 #import <CanvasKeymaster/ImpactTableViewController.h>
 #import <CanvasKeymaster/CLLocation+CKMDistance.h>
 #import <CanvasKeymaster/SupportTicketManager.h>

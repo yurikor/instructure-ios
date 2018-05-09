@@ -18,12 +18,10 @@
 
 #import <CanvasKit1/CanvasKit1.h>
 #import <CanvasKit1/CKActionSheetWithBlocks.h>
-#import <CanvasKit1/CKAlertViewWithBlocks.h>
 #import <CanvasKit1/NSFileManager+CKAdditions.h>
 
 #import "ProfileViewController.h"
 
-#import "FolderViewController.h"
 #import "AboutViewController.h"
 #import "UIImage+ImageEffects.h"
 #import "AFHTTPAvatarImageResponseSerializer.h"
@@ -33,7 +31,7 @@
 #import "CKIUser+SwiftCompatibility.h"
 #import "CKCanvasAPI+CurrentAPI.h"
 #import "Analytics.h"
-#import "LTIViewController.h"
+#import "UIAlertController+TechDebt.h"
 
 @import CanvasCore;
 @import CanvasKit;
@@ -57,8 +55,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *emailLabel;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *nameLabelVerticalConstraint;
 @property (weak, nonatomic) IBOutlet UILabel *versionLabel;
-
-@property (weak, nonatomic) ProfileContentViewController *content;
 
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingIndicator;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *headerHeightContraint;
@@ -143,31 +139,7 @@ CGFloat square(CGFloat x){return x*x;}
     if (! self.user) {
         self.user = self.canvasAPI.user;
     }
-    
-    [TheKeymaster.currentClient.authSession.enrollmentsDataSource getGaugeLTILaunchURLInSession:TheKeymaster.currentClient.authSession completion:^( NSURL * _Nullable url) {
-        if (url != nil) {
-            self.content.showGauge = YES;
-            self.gaugeLTIURL = url;
-            [self.content.tableView reloadData];
-        }
-    }];
-    
-    BOOL masquerading = [CKIClient currentClient].actAsUserID != nil;
-    if (masquerading) {
-        UIBarButtonItem *masq = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Stop Masquerading", @"Button title for stopping masquerading; when a privileged user becomes another user in the system") style:UIBarButtonItemStylePlain target:self action:@selector(stopMasquerade)];
-        self.navigationItem.rightBarButtonItem = masq;
-    }
-#if TARGET_IPHONE_SIMULATOR
-    else {
-        UIBarButtonItem *masq = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Masquerade", @"Button title for beginning masquerading") style:UIBarButtonItemStylePlain target:self action:@selector(masqueradeAsUser)];
-        self.navigationItem.rightBarButtonItem = masq;
-    }
-#else
-    else {
-        self.navigationItem.rightBarButtonItem = nil;
-    }
-#endif
-    
+
     NSDictionary *bundleInfo = [[NSBundle mainBundle] infoDictionary];
     NSString *versionString = [NSString stringWithFormat:@"v %@ (%@)", bundleInfo[@"CFBundleShortVersionString"], bundleInfo[@"CFBundleVersion"]];
     self.versionLabel.text = versionString;
@@ -246,34 +218,6 @@ CGFloat square(CGFloat x){return x*x;}
     }];
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:@"embedTable"]) {
-        ProfileContentViewController *content = (ProfileContentViewController *)segue.destinationViewController;
-        self.content = content;
-        @weakify(self);
-        content.filesAction = ^{
-            @strongify(self);
-            [self fileButtonPressed];
-        };
-        content.gaugeAction = ^{
-            @strongify(self);
-            [self gaugeButtonPressed];
-        };
-        content.settingsAction = ^{
-            @strongify(self);
-            [self settingsButtonPressed];
-        };
-        content.helpAction = ^{
-            @strongify(self);
-            [self helpButtonPressed];
-        };
-        content.logoutAction = ^{
-            @strongify(self);
-            [self logoutButtonPressed];
-        };
-    }
-}
-
 -(void)setImage:(UIImage *)image {
     self.headerImageView.backgroundColor = [UIColor clearColor];
     [self.loadingIndicator stopAnimating];
@@ -342,7 +286,6 @@ CGFloat square(CGFloat x){return x*x;}
     self.title = NSLocalizedString(@"Profile", @"Title for profile screen");
     BOOL isPersonalProfile = [self isPersonalProfile];
     self.avatarButton.enabled = isPersonalProfile;
-    self.content.tableView.hidden = !isPersonalProfile;
 }
 
 - (BOOL)isPersonalProfile {
@@ -476,9 +419,7 @@ CGFloat square(CGFloat x){return x*x;}
         if (error) {
             NSString *title = NSLocalizedString(@"Error", nil);
             NSString *message = NSLocalizedString(@"Unable to upload to server", @"message saying that avatar couldn't be loaded to server");
-            CKAlertViewWithBlocks *alertView = [[CKAlertViewWithBlocks alloc] initWithTitle:title message:message];
-            [alertView addButtonWithTitle:NSLocalizedString(@"OK", nil) handler:^{}];
-            [alertView show];
+            [UIAlertController showAlertWithTitle:title message:message];
             return;
         }
         
@@ -525,200 +466,4 @@ CGFloat square(CGFloat x){return x*x;}
     return fileURL;
 }
 
-#pragma mark - Actions
-
-- (void)fileButtonPressed {
-    FolderViewController *folderController = [[FolderViewController alloc] initWithInterfaceStyle:FolderInterfaceStyleLight];
-    folderController.canvasAPI = self.canvasAPI;
-    folderController.title = NSLocalizedString(@"Files", @"Title for the files screen");
-    CKContextInfo *context = [CKContextInfo contextInfoFromUser:self.user];
-    [folderController loadRootFolderForContext:context];
-    [self.navigationController pushViewController:folderController animated:YES];
-}
-
-- (void)gaugeButtonPressed {
-    CKIExternalTool *tool = [[CKIExternalTool alloc] init];
-    tool.url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/api/v1/accounts/self/external_tools/sessionless_launch?url=%@", TheKeymaster.currentClient.baseURL.absoluteString, self.gaugeLTIURL]];
-    // Don't need to localize this: this is a proper noun, our product name
-    tool.name = @"Gauge";
-    
-    LTIViewController *ltiVC = [[LTIViewController alloc] init];
-    ltiVC.externalTool = tool;
-    [self.navigationController pushViewController:ltiVC animated:YES];
-}
-
-- (void)settingsButtonPressed {
-    UIViewController *settings = self.settingsViewControllerFactory();
-    [self.navigationController pushViewController:settings animated:YES];
-}
-
-- (void)helpButtonPressed {
-    [Analytics logScreenView: @"View Help Options"];
-    
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    
-    UIAlertAction *reportProblem = [UIAlertAction actionWithTitle:NSLocalizedString(@"Report a problem", "option to report a problem") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [SupportTicketViewController presentFromViewController: self supportTicketType: SupportTicketTypeProblem];
-    }];
-    [alert addAction:reportProblem];
-    
-    UIAlertAction *requestFeature = [UIAlertAction actionWithTitle:NSLocalizedString(@"Request a feature", "option to request a feature") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [SupportTicketViewController presentFromViewController: self supportTicketType: SupportTicketTypeFeatureRequest];
-    }];
-    [alert addAction:requestFeature];
-    
-    UIAlertAction *cancel = [UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", "Cancel button title") style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-        
-    }];
-    [alert addAction:cancel];
-    
-    [self presentViewController:alert animated:YES completion:nil];
-}
-
-- (void)logoutButtonPressed {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Are you ready to logout?", @"Action sheet title verifying that a user wants to logout.") message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    
-    UIAlertAction *changeUser = [UIAlertAction actionWithTitle:NSLocalizedString(@"Change User", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [TheKeymaster switchUser];
-        [self.navigationController popToRootViewControllerAnimated:YES];
-    }];
-    [alert addAction:changeUser];
-    
-    UIAlertAction *logout = [UIAlertAction actionWithTitle:NSLocalizedString(@"Logout", @"Title for a button to logout a user") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [TheKeymaster logout];
-        [self.navigationController popToRootViewControllerAnimated:YES];
-    }];
-    [alert addAction:logout];
-    
-    UIAlertAction *cancel = [UIAlertAction actionWithTitle:NSLocalizedString(@"Stay Logged In", @"button title for cancelling a logout.") style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-        
-    }];
-    [alert addAction:cancel];
-    
-    [self presentViewController:alert animated:YES completion:nil];
-}
-
-#pragma mark - Masquerade
-
-- (void)masqueradeAsUser
-{
-    NSString *title = NSLocalizedString(@"Masquerade", nil);
-    NSString *message = NSLocalizedString(@"Enter User ID and Domain.", @"masquerade prompt");
-    UIAlertController *masq = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:
-                               UIAlertControllerStyleAlert];
-
-    __block UITextField *userIDField = nil;
-    [masq addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
-        textField.placeholder = NSLocalizedString(@"User ID", nil);
-        textField.keyboardType = UIKeyboardTypeNumberPad;
-        userIDField = textField;
-    }];
-    
-    __block UITextField *domainField = nil;
-    NSString *hostname = TheKeymaster.currentClient.baseURL.host;
-    [masq addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
-        textField.text = hostname;
-        textField.keyboardType = UIKeyboardTypeURL;
-        textField.placeholder = NSLocalizedString(@"Domain", nil);
-        
-        domainField = textField;
-    }];
-    
-    NSString *cancel = NSLocalizedString(@"Cancel", nil);
-    [masq addAction:[UIAlertAction actionWithTitle:cancel style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-        [userIDField resignFirstResponder];
-        [domainField resignFirstResponder];
-        DDLogVerbose(@"masqueradeAsUserCancelled");
-    }]];
-    
-
-    [masq addAction:[UIAlertAction actionWithTitle:title style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        DDLogVerbose(@"masqueradeAsUserSubmit");
-        [userIDField resignFirstResponder];
-        [domainField resignFirstResponder];
-        [self masquerade:userIDField.text domain:domainField.text];
-    }]];
-    
-    [self presentViewController:masq animated:true completion:nil];
-}
-
-- (void)masquerade:(NSString *)masqueradeAs domain:(NSString *)domain
-{
-    if (masqueradeAs.length > 0) {
-        [[TheKeymaster masqueradeAsUserWithID:masqueradeAs domain:domain] subscribeNext:^(id client) {
-            [self dismissViewControllerAnimated:false completion:nil];
-            DDLogVerbose(@"masqueradeAsUserSuccess : %@", [CKIClient currentClient].currentUser.id);
-            CKAlertViewWithBlocks *alert = [[CKAlertViewWithBlocks alloc] initWithTitle:NSLocalizedString(@"Success!", @"Masquerade success title") message:[NSString stringWithFormat:NSLocalizedString(@"You are now masquerading as %@", @"Masquerade title telling who you are masquerading as"), [CKIClient currentClient].currentUser.name]];
-            [alert addCancelButtonWithTitle:NSLocalizedString(@"OK", nil)];
-            [alert show];
-        } error:^(NSError *error) {
-            DDLogVerbose(@"masqueradeAsUserError : %@", [error localizedDescription]);
-
-            CKAlertViewWithBlocks *alert = [[CKAlertViewWithBlocks alloc] initWithTitle:NSLocalizedString(@"Oops!", nil) message:NSLocalizedString(@"You don't have permission to masquerade as this user or there is no user with that ID", @"Masquerade error message")];
-            [alert addCancelButtonWithTitle:NSLocalizedString(@"OK", nil)];
-            [alert show];
-        }];
-    }
-}
-
-- (void)stopMasquerade
-{
-    DDLogVerbose(@"stopMasqueradePressed");
-    [TheKeymaster stopMasquerading];
-}
-
-- (IBAction)masqueradeButtonClicked:(id)sender
-{
-    DDLogVerbose(@"masqueradeButtonPressed");
-    [self masqueradeAsUser];
-}
-
-
 @end
-
-
-@implementation ProfileContentViewController
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    
-    self.tableView.rowHeight = UITableViewAutomaticDimension;
-    self.tableView.estimatedRowHeight = 44.0;
-    
-    self.filesCell.textLabel.text = NSLocalizedString(@"My Files", @"files button");
-    self.logoutCell.textLabel.text = NSLocalizedString(@"Logout", @"Title for a button to logout a user");
-    self.settingsCell.textLabel.text = NSLocalizedString(@"Settings", @"Title for Settings");
-    self.helpCell.textLabel.text = NSLocalizedString(@"Help", @"help button");
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    if (cell == self.filesCell) {
-        self.filesAction();
-    } else if (cell == self.gaugeCell) {
-        self.gaugeAction();
-    } else if (cell == self.settingsCell) {
-        self.settingsAction();
-    } else if (cell == self.helpCell) {
-        self.helpAction();
-    } else if (cell == self.logoutCell) {
-        self.logoutAction();
-    }
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [super tableView:tableView cellForRowAtIndexPath:indexPath];
-    
-    if (cell == self.gaugeCell && !self.showGauge) {
-        return 0;
-    }
-    
-    return [super tableView:tableView heightForRowAtIndexPath:indexPath];
-}
-
-- (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    cell.textLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
-}
-
-@end
-

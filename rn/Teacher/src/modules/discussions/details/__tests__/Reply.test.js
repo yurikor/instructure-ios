@@ -16,32 +16,19 @@
 
 /* @flow */
 
+import { shallow } from 'enzyme'
 import React from 'react'
 import { ActionSheetIOS } from 'react-native'
-import renderer from 'react-test-renderer'
-import explore from '../../../../../test/helpers/explore'
-import { setSession } from '../../../../canvas-api'
-
 import Reply, { type Props } from '../Reply'
+import httpClient from '../../../../canvas-api/httpClient'
+import * as template from '../../../../__templates__'
 
-jest.mock('Button', () => 'Button').mock('TouchableHighlight', () => 'TouchableHighlight').mock('TouchableOpacity', () => 'TouchableOpacity')
-
-const template = {
-  ...require('../../../../__templates__/discussion'),
-  ...require('../../../../__templates__/users'),
-  ...require('../../../../__templates__/helm'),
-  ...require('../../../../__templates__/session'),
-}
-jest.mock('WebView', () => 'WebView')
-  .mock('ActionSheetIOS', () => ({
-    showActionSheetWithOptions: jest.fn(),
-  }))
-  .mock('../../../../common/components/Avatar', () => 'Avatar')
+jest.mock('ActionSheetIOS', () => ({
+  showActionSheetWithOptions: jest.fn(),
+}))
 
 describe('DiscussionReplies', () => {
-  beforeAll(() => setSession(template.session()))
-
-  let props
+  let props: Props
   beforeEach(() => {
     let reply = template.discussionReply({ id: '1' })
     reply.replies = [template.discussionReply({ id: 2 })]
@@ -51,7 +38,8 @@ describe('DiscussionReplies', () => {
       depth: 0,
       readState: 'read',
       participants: { [user.id]: user },
-      courseID: '1',
+      context: 'courses',
+      contextID: '1',
       discussionID: '1',
       entryID: '1',
       deleteDiscussionEntry: jest.fn(),
@@ -60,31 +48,69 @@ describe('DiscussionReplies', () => {
       navigator: template.navigator(),
       onPressMoreReplies: jest.fn(),
       maxReplyNodeDepth: 2,
+      discussionLockedForUser: false,
+      rating: null,
+      showRating: false,
+      canRate: false,
+      rateEntry: jest.fn(),
+      isLastReply: false,
     }
+    jest.clearAllMocks()
   })
 
   it('renders', () => {
-    testRender(props)
+    expect(shallow(<Reply {...props}/>)).toMatchSnapshot()
   })
 
   it('renders deleted', () => {
     props.reply.deleted = true
-    testRender(props)
+    let tree = shallow(<Reply {...props} />)
+    let webview = tree.find('RichContent')
+    expect(webview.props().html.includes('Deleted this reply.')).toEqual(true)
   })
 
   it('renders with no user', () => {
     props.reply.user_id = ''
     props.reply.editor_id = ''
-    testRender(props)
+    let tree = shallow(<Reply {...props} />)
+    expect(tree.find('Avatar').props().userName).toEqual('?')
+  })
+
+  it('renders with closed discussion as student', () => {
+    props.discussionLockedForUser = true
+    let tree = shallow(<Reply {...props} />)
+
+    expect(tree.find('[testID="discussions.reply-btn"]').length).toEqual(0)
+    expect(tree.find('[testID="discussions.edit-btn"]').length).toEqual(0)
+    expect(tree.find('[testID="discussion.reply.rate-btn"]').length).toEqual(0)
+  })
+
+  it('renders likes even if closed as student', () => {
+    props.discussionLockedForUser = true
+    props.showRating = true
+    props.canRate = true
+    let tree = shallow(<Reply {...props} />)
+
+    expect(tree.find('[testID="discussion.reply.rate-btn"]').length).toEqual(1)
   })
 
   it('navigates to the context card when an avatar is pressed', () => {
-    let avatar = explore(render(props).toJSON()).selectByID('reply.avatar') || {}
-    avatar.props.onPress()
+    let tree = shallow(<Reply {...props} />)
+    let avatar = tree.find('[testID="reply.avatar"]')
+    avatar.simulate('press')
     expect(props.navigator.show).toHaveBeenCalledWith(
       `/courses/1/users/1`,
       { modal: true },
     )
+  })
+
+  it('actionMore', () => {
+    props.depth = 2
+    props.reply.replies = [template.discussionReply({ id: 2 }), template.discussionReply({ id: 3 }), template.discussionReply({ id: 4 })]
+    let tree = shallow(<Reply {...props} />)
+    let replyButton = tree.find('[testID="discussion.more-replies"]')
+    replyButton.simulate('press')
+    expect(props.onPressMoreReplies).toHaveBeenCalledWith([0])
   })
 
   it('renders more button with some deleted replies', () => {
@@ -94,56 +120,55 @@ describe('DiscussionReplies', () => {
 
     let reply = template.discussionReply({ id: '1', replies: [a, b, c] })
     props.reply = reply
-    props.depth = 3
-    testRender(props)
+    props.depth = 2
+    let tree = shallow(<Reply {...props} />)
+    expect(tree.find('[testID="discussion.more-replies"]').length).toEqual(1)
   })
 
   it('edit action sheet calls delete', () => {
-    testEditActionSheet(1)
-    expect(props.deleteDiscussionEntry).toHaveBeenCalledWith('1', '1', '1', [0])
+    ActionSheetIOS.showActionSheetWithOptions = jest.fn((_, cb) => cb(1))
+    let tree = shallow(<Reply {...props} />)
+    let edit = tree.find('[testID="discussion.edit-btn"]')
+    edit.simulate('press')
+
+    expect(ActionSheetIOS.showActionSheetWithOptions).toHaveBeenCalled()
+    expect(props.deleteDiscussionEntry).toHaveBeenCalledWith('courses', '1', '1', '1', [0])
   })
 
   it('edit action sheet calls cancel', () => {
-    let reply = render(props).getInstance()
-    reply._actionEdit()
-    // $FlowFixMe
-    ActionSheetIOS.showActionSheetWithOptions.mock.calls[0][1](2)
+    ActionSheetIOS.showActionSheetWithOptions = jest.fn((_, cb) => cb(2))
+    let tree = shallow(<Reply {...props} />)
+    let edit = tree.find('[testID="discussion.edit-btn"]')
+    edit.simulate('press')
+
     expect(ActionSheetIOS.showActionSheetWithOptions).toHaveBeenCalled()
-    expect(render(props).toJSON()).toMatchSnapshot()
+    expect(props.deleteDiscussionEntry).not.toHaveBeenCalled()
+    expect(props.navigator.show).not.toHaveBeenCalled()
   })
 
   it('edit action sheet calls edit', () => {
-    testEditActionSheet(0)
+    ActionSheetIOS.showActionSheetWithOptions = jest.fn((_, cb) => cb(0))
+    let tree = shallow(<Reply {...props} />)
+    let edit = tree.find('[testID="discussion.edit-btn"]')
+    edit.simulate('press')
+
+    expect(ActionSheetIOS.showActionSheetWithOptions).toHaveBeenCalled()
     expect(props.navigator.show).toHaveBeenCalledWith('/courses/1/discussion_topics/1/reply', { modal: true }, { message: props.reply.message, entryID: props.reply.id, isEdit: true, indexPath: props.myPath })
   })
 
   it('reply to entry', () => {
-    let reply = render(props).getInstance()
-    reply._actionReply()
+    let tree = shallow(<Reply {...props} />)
+    let reply = tree.find('[testID="discussion.reply-btn"]')
+    reply.simulate('press')
+
     expect(props.replyToEntry).toHaveBeenCalledWith('1', [0])
   })
 
-  function testEditActionSheet (buttonIndex: number) {
-    let reply = render(props).getInstance()
-    reply._actionEdit()
-    // $FlowFixMe
-    ActionSheetIOS.showActionSheetWithOptions.mock.calls[0][1](buttonIndex)
-    expect(ActionSheetIOS.showActionSheetWithOptions).toHaveBeenCalled()
-  }
-
-  function testRender (props: Props) {
-    expect(render(props).toJSON()).toMatchSnapshot()
-  }
-
-  function render (props: Props): any {
-    return renderer.create(<Reply {...props}/>)
-  }
-
   it('shows attachment', () => {
     props.reply = Object.assign(props.reply, { attachment: { } })
-    let tree = render(props)
-
-    tree.getInstance().showAttachment()
+    let tree = shallow(<Reply {...props}/>)
+    let showAttachment = tree.find(`[testID="discussion-reply.${props.reply.id}.attachment"]`)
+    showAttachment.simulate('press')
 
     expect(props.navigator.show).toHaveBeenCalledWith(
       '/attachment',
@@ -151,5 +176,80 @@ describe('DiscussionReplies', () => {
       { attachment: props.reply.attachment }
     )
   })
-})
 
+  describe('ratings', () => {
+    beforeEach(() => {
+      props.reply = template.discussionReply({ id: '1', rating_sum: 2 })
+    })
+
+    it('renders rating', () => {
+      props.showRating = true
+      props.canRate = true
+      let tree = shallow(<Reply {...props} />)
+      expect(tree.find('[testID="discussion.reply.rating-count"]').length).toEqual(1)
+    })
+
+    it('renders user rating', () => {
+      props.showRating = true
+      props.canRate = true
+      props.rating = 1
+      let tree = shallow(<Reply {...props} />)
+      let rating = tree.find('[testID="discussion.reply.rating-count"]')
+      expect(rating.props().children).toEqual(['(', '2', ')'])
+    })
+
+    it('renders rating when user cant rate', () => {
+      props.showRating = true
+      props.canRate = false
+      let tree = shallow(<Reply {...props} />)
+      let rating = tree.find('[testID="discussion.reply.rating-count"]')
+      expect(rating.props().children).toEqual(['(', '2 likes', ')'])
+    })
+
+    it('renders rating after user rates for first time', () => {
+      props.showRating = true
+      props.canRate = true
+      props.rating = null
+      const view = shallow(<Reply {...props }/>)
+      const rateBtn = view.find('[testID="discussion.reply.rate-btn"]')
+      rateBtn.simulate('Press')
+      view.update()
+      expect(view).toMatchSnapshot()
+    })
+
+    it('renders rating after user updates rating', () => {
+      props.showRating = true
+      props.canRate = true
+      props.rating = 1
+      const view = shallow(<Reply {...props }/>)
+      const rateBtn = view.find('[testID="discussion.reply.rate-btn"]')
+      rateBtn.simulate('Press')
+      view.update()
+      expect(view).toMatchSnapshot()
+    })
+
+    it('fixes unverified urls', async () => {
+      const evaluateJavaScript = jest.fn()
+      const url = 'https://canvas.instructure.com/files/1/preview?verifier=1234'
+      const promise = Promise.resolve({ data: template.file({ url }) })
+      httpClient().get = jest.fn(() => promise)
+      let imageReply = template.discussionReply({ id: '1', message: `<img src="${url}" />` })
+
+      const screen = shallow(<Reply {...props} reply={imageReply} />)
+      const webView = screen.find('CanvasWebView')
+      webView.getElement().ref({ evaluateJavaScript })
+
+      webView.prop('onFinishedLoading')()
+      expect(evaluateJavaScript).toHaveBeenCalled()
+      expect(evaluateJavaScript.mock.calls).toMatchSnapshot()
+
+      evaluateJavaScript.mockClear()
+
+      const message = { type: 'BROKEN_IMAGES', data: ['api-url'] }
+      webView.prop('onMessage')({ body: JSON.stringify(message) })
+      await promise
+      expect(evaluateJavaScript).toHaveBeenCalled()
+      expect(evaluateJavaScript.mock.calls).toMatchSnapshot()
+    })
+  })
+})

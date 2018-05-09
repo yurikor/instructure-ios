@@ -28,19 +28,12 @@ import i18n from 'format-message'
 import type {
   SubmissionDataProps,
 } from '../../submissions/list/submission-prop-types'
-import SubmissionStatus from '../../submissions/list/SubmissionStatus'
+import SubmissionStatusLabel from '../../submissions/list/SubmissionStatusLabel'
 import Avatar from '../../../common/components/Avatar'
 
-export class Header extends Component {
-  props: HeaderProps
-  state: State
-
-  constructor (props: HeaderProps) {
-    super(props)
-
-    this.state = {
-      showingPicker: false,
-    }
+export class Header extends Component<HeaderProps, State> {
+  state: State = {
+    showingPicker: false,
   }
 
   navigateToContextCard = () => {
@@ -53,14 +46,14 @@ export class Header extends Component {
   renderDoneButton () {
     return (
       <View style={styles.doneButton}>
-          <TouchableHighlight onPress={this.props.closeModal} underlayColor='white' testID='header.navigation-done'>
-            <View style={{ paddingLeft: 20 }}>
-              <Text style={{ color: '#008EE2', fontSize: 18, fontWeight: '600' }}>
-                {i18n('Done')}
-              </Text>
-            </View>
-          </TouchableHighlight>
-        </View>
+        <TouchableHighlight onPress={this.props.closeModal} underlayColor='white' testID='header.navigation-done'>
+          <View style={{ paddingLeft: 20 }}>
+            <Text style={{ color: '#008EE2', fontSize: 18, fontWeight: '600' }}>
+              {i18n('Done')}
+            </Text>
+          </View>
+        </TouchableHighlight>
+      </View>
     )
   }
 
@@ -74,53 +67,39 @@ export class Header extends Component {
       ? ''
       : sub.avatarURL
 
+    let action = this.navigateToContextCard
+    let testID = 'header.context.button'
     if (sub.groupID && !this.props.anonymous) {
-      return (
-        <View style={styles.profileContainer}>
-          <View style={{ flex: 1 }}>
-            <View style={styles.innerRowContainer}>
-              <TouchableHighlight
-                onPress={this.showGroup}
-                underlayColor='white'
-                testID={'header.groupList.button'}>
-                  <View style={styles.innerRowContainer}>
-                    <View style={styles.avatar}>
-                      <Avatar
-                        key={sub.userID}
-                        avatarURL={avatarURL}
-                        userName={name}
-                      />
-                    </View>
-                    <View style={styles.nameContainer}>
-                      <Text style={styles.name} accessibilityTraits='header'>{name}</Text>
-                      <SubmissionStatus status={sub.status} />
-                    </View>
-                  </View>
-              </TouchableHighlight>
-            </View>
-          </View>
-          {this.renderDoneButton()}
-        </View>
-      )
-    } else {
-      return (
-        <View style={styles.profileContainer}>
-          <View style={styles.avatar}>
-            <Avatar
-              key={sub.userID}
-              avatarURL={avatarURL}
-              userName={name}
-              onPress={this.navigateToContextCard}
-            />
-          </View>
-          <View style={[styles.nameContainer, { flex: 1 }]}>
-            <Text style={styles.name} accessibilityTraits='header'>{name}</Text>
-            <SubmissionStatus status={sub.status} />
-          </View>
-          {this.renderDoneButton()}
-        </View>
-      )
+      action = this.showGroup
+      testID = 'header.groupList.button'
     }
+
+    return (
+      <View style={styles.profileContainer}>
+        <View style={styles.innerRowContainer}>
+          <TouchableHighlight
+            onPress={action}
+            underlayColor='white'
+            testID={testID}
+          >
+            <View style={styles.innerRowContainer}>
+              <View style={styles.avatar}>
+                <Avatar
+                  key={sub.userID}
+                  avatarURL={avatarURL}
+                  userName={name}
+                />
+              </View>
+              <View style={styles.nameContainer}>
+                <Text style={styles.name} accessibilityTraits='header'>{name}</Text>
+                <SubmissionStatusLabel status={sub.status} />
+              </View>
+            </View>
+          </TouchableHighlight>
+        </View>
+        {this.renderDoneButton()}
+      </View>
+    )
   }
 
   render () {
@@ -153,6 +132,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
   },
   navButtonImage: {
     resizeMode: 'contain',
@@ -181,13 +161,20 @@ const styles = StyleSheet.create({
   },
 })
 
-export function mapStateToProps (state: AppState, ownProps: RouterProps): HeaderDataProps {
-  let assignmentContent = state.entities.assignments[ownProps.assignmentID]
-  let quiz = assignmentContent.data.quiz_id && state.entities.quizzes[assignmentContent.data.quiz_id].data
-  let course = state.entities.courses[ownProps.courseID]
-  let anonymous = assignmentContent.anonymousGradingOn ||
+export function mapStateToProps (state: AppState, ownProps: RouterProps) {
+  const entities = state.entities
+  const { courseID, assignmentID } = ownProps
+
+  const assignmentContent = entities.assignments[assignmentID]
+  const assignmentData = assignmentContent ? assignmentContent.data : null
+  let quiz
+  if (assignmentData && assignmentData.quiz_id && entities.quizzes[assignmentData.quiz_id]) {
+    quiz = entities.quizzes[assignmentData.quiz_id].data
+  }
+  const courseContent = state.entities.courses[courseID]
+  const anonymous = assignmentContent.anonymousGradingOn ||
                   quiz && quiz.anonymous_submissions ||
-                  course && course.enabledFeatures.includes('anonymous_grading')
+                  courseContent && courseContent.enabledFeatures.includes('anonymous_grading')
   return {
     anonymous,
   }

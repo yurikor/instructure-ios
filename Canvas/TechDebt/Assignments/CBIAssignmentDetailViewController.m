@@ -40,11 +40,12 @@
 
 @import CanvasKeymaster;
 @import Masonry;
+@import CanvasCore;
 
 static NSUInteger const CBIAssignmentDetailNumMinutesInHour = 60;
 static NSUInteger const CBIAssignmentDetailNumMinutesInDay = 60 * 24;
 
-@interface CBIAssignmentDetailViewController () <UIActionSheetDelegate, SKStoreProductViewControllerDelegate>
+@interface CBIAssignmentDetailViewController () <UIActionSheetDelegate, SKStoreProductViewControllerDelegate, ModuleItemEmbeddedProtocol>
 
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segmentedControl;
 @property (weak, nonatomic) IBOutlet UIView *contentView;
@@ -55,10 +56,12 @@ static NSUInteger const CBIAssignmentDetailNumMinutesInDay = 60 * 24;
 @property (strong, nonatomic) CBILocalNotificationHandler *localNotificationHandler;
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *preparingTabsActivityIndicator;
 @property (nonatomic) NSInteger previousSelectedTab;
-
+@property (nonatomic) PageViewEventLoggerLegacySupport *pageViewEventLog;
 @end
 
 @implementation CBIAssignmentDetailViewController
+
+@dynamic viewModel;
 
 - (id)init
 {
@@ -68,6 +71,8 @@ static NSUInteger const CBIAssignmentDetailNumMinutesInDay = 60 * 24;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.pageViewEventLog = [PageViewEventLoggerLegacySupport new];
     
     RAC(self, view.tintColor) = RACObserve(self, viewModel.tintColor);
     
@@ -80,19 +85,36 @@ static NSUInteger const CBIAssignmentDetailNumMinutesInDay = 60 * 24;
     RAC(self, preparingTabsActivityIndicator.hidden) = haveSubmissionViewController;
     RAC(self, segmentedControl.layer.opacity) = haveSubmissionViewController;
     @weakify(self);
-    [[[self.viewModel fetchSubmissionsViewModel] map:^id(id<CBISubmissionsViewModel> submissionViewModel) {
-        return [submissionViewModel createViewController];
-    }] subscribeNext:^(MLVCTableViewController *submissionController) {
+    
+    [self displayContentLockIfNecessary];
+    self.contentView.hidden = YES;
+    [[[CKIClient currentClient] refreshModel:self.viewModel.model parameters:nil] subscribeError:^(NSError *error) {
+        if (error.code == NSURLErrorBadServerResponse) {
+            [self display404ErrorMessage];
+        }
+    } completed:^{
         @strongify(self);
-        self.submissionController = submissionController;
-    } error:^(NSError *error) {
-        @strongify(self);
-        
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:NSLocalizedStringFromTableInBundle(@"Network Error", nil, [NSBundle bundleForClass:[self class]], @"Network error title") message:NSLocalizedStringFromTableInBundle(@"Please check your network connection and try again.", nil, [NSBundle bundleForClass:[self class]], @"Network error message") preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTableInBundle(@"Dismiss", nil, [NSBundle bundleForClass:[self class]], @"Dismiss button title") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            // nothing to do.
-        }]];
-        [self presentViewController:alert animated:true completion:nil];
+        self.contentView.hidden = NO;
+        [self initializeTabs];
+        [self setupSegmentedControl];
+        [self setTab:DETAIL_TAB_INDEX];
+        [self displayContentLockIfNecessary];
+        [self setupRightBarButtonItems];
+
+        [[[self.viewModel fetchSubmissionsViewModel] map:^id(id<CBISubmissionsViewModel> submissionViewModel) {
+            return [submissionViewModel createViewController];
+        }] subscribeNext:^(MLVCTableViewController *submissionController) {
+            @strongify(self);
+            self.submissionController = submissionController;
+        } error:^(NSError *error) {
+            @strongify(self);
+
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:NSLocalizedStringFromTableInBundle(@"Network Error", nil, [NSBundle bundleForClass:[self class]], @"Network error title") message:NSLocalizedStringFromTableInBundle(@"Please check your network connection and try again.", nil, [NSBundle bundleForClass:[self class]], @"Network error message") preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTableInBundle(@"Dismiss", nil, [NSBundle bundleForClass:[self class]], @"Dismiss button title") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                // nothing to do.
+            }]];
+            [self presentViewController:alert animated:true completion:nil];
+        }];
     }];
     
     [self initializeTabs];
@@ -102,76 +124,26 @@ static NSUInteger const CBIAssignmentDetailNumMinutesInDay = 60 * 24;
     self.extendedLayoutIncludesOpaqueBars = YES;
 }
 
--(void) openInSpeedGrader {
-
-    NSString *currentURL = [NSString stringWithFormat:@"%@%@",[[[CKIClient currentClient] baseURL] host], self.viewModel.model.path];
-
-    NSURL* speedgraderLink = [NSURL URLWithString:[NSString stringWithFormat:@"canvas-speedgrader://%@",currentURL]];
-    
-    if ([[UIApplication sharedApplication] canOpenURL:speedgraderLink]) {
-        [[UIApplication sharedApplication] openURL:speedgraderLink];
-    } else {
-        NSNumber *speedGraderAppID = [NSNumber numberWithInt:418441195];
-        
-        SKStoreProductViewController *storeProductViewController = [[SKStoreProductViewController alloc]
-                                                                    init];
-        
-        [storeProductViewController setDelegate:self];
-        [storeProductViewController loadProductWithParameters: @{SKStoreProductParameterITunesItemIdentifier : speedGraderAppID}
-                                    completionBlock:^(BOOL result, NSError *error) {
-                                        if (error) {
-                                            DDLogVerbose(@"Failed to load app store and link to SpeedGrader");
-                                        } else {
-                                            DDLogVerbose(@"Successfully displayed App Store page for SpeedGrader");
-                                        }
-                                    }
-         ];
-        
-        [self presentViewController:storeProductViewController animated:YES completion:nil];
-    }
-    
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self.pageViewEventLog start];
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-    @weakify(self);
-    
-    [self displayContentLockIfNecessary];
-    if (self.viewModel.model.name == nil){
-        self.contentView.hidden = YES;
-        [[[CKIClient currentClient] refreshModel:self.viewModel.model parameters:nil] subscribeError:^(NSError *error) {
-            if (error.code == NSURLErrorBadServerResponse) {
-                [self display404ErrorMessage];
-            }
-        } completed:^{
-            @strongify(self);
-            self.contentView.hidden = NO;
-            [self initializeTabs];
-            [self setupSegmentedControl];
-            [self setTab:DETAIL_TAB_INDEX];
-            [self displayContentLockIfNecessary];
-            [self setupRightBarButtonItems];
-        }];
-    } else {
-        [self styleFont];   
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    CKIAssignment *assignment = self.viewModel.model;
+    NSString *path = [NSString stringWithFormat:@"%@", assignment.htmlURL.absoluteString];
+    if (self.moduleItemID) {
+        path = [NSString stringWithFormat:@"%@?module_item_id=%@", path, self.moduleItemID];
     }
+    [self.pageViewEventLog stopWithEventName:path];
 }
+
 
 - (void)setupRightBarButtonItems {
     CKIAssignment *assignment = self.viewModel.model;
     if ([assignment.dueAt compare:[NSDate date]] == NSOrderedDescending) {
         [self setAlarmButton:[self.localNotificationHandler localNotificationExists:assignment.id]];
-    }
-    
-    if ([assignment.context isKindOfClass:[CKICourse class]]) {
-        [[(CKICourse *)self.viewModel.model.context enrollments] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            if ([[obj role] isEqualToString:@"TeacherEnrollment"] && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-                UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Open in SpeedGrader",@"Link to open assignment in SpeedGrader") style:UIBarButtonItemStylePlain target:self action:@selector(openInSpeedGrader)];
-                self.navigationItem.rightBarButtonItem = rightButton;
-                *stop = YES;
-                return;
-            }
-        }];
     }
 }
 
@@ -185,7 +157,7 @@ static NSUInteger const CBIAssignmentDetailNumMinutesInDay = 60 * 24;
     CKAssignment *backwardsCompatibleAssignment = [[CKAssignment new] initWithInfo:[assignment JSONDictionary]];
     
     self.detailsController = [AssignmentDetailsViewController new];
-    [self.detailsController setPrependAssignmentInfoToContent:YES];
+    self.detailsController.prependAssignmentInfoToContent = YES;
     [self.detailsController setAssignment:backwardsCompatibleAssignment];
 
     self.rubricController = [[RubricViewController alloc] init];
@@ -200,6 +172,7 @@ static NSUInteger const CBIAssignmentDetailNumMinutesInDay = 60 * 24;
      {
          submission.assignment = backwardsCompatibleAssignment;
          self.rubricController = [self.rubricController initWithSubmission:submission];
+         self.rubricController.pageViewName = [NSString stringWithFormat:@"%@/submissions/%llu", assignment.htmlURL.absoluteString, submission.ident];
          CBIGradeDetailView *gradeView = [[CBIGradeDetailView alloc] initWithAssignment:backwardsCompatibleAssignment andSubmission:submission];
          self.rubricController.rubricTableView.tableHeaderView = gradeView;
      }];
@@ -211,7 +184,7 @@ static NSUInteger const CBIAssignmentDetailNumMinutesInDay = 60 * 24;
     self.detailsController.view.backgroundColor = [UIColor whiteColor];
     self.rubricController.view.backgroundColor = [UIColor whiteColor];
     
-    [self.detailsController.webView setAccessibilityElementsHidden:YES];
+    [self.detailsController.view setAccessibilityElementsHidden:YES];
     [self.submissionController.tableView setAccessibilityElementsHidden:YES];
     [self.rubricController.rubricTableView setAccessibilityElementsHidden:YES];
 }
@@ -288,7 +261,7 @@ static NSUInteger const CBIAssignmentDetailNumMinutesInDay = 60 * 24;
         newController = self.detailsController;
         self.detailsController.topContentInset = [self getContentInset];
         self.detailsController.bottomContentInset = self.tabBarController.tabBar.frame.size.height;
-        [self.detailsController.webView setAccessibilityElementsHidden:NO];
+        [self.detailsController.view setAccessibilityElementsHidden:NO];
         [self.submissionController.tableView setAccessibilityElementsHidden:YES];
         [self.rubricController.rubricTableView setAccessibilityElementsHidden:YES];
     } else if (index == GRADE_TAB_INDEX) {
@@ -296,7 +269,7 @@ static NSUInteger const CBIAssignmentDetailNumMinutesInDay = 60 * 24;
         [self.rubricController.rubricTableView setContentInset:UIEdgeInsetsMake([self getContentInset], 0, self.tabBarController.tabBar.frame.size.height, 0)];
         [self.rubricController.rubricTableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
         [self.rubricController.rubricTableView setAccessibilityElementsHidden:NO];
-        [self.detailsController.webView setAccessibilityElementsHidden:YES];
+        [self.detailsController.view setAccessibilityElementsHidden:YES];
         [self.submissionController.tableView setAccessibilityElementsHidden:YES];
     } else if (index == SUBMISSION_TAB_INDEX) {
         newController = self.submissionController;
@@ -304,7 +277,7 @@ static NSUInteger const CBIAssignmentDetailNumMinutesInDay = 60 * 24;
         UIEdgeInsets insets = UIEdgeInsetsMake([self getContentInset], 0, self.tabBarController.tabBar.frame.size.height, 0);
         scrollView.scrollIndicatorInsets = scrollView.contentInset = insets;
         [self.submissionController.tableView setAccessibilityElementsHidden:NO];
-        [self.detailsController.webView setAccessibilityElementsHidden:YES];
+        [self.detailsController.view setAccessibilityElementsHidden:YES];
         [self.rubricController.rubricTableView setAccessibilityElementsHidden:YES];
     }
     

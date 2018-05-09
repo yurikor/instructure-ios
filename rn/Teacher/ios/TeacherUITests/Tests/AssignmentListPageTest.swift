@@ -14,33 +14,31 @@
 // limitations under the License.
 //
 
+import SoSeedySwift
+
 class AssignmentListPageTest: TeacherTest {
-
-//    //TestRail ID = C3109578
-//    func testAssignmentListPage_displaysPageObjects() {
-//        let course = openAssignmentListPage(self)
-//        assignmentListPage.assertPageObjects(course)
-//    }
-
-/*
-    //TestRail ID = C3134487
-    func testAssignmentListPage_displaysNoAssignmentsView() {
-        // not implemented on iOS yet.
-    }
- */
+    var assignment: Soseedy_Assignment!
 
     //TestRail ID = C3109578
     func testAssignmentListPage_displaysAssignment() {
-        openAssignmentListPage(self)
-        let assignment = Data.getNextAssignment(self)
+        getToAssignmentList()
         assignmentListPage.assertHasAssignment(assignment)
     }
 
     //TestRail ID = C3134488
-    func testAssignmentListPage_displaysGradingPeriods() {
-        openAssignmentListPage(self)
-        let assignment = Data.getNextAssignment(self)
-        assignmentListPage.assertHasGradingPeriods(assignment)
-        
+    func testAssignmentListPage_displaysDueDate() {
+        getToAssignmentList()
+        assignmentListPage.assertHasDueDate(assignment)
+
+    }
+
+    func getToAssignmentList() {
+        let course = SoSeedySwift.createCourse()
+        let user = SoSeedySwift.createTeacher(in: course)
+        SoSeedySwift.favorite(course, as: user)
+        assignment = SoSeedySwift.createAssignment(for: course, as: user)
+        logIn2(user)
+        coursesListPage.openCourseDetailsPage(course)
+        courseBrowserPage.openAssignmentListPage()
     }
 }

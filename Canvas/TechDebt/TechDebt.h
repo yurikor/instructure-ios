@@ -42,4 +42,3 @@ FOUNDATION_EXPORT const unsigned char TechDebtVersionString[];
 #import <TechDebt/AboutViewController.h>
 #import <TechDebt/WebBrowserViewController.h>
 #import <TechDebt/MyLittleViewController.h>
-

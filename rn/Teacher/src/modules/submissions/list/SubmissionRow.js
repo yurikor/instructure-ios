@@ -27,11 +27,10 @@ import Token from '../../../common/components/Token'
 import i18n from 'format-message'
 import type {
   GradeProp,
-  SubmissionStatusProp,
 } from './submission-prop-types'
 import colors from '../../../common/colors'
 import { Text } from '../../../common/text'
-import SubmissionStatus from './SubmissionStatus'
+import SubmissionStatusLabel from './SubmissionStatusLabel'
 import Avatar from '../../../common/components/Avatar'
 import { formatGradeText } from '../../../common/formatters'
 
@@ -47,8 +46,8 @@ export type SubmissionRowDataProps = {
   groupID?: string,
   avatarURL: string,
   name: string,
-  status: SubmissionStatusProp,
-  grade: GradeProp,
+  status: SubmissionStatus,
+  grade: ?GradeProp,
   gradingType: GradingType,
   score: ?number,
   disclosure?: boolean,
@@ -56,12 +55,12 @@ export type SubmissionRowDataProps = {
 }
 
 export type SubmissionRowProps = {
-  onPress: () => void,
+  onPress: (userID: string) => any,
   onAvatarPress?: Function,
   anonymous: boolean,
 } & SubmissionRowDataProps
 
-class Row extends Component<any, RowProps, any> {
+class Row extends Component<RowProps, any> {
   render () {
     const { onPress, testID, children, disclosure } = this.props
     return (
@@ -77,8 +76,8 @@ class Row extends Component<any, RowProps, any> {
   }
 }
 
-const Grade = ({ grade, gradingType }: {grade: ?GradeProp, gradingType: GradingType}): * => {
-  if (!grade || grade === 'not_submitted' || grade === 'ungraded') {
+export const Grade = ({ grade, gradingType }: {grade: ?GradeProp, gradingType: GradingType}) => {
+  if (!grade || grade === 'not_submitted' || grade === 'ungraded' || gradingType === 'not_graded') {
     return null
   }
 
@@ -92,8 +91,9 @@ const Grade = ({ grade, gradingType }: {grade: ?GradeProp, gradingType: GradingT
   return <Text style={[ styles.gradeText, { alignSelf: 'center' } ]}>{ gradeText }</Text>
 }
 
-class SubmissionRow extends Component<any, SubmissionRowProps, any> {
+class SubmissionRow extends Component<SubmissionRowProps, any> {
   onPress = () => {
+    // $FlowFixMe
     this.props.onPress(this.props.userID)
   }
 
@@ -104,7 +104,7 @@ class SubmissionRow extends Component<any, SubmissionRowProps, any> {
   }
 
   render () {
-    let { userID, avatarURL, name, status, grade, disclosure } = this.props
+    let { userID, avatarURL, name, status, grade, gradingType, disclosure } = this.props
     if (disclosure === undefined) {
       disclosure = true
     }
@@ -127,14 +127,14 @@ class SubmissionRow extends Component<any, SubmissionRowProps, any> {
             style={styles.title}
             ellipsizeMode='tail'
             numberOfLines={2}>{name}</Text>
-          <SubmissionStatus status={status} />
-          {grade === 'ungraded' &&
+          <SubmissionStatusLabel status={status} />
+          {grade === 'ungraded' && gradingType !== 'not_graded' &&
             <Token style={{ alignSelf: 'flex-start', marginTop: 8 }} color={ colors.primaryButton }>
               {i18n('Needs Grading')}
             </Token>
           }
         </View>
-        <Grade grade={grade} gradingType={this.props.gradingType} />
+        <Grade grade={grade} gradingType={gradingType} />
       </Row>
     )
   }

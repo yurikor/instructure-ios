@@ -14,14 +14,15 @@
 // limitations under the License.
 //
 
-/* @flow */
+/* eslint-disable flowtype/require-valid-file-annotation */
 
 import React from 'react'
 import { ActionSheetIOS, AlertIOS } from 'react-native'
 import renderer from 'react-test-renderer'
 
 import { DiscussionsList, mapStateToProps, type Props } from '../DiscussionsList'
-import explore from '../../../../../test/helpers/explore'
+import explore from '@test/helpers/explore'
+import app from '@modules/app'
 
 jest
   .mock('Button', () => 'Button')
@@ -32,17 +33,21 @@ jest
     showActionSheetWithOptions: jest.fn(),
   }))
   .mock('../../../../routing/Screen')
+  .mock('../../../app', () => ({
+    isTeacher: jest.fn(),
+  }))
 
 const template = {
-  ...require('../../../../__templates__/helm'),
-  ...require('../../../../__templates__/discussion'),
-  ...require('../../../../redux/__templates__/app-state'),
+  ...require('@templates/helm'),
+  ...require('@templates/discussion'),
+  ...require('@redux/__templates__/app-state'),
 }
 
 describe('DiscussionsList', () => {
   let props: Props
   beforeEach(() => {
     jest.resetAllMocks()
+    app.isTeacher = jest.fn(() => true)
     props = {
       pending: false,
       refreshing: false,
@@ -52,11 +57,19 @@ describe('DiscussionsList', () => {
       updateDiscussion: jest.fn(),
       refreshDiscussions: jest.fn(),
       deleteDiscussion: jest.fn(),
-      courseID: '1',
+      context: 'courses',
+      contextID: '1',
+      permissions: template.discussionPermissions(),
     }
   })
 
   it('renders', () => {
+    testRender(props)
+  })
+
+  it('renders as student app', () => {
+    props.permissions.create_discussion_topic = false
+    app.isTeacher = jest.fn(() => false)
     testRender(props)
   })
 
@@ -178,15 +191,15 @@ describe('DiscussionsList', () => {
     ActionSheetIOS.showActionSheetWithOptions = jest.fn((options, callback) => callback(2))
     // $FlowFixMe
     AlertIOS.alert = jest.fn((title, message, buttons) => buttons[1].onPress())
-    props.courseID = '1'
+    props.contextID = '1'
     const kabob: any = explore(render(props).toJSON()).selectByID(`discussion.kabob-${props.discussions[0].id}`)
     kabob.props.onPress()
-    expect(props.deleteDiscussion).toHaveBeenCalledWith('1', '1')
+    expect(props.deleteDiscussion).toHaveBeenCalledWith(props.context, props.contextID, '1')
   })
 
   it('navigates to new discussion form', () => {
     props.navigator.show = jest.fn()
-    props.courseID = '1'
+    props.contextID = '1'
     const addBtn: any = explore(render(props).toJSON()).selectRightBarButton('discussions.list.add.button')
     addBtn.action()
     expect(props.navigator.show).toHaveBeenCalledWith('/courses/1/discussion_topics/new', { modal: true, modalPresentationStyle: 'formsheet' })
@@ -199,7 +212,7 @@ describe('DiscussionsList', () => {
     ActionSheetIOS.showActionSheetWithOptions.mock.calls[0][1](buttonIndex)
     expect(ActionSheetIOS.showActionSheetWithOptions).toHaveBeenCalled()
     if (expectToCallUpdateDiscussion) {
-      expect(props.updateDiscussion).toHaveBeenCalledWith('1', expectedDiscussion)
+      expect(props.updateDiscussion).toHaveBeenCalledWith('courses', '1', expectedDiscussion)
     }
   }
 
@@ -246,7 +259,98 @@ describe('map state to prop', () => {
     })
 
     expect(
-      mapStateToProps(state, { courseID: '1' })
+      mapStateToProps(state, { context: 'courses', contextID: '1' })
+    ).toMatchObject({
+      discussions,
+      courseColor: '#fff',
+    })
+  })
+
+  it('maps state to props course discussions that have group children', () => {
+    const discussions = [
+      template.discussion({ id: '1', group_category_id: '5', group_topic_children: [{ id: '3', group_id: '10' }] }),
+      template.discussion({ id: '2', group_category_id: '5', group_topic_children: [{ id: '4', group_id: '11' }] }),
+    ]
+    const state: AppState = template.appState({
+      entities: {
+        ...template.appState().entities,
+        courses: {
+          '1': {
+            color: '#fff',
+            course: {
+              name: 'Foo',
+            },
+            discussions: {
+              pending: 0,
+              error: null,
+              refs: ['1', '2'],
+            },
+          },
+        },
+        discussions: {
+          '1': {
+            data: discussions[0],
+          },
+          '2': {
+            data: discussions[1],
+          },
+          '3': {
+            data: template.discussion({ title: 'groupd discussion 3' }),
+          },
+          '4': {
+            data: template.discussion({ title: 'groupd discussion 4' }),
+          },
+        },
+        groups: {
+          '10': { data: { name: 'A' } },
+          '11': { data: { name: 'B' } },
+        },
+      },
+    })
+
+    expect(
+      mapStateToProps(state, { context: 'courses', contextID: '1' })
+    ).toMatchObject({
+      discussions: [
+        { ...discussions[0], html_url: '/groups/10/discussion_topics/3' },
+        { ...discussions[1], html_url: '/groups/11/discussion_topics/4' },
+      ],
+      courseColor: '#fff',
+    })
+  })
+
+  it('maps state to props group context', () => {
+    const discussions = [
+      template.discussion({ id: '1' }),
+      template.discussion({ id: '2' }),
+    ]
+    const state: AppState = template.appState({
+      entities: {
+        ...template.appState().entities,
+        groups: {
+          '1': {
+            color: '#fff',
+            group: { name: 'Foo' },
+            discussions: {
+              pending: 0,
+              error: null,
+              refs: ['1', '2'],
+            },
+          },
+        },
+        discussions: {
+          '1': {
+            data: discussions[0],
+          },
+          '2': {
+            data: discussions[1],
+          },
+        },
+      },
+    })
+
+    expect(
+      mapStateToProps(state, { context: 'groups', contextID: '1' }),
     ).toMatchObject({
       discussions,
       courseColor: '#fff',

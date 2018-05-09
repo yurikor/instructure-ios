@@ -19,6 +19,9 @@
 /* 88 out of 100 points */
 "%@ out of %@" = "%1$@ 在 %2$@之外";
 
+/* {point range max} to > {point range min} pts */
+"%@ to > %@ pts" = "%1$@至 > %2$@ 分";
+
 /* 83% (83 out of 100 points */
 "%@%% (%g out of %@)" = "%1$@%% (%2$g 在 %3$@之外)";
 
@@ -82,9 +85,6 @@
 /* No comment provided by engineer. */
 "Note: Media files are not immediately available for playback while they are processed on the server." = "注意：服务器正在处理的媒体文件不会立即回播。";
 
-/* No comment provided by engineer. */
-"OK" = "OK";
-
 /* Short name for observer enrollment */
 "Observer" = "观察员";
 
@@ -99,6 +99,9 @@
 
 /* A button that records */
 "Record" = "录制";
+
+/* No comment provided by engineer. */
+"Score" = "评分";
 
 /* Hint about the play button */
 "Starts playing your recording" = "开始播放您的录制";
@@ -146,7 +149,7 @@
 "Video" = "视频";
 
 /* No comment provided by engineer. */
-"Video error" = "视频错误";
+"Video Error" = "视频错误";
 
 /* No comment provided by engineer. */
 "Warning" = "警告";

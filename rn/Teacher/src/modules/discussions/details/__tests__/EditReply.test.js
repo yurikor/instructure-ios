@@ -14,8 +14,9 @@
 // limitations under the License.
 //
 
-// @flow
+/* eslint-disable flowtype/require-valid-file-annotation */
 
+import { shallow } from 'enzyme'
 import React from 'react'
 import { EditReply, mapStateToProps } from '../EditReply'
 import explore from '../../../../../test/helpers/explore'
@@ -23,6 +24,8 @@ import setProps from '../../../../../test/helpers/setProps'
 import { Alert } from 'react-native'
 import { defaultErrorTitle } from '../../../../redux/middleware/error-handler'
 import renderer from 'react-test-renderer'
+import app from '../../../app'
+import * as template from '../../../../__templates__'
 
 jest
   .mock('Alert', () => ({
@@ -42,14 +45,6 @@ jest
     },
   }))
 
-const template = {
-  ...require('../../../../__templates__/discussion'),
-  ...require('../../../../__templates__/course'),
-  ...require('../../../../__templates__/users'),
-  ...require('../../../../__templates__/helm'),
-  ...require('../../../../redux/__templates__/app-state'),
-}
-
 describe('EditReply', () => {
   let defaultProps
   beforeEach(() => {
@@ -58,16 +53,33 @@ describe('EditReply', () => {
       discussion: template.discussion({ id: '1' }),
       navigator: template.navigator(),
       discussionID: '1',
-      courseID: '1',
+      context: 'courses',
+      contextID: '1',
       entryID: '1',
       course: template.course({ id: 1 }),
       indexPath: [],
       deletePendingReplies: jest.fn(),
       lastReplyAt: (new Date()).toISOString(),
+      permissions: {
+        attach: true,
+        delete: true,
+        reply: true,
+        update: true,
+      },
     }
+    app.setCurrentApp('teacher')
   })
 
   it('renders', () => {
+    let tree = renderer.create(
+      <EditReply {...defaultProps} />
+    ).toJSON()
+
+    expect(tree).toMatchSnapshot()
+  })
+
+  it('renders title correctly when editing', () => {
+    defaultProps.isEdit = true
     let tree = renderer.create(
       <EditReply {...defaultProps} />
     ).toJSON()
@@ -87,19 +99,6 @@ describe('EditReply', () => {
     jest.runAllTimers()
 
     expect(Alert.alert).toHaveBeenCalledWith(defaultErrorTitle(), errorMessage)
-  })
-
-  it('calls dismiss on cancel', () => {
-    let component = renderer.create(
-      <EditReply {...defaultProps} />
-    )
-    let postReply = jest.fn(() => {
-      setProps(component, { pending: 0, error: 'error' })
-    })
-    component.update(<EditReply {...defaultProps} updateCourse={postReply} />)
-    const doneButton: any = explore(component.toJSON()).selectLeftBarButton('edit-discussion-reply.cancel-btn')
-    doneButton.action()
-    expect(component.toJSON()).toMatchSnapshot()
   })
 
   it('deletes pending replies on unmount', () => {
@@ -146,45 +145,87 @@ describe('EditReply', () => {
     expect(textEditor.props.placeholder).toEqual('Message')
   })
 
-  it('enteres text and posts reply', () => {
-    let component = renderer.create(
-      <EditReply {...defaultProps} />
-    )
+  it('enters text and posts reply', async () => {
+    let component = shallow(<EditReply {...defaultProps} refreshDiscussionEntries={jest.fn()} />)
     let postReply = jest.fn(() => {
-      setProps(component, { pending: 0 })
+      component.setProps({ pending: 0 })
     })
-    let textEditor = explore(component.toJSON()).query(({ type }) => type === 'RichTextEditor')[0]
+    component.setProps({ createEntry: postReply })
+    let textEditor = component.find('RichTextEditor')
     let message = 'not empty'
-    textEditor.props.onChangeValue(message)
-    let refresh = jest.fn()
-    component.update(<EditReply {...defaultProps} createEntry={postReply} refreshDiscussionEntries={refresh} />)
-    const doneButton: any = explore(component.toJSON()).selectRightBarButton('edit-discussion-reply.done-btn')
-    doneButton.action()
-    expect(postReply).toBeCalledWith(defaultProps.courseID, defaultProps.discussionID, defaultProps.entryID, { message }, [], defaultProps.lastReplyAt)
+    textEditor.getElement().ref({ getHTML: jest.fn(() => Promise.resolve(message)) })
+    const doneButton = component.prop('rightBarButtons')[0]
+    await doneButton.action()
+    expect(postReply).toBeCalledWith(defaultProps.context, defaultProps.contextID, defaultProps.discussionID, defaultProps.entryID, { attachment: null, message }, [], defaultProps.lastReplyAt)
     expect(defaultProps.navigator.dismissAllModals).toHaveBeenCalled()
   })
 
-  it('edits an existing reply', () => {
+  it('edits an existing reply', async () => {
     let editProps = {
       ...defaultProps,
       message: 'default message',
       isEdit: true,
+      refreshDiscussionEntries: jest.fn(),
     }
-    let component = renderer.create(
-      <EditReply {...editProps} />
-    )
-    let editReply = jest.fn(() => {
-      setProps(component, { pending: 0 })
+    let component = shallow(<EditReply {...editProps} />)
+    let editEntry = jest.fn(() => {
+      component.setProps({ pending: 0 })
     })
-    let textEditor = explore(component.toJSON()).query(({ type }) => type === 'RichTextEditor')[0]
+    component.setProps({ editEntry })
+    let textEditor = component.find('RichTextEditor')
     let message = 'edited message'
-    textEditor.props.onChangeValue(message)
-    let refresh = jest.fn()
-    component.update(<EditReply {...editProps} editEntry={editReply} refreshDiscussionEntries={refresh} />)
-    const doneButton: any = explore(component.toJSON()).selectRightBarButton('edit-discussion-reply.done-btn')
-    doneButton.action()
-    expect(editReply).toBeCalledWith(editProps.courseID, editProps.discussionID, editProps.entryID, { message }, [])
+    textEditor.getElement().ref({ getHTML: jest.fn(() => Promise.resolve(message)) })
+    const doneButton = component.prop('rightBarButtons')[0]
+    await doneButton.action()
+    expect(editEntry).toBeCalledWith(defaultProps.context, defaultProps.contextID, editProps.discussionID, editProps.entryID, { attachment: null, message }, [])
     expect(defaultProps.navigator.dismissAllModals).toHaveBeenCalled()
+  })
+
+  it('cannot add an attachment if it does not have permission', () => {
+    defaultProps.permissions.attach = false
+    const tree = shallow(<EditReply {...defaultProps} />)
+    const attach = tree.find('Screen').prop('rightBarButtons')
+      .find(({ testID }) => testID === 'edit-discussion-reply.attachment-btn')
+    expect(attach).toBeUndefined()
+  })
+
+  it('can add an attachment if it has permission', () => {
+    defaultProps.navigator = template.navigator({ show: jest.fn() })
+    defaultProps.permissions.attach = true
+    const tree = shallow(<EditReply {...defaultProps} />)
+    const attach = tree.find('Screen').prop('rightBarButtons')
+      .find(({ testID }) => testID === 'edit-discussion-reply.attachment-btn')
+    expect(attach).toBeDefined()
+    attach.action()
+    expect(defaultProps.navigator.show).toHaveBeenCalledWith(
+      '/attachments',
+      { modal: true },
+      {
+        attachments: [],
+        maxAllowed: 1,
+        storageOptions: {
+          uploadPath: null,
+        },
+        onComplete: expect.any(Function),
+      }
+    )
+    const attachment = template.attachment()
+    defaultProps.navigator.show.mock.calls[0][2].onComplete([ attachment ])
+    expect(tree.state('attachment')).toBe(attachment)
+  })
+
+  it('uses course files for rce media embeds in teacher', () => {
+    app.setCurrentApp('teacher')
+    defaultProps.context = 'courses'
+    defaultProps.contextID = '1'
+    const screen = shallow(<EditReply {...defaultProps} />)
+    expect(screen.find('RichTextEditor').prop('attachmentUploadPath')).toEqual('/courses/1/files')
+  })
+
+  it('uses user files for rce media embeds in student', () => {
+    app.setCurrentApp('student')
+    const screen = shallow(<EditReply {...defaultProps} />)
+    expect(screen.find('RichTextEditor').prop('attachmentUploadPath')).toEqual('/users/self/files')
   })
 })
 

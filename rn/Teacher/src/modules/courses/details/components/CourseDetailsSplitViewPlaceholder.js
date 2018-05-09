@@ -27,10 +27,10 @@ import Screen from '../../../../routing/Screen'
 import Images from '../../../../images/'
 import colors from '../../../../common/colors'
 
-export default class CourseDetailsSplitViewPlaceholder extends Component {
+export default class CourseDetailsSplitViewPlaceholder extends Component<*> {
   render () {
     const courseColor = this.props.courseColor
-    const course = this.props.course
+    const course = this.props.course || {}
     const courseCode = course.course_code || ''
 
     return (

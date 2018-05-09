@@ -14,14 +14,13 @@
 // limitations under the License.
 //
 
-/* @flow */
+/* eslint-disable flowtype/require-valid-file-annotation */
 import {
   ActionSheetIOS,
   AlertIOS,
 } from 'react-native'
 import React from 'react'
 import { ConversationDetails, mapStateToProps, handleRefresh, shouldRefresh, type ConversationDetailsProps } from '../ConversationDetails.js'
-import { setSession } from '../../../../canvas-api'
 import explore from '../../../../../test/helpers/explore'
 import setProps from '../../../../../test/helpers/setProps'
 
@@ -88,11 +87,12 @@ describe('ConversationDetails', () => {
     }
   })
 
-  beforeAll(() => {
-    setSession(template.session())
+  it('renders correctly', () => {
+    Screen(props).testRender()
   })
 
-  it('renders correctly', () => {
+  it('renders correctly with no conversation', () => {
+    props.conversation = null
     Screen(props).testRender()
   })
 
@@ -151,6 +151,7 @@ describe('ConversationDetails', () => {
       starConversation,
       markAsRead: jest.fn(),
       messages: [],
+      navigator: template.navigator(),
     }
 
     let tree = renderer.create(

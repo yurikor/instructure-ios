@@ -14,7 +14,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-/* @flow */
+/* eslint-disable flowtype/require-valid-file-annotation */
 
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
@@ -91,24 +91,24 @@ function booleanTransformer<T> (truthy: T, falsey: T): (b: boolean) => T {
 const PickerItem = PickerIOS.Item
 
 export class QuizEdit extends Component<Props, any> {
+  static defaultProps = {
+    updateQuiz: canvas.updateQuiz,
+  }
+
   datesEditor: AssignmentDatesEditor
   scrollView: KeyboardAwareScrollView
 
-  constructor (props: Props) {
-    super(props)
-
-    this.state = {
-      pending: false,
-      quiz: props.quiz,
-      pickers: {},
-      assignment: props.assignment,
-      validation: {
-        isValid: true,
-        title: true,
-        showCorrectAnswerDates: true,
-        accessCode: true,
-      },
-    }
+  state = {
+    pending: false,
+    quiz: this.props.quiz,
+    pickers: {},
+    assignment: this.props.assignment,
+    validation: {
+      isValid: true,
+      title: true,
+      showCorrectAnswerDates: true,
+      accessCode: true,
+    },
   }
 
   componentWillReceiveProps ({ quiz, pending, error, assignment }: Props) {
@@ -142,7 +142,6 @@ export class QuizEdit extends Component<Props, any> {
     return (
       <Screen
         title={i18n('Edit Quiz Details')}
-        navBarStyle='light'
         navBarTitleColor={colors.darkText}
         navBarButtonColor={colors.link}
         rightBarButtons={[
@@ -154,14 +153,7 @@ export class QuizEdit extends Component<Props, any> {
             disabled: this.state.pending,
           },
         ]}
-        leftBarButtons={[
-          {
-            title: i18n('Cancel'),
-            testID: 'quizzes.edit.cancelButton',
-            action: this._cancelPressed,
-            disabled: this.state.pending,
-          },
-        ]}
+        dismissButtonTitle={i18n('Cancel')}
       >
         <View style={{ flex: 1, backgroundColor: '#F5F5F5' }}>
           { this.state.pending && <SavingBanner style={style.savingBanner} />}
@@ -217,13 +209,15 @@ export class QuizEdit extends Component<Props, any> {
                 ))}
               </PickerIOS>
             }
-            <RowWithSwitch
-              title={i18n('Publish')}
-              border='bottom'
-              onValueChange={this._updateQuiz('published')}
-              value={quiz.published}
-              identifier='quizzes.edit.published-toggle'
-            />
+            { (!quiz.published || quiz.can_unpublish) &&
+              <RowWithSwitch
+                title={i18n('Publish')}
+                border='bottom'
+                onValueChange={this._updateQuiz('published')}
+                value={quiz.published}
+                identifier='quizzes.edit.published-toggle'
+              />
+            }
             { graded &&
               <View>
                 <RowWithDetail
@@ -607,22 +601,15 @@ export class QuizEdit extends Component<Props, any> {
     }
   }
 
-  _cancelPressed = () => {
-    this.props.navigator.dismiss()
-  }
-
   _editDescription = () => {
-    this.props.navigator.show('/rich-text-editor', { modal: false }, {
+    this.props.navigator.show('/rich-text-editor', { modal: true, modalPresentationStyle: 'fullscreen' }, {
       defaultValue: this.state.quiz.description,
       onChangeValue: this._updateQuiz('description'),
       showToolbar: 'always',
       placeholder: i18n('Description'),
+      attachmentUploadPath: `/courses/${this.props.courseID}/files`,
     })
   }
-}
-
-QuizEdit.defaultProps = {
-  updateQuiz: canvas.updateQuiz,
 }
 
 const style = StyleSheet.create({

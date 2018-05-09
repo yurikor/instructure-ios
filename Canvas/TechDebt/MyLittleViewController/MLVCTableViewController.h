@@ -26,6 +26,7 @@
 @property (nonatomic, readonly) RACSignal *selectedCellViewModelSignal;
 @property (nonatomic, readonly) RACSignal *tableViewDidAppearSignal;
 @property (nonatomic, strong) id customRefreshControl;
+@property (nonatomic, strong) NSString *url;
 
 - (void)refreshFromRefreshControl:(id)refreshControl;
 @end

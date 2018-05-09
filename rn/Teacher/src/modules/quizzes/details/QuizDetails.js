@@ -30,7 +30,7 @@ import AssignmentSection from '../../assignment-details/components/AssignmentSec
 import AssignmentDates from '../../assignment-details/components/AssignmentDates'
 import PublishedIcon from '../../assignment-details/components/PublishedIcon'
 import { RefreshableScrollView } from '../../../common/components/RefreshableList'
-import WebContainer from '../../../common/components/WebContainer'
+import CanvasWebView from '../../../common/components/CanvasWebView'
 import DescriptionDefaultView from '../../../common/components/DescriptionDefaultView'
 import {
   Heading1,
@@ -55,6 +55,7 @@ type State = {
   assignment: ?Assignment,
   courseName: string,
   showSubmissionSummary: boolean,
+  courseColor: ?string,
 }
 
 export type Props = State & OwnProps & RefreshProps & typeof Actions & {
@@ -96,7 +97,8 @@ export class QuizDetails extends Component<Props, any> {
             <Heading1>{quiz.title}</Heading1>
             <View style={style.pointsContainer}>
               { Boolean(quiz.points_possible) &&
-                <Text style={style.points}>{`${quiz.points_possible} ${i18n('pts')}`}</Text>
+                // TODO: fix i18n here
+                <Text style={style.points}>{`${quiz.points_possible || 0} ${i18n('pts')}`}</Text>
               }
               <PublishedIcon published={quiz.published} />
           </View>
@@ -110,7 +112,10 @@ export class QuizDetails extends Component<Props, any> {
             onPress={this.props.assignment && this._viewDueDates}
             testID='quizzes.details.viewDueDatesButton'
           >
-            <AssignmentDates assignment={this.props.assignment || quiz} />
+            <AssignmentDates
+              // $FlowFixMe
+              assignment={this.props.assignment || quiz}
+            />
           </AssignmentSection>
 
           {this.props.showSubmissionSummary &&
@@ -153,6 +158,7 @@ export class QuizDetails extends Component<Props, any> {
 
     return (
       <Screen
+        navBarColor={this.props.courseColor}
         navBarStyle='dark'
         title={i18n('Quiz Details')}
         subtitle={this.props.courseName}
@@ -226,8 +232,9 @@ export class QuizDetails extends Component<Props, any> {
 
   checkAssignmentDescription (description: ?string) {
     if (description) {
-      return (<WebContainer style={{ flex: 1 }} html={description} scrollEnabled={false} navigator={this.props.navigator}/>)
+      return (<CanvasWebView style={{ flex: 1 }} html={description} scrollEnabled={false} navigator={this.props.navigator}/>)
     } else {
+      // $FlowFixMe
       return (<DescriptionDefaultView />)
     }
   }
@@ -310,6 +317,7 @@ export function mapStateToProps ({ entities }: AppState, { courseID, quizID }: O
   let assignmentGroup = null
   let assignment = null
   let courseName = ''
+  let courseColor = null
 
   if (entities.quizzes &&
     entities.quizzes[quizID] &&
@@ -324,6 +332,7 @@ export function mapStateToProps ({ entities }: AppState, { courseID, quizID }: O
       entities.courses[courseID] &&
       entities.courses[courseID].course) {
       courseName = entities.courses[courseID].course.name
+      courseColor = entities.courses[courseID].color
     }
 
     if (quiz.assignment_group_id &&
@@ -348,6 +357,7 @@ export function mapStateToProps ({ entities }: AppState, { courseID, quizID }: O
     error,
     courseID,
     courseName,
+    courseColor,
     quizID,
     assignmentGroup,
     assignment,

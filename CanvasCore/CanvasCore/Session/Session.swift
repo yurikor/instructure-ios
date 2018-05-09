@@ -24,7 +24,7 @@ import Marshal
 import WebKit // fixes random "library not loaded" errors.
 import AVFoundation // fixes random "library not loaded" errors.
 
-private let LocalStoreAppGroupName = "group.com.instructure.SoPersistent.LocalStore"
+let LocalStoreAppGroupName = "group.com.instructure.Contexts"
 
 open class Session: NSObject {
     public enum LocalStoreDirectory: String {
@@ -54,7 +54,7 @@ open class Session: NSObject {
     }
 
     public convenience init(baseURL: URL, user: SessionUser, token: String?, masqueradeAsUserID: String? = nil) {
-        self.init(baseURL: baseURL, user: user, token: token, localStoreDirectory: .Default, masqueradeAsUserID: masqueradeAsUserID)
+        self.init(baseURL: baseURL, user: user, token: token, localStoreDirectory: .AppGroup, masqueradeAsUserID: masqueradeAsUserID)
     }
 
     public init(baseURL: URL, user: SessionUser, token: String?, localStoreDirectory: LocalStoreDirectory, masqueradeAsUserID: String? = nil) {
@@ -78,9 +78,13 @@ open class Session: NSObject {
     }
     
     open var sessionID: String {
-        let masq = masqueradeAsUserID.map { "-\($0)" } ?? ""
         let host = baseURL.host ?? "unknown-host"
-        return "\(host)-\(user.id)\(masq)"
+        let userID = user.id
+        var components = [host, userID]
+        if let masq = masqueradeAsUserID {
+            components.append(masq)
+        }
+        return components.joined(separator: "-")
     }
     
     open var localStoreDirectoryURL: URL {
@@ -129,7 +133,7 @@ extension Session {
         let baseURL = (data["baseURL"] as? String).flatMap { URL(string: $0) }
         let user = (data["currentUser"] as? [String: AnyObject]).flatMap { SessionUser.fromJSON($0) }
         let masqueradeUserID = data["actAsUserID"] as? String
-        let localStoreDirectory = (data["localStoreDirectory"] as? String).flatMap(LocalStoreDirectory.init) ?? .Default
+        let localStoreDirectory = (data["localStoreDirectory"] as? String).flatMap(LocalStoreDirectory.init) ?? .AppGroup
         
         if let token = token, let baseURL = baseURL, let user = user {
             return Session(baseURL: baseURL, user: user, token: token, localStoreDirectory: localStoreDirectory, masqueradeAsUserID: masqueradeUserID)

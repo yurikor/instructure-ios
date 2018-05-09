@@ -1,3 +1,5 @@
+"Inbox" = "收件箱";
+
 /* Error message component with the report id */
 " Error report ID: (reportID)" = " 报告 ID 出错：(reportID)";
 
@@ -44,8 +46,14 @@
 /* all pages segmented control title */
 "All Pages" = "所有页面";
 
-/* Title for push notification pre-authorization alert */
-"Allow Push Notifications?" = "允许推送通知？";
+/* No comment provided by engineer. */
+"All notifications are currently disabled." = "所有通知当前都已禁用。";
+
+/* No comment provided by engineer. */
+"All notifications are currently enabled." = "所有通知当前都已启用。";
+
+/* No comment provided by engineer. */
+"Allow Notifications in Settings" = "允许设置通知";
 
 /* label for number of attempts that are allowed */
 "Allowed Attempts" = "允许的尝试次数";
@@ -86,7 +94,8 @@
 /* Alert title when unable to parse JSON for notification preferences */
 "Can't Display Notification Preferences" = "无法显示通知首选项";
 
-/* Cancel button title
+/* Cancel Audio recording.
+   Cancel button title
    Cancel submission option
    Cancel upload */
 "Cancel" = "取消";
@@ -119,6 +128,9 @@
 "Choose your answers below" = "在下方选择您的答案";
 
 /* No comment provided by engineer. */
+"Collapse" = "折叠";
+
+/* No comment provided by engineer. */
 "Comments" = "评论";
 
 /* File upload completed */
@@ -144,9 +156,6 @@
 
 /* Notification display name for course activities group */
 "Course Activities" = "课程活动";
-
-/* Button for creating a note from text selection */
-"Create Note" = "创建备注";
 
 /* Header label for a screen that customizes a course */
 "Customize" = "自定义";
@@ -237,11 +246,17 @@
 /* No comment provided by engineer. */
 "Error parsing the Roll Call response. Unexpected null value: (k)" = "解析点名应答时出错。意外的无效值：(k)";
 
+/* No comment provided by engineer. */
+"Error retrieving tool launch URL" = "检索工具启动URL时出错";
+
 /* rollcall status error */
 "Error: No data returned from the rollcall api." = "错误：没有数据从点名单 API 中返回。";
 
 /* Exit button to leave the quiz */
 "Exit" = "退出";
+
+/* No comment provided by engineer. */
+"Expand" = "展开";
 
 /* Error message when the server returns a invalid response */
 "Expected a response in the 200-299 range. Got %@" = "预计响应介于 200-299 范围内。获取%@";
@@ -288,15 +303,15 @@
 /* Hides the question list */
 "Hide Question List" = "隐藏问题列表";
 
-/* No comment provided by engineer. */
-"Inbox" = "收件箱";
-
 /* Indigo course color button */
 "Indigo" = "靛蓝色";
 
 /* Mark student late
    Student is present in class */
 "Late" = "延迟";
+
+/* No comment provided by engineer. */
+"Launch External Tool" = "启动外部工具";
 
 /* Leave the quiz */
 "Leave" = "离开";
@@ -332,9 +347,6 @@
 /* Next button for advancing a quiz */
 "Next" = "下一步";
 
-/* Title for no button for push notification pre-authorization alert */
-"No" = "否";
-
 /* Alert title when unable to load communication channels */
 "No Communication Channels Found" = "没有找到通讯频道";
 
@@ -361,9 +373,6 @@
 
 /* Title for alert showing when a quiz isn't takeable */
 "Not Takeable" = "不能参加";
-
-/* No comment provided by engineer. */
-"Note..." = "备注...";
 
 /* Error title for push notification registration error */
 "Notification Error" = "通知错误";
@@ -442,10 +451,10 @@
 "Question %@" = "问题%@";
 
 /* state for a question that has been flagged */
-"Question (questionNumber) Flagged" = "问题（questionNumber）已标记";
+"Question (number) Flagged" = "标记的问题（数量）";
 
 /* state for unflagged question */
-"Question (questionNumber) Unflagged" = "问题（questionNumber）未标记";
+"Question (number) Unflagged" = "未标记的问题（数量）";
 
 /* label for the number of questions */
 "Questions" = "问题";
@@ -705,10 +714,7 @@
 "Unable to display any notification preferences returned from the server at this time." = "此时无法显示任何从服务器返回的通知首选项。";
 
 /* Alert message when unable to load communication channels */
-"Unable to load any Communication Channels at this time.  Error: (result.error?.localizedDescription)" = "暂时无法加载任何通信通道。错误：(result.error?.localizedDescription)";
-
-/* Alert message when unable to load notification preferences */
-"Unable to load any notification preferences at this time.  Error: (result.error?.localizedDescription)" = "暂时无法加载任何通知首选项。错误：(result.error?.localizedDescription)";
+"Unable to load any Communication Channels at this time." = "暂时无法加载任何通信通道。";
 
 /* Error message when parsing communication preferences */
 "Unable to parse JSON for communication channels" = "无法解析 JSON 的信道";
@@ -758,14 +764,8 @@
 /* Error message for being unable to update a push notification preference */
 "We were not able to update this value with the server" = "我们无法更新服务器的价值";
 
-/* Message for push notification pre-authorization alert */
-"Would you like to allow Canvas to send you important notifications about announcements, course, assignments, etc?" = "您允许Canvas 向您发送有关通告、课程、作业等的重要通知吗？";
-
 /* Yellow course color button */
 "Yellow" = "黄色";
-
-/* Title for yes button for push notification pre-authorization alert */
-"Yes" = "是";
 
 /* Description for Yo communication channel */
 "Yo" = "哟";
@@ -796,4 +796,7 @@
 
 /* File upload in progress */
 "uploading..." = "正在上传……";
+
+/* web content failed to load */
+"⚠️ Error Loading Content" = "⚠️ 加载内容时出错";
 

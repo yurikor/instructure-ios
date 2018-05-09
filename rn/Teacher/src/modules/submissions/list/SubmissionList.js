@@ -51,12 +51,10 @@ type Props = SubmissionListProps & { navigator: Navigator } & RefreshProps
 type State = {
   isConnected: boolean,
   filterOptions: SubmissionFilterOption[],
+  filter: Function,
 }
 
-export class SubmissionList extends Component {
-  props: Props
-  state: State
-
+export class SubmissionList extends Component<Props, State> {
   constructor (props: Props) {
     super(props)
     let filterOptions = [ ...defaultFilterOptions(this.props.filterType), ...this.props.sections.map(createFilterFromSection) ]
@@ -121,7 +119,7 @@ export class SubmissionList extends Component {
     return (
       <SubmissionRow
         {...item}
-        onAvatarPress={!this.props.groupAssignment && this.navigateToContextCard}
+        onAvatarPress={!this.props.groupAssignment ? this.navigateToContextCard : undefined}
         onPress={this.navigateToSubmission(index)}
         anonymous={this.props.anonymous}
         gradingType={this.props.gradingType}
@@ -189,7 +187,7 @@ export class SubmissionList extends Component {
               <SubmissionsHeader
                 filterOptions={this.state.filterOptions}
                 applyFilter={this.applyFilter}
-                filterPromptMessage={i18n('Out of {points}', { points: this.props.pointsPossible })}
+                filterPromptMessage={i18n('Out of {points, number}', { points: this.props.pointsPossible })}
                 initialFilterType={this.props.filterType}
                 pointsPossible={this.props.pointsPossible}
                 anonymous={this.props.anonymous}
@@ -244,7 +242,8 @@ const styles = StyleSheet.create({
 export function refreshSubmissionList (props: SubmissionListProps): void {
   props.refreshSections(props.courseID)
   props.getCourseEnabledFeatures(props.courseID)
-  if (props.groupAssignment && !props.groupAssignment.gradeIndividually) {
+
+  if (props.isMissingGroupsData || props.isGroupGradedAssignment) {
     props.refreshGroupsForCourse(props.courseID)
     props.refreshSubmissions(props.courseID, props.assignmentID, true)
   } else {
@@ -269,7 +268,7 @@ const Connected = connect(mapStateToProps, {
   ...SectionActions,
   ...CourseActions,
 })(Refreshed)
-export default (Connected: Component<any, SubmissionListProps, any>)
+export default (Connected: Component<SubmissionListProps, any>)
 
 function createFilterFromSection (section) {
   return {
@@ -279,6 +278,7 @@ function createFilterFromSection (section) {
     selected: false,
     exclusive: false,
     filterFunc: (submission) => {
+      if (!submission || !submission.allSectionIDs) return false
       return submission.allSectionIDs.includes(section.id)
     },
   }

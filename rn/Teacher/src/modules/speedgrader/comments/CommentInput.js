@@ -38,7 +38,7 @@ type CommentInputProps = {
   drawerState: DrawerState,
   addMedia?: () => void,
   initialValue: ?string,
-  disabled: boolean,
+  disabled?: boolean,
   autoFocus?: boolean,
   onBlur?: () => void,
 }
@@ -47,14 +47,13 @@ type State = {
   textComment: string,
 }
 
-export default class CommentInput extends Component<any, CommentInputProps, any> {
-  state: State
-  _textInput: TextInput
-
-  constructor (props: CommentInputProps) {
-    super(props)
-    this.state = { textComment: props.initialValue || '' }
+export default class CommentInput extends Component<CommentInputProps, State> {
+  static defaultProps = {
+    disabled: false,
   }
+
+  state: State = { textComment: this.props.initialValue || '' }
+  _textInput: TextInput
 
   addMedia = () => {
     console.log('Add some media!')
@@ -88,7 +87,7 @@ export default class CommentInput extends Component<any, CommentInputProps, any>
     this.props.onBlur && this.props.onBlur()
   }
 
-  captureTextInput = (textInput: TextInput) => {
+  captureTextInput = (textInput: any) => {
     this._textInput = textInput
   }
 
@@ -112,7 +111,7 @@ export default class CommentInput extends Component<any, CommentInputProps, any>
               accessible
               accessibilityLabel={addMedia}
               accessibilityTraits={['button']}
-              hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+              hitSlop={{ top: 11, right: 11, bottom: 11, left: 11 }}
             >
               <Image
                 resizeMode="center"
@@ -149,6 +148,7 @@ export default class CommentInput extends Component<any, CommentInputProps, any>
                 accessibilityLabel={send}
                 accessibilityTraits={['button']}
                 activeOpacity={disableSend ? 1 : 0.2}
+                hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
               >
                 <Image
                   style={styles.sendButtonArrow}
@@ -164,14 +164,10 @@ export default class CommentInput extends Component<any, CommentInputProps, any>
   }
 }
 
-CommentInput.defaultProps = {
-  disabled: false,
-}
-
 const styles = StyleSheet.create({
   mediaButton: {
     alignSelf: 'center',
-    paddingHorizontal: 4,
+    paddingHorizontal: 11,
   },
   plus: {
     tintColor: colors.secondaryButton,

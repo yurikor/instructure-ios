@@ -1,9 +1,12 @@
 /* (No Comment) */
-"CFBundleDisplayName" = "Canvas";
+"NSCameraUsageDescription" = "Anexe fotos e vídeos a mensagens e postagens de discussão ou apresente-as como envio de tarefas.";
 
 /* (No Comment) */
-"CFBundleName" = "${PRODUCT_NAME}";
+"NSLocationWhenInUseUsageDescription" = "Ajude-nos a encontrar escolas perto de si.";
 
 /* (No Comment) */
-"CFBundleShortVersionString" = "3.17.1";
+"NSMicrophoneUsageDescription" = "Anexe gravações de áudio a mensagens e postagens de discussão ou altere-as como envio de tarefas.";
+
+/* (No Comment) */
+"NSPhotoLibraryUsageDescription" = "Anexe fotos e vídeos a mensagens e postagens de discussão ou apresente-as como envio de tarefas.";
 

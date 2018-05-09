@@ -32,12 +32,13 @@ public func ToDoTabViewController(session: Session, route: @escaping (UIViewCont
     let masterNav = UINavigationController(rootViewController: list)
     let detailNav = UINavigationController()
     detailNav.view.backgroundColor = UIColor.white
+    masterNav.applyDefaultBranding()
+    detailNav.applyDefaultBranding()
     split.viewControllers = [masterNav, detailNav]
 
     let title = NSLocalizedString("To Do", comment: "Title of the Todo screen")
     list.navigationItem.title = title
     split.tabBarItem.title = title
     split.tabBarItem.image = .icon(.todo)
-    split.tabBarItem.selectedImage = .icon(.todo)
     return split
 }

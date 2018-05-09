@@ -1,5 +1,40 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`RichTextEditor can be keyboard aware 1`] = `
+<View
+  onLayout={[Function]}
+  style={
+    Object {
+      "flex": 1,
+      "flexDirection": "column",
+    }
+  }
+>
+  <ZSSRichTextEditor
+    editorItemsChanged={[Function]}
+    getFile={[Function]}
+    navigator={
+      Object {
+        "dismiss": [Function],
+        "dismissAllModals": [Function],
+        "isModal": false,
+        "pop": [Function],
+        "show": [Function],
+        "traitCollection": [Function],
+      }
+    }
+    onBlur={[Function]}
+    onFocus={[Function]}
+    onLoad={[Function]}
+    scrollEnabled={true}
+  />
+  <KeyboardSpacer
+    onToggle={[Function]}
+    topSpacing={-209}
+  />
+</View>
+`;
+
 exports[`RichTextEditor does height stuff when color picker shown 1`] = `
 "
         var scrollTop = $(window).scrollTop();
@@ -17,30 +52,59 @@ exports[`RichTextEditor hides toolbar when editor blurs 1`] = `
     }
   }
 >
-  <View
-    style={
+  <ZSSRichTextEditor
+    editorItemsChanged={[Function]}
+    getFile={[Function]}
+    navigator={
       Object {
-        "flex": 1,
-        "paddingBottom": 12.8,
-        "paddingLeft": 16,
-        "paddingRight": 16,
-        "paddingTop": 12.8,
+        "dismiss": [Function],
+        "dismissAllModals": [Function],
+        "isModal": false,
+        "pop": [Function],
+        "show": [Function],
+        "traitCollection": [Function],
       }
     }
-  >
-    <ZSSRichTextEditor
-      _setMock={[Function]}
-      editorItemsChanged={[Function]}
-      html=""
-      navigator={undefined}
-      onBlur={[Function]}
-      onFocus={[Function]}
-      onHeightChange={undefined}
-      onInputChange={[Function]}
-      onLoad={[Function]}
-      scrollEnabled={true}
-    />
-  </View>
+    onBlur={[Function]}
+    onFocus={[Function]}
+    onLoad={[Function]}
+    scrollEnabled={true}
+  />
+  <KeyboardSpacer
+    onToggle={[Function]}
+    topSpacing={-209}
+  />
+</View>
+`;
+
+exports[`RichTextEditor hides toolbar when showToolbar is false 1`] = `
+<View
+  onLayout={[Function]}
+  style={
+    Object {
+      "flex": 1,
+      "flexDirection": "column",
+    }
+  }
+>
+  <ZSSRichTextEditor
+    editorItemsChanged={[Function]}
+    getFile={[Function]}
+    navigator={
+      Object {
+        "dismiss": [Function],
+        "dismissAllModals": [Function],
+        "isModal": false,
+        "pop": [Function],
+        "show": [Function],
+        "traitCollection": [Function],
+      }
+    }
+    onBlur={[Function]}
+    onFocus={[Function]}
+    onLoad={[Function]}
+    scrollEnabled={true}
+  />
   <KeyboardSpacer
     onToggle={[Function]}
     topSpacing={0}
@@ -58,30 +122,24 @@ exports[`RichTextEditor renders 1`] = `
     }
   }
 >
-  <View
-    style={
+  <ZSSRichTextEditor
+    editorItemsChanged={[Function]}
+    getFile={[Function]}
+    navigator={
       Object {
-        "flex": 1,
-        "paddingBottom": 12.8,
-        "paddingLeft": 16,
-        "paddingRight": 16,
-        "paddingTop": 12.8,
+        "dismiss": [Function],
+        "dismissAllModals": [Function],
+        "isModal": false,
+        "pop": [Function],
+        "show": [Function],
+        "traitCollection": [Function],
       }
     }
-  >
-    <ZSSRichTextEditor
-      _setMock={[Function]}
-      editorItemsChanged={[Function]}
-      html=""
-      navigator={undefined}
-      onBlur={[Function]}
-      onFocus={[Function]}
-      onHeightChange={undefined}
-      onInputChange={[Function]}
-      onLoad={[Function]}
-      scrollEnabled={true}
-    />
-  </View>
+    onBlur={[Function]}
+    onFocus={[Function]}
+    onLoad={[Function]}
+    scrollEnabled={true}
+  />
   <KeyboardSpacer
     onToggle={[Function]}
     topSpacing={0}
@@ -99,32 +157,27 @@ exports[`RichTextEditor renders toolbar when editor focused 1`] = `
     }
   }
 >
-  <View
-    style={
+  <ZSSRichTextEditor
+    editorItemsChanged={[Function]}
+    getFile={[Function]}
+    navigator={
       Object {
-        "flex": 1,
-        "paddingBottom": 12.8,
-        "paddingLeft": 16,
-        "paddingRight": 16,
-        "paddingTop": 12.8,
+        "dismiss": [Function],
+        "dismissAllModals": [Function],
+        "isModal": false,
+        "pop": [Function],
+        "show": [Function],
+        "traitCollection": [Function],
       }
     }
-  >
-    <ZSSRichTextEditor
-      _setMock={[Function]}
-      editorItemsChanged={[Function]}
-      html=""
-      navigator={undefined}
-      onBlur={[Function]}
-      onFocus={[Function]}
-      onHeightChange={undefined}
-      onInputChange={[Function]}
-      onLoad={[Function]}
-      scrollEnabled={true}
-    />
-  </View>
+    onBlur={[Function]}
+    onFocus={[Function]}
+    onLoad={[Function]}
+    scrollEnabled={true}
+  />
   <RichTextToolbar
     active={Array []}
+    insertImage={null}
     insertLink={[Function]}
     onColorPickerShown={[Function]}
     redo={[Function]}
@@ -137,7 +190,7 @@ exports[`RichTextEditor renders toolbar when editor focused 1`] = `
   />
   <KeyboardSpacer
     onToggle={[Function]}
-    topSpacing={0}
+    topSpacing={-209}
   />
 </View>
 `;
@@ -152,36 +205,27 @@ exports[`RichTextEditor should update active editor items in toolbar 1`] = `
     }
   }
 >
-  <View
-    style={
+  <ZSSRichTextEditor
+    editorItemsChanged={[Function]}
+    getFile={[Function]}
+    navigator={
       Object {
-        "flex": 1,
-        "paddingBottom": 12.8,
-        "paddingLeft": 16,
-        "paddingRight": 16,
-        "paddingTop": 12.8,
+        "dismiss": [Function],
+        "dismissAllModals": [Function],
+        "isModal": false,
+        "pop": [Function],
+        "show": [Function],
+        "traitCollection": [Function],
       }
     }
-  >
-    <ZSSRichTextEditor
-      _setMock={[Function]}
-      editorItemsChanged={[Function]}
-      html=""
-      navigator={undefined}
-      onBlur={[Function]}
-      onFocus={[Function]}
-      onHeightChange={undefined}
-      onInputChange={[Function]}
-      onLoad={[Function]}
-      scrollEnabled={true}
-    />
-  </View>
+    onBlur={[Function]}
+    onFocus={[Function]}
+    onLoad={[Function]}
+    scrollEnabled={true}
+  />
   <RichTextToolbar
-    active={
-      Array [
-        "italic",
-      ]
-    }
+    active={Array []}
+    insertImage={null}
     insertLink={[Function]}
     onColorPickerShown={[Function]}
     redo={[Function]}
@@ -194,7 +238,7 @@ exports[`RichTextEditor should update active editor items in toolbar 1`] = `
   />
   <KeyboardSpacer
     onToggle={[Function]}
-    topSpacing={0}
+    topSpacing={-209}
   />
 </View>
 `;
@@ -209,36 +253,27 @@ exports[`RichTextEditor should update active editor items in toolbar 2`] = `
     }
   }
 >
-  <View
-    style={
+  <ZSSRichTextEditor
+    editorItemsChanged={[Function]}
+    getFile={[Function]}
+    navigator={
       Object {
-        "flex": 1,
-        "paddingBottom": 12.8,
-        "paddingLeft": 16,
-        "paddingRight": 16,
-        "paddingTop": 12.8,
+        "dismiss": [Function],
+        "dismissAllModals": [Function],
+        "isModal": false,
+        "pop": [Function],
+        "show": [Function],
+        "traitCollection": [Function],
       }
     }
-  >
-    <ZSSRichTextEditor
-      _setMock={[Function]}
-      editorItemsChanged={[Function]}
-      html=""
-      navigator={undefined}
-      onBlur={[Function]}
-      onFocus={[Function]}
-      onHeightChange={undefined}
-      onInputChange={[Function]}
-      onLoad={[Function]}
-      scrollEnabled={true}
-    />
-  </View>
+    onBlur={[Function]}
+    onFocus={[Function]}
+    onLoad={[Function]}
+    scrollEnabled={true}
+  />
   <RichTextToolbar
-    active={
-      Array [
-        "bold",
-      ]
-    }
+    active={Array []}
+    insertImage={null}
     insertLink={[Function]}
     onColorPickerShown={[Function]}
     redo={[Function]}
@@ -251,7 +286,7 @@ exports[`RichTextEditor should update active editor items in toolbar 2`] = `
   />
   <KeyboardSpacer
     onToggle={[Function]}
-    topSpacing={0}
+    topSpacing={-209}
   />
 </View>
 `;

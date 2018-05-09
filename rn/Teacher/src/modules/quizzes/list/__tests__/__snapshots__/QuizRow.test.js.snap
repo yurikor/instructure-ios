@@ -2,13 +2,7 @@
 
 exports[`QuizRow renders 1`] = `
 <View>
-  <View
-    style={
-      Object {
-        "marginLeft": -12,
-      }
-    }
-  >
+  <View>
     <TouchableHighlight
       accessibilityLabel={undefined}
       accessibilityTraits={
@@ -61,12 +55,11 @@ exports[`QuizRow renders 1`] = `
               Object {
                 "alignItems": "center",
                 "flex": 0,
-                "height": 32,
-                "width": 46,
               }
             }
           >
             <Image
+              resizeMode="cover"
               source={
                 Object {
                   "testUri": "../../../src/images/course/Quiz.png",
@@ -74,14 +67,14 @@ exports[`QuizRow renders 1`] = `
               }
               style={
                 Array [
+                  false,
                   Object {
-                    "position": "absolute",
-                  },
-                  Object {
-                    "tintColor": "#fff",
+                    "minHeight": 24,
+                    "minWidth": 24,
                   },
                 ]
               }
+              testID="access-icon-image"
             />
             <View
               style={
@@ -89,11 +82,11 @@ exports[`QuizRow renders 1`] = `
                   "alignItems": "center",
                   "backgroundColor": "white",
                   "borderRadius": 8,
+                  "bottom": -6,
                   "height": 16,
                   "justifyContent": "center",
-                  "left": 20,
                   "position": "absolute",
-                  "top": 10,
+                  "right": -5,
                   "width": 16,
                 }
               }
@@ -111,17 +104,23 @@ exports[`QuizRow renders 1`] = `
                     "width": 12,
                   }
                 }
+                testID="access-icon-icon"
               />
             </View>
           </View>
         </View>
         <View
           style={
-            Object {
-              "flex": 1,
-              "flexDirection": "column",
-              "justifyContent": "center",
-            }
+            Array [
+              Object {
+                "flex": 1,
+                "flexDirection": "column",
+                "justifyContent": "center",
+              },
+              Object {
+                "marginLeft": 12,
+              },
+            ]
           }
         >
           <Text
@@ -142,7 +141,6 @@ exports[`QuizRow renders 1`] = `
                   Object {
                     "fontWeight": "600",
                   },
-                  undefined,
                 ],
                 Object {
                   "fontFamily": ".SFUIDisplay-semibold",
@@ -354,13 +352,7 @@ exports[`QuizRow renders 1`] = `
 
 exports[`QuizRow renders multiple question count 1`] = `
 <View>
-  <View
-    style={
-      Object {
-        "marginLeft": -12,
-      }
-    }
-  >
+  <View>
     <TouchableHighlight
       accessibilityLabel={undefined}
       accessibilityTraits={
@@ -413,12 +405,11 @@ exports[`QuizRow renders multiple question count 1`] = `
               Object {
                 "alignItems": "center",
                 "flex": 0,
-                "height": 32,
-                "width": 46,
               }
             }
           >
             <Image
+              resizeMode="cover"
               source={
                 Object {
                   "testUri": "../../../src/images/course/Quiz.png",
@@ -426,14 +417,14 @@ exports[`QuizRow renders multiple question count 1`] = `
               }
               style={
                 Array [
+                  false,
                   Object {
-                    "position": "absolute",
-                  },
-                  Object {
-                    "tintColor": "#fff",
+                    "minHeight": 24,
+                    "minWidth": 24,
                   },
                 ]
               }
+              testID="access-icon-image"
             />
             <View
               style={
@@ -441,11 +432,11 @@ exports[`QuizRow renders multiple question count 1`] = `
                   "alignItems": "center",
                   "backgroundColor": "white",
                   "borderRadius": 8,
+                  "bottom": -6,
                   "height": 16,
                   "justifyContent": "center",
-                  "left": 20,
                   "position": "absolute",
-                  "top": 10,
+                  "right": -5,
                   "width": 16,
                 }
               }
@@ -463,17 +454,23 @@ exports[`QuizRow renders multiple question count 1`] = `
                     "width": 12,
                   }
                 }
+                testID="access-icon-icon"
               />
             </View>
           </View>
         </View>
         <View
           style={
-            Object {
-              "flex": 1,
-              "flexDirection": "column",
-              "justifyContent": "center",
-            }
+            Array [
+              Object {
+                "flex": 1,
+                "flexDirection": "column",
+                "justifyContent": "center",
+              },
+              Object {
+                "marginLeft": 12,
+              },
+            ]
           }
         >
           <Text
@@ -494,7 +491,6 @@ exports[`QuizRow renders multiple question count 1`] = `
                   Object {
                     "fontWeight": "600",
                   },
-                  undefined,
                 ],
                 Object {
                   "fontFamily": ".SFUIDisplay-semibold",
@@ -706,13 +702,7 @@ exports[`QuizRow renders multiple question count 1`] = `
 
 exports[`QuizRow renders published 1`] = `
 <View>
-  <View
-    style={
-      Object {
-        "marginLeft": -12,
-      }
-    }
-  >
+  <View>
     <TouchableHighlight
       accessibilityLabel={undefined}
       accessibilityTraits={
@@ -765,12 +755,11 @@ exports[`QuizRow renders published 1`] = `
               Object {
                 "alignItems": "center",
                 "flex": 0,
-                "height": 32,
-                "width": 46,
               }
             }
           >
             <Image
+              resizeMode="cover"
               source={
                 Object {
                   "testUri": "../../../src/images/course/Quiz.png",
@@ -778,14 +767,14 @@ exports[`QuizRow renders published 1`] = `
               }
               style={
                 Array [
+                  false,
                   Object {
-                    "position": "absolute",
-                  },
-                  Object {
-                    "tintColor": "#fff",
+                    "minHeight": 24,
+                    "minWidth": 24,
                   },
                 ]
               }
+              testID="access-icon-image"
             />
             <View
               style={
@@ -793,11 +782,11 @@ exports[`QuizRow renders published 1`] = `
                   "alignItems": "center",
                   "backgroundColor": "white",
                   "borderRadius": 8,
+                  "bottom": -6,
                   "height": 16,
                   "justifyContent": "center",
-                  "left": 20,
                   "position": "absolute",
-                  "top": 10,
+                  "right": -5,
                   "width": 16,
                 }
               }
@@ -815,17 +804,23 @@ exports[`QuizRow renders published 1`] = `
                     "width": 12,
                   }
                 }
+                testID="access-icon-icon"
               />
             </View>
           </View>
         </View>
         <View
           style={
-            Object {
-              "flex": 1,
-              "flexDirection": "column",
-              "justifyContent": "center",
-            }
+            Array [
+              Object {
+                "flex": 1,
+                "flexDirection": "column",
+                "justifyContent": "center",
+              },
+              Object {
+                "marginLeft": 12,
+              },
+            ]
           }
         >
           <Text
@@ -846,7 +841,6 @@ exports[`QuizRow renders published 1`] = `
                   Object {
                     "fontWeight": "600",
                   },
-                  undefined,
                 ],
                 Object {
                   "fontFamily": ".SFUIDisplay-semibold",
@@ -1058,13 +1052,7 @@ exports[`QuizRow renders published 1`] = `
 
 exports[`QuizRow renders selected 1`] = `
 <View>
-  <View
-    style={
-      Object {
-        "marginLeft": -12,
-      }
-    }
-  >
+  <View>
     <TouchableHighlight
       accessibilityLabel={undefined}
       accessibilityTraits={
@@ -1118,12 +1106,11 @@ exports[`QuizRow renders selected 1`] = `
               Object {
                 "alignItems": "center",
                 "flex": 0,
-                "height": 32,
-                "width": 46,
               }
             }
           >
             <Image
+              resizeMode="cover"
               source={
                 Object {
                   "testUri": "../../../src/images/course/Quiz.png",
@@ -1131,14 +1118,14 @@ exports[`QuizRow renders selected 1`] = `
               }
               style={
                 Array [
+                  false,
                   Object {
-                    "position": "absolute",
-                  },
-                  Object {
-                    "tintColor": "#fff",
+                    "minHeight": 24,
+                    "minWidth": 24,
                   },
                 ]
               }
+              testID="access-icon-image"
             />
             <View
               style={
@@ -1146,11 +1133,11 @@ exports[`QuizRow renders selected 1`] = `
                   "alignItems": "center",
                   "backgroundColor": "white",
                   "borderRadius": 8,
+                  "bottom": -6,
                   "height": 16,
                   "justifyContent": "center",
-                  "left": 20,
                   "position": "absolute",
-                  "top": 10,
+                  "right": -5,
                   "width": 16,
                 }
               }
@@ -1168,17 +1155,23 @@ exports[`QuizRow renders selected 1`] = `
                     "width": 12,
                   }
                 }
+                testID="access-icon-icon"
               />
             </View>
           </View>
         </View>
         <View
           style={
-            Object {
-              "flex": 1,
-              "flexDirection": "column",
-              "justifyContent": "center",
-            }
+            Array [
+              Object {
+                "flex": 1,
+                "flexDirection": "column",
+                "justifyContent": "center",
+              },
+              Object {
+                "marginLeft": 12,
+              },
+            ]
           }
         >
           <Text
@@ -1199,7 +1192,6 @@ exports[`QuizRow renders selected 1`] = `
                   Object {
                     "fontWeight": "600",
                   },
-                  undefined,
                 ],
                 Object {
                   "fontFamily": ".SFUIDisplay-semibold",
@@ -1411,13 +1403,7 @@ exports[`QuizRow renders selected 1`] = `
 
 exports[`QuizRow renders single question count 1`] = `
 <View>
-  <View
-    style={
-      Object {
-        "marginLeft": -12,
-      }
-    }
-  >
+  <View>
     <TouchableHighlight
       accessibilityLabel={undefined}
       accessibilityTraits={
@@ -1470,12 +1456,11 @@ exports[`QuizRow renders single question count 1`] = `
               Object {
                 "alignItems": "center",
                 "flex": 0,
-                "height": 32,
-                "width": 46,
               }
             }
           >
             <Image
+              resizeMode="cover"
               source={
                 Object {
                   "testUri": "../../../src/images/course/Quiz.png",
@@ -1483,14 +1468,14 @@ exports[`QuizRow renders single question count 1`] = `
               }
               style={
                 Array [
+                  false,
                   Object {
-                    "position": "absolute",
-                  },
-                  Object {
-                    "tintColor": "#fff",
+                    "minHeight": 24,
+                    "minWidth": 24,
                   },
                 ]
               }
+              testID="access-icon-image"
             />
             <View
               style={
@@ -1498,11 +1483,11 @@ exports[`QuizRow renders single question count 1`] = `
                   "alignItems": "center",
                   "backgroundColor": "white",
                   "borderRadius": 8,
+                  "bottom": -6,
                   "height": 16,
                   "justifyContent": "center",
-                  "left": 20,
                   "position": "absolute",
-                  "top": 10,
+                  "right": -5,
                   "width": 16,
                 }
               }
@@ -1520,17 +1505,23 @@ exports[`QuizRow renders single question count 1`] = `
                     "width": 12,
                   }
                 }
+                testID="access-icon-icon"
               />
             </View>
           </View>
         </View>
         <View
           style={
-            Object {
-              "flex": 1,
-              "flexDirection": "column",
-              "justifyContent": "center",
-            }
+            Array [
+              Object {
+                "flex": 1,
+                "flexDirection": "column",
+                "justifyContent": "center",
+              },
+              Object {
+                "marginLeft": 12,
+              },
+            ]
           }
         >
           <Text
@@ -1551,7 +1542,6 @@ exports[`QuizRow renders single question count 1`] = `
                   Object {
                     "fontWeight": "600",
                   },
-                  undefined,
                 ],
                 Object {
                   "fontFamily": ".SFUIDisplay-semibold",
@@ -1763,13 +1753,7 @@ exports[`QuizRow renders single question count 1`] = `
 
 exports[`QuizRow renders unpublished 1`] = `
 <View>
-  <View
-    style={
-      Object {
-        "marginLeft": -12,
-      }
-    }
-  >
+  <View>
     <TouchableHighlight
       accessibilityLabel={undefined}
       accessibilityTraits={
@@ -1822,12 +1806,11 @@ exports[`QuizRow renders unpublished 1`] = `
               Object {
                 "alignItems": "center",
                 "flex": 0,
-                "height": 32,
-                "width": 46,
               }
             }
           >
             <Image
+              resizeMode="cover"
               source={
                 Object {
                   "testUri": "../../../src/images/course/Quiz.png",
@@ -1835,14 +1818,14 @@ exports[`QuizRow renders unpublished 1`] = `
               }
               style={
                 Array [
+                  false,
                   Object {
-                    "position": "absolute",
-                  },
-                  Object {
-                    "tintColor": "#fff",
+                    "minHeight": 24,
+                    "minWidth": 24,
                   },
                 ]
               }
+              testID="access-icon-image"
             />
             <View
               style={
@@ -1850,11 +1833,11 @@ exports[`QuizRow renders unpublished 1`] = `
                   "alignItems": "center",
                   "backgroundColor": "white",
                   "borderRadius": 8,
+                  "bottom": -6,
                   "height": 16,
                   "justifyContent": "center",
-                  "left": 20,
                   "position": "absolute",
-                  "top": 10,
+                  "right": -5,
                   "width": 16,
                 }
               }
@@ -1872,17 +1855,23 @@ exports[`QuizRow renders unpublished 1`] = `
                     "width": 12,
                   }
                 }
+                testID="access-icon-icon"
               />
             </View>
           </View>
         </View>
         <View
           style={
-            Object {
-              "flex": 1,
-              "flexDirection": "column",
-              "justifyContent": "center",
-            }
+            Array [
+              Object {
+                "flex": 1,
+                "flexDirection": "column",
+                "justifyContent": "center",
+              },
+              Object {
+                "marginLeft": 12,
+              },
+            ]
           }
         >
           <Text
@@ -1903,7 +1892,6 @@ exports[`QuizRow renders unpublished 1`] = `
                   Object {
                     "fontWeight": "600",
                   },
-                  undefined,
                 ],
                 Object {
                   "fontFamily": ".SFUIDisplay-semibold",
@@ -2104,13 +2092,7 @@ exports[`QuizRow renders unpublished 1`] = `
 
 exports[`QuizRow renders without points possible 1`] = `
 <View>
-  <View
-    style={
-      Object {
-        "marginLeft": -12,
-      }
-    }
-  >
+  <View>
     <TouchableHighlight
       accessibilityLabel={undefined}
       accessibilityTraits={
@@ -2163,12 +2145,11 @@ exports[`QuizRow renders without points possible 1`] = `
               Object {
                 "alignItems": "center",
                 "flex": 0,
-                "height": 32,
-                "width": 46,
               }
             }
           >
             <Image
+              resizeMode="cover"
               source={
                 Object {
                   "testUri": "../../../src/images/course/Quiz.png",
@@ -2176,14 +2157,14 @@ exports[`QuizRow renders without points possible 1`] = `
               }
               style={
                 Array [
+                  false,
                   Object {
-                    "position": "absolute",
-                  },
-                  Object {
-                    "tintColor": "#fff",
+                    "minHeight": 24,
+                    "minWidth": 24,
                   },
                 ]
               }
+              testID="access-icon-image"
             />
             <View
               style={
@@ -2191,11 +2172,11 @@ exports[`QuizRow renders without points possible 1`] = `
                   "alignItems": "center",
                   "backgroundColor": "white",
                   "borderRadius": 8,
+                  "bottom": -6,
                   "height": 16,
                   "justifyContent": "center",
-                  "left": 20,
                   "position": "absolute",
-                  "top": 10,
+                  "right": -5,
                   "width": 16,
                 }
               }
@@ -2213,17 +2194,23 @@ exports[`QuizRow renders without points possible 1`] = `
                     "width": 12,
                   }
                 }
+                testID="access-icon-icon"
               />
             </View>
           </View>
         </View>
         <View
           style={
-            Object {
-              "flex": 1,
-              "flexDirection": "column",
-              "justifyContent": "center",
-            }
+            Array [
+              Object {
+                "flex": 1,
+                "flexDirection": "column",
+                "justifyContent": "center",
+              },
+              Object {
+                "marginLeft": 12,
+              },
+            ]
           }
         >
           <Text
@@ -2244,7 +2231,6 @@ exports[`QuizRow renders without points possible 1`] = `
                   Object {
                     "fontWeight": "600",
                   },
-                  undefined,
                 ],
                 Object {
                   "fontFamily": ".SFUIDisplay-semibold",

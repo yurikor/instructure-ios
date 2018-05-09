@@ -23,10 +23,10 @@ import { connect } from 'react-redux'
 import { updateMapStateToProps, type AssignmentDetailsProps } from './map-state-to-props'
 import AssignmentActions from '../assignments/actions'
 import i18n from 'format-message'
-import EditSectionHeader from './components/EditSectionHeader'
+import EditSectionHeader from '../../common/components/EditSectionHeader'
 import AssignmentDatesEditor from './components/AssignmentDatesEditor'
 import { TextInput, Text } from '../../common/text'
-import ModalActivityIndicator from '../../common/components/ModalActivityIndicator'
+import ModalOverlay from '../../common/components/ModalOverlay'
 import UnmetRequirementBanner from '../../common/components/UnmetRequirementBanner'
 import RequiredFieldSubscript from '../../common/components/RequiredFieldSubscript'
 import { alertError } from '../../redux/middleware/error-handler'
@@ -69,7 +69,7 @@ export function gradeDisplayOptions (): Map<string, string> {
   ])
 }
 
-export class AssignmentDetailsEdit extends Component<any, AssignmentDetailsProps, any> {
+export class AssignmentDetailsEdit extends Component<AssignmentDetailsProps, any> {
   props: AssignmentDetailsProps
   state: any = {}
   datesEditor: AssignmentDatesEditor
@@ -149,7 +149,6 @@ export class AssignmentDetailsEdit extends Component<any, AssignmentDetailsProps
     return (
       <Screen
         title={i18n('Edit Assignment')}
-        navBarStyle='light'
         navBarTitleColor={color.darkText}
         navBarButtonColor={color.link}
         rightBarButtons={[
@@ -157,19 +156,20 @@ export class AssignmentDetailsEdit extends Component<any, AssignmentDetailsProps
             title: i18n('Done'),
             style: 'done',
             testID: 'edit-assignment.dismiss-btn',
-            action: this.actionDonePressed.bind(this),
+            action: this.actionDonePressed,
           },
         ]}
         leftBarButtons={[
           {
             title: i18n('Cancel'),
             testID: 'edit-assignment.cancel-btn',
-            action: this.actionCancelPressed.bind(this),
+            action: this.actionCancelPressed,
           },
         ]}
+        showDismissButton={false}
       >
         <View style={{ flex: 1 }}>
-          <ModalActivityIndicator text={savingText} visible={this.state.pending}/>
+          <ModalOverlay text={savingText} visible={this.state.pending}/>
           <UnmetRequirementBanner text={this.state.validation.invalid} visible={this.state.validation.invalid} testID={'assignmentDetailsEdit.unmet-requirement-banner'}/>
           <KeyboardAwareScrollView
             style={style.container}
@@ -213,29 +213,31 @@ export class AssignmentDetailsEdit extends Component<any, AssignmentDetailsProps
               identifier='assignmentDetails.edit.points_possible.input'
             />
 
+            <RequiredFieldSubscript title={this.state.validation.points} visible={this.state.validation.points} />
+
             {/* Display Grade As */}
             <RowWithDetail title={displayGradeAs}
               detailSelected={this.state.showPicker}
-              detail={i18n(gradeDisplayOptions().get(this.state.assignment.grading_type))}
+              detail={i18n(gradeDisplayOptions().get(this.state.assignment.grading_type) || '')}
               onPress={this.toggleDisplayGradeAsPicker}
               border={'bottom'}
               testID="assignment-details.toggle-display-grade-as-picker" />
             {this.renderDataMapPicker()}
 
             {/* Publish */}
-            <RowWithSwitch
-              title={publish}
-              border={'bottom'}
-              value={this.defaultValueForBooleanInput('published')}
-              identifier='published'
-              onValueChange={this._updateToggleValue} />
-
-            <RequiredFieldSubscript title={this.state.validation.points} visible={this.state.validation.points} />
+            { (!this.props.assignmentDetails.published || this.props.assignmentDetails.unpublishable) &&
+              <RowWithSwitch
+                title={publish}
+                border={'bottom'}
+                value={this.defaultValueForBooleanInput('published')}
+                identifier='published'
+                onValueChange={this._updateToggleValue} />
+            }
 
             {/* Due Dates */}
             <AssignmentDatesEditor
               assignment={this.props.assignmentDetails}
-              ref={c => { this.datesEditor = c }}
+              ref={(c: any) => { this.datesEditor = c }}
               canEditAssignees={Boolean(this.state.assignment)}
               navigator={this.props.navigator} />
 
@@ -250,11 +252,12 @@ export class AssignmentDetailsEdit extends Component<any, AssignmentDetailsProps
   }
 
   _editDescription = () => {
-    this.props.navigator.show('/rich-text-editor', { modal: false }, {
+    this.props.navigator.show('/rich-text-editor', { modal: true, modalPresentationStyle: 'fullscreen' }, {
       onChangeValue: (value) => { this.updateFromInput('description', value) },
       defaultValue: this.state.assignment.description,
       placeholder: i18n('Description'),
       showToolbar: 'always',
+      attachmentUploadPath: `/courses/${this.props.courseID}/files`,
     })
   }
 
@@ -336,7 +339,7 @@ export class AssignmentDetailsEdit extends Component<any, AssignmentDetailsProps
     return validator
   }
 
-  actionDonePressed () {
+  actionDonePressed = () => {
     const validator = this.validateChanges()
 
     if (validator.invalid !== '') {
@@ -355,7 +358,7 @@ export class AssignmentDetailsEdit extends Component<any, AssignmentDetailsProps
     this.props.updateAssignment(this.props.courseID, updatedAssignment, this.props.assignmentDetails)
   }
 
-  actionCancelPressed () {
+  actionCancelPressed = () => {
     this.props.cancelAssignmentUpdate(this.props.assignmentDetails)
     this.props.navigator.dismiss()
   }
@@ -459,4 +462,4 @@ const style = StyleSheet.create({
 })
 
 let Connected = connect(updateMapStateToProps, AssignmentActions)(AssignmentDetailsEdit)
-export default (Connected: Component<any, AssignmentDetailsProps, any>)
+export default (Connected: Component<AssignmentDetailsProps, any>)

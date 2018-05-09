@@ -17,7 +17,7 @@
 // @flow
 
 import React, { Component } from 'react'
-import ReactNative, {
+import {
   TouchableHighlight,
   View,
   StyleSheet,
@@ -28,13 +28,13 @@ import Images from '../../../../images/'
 import { Text } from '../../../../common/text'
 
 type Props = {
-  course: Course,
+  course: Course | Group,
   isFavorite: boolean,
-  onPress: (courseID: string, favorited: boolean) => Promise<any>,
+  onPress: (contextID: string, favorited: boolean) => Promise<any>,
 }
 
-export default class CourseFavorite extends Component<void, Props, void> {
-  onPress = (event: ReactNative.NativeSyntheticEvent<ReactNative.NativeTouchEvent>) => {
+export default class CourseFavorite extends Component<Props> {
+  onPress = () => {
     this.props.onPress(this.props.course.id, !this.props.isFavorite)
   }
 

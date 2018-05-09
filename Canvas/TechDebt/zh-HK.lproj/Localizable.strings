@@ -49,12 +49,6 @@
 /* Button to submit files to an assignment */
 "%@ (%d)" = "%1$@ (%2$d)";
 
-/* B- (83 out of 100 points */
-"%@ (%g out of %@)" = "%1$@ (%2$g 出自 %3$@)";
-
-/* Event happens on a date at a time */
-"%@ at %@" = "%1$@ 位於 %2$@";
-
 /* Message for unsupported tab coming soon */
 "%@ is coming soon!" = "%@ 即將推出!";
 
@@ -73,17 +67,11 @@
 /* Message for unsupported tab */
 "%@ is not currently supported." = "%@ 目前不被支持。";
 
-/* Description for how many times a specific discussion has been liked by other users */
+/* (No Comment) */
 "%@ likes" = "%@ 個讚";
 
 /* (No Comment) */
 "%@ need grading" = "%@ 需要評分";
-
-/* 88 out of 100 points */
-"%@ out of %@" = "%1$@ 出自 %2$@";
-
-/* 83% (83 out of 100 points */
-"%@%% (%g out of %@)" = "%1$@%% (%2$g 出自 %3$@)";
 
 /* (No Comment) */
 "%@..." = "%@...";
@@ -97,7 +85,7 @@
 /* (No Comment) */
 "%d hours ago" = "%d 小時前";
 
-/* Number of files/folders inside a folder. (Used for all cases except 1 item.) */
+/* (No Comment) */
 "%d items" = "%d 個項目";
 
 /* (No Comment) */
@@ -109,10 +97,10 @@
 /* In the context 'Joe, Fred, ((25 more))' */
 "%d more" = "%d 更多";
 
-/* Something like '5 replies' */
+/* (No Comment) */
 "%d replies" = "%d 個回覆";
 
-/* Something like '3 unread'. Refers to unread replies in a discsusion. */
+/* (No Comment) */
 "%d unread" = "%d 未讀";
 
 /* (No Comment) */
@@ -166,10 +154,10 @@
 /* (No Comment) */
 "1 hour ago" = "1 小時前";
 
-/* Number of files/folders inside a folder. (Only used when there is exactly 1 item. */
+/* (No Comment) */
 "1 item" = "1 項目";
 
-/* Description for a post that has been liked once */
+/* (No Comment) */
 "1 like" = "1 個讚";
 
 /* (No Comment) */
@@ -217,10 +205,10 @@
 /* No comment provided by engineer. */
 "Add comment" = "添加評論";
 
-/* Button title for adding a folder to a folder */
+/* (No Comment) */
 "Add folder" = "添加資料夾";
 
-/* Title on the add-inline-media sheet */
+/* (No Comment) */
 "Add inline media" = "添加線上媒體";
 
 /* (No Comment) */
@@ -232,10 +220,10 @@
 /* (No Comment) */
 "An unknown error occurred" = "出現未知錯誤";
 
-/* Title of the new announcement view */
+/* (No Comment) */
 "Announcement" = "宣告";
 
-/* Title for the announcements view controller */
+/* (No Comment) */
 "Announcements" = "宣告";
 
 /* Assignment submission type for selecting an Arc video */
@@ -253,7 +241,7 @@
 /* (No Comment) */
 "Archived" = "已存檔";
 
-/* Action sheet title verifying that a user wants to logout. */
+/* (No Comment) */
 "Are you ready to logout?" = "你是否要登出？";
 
 /* Confirmation alert text for submitting an Arc video for an assignment */
@@ -262,7 +250,7 @@
 /* (No Comment) */
 "Ask me later" = "稍後再問我";
 
-/* Label for an assignment */
+/* (No Comment) */
 "Assignment" = "任務";
 
 /* (No Comment) */
@@ -280,7 +268,7 @@
 /* (No Comment) */
 "Attachments" = "附件";
 
-/* Label for a discussion */
+/* (No Comment) */
 "Attendance" = "出勤";
 
 /* Audio file type */
@@ -301,7 +289,7 @@
 /* (No Comment) */
 "Calendar" = "月曆";
 
-/* Invalid LTI tool error title */
+/* No comment provided by engineer. */
 "Can't load tool" = "無法載入工具";
 
 /* Setup only allows media but no Kaltura instance error title */
@@ -329,7 +317,7 @@
 /* button to change user's profile image */
 "Change Profile Image" = "更改檔案圖片";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Change User" = "變更使用者";
 
 /* Button label for choosing a photo */
@@ -344,7 +332,7 @@
 /* No comment provided by engineer. */
 "Choose a name for the new folder" = "為新資料夾選擇一個名字";
 
-/* Content of an alert popup */
+/* (No Comment) */
 "Choose a name for the new folder." = "為新資料夾選擇一個名字。";
 
 /* No comment provided by engineer. */
@@ -359,7 +347,7 @@
 /* Close the window */
 "Close" = "關閉";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Closed for Comments" = "已關閉評論";
 
 /* Title for Collaborations tab */
@@ -371,10 +359,10 @@
 /* title for media comment upload failure */
 "Comment Error" = "評論錯誤";
 
-/* View comments */
+/* (No Comment) */
 "Comments" = "評論";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Comments are disabled" = "評論功能已禁用";
 
 /* (No Comment) */
@@ -395,7 +383,7 @@
 /* Confirm an arc video submission for an assignment */
 "Confirm Submission" = "確定提交";
 
-/* Alert title */
+/* (No Comment) */
 "Confirm deletion" = "確認刪除";
 
 /* Button title for selecting to continue on to quiz. The will appear in the alert view notfifying the user of mobile quiz limitations. */
@@ -416,7 +404,7 @@
 /* (No Comment) */
 "Courses" = "課程";
 
-/* cancel folder creation */
+/* Cancel button title */
 "Create Folder" = "創建資料夾";
 
 /* Header for a section showing submitted filenames */
@@ -431,14 +419,13 @@
 /* (No Comment) */
 "Customize" = "自定義";
 
-/* Default delete button MLVC
-   Delete Button title */
+/* Default delete button MLVC */
 "Delete" = "刪除";
 
-/* Button for deleting files or folders. %d will be the number of selected items */
+/* (No Comment) */
 "Delete (%d)" = "刪除 (%d)";
 
-/* Alert message */
+/* (No Comment) */
 "Delete this reply?" = "確定刪除這個回覆？";
 
 /* delete file confirmation alert */
@@ -450,25 +437,25 @@
 /* No comment provided by engineer. */
 "Detail" = "詳情";
 
-/* Placeholder text for discussion details field */
+/* (No Comment) */
 "Details" = "詳情";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Discard" = "丟棄";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Discard this entry?" = "丟棄這條輸入？";
 
-/* Title of the new discussion view */
+/* (No Comment) */
 "Discussion" = "討論";
 
 /* Title for discussion entry submission */
 "Discussion Entry" = "討論條目";
 
-/* Title for Discussion Topics view controller */
+/* (No Comment) */
 "Discussion Topics" = "討論話題";
 
-/* Title for Discussions view controller */
+/* (No Comment) */
 "Discussions" = "討論";
 
 /* Dismiss button title
@@ -484,10 +471,10 @@
 /* (No Comment) */
 "Don't ask me again" = "不要再詢問我";
 
-/* Button to cancel deleting folders */
+/* (No Comment) */
 "Don't delete" = "不要刪除";
 
-/* Button to stop editing a list */
+/* (No Comment) */
 "Done" = "完成";
 
 /* Shown when we cancel a file download */
@@ -508,7 +495,7 @@
 /* Link to the End User License Agreement document */
 "EULA" = "EULA";
 
-/* Button to edit a discussion entry */
+/* (No Comment) */
 "Edit" = "編輯";
 
 /* (No Comment) */
@@ -517,14 +504,11 @@
 /* (No Comment) */
 "Edit Group List" = "編輯群組清單";
 
-/* Button title for deleting items in a folder */
+/* (No Comment) */
 "Edit items" = "編輯項目";
 
 /* (No Comment) */
 "Editing reply by %1$@, %2$@" = "編輯回覆，依照順序 %1$@, %2$@";
-
-/* Header when editing a discussion entry with name and timestamp */
-"Editing reply by %@, %@" = "編輯回覆，依照順序 %1$@, %2$@";
 
 /* the users email */
 "Email" = "電子郵件";
@@ -532,13 +516,16 @@
 /* (No Comment) */
 "Enable Push Notifications" = "啟用推送通知";
 
-/* masquerade prompt */
+/* (No Comment) */
 "Enter User ID and Domain." = "輸入使用者ID和網域名";
+
+/* No comment provided by engineer. */
+"Enter folder name" = "輸入資料夾名字";
 
 /* Submission input view placeholder text */
 "Enter submission" = "鍵入提交件";
 
-/* Confirmation message after posting a discussion entry */
+/* (No Comment) */
 "Entry posted" = "條目已發布";
 
 /* Title for an error popup */
@@ -556,7 +543,7 @@
 /* Error deleting folder alert view title */
 "Error deleting folder" = "刪除資料夾時出錯";
 
-/* Label for a calendar event */
+/* (No Comment) */
 "Event" = "事件";
 
 /* No comment provided by engineer. */
@@ -583,7 +570,7 @@
 /* No comment provided by engineer. */
 "File received" = "收到的資料夾";
 
-/* Title for an alert popup */
+/* (No Comment) */
 "File unavailable" = "資料夾不可用";
 
 /* File upload submission type */
@@ -594,6 +581,9 @@
 
 /* Title for the files screen */
 "Files" = "資料夾";
+
+/* No comment provided by engineer. */
+"Final Grade" = "最終評分";
 
 /* Shown when we finish downloading a file */
 "Finished downloading" = "完成的下載";
@@ -607,13 +597,13 @@
 /* title for discussion assignment submission button */
 "Go To Discussion" = "前往討論";
 
-/* Action on an alert */
+/* (No Comment) */
 "Go to App Store" = "前往 App 商店";
 
-/* text for the \"go to quiz\" button */
+/* (No Comment) */
 "Go to Quiz" = "前往考試";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Go to discussion" = "前往討論";
 
 /* No comment provided by engineer. */
@@ -622,7 +612,7 @@
 /* (No Comment) */
 "Grade %@" = "評分 %@";
 
-/* Launch the SpeedGrader app */
+/* (No Comment) */
 "Grade in SpeedGrader" = "在 SpeedGrader 中評分";
 
 /* (No Comment) */
@@ -631,13 +621,13 @@
 /* (No Comment) */
 "Grade: %@" = "評分: %@";
 
-/* Label for a discussion */
+/* (No Comment) */
 "Graded Discussion" = "已評分的討論";
 
-/* Lets user know discussion is graded */
+/* (No Comment) */
 "Graded discussion." = "已評分的討論。";
 
-/* Graded discussion. 25 points possible */
+/* (No Comment) */
 "Graded discussion. %g points possible." = "已評分的討論。可得點為 %g。";
 
 /* (No Comment) */
@@ -649,7 +639,7 @@
 /* (No Comment) */
 "Groups" = "群組";
 
-/* help button */
+/* (No Comment) */
 "Help" = "幫助";
 
 /* (No Comment) */
@@ -679,7 +669,7 @@
 /* (No Comment) */
 "Individual messages" = "單個郵件";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Invalid URL" = "無效 URL";
 
 /* (No Comment) */
@@ -697,7 +687,7 @@
 /* (No Comment) */
 "Jumps to current day on calendar" = "在月曆上跳轉至當前日期";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Keep" = "保存";
 
 /* Title for an LTI launch submitted as an assignment */
@@ -706,10 +696,13 @@
 /* (No Comment) */
 "Landing Page" = "登入頁面";
 
-/* Title for an alert popup */
+/* (No Comment) */
 "Large file" = "大資料夾";
 
-/* Button in an alert */
+/* No comment provided by engineer. */
+"Late Penalty" = "逾期懲罰";
+
+/* (No Comment) */
 "Later" = "以後再說";
 
 /* title for submission button */
@@ -718,7 +711,7 @@
 /* Title for legal section on the about page */
 "Legal" = "法律事務";
 
-/* Generic loading title with ellipsis */
+/* (No Comment) */
 "Loading..." = "正在載入...";
 
 /* (No Comment) */
@@ -733,7 +726,7 @@
 /* (No Comment) */
 "Login Problem" = "登入問題";
 
-/* Title for a button to logout a user */
+/* (No Comment) */
 "Logout" = "登出";
 
 /* (No Comment) */
@@ -784,7 +777,7 @@
 /* Button title for selecting to view more info about the limitations of mobile quizzes */
 "More Info" = "更多資訊";
 
-/* Title of a link to show additional due dates customized for sections or groups. */
+/* (No Comment) */
 "Multiple Due Dates" = "多個到期日";
 
 /* (No Comment) */
@@ -802,19 +795,19 @@
 /* (No Comment) */
 "Must view" = "必須檢視";
 
-/* files button */
+/* (No Comment) */
 "My Files" = "我的資料夾";
 
 /* the users name */
 "Name" = "名稱";
 
-/* Title notifying user that SpeedGrader is available for iPad */
+/* (No Comment) */
 "Need SpeedGrader for iPad" = "需要 iPad 版本的 SpeedGrader";
 
 /* Network error title */
 "Network Error" = "網路錯誤";
 
-/* Title for an alert popup, where the user will be asked to provide a name for the new folder */
+/* No comment provided by engineer. */
 "New Folder" = "新建資料夾";
 
 /* No comment provided by engineer. */
@@ -823,7 +816,7 @@
 /* No comment provided by engineer. */
 "Next item" = "下一個項目";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "No" = "否";
 
 /* No comment provided by engineer. */
@@ -866,7 +859,7 @@
 /* (No Comment) */
 "Not Complete" = "未完成";
 
-/* Accessibility label for points out of points possible label when points are not availiable. */
+/* No comment provided by engineer. */
 "Not available" = "不可用";
 
 /* (No Comment) */
@@ -893,7 +886,7 @@
 /* (No Comment) */
 "Notifications" = "通知";
 
-/* OK Button Title */
+/* No comment provided by engineer. */
 "OK" = "是";
 
 /* No comment provided by engineer. */
@@ -908,10 +901,13 @@
 /* Title for an error alert */
 "Oops!" = "抱歉！";
 
+/* Link to Open Source Components */
+"Open Source Components" = "打開來源組件";
+
 /* Open a document in the application Safari */
 "Open in Safari" = "在 Safari 中打開";
 
-/* Link to open assignment in SpeedGrader */
+/* (No Comment) */
 "Open in SpeedGrader" = "在 SpeedGrader 中打開";
 
 /* Open file in another application */
@@ -920,7 +916,7 @@
 /* No comment provided by engineer. */
 "Other" = "其他";
 
-/* A message indicating that the user cannot see other people's replies until the user has first posted a reply of their own. Only one line of text, so as concise as possible. */
+/* (No Comment) */
 "Other replies hidden until you reply" = "在你回覆前，其他回覆不可見";
 
 /* Title for Outcomes tab */
@@ -935,7 +931,7 @@
 /* Title for the people view */
 "People" = "人";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Pinned Discussions" = "固定的討論";
 
 /* (No Comment) */
@@ -944,7 +940,7 @@
 /* Network error message */
 "Please check your network connection and try again." = "請檢查您的網路連接然後重試。";
 
-/* Button to post new discussion topic */
+/* No comment provided by engineer. */
 "Post" = "發布";
 
 /* (No Comment) */
@@ -953,7 +949,7 @@
 /* No comment provided by engineer. */
 "Post comment" = "發布評論";
 
-/* Message shown while posting a discussion entry */
+/* (No Comment) */
 "Posting…" = "正在發布...";
 
 /* (No Comment) */
@@ -1022,16 +1018,16 @@
 /* Button title for confirming a file deletion */
 "Remove this file?" = "確定移除這個文檔？";
 
-/* option to report a problem */
+/* (No Comment) */
 "Report a problem" = "報告問題";
 
-/* option to request a feature */
+/* (No Comment) */
 "Request a feature" = "請求一項功能";
 
-/* View grading rubric */
+/* (No Comment) */
 "Rubric" = "專欄";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Save" = "保存";
 
 /* Title for Assignment Notifications Sheet */
@@ -1070,16 +1066,16 @@
 /* title for quiz assignment submission button */
 "Show Quiz" = "顯示考試";
 
-/* Title for button confirming showing a file */
+/* (No Comment) */
 "Show file" = "顯示資料夾";
 
 /* (No Comment) */
 "Show recipients" = "顯示收信人";
 
-/* Message for an error popup */
+/* (No Comment) */
 "Some items could not be deleted" = "有些項目無法被刪除";
 
-/* Message for a warning popup */
+/* (No Comment) */
 "Some selected folders are not empty. Are you sure you want to delete them?" = "有些選中的資料夾不是空的。您確定要刪除它們？";
 
 /* 404 Error for missing assignment */
@@ -1091,13 +1087,13 @@
 /* (No Comment) */
 "Starts recording a media comment" = "開始錄製媒體評論";
 
-/* button title for cancelling a logout. */
+/* (No Comment) */
 "Stay Logged In" = "保持登入狀態";
 
 /* Stop loading button for webview */
 "Stop" = "停止";
 
-/* Button title for stopping masquerading; when a privileged user becomes another user in the system */
+/* (No Comment) */
 "Stop Masquerading" = "停止偽裝身份";
 
 /* (No Comment) */
@@ -1112,23 +1108,22 @@
 /* (No Comment) */
 "Sub Header" = "子表頭";
 
-/* View previously submitted assignment */
+/* No comment provided by engineer. */
 "Submission" = "提交";
 
 /* Title for file submission error */
 "Submission Error" = "提交錯誤";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Submission complete" = "提交完成";
 
-/* Submit an assignment
-   Submit Arc video as assignment button */
+/* Submit Arc video as assignment button */
 "Submit" = "提交";
 
 /* Submitted grouping */
 "Submitted" = "已提交";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Submitting..." = "正在提交...";
 
 /* Subscribe to calendar feed allows the user to export their calendar events to a 3rd party calendar */
@@ -1170,7 +1165,7 @@
 /* Take a video to use in a comment. */
 "Take a Video..." = "拍攝視頻...";
 
-/* Displayed in a row when an error occurs loading more items */
+/* (No Comment) */
 "Tap to try again" = "輕點以重試";
 
 /* (No Comment) */
@@ -1197,7 +1192,7 @@
 /* (No Comment) */
 "The recipients could not be added. Please try again. (%@)" = "收信人無法被添加。請重試。(%@)";
 
-/* Explanation for while a file is unavailable */
+/* (No Comment) */
 "The server could not be reached" = "伺服器無法連結";
 
 /* (No Comment) */
@@ -1209,7 +1204,7 @@
 /* Error message */
 "There are no actions for this item" = "無法對此項目進行操作";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "There are no items to display" = "沒有要展示的項目";
 
 /* message for media comment upload failure */
@@ -1233,7 +1228,7 @@
 /* (No Comment) */
 "This app is not authorized for use." = "該 app 程式未獲得使用權限。";
 
-/* Invalid LTI tool error message */
+/* No comment provided by engineer. */
 "This assignment doesn't appear to be a valid external tool or is misconfigured." = "該任務似乎並不是有效的外部工具或存在配置錯誤。";
 
 /* message displayed in the details section if there is no comment. */
@@ -1242,16 +1237,16 @@
 /* Error message for refresh failing with an unauthorized code */
 "This can happen if your course hasn't started yet or you don't have permission to access this page." = "如果您的課程尚未開始，或者您無權限訪問此內容頁，就可能會發生這種情況。";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "This entry has been deleted" = "此條目已經被刪除";
 
 /* Text indicating a file cannot be previewed */
 "This file cannot be displayed on this device." = "此文檔無法在此設備上顯示";
 
-/* Text indicating that a file cannot be opened */
+/* (No Comment) */
 "This file is locked" = "此資料夾已被鎖定";
 
-/* Text indicating that a folder cannot be opened */
+/* (No Comment) */
 "This folder is locked" = "此資料夾已被鎖定";
 
 /* (No Comment) */
@@ -1290,7 +1285,7 @@
 /* (No Comment) */
 "Uh-oh! No Internet Connection" = "抱歉！沒有網際網路連結";
 
-/* Error title */
+/* (No Comment) */
 "Unable to load" = "無法載入";
 
 /* (No Comment) */
@@ -1314,7 +1309,7 @@
 /* (No Comment) */
 "Unread" = "未讀";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Unsaved Reply" = "未保存的回覆";
 
 /* Button title for uploading a file */
@@ -1329,7 +1324,7 @@
 /* (No Comment) */
 "Upload failed. Reason: (%@)" = "上載失敗。原因： (%@)";
 
-/* Button title for adding a file to a folder */
+/* (No Comment) */
 "Upload file" = "上載資料夾";
 
 /* Error message */
@@ -1338,16 +1333,13 @@
 /* (No Comment) */
 "Upload to assignment &quot;%@&quot; failed" = "上載至任務 &quot;%@&quot; 失敗";
 
-/* Error message */
-"Upload to folder \"%@\" failed" = "上載至資料夾 \"%@\" 失敗";
-
 /* (No Comment) */
-"Upload to folder &quot;%@&quot; failed" = "上載至文件夾 &quot;&quot; 失敗";
+"Upload to folder &quot;%@&quot; failed" = "上載至文件夾 &quot;%@&quot; 失敗";
 
 /* button for using the recorded audio */
 "Use" = "使用";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "User ID" = "使用者 ID";
 
 /* Title for User Info section on the about page */
@@ -1362,7 +1354,7 @@
 /* (No Comment) */
 "View" = "檢視";
 
-/* Title for a warning popup */
+/* (No Comment) */
 "Warning" = "警告";
 
 /* error message for failure to load a file submission */
@@ -1374,7 +1366,7 @@
 /* Error Title */
 "Whoops!" = "抱歉！";
 
-/* unlock date for discussion/announcement */
+/* (No Comment) */
 "Will unlock %@." = "即將解鎖 %@.";
 
 /* (No Comment) */
@@ -1386,28 +1378,28 @@
 /* (No Comment) */
 "Would you mind letting us know the problems you have been having with the app?" = "您是否能告訴我們您在使用 app 時遇到的問題？";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "Yes" = "是";
 
-/* Masquerade title telling who you are masquerading as */
+/* (No Comment) */
 "You are now masquerading as %@" = "您現在正在偽裝身份為 %@";
 
 /* Masquerade success message */
 "You are now masquerading as %@. To Stop Masquerading go to your Profile." = "您現在正在偽裝身份為%@。 要停止偽裝請前往您的個人檔案。";
 
-/* Message in an alert */
+/* (No Comment) */
 "You do not have SpeedGrader for iPad. You can download it for free from the App Store." = "您沒有安裝 iPad版的 SpeedGrader。 您可以從 App 商店中免費下載。";
 
 /* (No Comment) */
 "You do not have access to this content. The Course or Group may not have started, or may have been concluded." = "您無權存取此內容。此課程或群組或許尚未開始，或已經結束。";
 
-/* Error message */
+/* (No Comment) */
 "You do not have permission to delete this reply" = "您沒有獲得刪除這條回覆的許可。";
 
 /* Masquerade error message */
 "You don't have permission to masquerade as this user or there is no user with that ID" = "您沒有獲得偽裝為這名使用者的權限，或者沒有使用此 ID 的使用者";
 
-/* No comment provided by engineer. */
+/* (No Comment) */
 "You have an unsaved reply. Would you like to discard that reply?" = "您有一封未保存的回覆。您是否希望刪除它？";
 
 /* An explanation of how to transfer files to the Canvas app. */
@@ -1416,13 +1408,13 @@
 /* (No Comment) */
 "You must first complete:" = "您必須首先完成：";
 
-/* Error message */
+/* (No Comment) */
 "You need a title and a description to post" = "您需要給發布的內容起一個標題並描述";
 
 /* (No Comment) */
 "You should go rate Canvas on the App Store!" = "您請前往 App 商店給 Canvas 評分吧！";
 
-/* Error content */
+/* (No Comment) */
 "Your files could not be found" = "無法找到您的文檔";
 
 /* Media submission type selected with no Kaltura set up */
@@ -1431,16 +1423,13 @@
 /* (No Comment) */
 "due on %1$@ at %2$@" = "到期日為 %1$@ 於 %2$@";
 
-/* Assignment is due on a date at a time */
-"due on %@ at %@" = "到期日為 %1$@ 於 %2$@";
-
 /* (No Comment) */
 "moments ago" = "不久前";
 
-/* Accessibility label modifier for point out of point possible */
+/* No comment provided by engineer. */
 "out of" = "出自";
 
-/* The assignment is out of 100 points */
+/* (No Comment) */
 "out of %@" = "出自 %@";
 
 /* (No Comment) */

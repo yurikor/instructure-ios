@@ -40,7 +40,7 @@ test('refresh courses workflow', async () => {
     },
     {
       type: actions.refreshCourses.toString(),
-      payload: { result: [{ data: courses }, { data: colors }] },
+      payload: { result: [{ data: courses }, { data: colors }], syncToNative: true },
     },
   ])
 })
@@ -110,6 +110,26 @@ test('getCourseEnabledFeatures', async () => {
         data: features,
       },
       courseID: '1',
+    },
+  }])
+})
+
+test('getCoursePermissions', async () => {
+  let permissions = { send_messages: false }
+  let actions = CoursesActions({ getCoursePermissions: apiResponse(permissions) })
+  let result = await testAsyncAction(actions.getCoursePermissions('1'))
+
+  expect(result).toMatchObject([{
+    type: actions.getCoursePermissions.toString(),
+    payload: { courseID: '1' },
+    pending: true,
+  }, {
+    type: actions.getCoursePermissions.toString(),
+    payload: {
+      courseID: '1',
+      result: {
+        data: permissions,
+      },
     },
   }])
 })

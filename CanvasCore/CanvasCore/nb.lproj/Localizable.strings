@@ -1,3 +1,5 @@
+"Inbox" = "Innboks";
+
 /* Error message component with the report id */
 " Error report ID: (reportID)" = " Feilrapporterings-ID (reportID)";
 
@@ -44,8 +46,14 @@
 /* all pages segmented control title */
 "All Pages" = "Alle sider";
 
-/* Title for push notification pre-authorization alert */
-"Allow Push Notifications?" = "Tillate push-varsler?";
+/* No comment provided by engineer. */
+"All notifications are currently disabled." = "Alle varslinger er deaktivert.";
+
+/* No comment provided by engineer. */
+"All notifications are currently enabled." = "Alle varslinger er aktivert.";
+
+/* No comment provided by engineer. */
+"Allow Notifications in Settings" = "Tillat varslinger i innstillinger";
 
 /* label for number of attempts that are allowed */
 "Allowed Attempts" = "Tillatte forsøk";
@@ -86,7 +94,8 @@
 /* Alert title when unable to parse JSON for notification preferences */
 "Can't Display Notification Preferences" = "Kan ikke vise varslingspreferanser";
 
-/* Cancel button title
+/* Cancel Audio recording.
+   Cancel button title
    Cancel submission option
    Cancel upload */
 "Cancel" = "Avbryt";
@@ -119,6 +128,9 @@
 "Choose your answers below" = "Velg svarene dine nedenfor";
 
 /* No comment provided by engineer. */
+"Collapse" = "Skjul";
+
+/* No comment provided by engineer. */
 "Comments" = "Kommentarer";
 
 /* File upload completed */
@@ -144,9 +156,6 @@
 
 /* Notification display name for course activities group */
 "Course Activities" = "Aktiviteter for emne";
-
-/* Button for creating a note from text selection */
-"Create Note" = "Lag merknad";
 
 /* Header label for a screen that customizes a course */
 "Customize" = "Tilpass";
@@ -237,11 +246,17 @@
 /* No comment provided by engineer. */
 "Error parsing the Roll Call response. Unexpected null value: (k)" = "Feil ved parsering av svar på opprop. Uventet null verdi: (k)";
 
+/* No comment provided by engineer. */
+"Error retrieving tool launch URL" = "Feil i pålogging av URL";
+
 /* rollcall status error */
 "Error: No data returned from the rollcall api." = "Avvik: Ingen data returnert fra opprop api.";
 
 /* Exit button to leave the quiz */
 "Exit" = "Avslutt";
+
+/* No comment provided by engineer. */
+"Expand" = "Utvid";
 
 /* Error message when the server returns a invalid response */
 "Expected a response in the 200-299 range. Got %@" = "Forventet et svar i området 200-299. Fikk %@";
@@ -288,15 +303,15 @@
 /* Hides the question list */
 "Hide Question List" = "Skjul spørsmålsliste";
 
-/* No comment provided by engineer. */
-"Inbox" = "Innboks";
-
 /* Indigo course color button */
 "Indigo" = "Indigo";
 
 /* Mark student late
    Student is present in class */
 "Late" = "Sent";
+
+/* No comment provided by engineer. */
+"Launch External Tool" = "Åpne eksternt verktøy";
 
 /* Leave the quiz */
 "Leave" = "Forlate";
@@ -332,9 +347,6 @@
 /* Next button for advancing a quiz */
 "Next" = "Neste";
 
-/* Title for no button for push notification pre-authorization alert */
-"No" = "Nei";
-
 /* Alert title when unable to load communication channels */
 "No Communication Channels Found" = "Ingen kommunikasjonskanaler funnet";
 
@@ -361,9 +373,6 @@
 
 /* Title for alert showing when a quiz isn't takeable */
 "Not Takeable" = "Ikke tagbar";
-
-/* No comment provided by engineer. */
-"Note..." = "Merknad...";
 
 /* Error title for push notification registration error */
 "Notification Error" = "Varslingsfeil";
@@ -442,10 +451,10 @@
 "Question %@" = "Spørsmål %@";
 
 /* state for a question that has been flagged */
-"Question (questionNumber) Flagged" = "Spørsmål (questionNumber) Flagget";
+"Question (number) Flagged" = "Spørsmål (nummer) flagget";
 
 /* state for unflagged question */
-"Question (questionNumber) Unflagged" = "Spørsmål (questionNumber) Uflagget";
+"Question (number) Unflagged" = "Spørsmål (nummer) uflagget";
 
 /* label for the number of questions */
 "Questions" = "Spørsmål";
@@ -705,10 +714,7 @@
 "Unable to display any notification preferences returned from the server at this time." = "Ikke i stand til å vise noen varslingspreferanser returnert fra serveren på dette tidspunktet.";
 
 /* Alert message when unable to load communication channels */
-"Unable to load any Communication Channels at this time.  Error: (result.error?.localizedDescription)" = "Kan ikke laste inn noen kommunikasjonskanaler for øyeblikket.  Avvik: (resultat.avvik?.localizedDescription)";
-
-/* Alert message when unable to load notification preferences */
-"Unable to load any notification preferences at this time.  Error: (result.error?.localizedDescription)" = "Kan ikke laste inn noen varslingsinnstillinger på dette tidspunktet.  Avvik: (resultat.avvik?.localizedDescription)";
+"Unable to load any Communication Channels at this time." = "Kan ikke laste inn noen kommunikasjonskanaler for øyeblikket.";
 
 /* Error message when parsing communication preferences */
 "Unable to parse JSON for communication channels" = "Kunne ikke dele opp JSON for kommunikasjonskanaler";
@@ -758,14 +764,8 @@
 /* Error message for being unable to update a push notification preference */
 "We were not able to update this value with the server" = "Vi var ikke i stand til å oppdatere denne verdien med serveren";
 
-/* Message for push notification pre-authorization alert */
-"Would you like to allow Canvas to send you important notifications about announcements, course, assignments, etc?" = "Ønsker du å tillate at Canvas sender deg viktige varslinger om kunngjøringer, emne, oppgaver osv?";
-
 /* Yellow course color button */
 "Yellow" = "Gul";
-
-/* Title for yes button for push notification pre-authorization alert */
-"Yes" = "Ja";
 
 /* Description for Yo communication channel */
 "Yo" = "Yo";
@@ -796,4 +796,7 @@
 
 /* File upload in progress */
 "uploading..." = "laster opp...";
+
+/* web content failed to load */
+"⚠️ Error Loading Content" = "⚠️ Feil ved nedlasting av innhold";
 

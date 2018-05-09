@@ -19,6 +19,9 @@
 /* 88 out of 100 points */
 "%@ out of %@" = "%1$@ von %2$@";
 
+/* {point range max} to > {point range min} pts */
+"%@ to > %@ pts" = "%1$@ bis > %2$@ Pkte.";
+
 /* 83% (83 out of 100 points */
 "%@%% (%g out of %@)" = "%1$@%% (%2$g von %3$@)";
 
@@ -82,9 +85,6 @@
 /* No comment provided by engineer. */
 "Note: Media files are not immediately available for playback while they are processed on the server." = "Anmerkung: Mediendateien stehen nicht zur unmittelbaren Playback-Verfügung, während Sie auf dem Server verarbeitet werden.";
 
-/* No comment provided by engineer. */
-"OK" = "OK";
-
 /* Short name for observer enrollment */
 "Observer" = "Beobachter";
 
@@ -99,6 +99,9 @@
 
 /* A button that records */
 "Record" = "Aufnehmen";
+
+/* No comment provided by engineer. */
+"Score" = "Punktestand";
 
 /* Hint about the play button */
 "Starts playing your recording" = "Startet das Abspielen Ihrer Aufzeichnung";
@@ -146,7 +149,7 @@
 "Video" = "Video";
 
 /* No comment provided by engineer. */
-"Video error" = "Videofehler";
+"Video Error" = "Videofehler";
 
 /* No comment provided by engineer. */
 "Warning" = "Warnung";

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-/* @flow */
+/* eslint-disable flowtype/require-valid-file-annotation */
 
 import 'react-native'
 import React from 'react'
@@ -42,6 +42,18 @@ test('renders correctly', () => {
 test('renders correctly with needs_grading_count', () => {
   let assignment = template.assignment({ due_at: null })
   assignment.needs_grading_count = 5
+  let tree = renderer.create(
+    <AssignmentListRow assignment={assignment} tintColor='#fff' />
+  ).toJSON()
+  expect(tree).toMatchSnapshot()
+})
+
+test('renders correctly with needs_grading_count and set to not_graded', () => {
+  let assignment = template.assignment({
+    due_at: null,
+    needs_grading_count: 5,
+    grading_type: 'not_graded',
+  })
   let tree = renderer.create(
     <AssignmentListRow assignment={assignment} tintColor='#fff' />
   ).toJSON()
@@ -82,7 +94,7 @@ test('renders correctly with selected props', () => {
   let assignment = template.assignment({ due_at: null })
   assignment.needs_grading_count = 0
   let tree = renderer.create(
-    <AssignmentListRow assignment={assignment} tintColor='#fff' underlayColor='#eee' selectedColor='#f00'/>
+    <AssignmentListRow assignment={assignment} tintColor='#fff' underlayColor='#eee' selected />
   ).toJSON()
   expect(tree).toMatchSnapshot()
 })

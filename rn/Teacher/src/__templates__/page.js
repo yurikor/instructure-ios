@@ -15,11 +15,13 @@
 //
 
 // @flow
-
+import { PageModel } from '../canvas-api/model'
 import template, { type Template } from '../utils/template'
 
 export const page: Template<Page> = template({
+  page_id: '1',
   url: 'page-1',
+  html_url: '/pages/page-1',
   title: 'Page 1',
   created_at: '2017-03-17T19:15:25Z',
   updated_at: '2017-03-17T19:15:25Z',
@@ -29,3 +31,6 @@ export const page: Template<Page> = template({
   published: true,
   front_page: false,
 })
+
+export const pageModel: Template<PageModel> = overrides =>
+  Object.assign(new PageModel(page()), overrides)

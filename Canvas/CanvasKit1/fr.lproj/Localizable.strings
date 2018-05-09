@@ -19,6 +19,9 @@
 /* 88 out of 100 points */
 "%@ out of %@" = "%1$@ sur %2$@ au total";
 
+/* {point range max} to > {point range min} pts */
+"%@ to > %@ pts" = "%1$@ à > %2$@ pts";
+
 /* 83% (83 out of 100 points */
 "%@%% (%g out of %@)" = "%1$@%% (%2$g sur %3$@ au total)";
 
@@ -82,9 +85,6 @@
 /* No comment provided by engineer. */
 "Note: Media files are not immediately available for playback while they are processed on the server." = "Note : Les fichiers de média sont seulement rendus disponibles à la lecture qu'après avoir été traités sur le serveur.";
 
-/* No comment provided by engineer. */
-"OK" = "D'accord";
-
 /* Short name for observer enrollment */
 "Observer" = "Observateur";
 
@@ -99,6 +99,9 @@
 
 /* A button that records */
 "Record" = "Enregistrer";
+
+/* No comment provided by engineer. */
+"Score" = "Score";
 
 /* Hint about the play button */
 "Starts playing your recording" = "Commencer la lecture de votre enregistrement";
@@ -116,7 +119,7 @@
 "Stops recording a media comment" = "Arrête l'enregistrement d'un commentaire de média";
 
 /* Short name for student enrollment */
-"Student" = "Étudiant";
+"Student" = "Élève";
 
 /* Hint about media input selection */
 "Switches media input between audio and video. Currently set to %@" = "Changer l'entrée de média entre audio et vidéo. Actuellement réglée sur %@";
@@ -146,7 +149,7 @@
 "Video" = "Vidéo";
 
 /* No comment provided by engineer. */
-"Video error" = "Erreur du fichier vidéo";
+"Video Error" = "Erreur vidéo";
 
 /* No comment provided by engineer. */
 "Warning" = "Avertissement";

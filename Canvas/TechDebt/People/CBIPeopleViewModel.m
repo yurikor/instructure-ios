@@ -34,11 +34,13 @@
 
 @implementation CBIPeopleViewModel
 
+@dynamic model;
+
 - (id)init
 {
     self = [super init];
     if (self) {
-        RAC(self, name) = RACObserve(self, model.sortableName);
+        RAC(self, name) = RACObserve(self, model.name);
         [self setupAvatar];
     }
     return self;
@@ -64,7 +66,7 @@
             return avatarURL != nil;
     }] flattenMap:^__kindof RACStream *(NSURL *avatarURL) {
         return [RACSignal createSignal:^RACDisposable *(id <RACSubscriber> subscriber) {
-            NSURLSessionDataTask *avatarTask = [client GET:avatarURL.absoluteString parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+            NSURLSessionDataTask *avatarTask = [client GET:avatarURL.absoluteString parameters:nil progress:nil success:^(NSURLSessionDataTask *task, id responseObject) {
                 [subscriber sendNext:responseObject];
                 [subscriber sendCompleted];
             } failure:^(NSURLSessionDataTask *task, NSError *error) {

@@ -15,30 +15,39 @@
 //
 
 // @flow
-
+import { Component } from 'react'
 import localeSort from '../../utils/locale-sort'
 import Navigator from '../../routing/Navigator'
 import AssignmentListActions from './actions'
+import i18n from 'format-message'
 
 export type AssignmentListDataProps = {
-  +pending: number,
-  +error?: ?string,
-  +courseColor: string,
-  +courseName: string,
-  +assignmentGroups: AssignmentGroup[],
-  +gradingPeriods: Array<GradingPeriod & { assignmentRefs: [string] }>,
-  +selectedRowID: string,
+  pending: number,
+  error?: ?string,
+  courseColor: string,
+  courseName: string,
+  assignmentGroups: AssignmentGroup[],
+  gradingPeriods: Array<GradingPeriod & { assignmentRefs: [string] }>,
+  currentGradingPeriodID: ?string,
+  selectedRowID: string,
+  screenTitle: string,
+  ListRow?: Class<Component<*, *>>,
+  user?: SessionUser,
+  currentScore?: number,
+  showTotalScore: boolean,
 }
 
 export type AssignmentListProps = AssignmentListDataProps
   & RoutingProps
   & typeof AssignmentListActions
-  & { navigator: Navigator }
   & RefreshProps
 
-type RoutingProps = { +courseID: string }
+export type RoutingProps = {
+  courseID: string,
+  navigator: Navigator,
+}
 
-export function mapStateToProps ({ entities }: AppState, { courseID }: RoutingProps): AssignmentListDataProps {
+export function mapStateToProps ({ entities }: AppState, { courseID, navigator }: RoutingProps): AssignmentListDataProps {
   const course = entities.courses[courseID]
 
   if (!course) {
@@ -46,9 +55,12 @@ export function mapStateToProps ({ entities }: AppState, { courseID }: RoutingPr
       assignmentGroups: [],
       pending: 0,
       gradingPeriods: [],
+      currentGradingPeriodID: null,
       courseColor: '',
       courseName: '',
       selectedRowID: '',
+      screenTitle: i18n('Assignments'),
+      showTotalScore: false,
     }
   }
 
@@ -78,14 +90,24 @@ export function mapStateToProps ({ entities }: AppState, { courseID }: RoutingPr
   }
 
   let selectedRowID = entities.courseDetailsTabSelectedRow.rowID || ''
+  let currentGradingPeriodID
+  for (const enroll of course.course.enrollments) {
+    if (enroll.type === 'student' && enroll.current_grading_period_id) {
+      currentGradingPeriodID = enroll.current_grading_period_id
+      break
+    }
+  }
 
   return {
     pending,
     error,
     assignmentGroups,
     gradingPeriods,
+    currentGradingPeriodID,
     courseColor,
     courseName,
     selectedRowID,
+    screenTitle: i18n('Assignments'),
+    showTotalScore: false,
   }
 }

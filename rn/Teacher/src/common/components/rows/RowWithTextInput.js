@@ -26,7 +26,8 @@ import Row, { type RowProps } from './Row'
 
 type Props = RowProps & {
   defaultValue?: ?string,
-  onChangeText?: (text: string, identifier: string) => void,
+  value?: ?string,
+  onChangeText?: (text: string, identifier: ?string) => void,
   inputWidth?: number, // only applies with title, default is 50
   inputHeight?: number, // only applies with title, default is 50
   placeholder?: ?string,
@@ -34,41 +35,58 @@ type Props = RowProps & {
   onFocus?: Function,
 }
 
-const ACCESSIBILITY_TRAITS = ['button']
-
 export default class RowWithTextInput extends Component<Props, any> {
+  input: ?TextInput
+
+  static defaultProps = {
+    title: '',
+  }
+
+  handlePress = (event: Event) => {
+    this.props.onPress && this.props.onPress(event)
+    this.input && this.input.focus()
+  }
 
   render () {
     return this.props.title ? this._renderWithTitle() : this._renderWithoutTitle()
   }
 
   _renderWithoutTitle () {
-    return <Row {...this.props} children={this._renderTextInput()} accessibilityTraits={ACCESSIBILITY_TRAITS} />
+    return <Row {...this.props} children={this._renderTextInput()} accessibilityLabel={this.props.value} />
   }
 
   _renderWithTitle () {
     const accessory = (
       <View
         style={{
-          height: this.props.inputHeight || 50,
+          height: this.props.inputHeight || 30,
           width: this.props.inputWidth || 50,
         }}
         children={this._renderTextInput({ textAlign: 'right' })}
       />
     )
-    return <Row {...this.props} accessories={accessory} accessibilityTraits={ACCESSIBILITY_TRAITS} />
+    return (
+      <Row
+        {...this.props}
+        accessories={accessory}
+        accessibilityLabel={`${this.props.title}, ${this.props.value || ''}`}
+        onPress={this.handlePress}
+      />
+    )
   }
 
   _renderTextInput (styles?: any) {
     return (
       <TextInput
         defaultValue={this.props.defaultValue}
+        value={this.props.value}
         onChangeText={this._onChangeText}
         testID={this.props.identifier}
         style={[style.input, styles]}
         placeholder={this.props.placeholder}
         keyboardType={this.props.keyboardType}
         onFocus={this.props.onFocus}
+        ref={input => { this.input = input }}
       />
     )
   }

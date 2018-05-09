@@ -26,12 +26,14 @@ import {
   Image,
   TouchableHighlight,
 } from 'react-native'
+import i18n from 'format-message'
 import { Text } from '../../../common/text'
 import Images from '../../../images'
 import SpeedGraderActions from '../actions'
+import DrawerState from '../utils/drawer-state'
+import ListEmptyComponent from '../../../common/components/ListEmptyComponent'
 
-export class FilesTab extends Component {
-  props: FileTabProps
+export class FilesTab extends Component<FileTabProps> {
 
   listOfFiles () {
     const submission = this.props.submissionProps.submission
@@ -48,6 +50,7 @@ export class FilesTab extends Component {
   selectFile = (index: number) => {
     if (this.props.submissionID) {
       this.props.selectFile(this.props.submissionID, index)
+      this.props.drawerState.snapTo(0, true)
     }
   }
 
@@ -111,6 +114,7 @@ export class FilesTab extends Component {
           testID='speedgrader.files.list'
           renderItem={this.renderRow}
           extraData={{ selected: this.props.selectedAttachmentIndex }}
+          ListEmptyComponent={<ListEmptyComponent title={i18n('There are no files to display.')} />}
         />
       </ScrollView>
     )
@@ -184,6 +188,7 @@ type RouterProps = {
   submissionID: ?string,
   submissionProps: Object,
   selectedIndex: ?number,
+  drawerState: DrawerState,
 }
 
 type FileTabDataProps = {

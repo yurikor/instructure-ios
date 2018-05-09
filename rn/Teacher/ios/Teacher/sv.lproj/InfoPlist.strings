@@ -1,1 +1,9 @@
-/* No Localized Strings */
+/* (No Comment) */
+"NSCameraUsageDescription" = "Bifoga foton och videoklipp till inlämningskommentarer.";
+
+/* (No Comment) */
+"NSMicrophoneUsageDescription" = "Anslut ljudinspelningar till inlämningskommentarer.";
+
+/* (No Comment) */
+"NSPhotoLibraryUsageDescription" = "Ladda upp innehåll till kurser.";
+

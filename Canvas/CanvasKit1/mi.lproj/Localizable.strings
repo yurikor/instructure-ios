@@ -19,6 +19,9 @@
 /* 88 out of 100 points */
 "%@ out of %@" = "%1$@ i roto i te %2$@";
 
+/* {point range max} to > {point range min} pts */
+"%@ to > %@ pts" = "%1$@ kī > %2$@ ngā koinga";
+
 /* 83% (83 out of 100 points */
 "%@%% (%g out of %@)" = "%1$@%% (%2$g i roto i te %3$@)";
 
@@ -82,9 +85,6 @@
 /* No comment provided by engineer. */
 "Note: Media files are not immediately available for playback while they are processed on the server." = "Mōhio: e kore e tonu e wātea ana ngā kōnae pāpāho mō te purei ia e tukatuka ratou i runga i te tūmau.";
 
-/* No comment provided by engineer. */
-"OK" = "OK";
-
 /* Short name for observer enrollment */
 "Observer" = "Kaimātakitaki";
 
@@ -99,6 +99,9 @@
 
 /* A button that records */
 "Record" = "Record";
+
+/* No comment provided by engineer. */
+"Score" = "Kaute";
 
 /* Hint about the play button */
 "Starts playing your recording" = "Tīmata te tākaro koutou tuhi";
@@ -146,7 +149,7 @@
 "Video" = "Ataata";
 
 /* No comment provided by engineer. */
-"Video error" = "hapa ataata";
+"Video Error" = "Hapa ataata";
 
 /* No comment provided by engineer. */
 "Warning" = "Whakatūpato";

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-/* @flow */
+/* eslint-disable flowtype/require-valid-file-annotation */
 
 import React from 'react'
 import {
@@ -23,10 +23,13 @@ import {
 } from 'react-native'
 import renderer from 'react-test-renderer'
 
-import { DiscussionDetails, mapStateToProps, type Props } from '../DiscussionDetails'
+import { DiscussionDetails, mapStateToProps, shouldRefresh, type Props } from '../DiscussionDetails'
 import explore from '../../../../../test/helpers/explore'
 import setProps from '../../../../../test/helpers/setProps'
-import { setSession } from '../../../../canvas-api'
+import app from '../../../app'
+import { shallow } from 'enzyme'
+import { alertError } from '../../../../redux/middleware/error-handler'
+import * as template from '../../../../__templates__'
 
 jest
   .mock('Button', () => 'Button')
@@ -36,36 +39,34 @@ jest
   .mock('../../../../common/components/Avatar', () => 'Avatar')
   .mock('../../../../routing')
   .mock('../../../../routing/Screen')
-  .mock('../../../assignment-details/components/SubmissionBreakdownGraphSection')
+  .mock('../../../assignment-details/components/SubmissionBreakdownGraphSection', () => 'SubmissionBreakdownGraphSection')
   .mock('../../../assignment-details/components/PublishedIcon', () => 'PublishedIcon')
   .mock('LayoutAnimation', () => ({
     easeInEaseOut: jest.fn(),
   }))
+  .mock('../../../app', () => ({
+    isTeacher: jest.fn(),
+  }))
+  .mock('../../../../redux/middleware/error-handler', () => {
+    return { alertError: jest.fn() }
+  })
 
-const template = {
-  ...require('../../../../__templates__/discussion'),
-  ...require('../../../../__templates__/assignments'),
-  ...require('../../../../__templates__/course'),
-  ...require('../../../../__templates__/users'),
-  ...require('../../../../redux/__templates__/app-state'),
-  ...require('../../../../__templates__/helm'),
-  ...require('../../../../__templates__/session'),
-}
+jest.useFakeTimers()
 
 describe('DiscussionDetails', () => {
-  beforeAll(() => setSession(template.session()))
-
   let props: Props
   beforeEach(() => {
     jest.clearAllMocks()
-    let discussion = template.discussion({ id: '1', replies: [template.discussionReply()] })
+    app.isTeacher = jest.fn(() => true)
+    let discussion = template.discussion({ id: '1', replies: [template.discussionReply()], participants: { [template.userDisplay().id]: template.userDisplay() } })
     props = {
       refresh: jest.fn(),
       refreshing: false,
       discussion: discussion,
       navigator: template.navigator(),
       discussionID: '1',
-      courseID: '1',
+      context: 'courses',
+      contextID: '1',
       courseName: 'HOTS For Dummies',
       courseColor: '#fff',
       title: null,
@@ -90,6 +91,37 @@ describe('DiscussionDetails', () => {
     testRender(newProps)
   })
 
+  it('renders in student app', () => {
+    app.isTeacher = jest.fn(() => false)
+    testRender(props)
+  })
+
+  it('renders section names for section specific announcements', () => {
+    let discussion = template.discussion({
+      replies: [template.discussionReply()],
+      participants: {
+        [template.userDisplay().id]: template.userDisplay(),
+      },
+      is_section_specific: true,
+      sections: [template.section({ name: 'A Section' })],
+    })
+
+    let view = shallow(
+      new DiscussionDetails({
+        ...props,
+        discussion,
+      }).renderDetails(discussion)
+    )
+    let subtitle = view.find('SubTitle')
+    expect(subtitle.props().children).toContain('A Section')
+  })
+
+  it('renders closed discussion as student', () => {
+    app.isTeacher = jest.fn(() => false)
+    props.discussion.locked_for_user = true
+    testRender(props)
+  })
+
   it('renders with replies', () => {
     testRender(props)
   })
@@ -110,19 +142,27 @@ describe('DiscussionDetails', () => {
     const instance = tree.getInstance()
     instance._onPressMoreReplies([0, 0, 0, 0])
     expect(tree.toJSON()).toMatchSnapshot()
-    expect(instance.state).toEqual({ deletePending: false, rootNodePath: [0, 0, 0, 0], maxReplyNodeDepth: 2, unread_entries: [] })
+    expect(instance.state).toMatchObject({
+      deletePending: false,
+      rootNodePath: [0, 0, 0, 0],
+      maxReplyNodeDepth: 2,
+      unread_entries: [],
+      entry_ratings: {},
+    })
 
-    let rootNodes = instance.rootRepliesData()
+    let rootNodes = instance.rootRepliesData(discussion, [0, 0, 0, 0])
     let expected = [{
       ...aaaa,
       depth: 0,
       readState: 'read',
       myPath: [0],
+      rating: undefined,
     }, {
       ...aaaaa,
       depth: 1,
       readState: 'read',
       myPath: [0, 0],
+      rating: undefined,
     },
     ]
     expect(rootNodes).toEqual(expected)
@@ -162,6 +202,21 @@ describe('DiscussionDetails', () => {
     expect(navigator.show).toHaveBeenCalledWith('/courses/1/discussion_topics/1/reply', { modal: true }, {
       indexPath: [],
       lastReplyAt: props.discussion && props.discussion.last_reply_at,
+      permissions: props.discussion && props.discussion.permissions,
+    })
+  })
+
+  it('touches reply in top level author info', () => {
+    const navigator = template.navigator({
+      show: jest.fn(),
+    })
+    let tree = shallow(new DiscussionDetails({ ...props, navigator }).renderDetails(props.discussion))
+    let button = tree.find('[testID="discussion.details-reply"]')
+    button.simulate('press')
+    expect(navigator.show).toHaveBeenCalledWith('/courses/1/discussion_topics/1/reply', { modal: true }, {
+      indexPath: [],
+      lastReplyAt: props.discussion && props.discussion.last_reply_at,
+      permissions: props.discussion && props.discussion.permissions,
     })
   })
 
@@ -188,7 +243,7 @@ describe('DiscussionDetails', () => {
     ).getInstance()
     details.viewDueDateDetails()
     expect(navigator.show).toHaveBeenCalledWith(
-      `/courses/${props.courseID}/assignments/1/due_dates`,
+      `/courses/${props.contextID}/assignments/1/due_dates`,
       { modal: false },
       { onEditPressed: expect.any(Function) }
     )
@@ -229,7 +284,7 @@ describe('DiscussionDetails', () => {
 
     const kabob: any = explore(render(props).toJSON()).selectRightBarButton('discussions.details.edit.button')
     kabob.action()
-    expect(props.markAllAsRead).toHaveBeenCalledWith('1', '1', 1)
+    expect(props.markAllAsRead).toHaveBeenCalledWith('courses', '1', '1', 1)
   })
 
   it('alerts to confirm delete discussion', () => {
@@ -278,7 +333,6 @@ describe('DiscussionDetails', () => {
   })
 
   it('marks unread entry as read when viewable', () => {
-    jest.useFakeTimers()
     let a = template.discussionReply({ id: '0', readState: 'unread' })
     let discussion = { ...props.discussion, replies: [a] }
     const tree = render({ ...props, discussion })
@@ -299,11 +353,10 @@ describe('DiscussionDetails', () => {
     }
     instance._markViewableAsRead(info)
     jest.runAllTimers()
-    expect(props.markEntryAsRead).toHaveBeenCalledWith('1', '1', '0')
+    expect(props.markEntryAsRead).toHaveBeenCalledWith('courses', '1', '1', '0')
   })
 
   it('does not marks unread entry as read when not in view', () => {
-    jest.useFakeTimers()
     let a = template.discussionReply({ id: '0', readState: 'unread' })
     let discussion = { ...props.discussion, replies: [a] }
     const tree = render({ ...props, discussion })
@@ -328,7 +381,6 @@ describe('DiscussionDetails', () => {
   })
 
   it('does not call markEntryAsRead action if it has already been read', () => {
-    jest.useFakeTimers()
     let a = template.discussionReply({ id: '0', readState: 'read' })
     let discussion = { ...props.discussion, replies: [a] }
     const tree = render({ ...props, discussion })
@@ -353,7 +405,6 @@ describe('DiscussionDetails', () => {
   })
 
   it('catches the discussion details section when on screen so it doesnt try to mark as read', () => {
-    jest.useFakeTimers()
     let a = template.discussionReply({ id: '1', readState: 'unread' })
     let discussion = { ...props.discussion, replies: [a] }
     const tree = render({ ...props, discussion })
@@ -380,7 +431,7 @@ describe('DiscussionDetails', () => {
   it('calls refreshSingleDiscussion on unmount to update unread count', () => {
     props.refreshSingleDiscussion = jest.fn()
     render(props).getInstance().componentWillUnmount()
-    expect(props.refreshSingleDiscussion).toHaveBeenCalledWith(props.courseID, props.discussionID)
+    expect(props.refreshSingleDiscussion).toHaveBeenCalledWith(props.context, props.contextID, props.discussionID)
   })
 
   it('does not call refreshSingleDiscussion on unmount if no discussion (was deleted)', () => {
@@ -408,13 +459,13 @@ describe('DiscussionDetails', () => {
     const instance = tree.getInstance()
     instance._onPressMoreReplies([0, 0, 0, 0])
     instance._onPressMoreReplies([0, 0, 0, 0, 0, 0, 0])
-    expect(instance.state).toEqual({ deletePending: false, rootNodePath: [0, 0, 0, 0, 0, 0, 0], maxReplyNodeDepth: 2, unread_entries: [] })
+    expect(instance.state).toMatchObject({ deletePending: false, rootNodePath: [0, 0, 0, 0, 0, 0, 0], maxReplyNodeDepth: 2, unread_entries: [] })
     instance._onPopReplyRootPath()
-    expect(instance.state).toEqual({ deletePending: false, rootNodePath: [0, 0, 0, 0, 0], maxReplyNodeDepth: 2, unread_entries: [] })
+    expect(instance.state).toMatchObject({ deletePending: false, rootNodePath: [0, 0, 0, 0, 0], maxReplyNodeDepth: 2, unread_entries: [] })
     instance._onPopReplyRootPath()
-    expect(instance.state).toEqual({ deletePending: false, rootNodePath: [0, 0, 0], maxReplyNodeDepth: 2, unread_entries: [] })
+    expect(instance.state).toMatchObject({ deletePending: false, rootNodePath: [0, 0, 0], maxReplyNodeDepth: 2, unread_entries: [] })
     instance._onPopReplyRootPath()
-    expect(instance.state).toEqual({ deletePending: false, rootNodePath: [], maxReplyNodeDepth: 2, unread_entries: [] })
+    expect(instance.state).toMatchObject({ deletePending: false, rootNodePath: [], maxReplyNodeDepth: 2, unread_entries: [] })
   })
 
   it('deletes discussion', () => {
@@ -427,7 +478,7 @@ describe('DiscussionDetails', () => {
     props.discussionID = '2'
     const kabob: any = explore(render(props).toJSON()).selectRightBarButton('discussions.details.edit.button')
     kabob.action()
-    expect(props.deleteDiscussion).toHaveBeenCalledWith('1', '2')
+    expect(props.deleteDiscussion).toHaveBeenCalledWith('courses', '1', '2')
   })
 
   it('routes to discussion edit', () => {
@@ -456,6 +507,7 @@ describe('DiscussionDetails', () => {
       'entryID': '3',
       'indexPath': [1, 0],
       lastReplyAt: props.discussion && props.discussion.last_reply_at,
+      permissions: props.discussion && props.discussion.permissions,
     })
   })
 
@@ -486,7 +538,7 @@ describe('DiscussionDetails', () => {
     let details = render({ ...props, navigator }).getInstance()
     details.viewAllSubmissions()
     expect(navigator.show).toHaveBeenCalledWith(
-      `/courses/${props.courseID}/assignments/1/submissions`
+      `/courses/${props.contextID}/assignments/1/submissions`
     )
   })
 
@@ -500,7 +552,7 @@ describe('DiscussionDetails', () => {
     doneButton.props.onPress()
 
     expect(navigator.show).toHaveBeenCalledWith(
-      `/courses/${props.courseID}/assignments/1/submissions`
+      `/courses/${props.contextID}/assignments/1/submissions`
     )
   })
 
@@ -512,7 +564,7 @@ describe('DiscussionDetails', () => {
     let details = render({ ...props, navigator }).getInstance()
     details.onSubmissionDialPress('graded')
     expect(navigator.show).toHaveBeenCalledWith(
-      `/courses/${props.courseID}/assignments/1/submissions`,
+      `/courses/${props.contextID}/assignments/1/submissions`,
       { modal: false },
       { filterType: 'graded' }
     )
@@ -526,7 +578,7 @@ describe('DiscussionDetails', () => {
     let details = render({ ...props, navigator }).getInstance()
     details._editDiscussion()
     expect(navigator.show).toHaveBeenCalledWith(
-      `/courses/${props.courseID}/discussion_topics/1/edit`,
+      `/courses/${props.contextID}/discussion_topics/1/edit`,
       { modal: true, modalPresentationStyle: 'formsheet' },
     )
   })
@@ -587,6 +639,26 @@ describe('DiscussionDetails', () => {
     )
   })
 
+  it('does not show require_initial_post message on render', () => {
+    props.requireInitialPost = false
+    const details = shallow(new DiscussionDetails(props).renderDetails(props.discussion))
+    expect(details.find('[testID="discussions.details.require_initial_post.message"]')).toHaveLength(0)
+  })
+
+  it('shows require_initial_post message', () => {
+    props.initialPostRequired = true
+    props.discussion = template.discussion()
+    const screen = shallow(<DiscussionDetails {...props} />)
+    const details = shallow(screen.instance().renderDetails(props.discussion))
+    expect(details.find('[testID="discussions.details.require_initial_post.message"]')).toHaveLength(1)
+  })
+
+  it('alerts error', () => {
+    const screen = shallow(<DiscussionDetails {...props} />)
+    screen.setProps({ error: 'ERROR!' })
+    expect(alertError).toHaveBeenCalledWith('ERROR!')
+  })
+
   function testRender (props: any) {
     expect(render(props).toJSON()).toMatchSnapshot()
   }
@@ -611,6 +683,7 @@ describe('mapStateToProps', () => {
             data: discussion,
             pending: 1,
             error: null,
+            entry_ratings: { '4': 1 },
           },
         },
         courses: {
@@ -628,16 +701,19 @@ describe('mapStateToProps', () => {
     })
 
     expect(
-      mapStateToProps(state, { courseID: '1', discussionID: '1' })
+      mapStateToProps(state, { context: 'courses', contextID: '1', discussionID: '1' })
     ).toMatchObject({
       discussion,
       pending: 1,
       error: null,
-      courseID: '1',
+      context: 'courses',
+      contextID: '1',
       discussionID: '1',
       courseName: 'Course',
       courseColor: '#fff',
       assignment,
+      isAnnouncement: false,
+      entryRatings: { '4': 1 },
     })
   })
 
@@ -668,13 +744,72 @@ describe('mapStateToProps', () => {
     })
 
     expect(
-      mapStateToProps(state, { courseID: '1', discussionID: '1' })
+      mapStateToProps(state, { context: 'courses', contextID: '1', discussionID: '1' })
     ).toMatchObject({
       discussion,
       pending: 1,
       error: null,
-      courseID: '1',
+      context: 'courses',
+      contextID: '1',
       discussionID: '1',
     })
+  })
+
+  it('handles announcementID route prop', () => {
+    const discussion = template.discussion({ id: '1', assignment_id: '1' })
+    const course = template.course({ id: '1' })
+    const state: AppState = template.appState({
+      entities: {
+        ...template.appState().entities,
+        discussions: {
+          '1': {
+            data: discussion,
+            pending: 1,
+            error: null,
+          },
+        },
+        courses: {
+          '1': {
+            course: course,
+          },
+        },
+        assignments: {
+          '2': {
+            data: null,
+          },
+        },
+      },
+    })
+
+    expect(
+      mapStateToProps(state, { context: 'courses', contextID: '1', announcementID: '1' })
+    ).toMatchObject({
+      discussion,
+      pending: 1,
+      error: null,
+      context: 'courses',
+      contextID: '1',
+      discussionID: '1',
+      isAnnouncement: true,
+    })
+  })
+})
+
+describe('shouldRefresh', () => {
+  it('should refresh if discussion allows ratings', () => {
+    const props = {
+      discussion: template.discussion({
+        replies: [template.discussionReply()],
+        assignment_id: null,
+        unread_count: 0,
+      }),
+      unreadEntries: null,
+    }
+
+    props.allow_rating = false
+    expect(shouldRefresh(props)).toBeFalsy()
+
+    props.discussion.allow_rating = true
+    expect(shouldRefresh(props)).toBeTruthy()
   })
 })

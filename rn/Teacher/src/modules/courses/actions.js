@@ -27,12 +27,20 @@ export let CoursesActions = (api: CanvasApi): * => ({
       api.getCourses(),
       api.getCustomColors(),
     ]),
+    syncToNative: true,
   })),
+  refreshCourse: createAction('course.refresh', (courseID: string) => {
+    return {
+      promise: api.getCourse(courseID),
+      courseID,
+    }
+  }),
   updateCourseColor: createAction('courses.updateColor', (courseID: string, color: string) => {
     return {
       courseID,
       color,
       promise: api.updateCourseColor(courseID, color),
+      syncToNative: true,
     }
   }),
   refreshGradingPeriods: createAction('courses.refreshGradingPeriods', (courseID: string) => {
@@ -48,6 +56,17 @@ export let CoursesActions = (api: CanvasApi): * => ({
       courseID,
     }
   }),
+  getCoursePermissions: createAction('courses.getPermissions', (courseID: string) => {
+    return {
+      promise: api.getCoursePermissions(courseID),
+      courseID,
+    }
+  }),
+  updateCourseNickname: createAction('courses.update-nickname', (course: Course, nickname: string) => ({
+    course,
+    nickname,
+    promise: api.updateCourseNickname(course, nickname),
+  })),
 })
 
 export default (CoursesActions(canvas): *)

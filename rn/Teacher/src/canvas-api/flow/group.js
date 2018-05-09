@@ -22,4 +22,5 @@ export type Group = {
   group_category_id: string,
   members_count: number,
   users?: [UserDisplay],
+  concluded?: boolean,
 }

@@ -14,22 +14,21 @@ public func inboxTab() -> UIViewController {
     let inboxVC = HelmViewController(moduleName: "/conversations", props: [:])
     let inboxNav = HelmNavigationController(rootViewController: inboxVC)
     
+    inboxNav.applyDefaultBranding()
+    inboxVC.navigationItem.titleView = Brand.current.navBarTitleView()
+    
     let inboxSplit = HelmSplitViewController()
     
     let empty = HelmNavigationController()
-    empty.navigationBar.barTintColor = Brand.current.navBgColor
-    empty.navigationBar.tintColor = Brand.current.navButtonColor
-    empty.navigationBar.isTranslucent = false
+    empty.applyDefaultBranding()
     
     inboxSplit.viewControllers = [inboxNav, empty]
-    let icon = UIImage(named: "teacher-inbox", in: .core, compatibleWith: nil)
-    inboxSplit.tabBarItem = UITabBarItem(title: NSLocalizedString("Inbox", comment: ""), image: icon, selectedImage: nil)
+    let icon = UIImage.icon(.email)
+    inboxSplit.tabBarItem = UITabBarItem(title: NSLocalizedString("Inbox", tableName: "Localizable", bundle: .core, value: "Inbox", comment: "Inbox tab title"), image: icon, selectedImage: nil)
     inboxSplit.tabBarItem.accessibilityIdentifier = "tab-bar.inbox-btn"
     inboxSplit.extendedLayoutIncludesOpaqueBars = true
     
-    inboxSplit.tabBarItem.reactive.badgeValue
-        <~ UnreadMessages.count
-            .map { count in count > 0 ? "\(count)" : nil }
+    inboxSplit.tabBarItem.reactive.badgeValue <~ TabBarBadgeCounts.unreadMessageCountString
     
     return inboxSplit
 }

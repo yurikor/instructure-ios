@@ -107,6 +107,7 @@ UIColor *CKPostButtonDisabledColor() {
     self.webView.accessibilityLabel = NSLocalizedString(@"Add comment", nil);
     [self.sendButton setIsAccessibilityElement:YES];
     self.sendButton.accessibilityLabel = NSLocalizedString(@"Post comment", nil);
+    [self.sendButton setTitle:NSLocalizedString(@"Post", nil) forState:UIControlStateNormal];
     [self.addAttachmentButton setIsAccessibilityElement:YES];
     self.addAttachmentButton.accessibilityLabel = NSLocalizedString(@"Add attachment", nil);
     [self.webView setKeyboardDisplayRequiresUserAction:NO];
@@ -154,6 +155,8 @@ UIColor *CKPostButtonDisabledColor() {
     
     self.imageCache = [[NSCache alloc] init];
     loadingImages = [NSMutableDictionary new];
+    
+    self.placeholderLabel.text = _placeholderText;
 }
 
 - (CKAllowedAttachmentType)allowedAttachmentTypes
@@ -441,8 +444,6 @@ UIColor *CKPostButtonDisabledColor() {
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
-    self.placeholderLabel.text = _placeholderText;
-
     // This is to get around a nasty web view issue where initially text wasn't pasteable, so to get around that you set and unset text...
     NSString *js = [NSString stringWithFormat:@"setInitialText('%@');", @"INITIAL SET"];
     [self.webView stringByEvaluatingJavaScriptFromString:js];
@@ -548,7 +549,7 @@ UIColor *CKPostButtonDisabledColor() {
             superView = button.superview;
         }
         if (!self.attachmentManager.presentFromViewController && [self.delegate isKindOfClass:[UIViewController class]]) {
-            [self.attachmentManager setPresentFromViewController:self.delegate];
+            [self.attachmentManager setPresentFromViewController:(UIViewController *)self.delegate];
         }
         [self.attachmentManager showAttachmentPickerFromRect:button.frame
                                                       inView:superView

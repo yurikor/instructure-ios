@@ -16,7 +16,9 @@
 
 // @flow
 
+import { shallow } from 'enzyme'
 import React from 'react'
+import { NativeModules } from 'react-native'
 import {
   SpeedGrader,
   mapStateToProps,
@@ -24,7 +26,6 @@ import {
   shouldRefresh,
   isRefreshing,
 } from '../SpeedGrader'
-import renderer from 'react-test-renderer'
 import shuffle from 'knuth-shuffle-seeded'
 
 jest.mock('../components/GradePicker')
@@ -34,6 +35,8 @@ jest.mock('../components/FilesTab')
 jest.mock('../components/SimilarityScore')
 jest.mock('../../../common/components/BottomDrawer')
 jest.mock('knuth-shuffle-seeded', () => jest.fn())
+
+const { NativeAccessibility } = NativeModules
 
 const templates = {
   ...require('../../../__templates__/submissions'),
@@ -82,10 +85,14 @@ let defaultProps = {
 }
 
 describe('SpeedGrader', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
   it('renders', () => {
-    let tree = renderer.create(
+    let tree = shallow(
       <SpeedGrader {...defaultProps} />
-    ).toJSON()
+    )
 
     expect(tree).toMatchSnapshot()
   })
@@ -94,52 +101,114 @@ describe('SpeedGrader', () => {
     let props = {
       ...defaultProps,
       submissions: [templates.submissionProps(), templates.submissionProps({ status: 'missing' })],
-      selectedFilter: {
-        filter: {
-          type: 'notsubmitted',
-          title: 'Who Cares?',
-          filterFunc: subs => subs.filter(sub => sub.status === 'missing'),
-        },
-      },
+      filter: subs => subs.filter(sub => sub.status === 'missing'),
     }
-    let tree = renderer.create(
+    let tree = shallow(
       <SpeedGrader {...props} />
-    ).toJSON()
+    )
+    let list = tree.find('FlatList')
+    expect(list.props().data.length).toEqual(1)
+  })
 
-    expect(tree).toMatchSnapshot()
+  it('refreshes accessibility after showing loading indicator', () => {
+    const props = {
+      ...defaultProps,
+      pending: true,
+    }
+    const tree = shallow(<SpeedGrader {...props} />)
+    expect(NativeAccessibility.refresh).not.toHaveBeenCalled()
+    tree.setProps({
+      pending: false,
+      submissions: [templates.submissionProps()],
+    })
+    expect(NativeAccessibility.refresh).toHaveBeenCalled()
+  })
+
+  it('doesnt set index until there are some submissions', () => {
+    let props = {
+      ...defaultProps,
+      submissions: [],
+    }
+
+    let tree = shallow(
+      <SpeedGrader {...props} />
+    )
+    expect(tree.state()).toMatchObject({
+      submissions: [],
+      currentPageIndex: undefined,
+    })
+
+    tree.setProps({ submissions: [] })
+    expect(tree.state()).toMatchObject({
+      submissions: [],
+      currentPageIndex: undefined,
+    })
+
+    tree.setProps({ submissions: [templates.submissionProps()] })
+    expect(tree.state()).toMatchObject({
+      submissions: [templates.submissionProps()],
+      currentPageIndex: 0,
+    })
   })
 
   it('shows the loading spinner when there are no submissions', () => {
-    let tree = renderer.create(
+    let tree = shallow(
       <SpeedGrader {...defaultProps} />
-    ).toJSON()
-
-    expect(tree).toMatchSnapshot()
+    )
+    expect(tree.find('ActivityIndicator').length).toEqual(1)
   })
 
   it('shows the loading spinner when pending and not refreshing', () => {
-    let tree = renderer.create(
+    let tree = shallow(
       <SpeedGrader {...defaultProps} pending={true} />
-    ).toJSON()
+    )
 
-    expect(tree).toMatchSnapshot()
+    expect(tree.find('ActivityIndicator').length).toEqual(1)
   })
 
   it('renders submissions if there are some', () => {
     const submissions = [templates.submissionProps()]
     const props = { ...defaultProps, submissions }
-    let tree = renderer.create(
+    let tree = shallow(
       <SpeedGrader {...props} />
-    ).toJSON()
+    )
+    let itemTree = shallow(
+      tree.instance().renderItem({ item: {
+        key: submissions[0].userID,
+        submission: submissions[0],
+      },
+        index: 0,
+      })
+    )
+    expect(itemTree).toMatchSnapshot()
+  })
 
-    expect(tree).toMatchSnapshot()
+  it('can toggle scrolling', () => {
+    const submissions = [templates.submissionProps()]
+    const props = { ...defaultProps, submissions }
+    let instance = new SpeedGrader(props)
+    instance.scrollView = { setNativeProps: jest.fn() }
+    let tree = shallow(instance.renderItem({
+      item: {
+        kehy: submissions[0].userID,
+        submission: submissions[0],
+      },
+      index: 0,
+    }))
+    let submissionGrader = tree.find('SubmissionGrader')
+
+    submissionGrader.props().setScrollEnabled(false)
+    expect(instance.scrollView.setNativeProps).toHaveBeenCalledWith({ scrollEnabled: false })
+
+    submissionGrader.props().setScrollEnabled(true)
+    expect(instance.scrollView.setNativeProps).toHaveBeenCalledWith({ scrollEnabled: true })
   })
 
   it('supplies getItemLayout', () => {
-    let view = renderer.create(
+    let view = shallow(
       <SpeedGrader {...defaultProps} />
     )
-    expect(view.getInstance().getItemLayout(null, 2)).toEqual({
+    expect(view.instance().getItemLayout(null, 2)).toEqual({
       length: 770,
       offset: 770 * 2,
       index: 2,
@@ -148,11 +217,31 @@ describe('SpeedGrader', () => {
 
   it('refreshes assignment on unmount', () => {
     const spy = jest.fn()
-    let view = renderer.create(
+    let view = shallow(
       <SpeedGrader {...defaultProps} refreshAssignment={spy} />
     )
-    view.getInstance().componentWillUnmount()
+    view.unmount()
     expect(spy).toHaveBeenCalledWith(defaultProps.courseID, defaultProps.assignmentID)
+  })
+
+  it('defaults current page to 0 without studentIndex', () => {
+    const tree = shallow(<SpeedGrader {...defaultProps} studentIndex={null} />)
+    expect(tree).toMatchSnapshot()
+  })
+
+  it('defaults current page to 0 if userID is not in submissions', () => {
+    const tree = shallow(<SpeedGrader {...defaultProps} studentIndex={200} />)
+    expect(tree).toMatchSnapshot()
+  })
+
+  it('only sets submissions once', () => {
+    let submissions = [
+      templates.submissionProps(),
+      templates.submissionProps(),
+    ]
+    const tree = shallow(<SpeedGrader {...defaultProps} submissions={submissions} />)
+    tree.setProps({ submissions: [] })
+    expect(tree).toMatchSnapshot()
   })
 })
 

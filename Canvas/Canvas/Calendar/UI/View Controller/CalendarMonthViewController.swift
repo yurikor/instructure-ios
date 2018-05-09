@@ -21,7 +21,7 @@ import ReactiveSwift
 import Crashlytics
 import CanvasCore
 
-open class CalendarMonthViewController: UIViewController, CalendarViewDelegate, CalendarViewDataSource {
+open class CalendarMonthViewController: UIViewController, CalendarViewDelegate, CalendarViewDataSource, PageViewEventViewControllerLoggingProtocol {
 
     // ---------------------------------------------
     // MARK: - Instance Variables
@@ -35,27 +35,26 @@ open class CalendarMonthViewController: UIViewController, CalendarViewDelegate, 
     // UI Views
     fileprivate var calendar: Calendar = Calendar.current
     internal var calendarView: CalendarView!
-    fileprivate let toastManager = ToastManager()
+    fileprivate var toastManager: ToastManager?
 
     // Data Variables
     fileprivate var session: Session!
 
     var allCoursesCollection: FetchedCollection<Course>!
     var favCoursesCollection: FetchedCollection<Course>!
-    var eventsCollection: FetchedCollection<CalendarEvent>!
 
     var refresher: Refresher? {
         didSet {
             oldValue?.refreshControl.endRefreshing()
             oldValue?.refreshControl.removeFromSuperview()
             refresher?.refreshingBegan.observeValues { [weak self] in
-                self?.toastManager.statusBarToastInfo(NSLocalizedString("Refreshing Calendar Events", comment: "Refreshing Calendar Events"), completion: nil)
+                self?.toastManager?.beginToastInfo(NSLocalizedString("Refreshing Calendar Events", comment: "Refreshing Calendar Events"))
             }
             refresher?.refreshingCompleted.observeValues { [weak self] err in
                 guard let me = self else { return }
                 ErrorReporter.reportError(err, from: self)
                 me.calendarView?.reloadVisibleCells()
-                me.toastManager.dismissNotification()
+                me.toastManager?.endToast()
                 me.didFinishRefreshing()
             }
         }
@@ -113,6 +112,8 @@ open class CalendarMonthViewController: UIViewController, CalendarViewDelegate, 
     open override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.navigationController?.applyDefaultBranding()
+        
         CLSLogv("locale: %@", getVaList([Locale.current.identifier]))
         CLSLogv("calendar: %@", getVaList([Calendar.current.description]))
 
@@ -134,6 +135,10 @@ open class CalendarMonthViewController: UIViewController, CalendarViewDelegate, 
 
         allCoursesCollection = try! Course.allCoursesCollection(session)
         
+        if let nav = navigationController?.navigationBar {
+            self.toastManager = ToastManager(navigationBar: nav)
+        }
+
         updateCalendarEvents()
     }
 
@@ -146,13 +151,14 @@ open class CalendarMonthViewController: UIViewController, CalendarViewDelegate, 
 
         // Scrolling needs to happen after viewDidAppear so we're hiding this until after that happens
         self.calendarView?.alpha = 0.0
-
+        startTrackingTimeOnViewController()
     }
 
     open override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        self.toastManager.dismissNotification()
+        self.toastManager?.endToast()
+        stopTrackingTimeOnViewController(eventName: "/calendar")
     }
 
     open override func viewDidAppear(_ animated: Bool) {
@@ -174,12 +180,6 @@ open class CalendarMonthViewController: UIViewController, CalendarViewDelegate, 
         UIView.animate(withDuration: 0.25, animations: { () -> Void in
             self.calendarView?.alpha = 1.0
         })
-    }
-
-    open override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-
-        calendarView = nil
     }
 
     // ---------------------------------------------
@@ -223,7 +223,16 @@ open class CalendarMonthViewController: UIViewController, CalendarViewDelegate, 
     }
 
     open func calendarViewNumberOfEventsForDate(_ calendarView: CalendarView, date: Date) -> Int {
-        return calendarEventsForDate(date).count
+        let min = date.dateAtMidnight
+        let max = min.addingTimeInterval(24 * 60 * 60)
+        do {
+            let context = try session.calendarEventsManagedObjectContext()
+            let predicate = CalendarEvent.predicate(min, endDate: max, contextCodes: selectedContextCodes())
+            let fetch: NSFetchRequest<CalendarEvent> = context.fetch(predicate)
+            return try context.count(for: fetch)
+        } catch {
+            return 0
+        }
     }
 
     // ---------------------------------------------
@@ -232,11 +241,10 @@ open class CalendarMonthViewController: UIViewController, CalendarViewDelegate, 
     fileprivate func initNavigationButtons() {
         var navigationButtons = [UIBarButtonItem]()
         // Navigation Buttons
-        if let refreshImage = UIImage(named: "icon_sync", in: CalendarMonthViewController.bundle, compatibleWith: nil)?.withRenderingMode(UIImageRenderingMode.alwaysTemplate) {
-            let refreshButton = UIBarButtonItem(image: refreshImage, style: UIBarButtonItemStyle.plain, target: self, action: #selector(CalendarMonthViewController.refreshButtonPressed(_:)))
-            refreshButton.accessibilityLabel = NSLocalizedString("Refresh", comment: "Button to refresh the calendar events")
-            navigationButtons.append(refreshButton)
-        }
+        let refreshImage = UIImage.icon(.refresh).withRenderingMode(.alwaysTemplate)
+        let refreshButton = UIBarButtonItem(image: refreshImage, style: UIBarButtonItemStyle.plain, target: self, action: #selector(CalendarMonthViewController.refreshButtonPressed(_:)))
+        refreshButton.accessibilityLabel = NSLocalizedString("Refresh", comment: "Button to refresh the calendar events")
+        navigationButtons.append(refreshButton)
 
         if let todayView = IconTodayView.instantiateFromNib(Date(), tintColor: self.navigationController?.navigationBar.tintColor, target: self, action: #selector(CalendarMonthViewController.todayButtonPressed(_:))) {
             let todayButton = UIBarButtonItem(customView: todayView)
@@ -259,14 +267,8 @@ open class CalendarMonthViewController: UIViewController, CalendarViewDelegate, 
         let startDate = Date() + -365.daysComponents
         let endDate = Date() + 365.daysComponents
 
-        eventsCollection = try! CalendarEvent.collectionByDueDate(session, startDate: startDate, endDate: endDate, contextCodes: selectedContextCodes())
         refresher = try! CalendarEvent.refresher(session, startDate: startDate, endDate: endDate, contextCodes: selectedContextCodes())
         refresher?.refresh(false)
-        eventsDisposable = eventsCollection.collectionUpdates
-            .observe(on: UIScheduler())
-            .observeValues { [unowned self] updates in
-                self.calendarView?.reloadVisibleCells()
-            }.map(ScopedDisposable.init)
     }
 
     open func selectedContextCodes() -> [String] {
@@ -278,37 +280,6 @@ open class CalendarMonthViewController: UIViewController, CalendarViewDelegate, 
         }
 
         return contextCodes
-    }
-
-    internal func calendarEventsForDate(_ date: Date) -> [CalendarEvent] {
-        let section = self.sectionForDate(date)
-        if let section = section {
-            return self.objectsInSection(section)
-        }
-        return [CalendarEvent]()
-    }
-
-    // We need to speed this up
-    internal func sectionForDate(_ date: Date) -> Int? {
-        let sections = 0..<eventsCollection.numberOfSections()
-        for section in sections {
-            if let dateString = eventsCollection.titleForSection(section), dateString == CalendarEvent.sectionTitleDateFormatter.string(from: date) {
-                return section
-            }
-        }
-
-        return nil
-    }
-
-    // This needs a kick in the pants too
-    internal func objectsInSection(_ section: Int) -> [CalendarEvent] {
-        var events = [CalendarEvent]()
-
-        for i in 0..<eventsCollection.numberOfItemsInSection(section) {
-            events.append(eventsCollection[IndexPath(row: i, section: section)])
-        }
-        
-        return events
     }
     
 }
