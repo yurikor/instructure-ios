@@ -263,6 +263,7 @@ exports[`ContextCard formats the last_activity_at properly 1`] = `
           "grade_matches_current_submission": true,
           "id": "1",
           "late": false,
+          "missing": false,
           "preview_url": "",
           "submission_type": "online_text_entry",
           "submitted_at": "2017-04-05T15:12:45Z",
@@ -796,7 +797,7 @@ exports[`ContextCard formats the last_activity_at properly 1`] = `
                       <Image
                         source={
                           Object {
-                            "testUri": "../../../src/images/Published.png",
+                            "testUri": "../../../src/images/publish-small.png",
                           }
                         }
                         style={
@@ -1171,6 +1172,7 @@ exports[`ContextCard renders 1`] = `
           "grade_matches_current_submission": true,
           "id": "1",
           "late": false,
+          "missing": false,
           "preview_url": "",
           "submission_type": "online_text_entry",
           "submitted_at": "2017-04-05T15:12:45Z",
@@ -1704,7 +1706,7 @@ exports[`ContextCard renders 1`] = `
                       <Image
                         source={
                           Object {
-                            "testUri": "../../../src/images/Published.png",
+                            "testUri": "../../../src/images/publish-small.png",
                           }
                         }
                         style={
@@ -2555,6 +2557,7 @@ exports[`ContextCard renders if there is no enrollment 1`] = `
           "grade_matches_current_submission": true,
           "id": "1",
           "late": false,
+          "missing": false,
           "preview_url": "",
           "submission_type": "online_text_entry",
           "submitted_at": "2017-04-05T15:12:45Z",
@@ -2835,7 +2838,7 @@ exports[`ContextCard renders if there is no enrollment 1`] = `
                       <Image
                         source={
                           Object {
-                            "testUri": "../../../src/images/Published.png",
+                            "testUri": "../../../src/images/publish-small.png",
                           }
                         }
                         style={
@@ -3199,6 +3202,7 @@ exports[`ContextCard renders if there is no section in the enrollment 1`] = `
           "grade_matches_current_submission": true,
           "id": "1",
           "late": false,
+          "missing": false,
           "preview_url": "",
           "submission_type": "online_text_entry",
           "submitted_at": "2017-04-05T15:12:45Z",
@@ -3706,7 +3710,7 @@ exports[`ContextCard renders if there is no section in the enrollment 1`] = `
                       <Image
                         source={
                           Object {
-                            "testUri": "../../../src/images/Published.png",
+                            "testUri": "../../../src/images/publish-small.png",
                           }
                         }
                         style={
@@ -4081,6 +4085,7 @@ exports[`ContextCard shows points values when there is no grade 1`] = `
           "grade_matches_current_submission": true,
           "id": "1",
           "late": false,
+          "missing": false,
           "preview_url": "",
           "submission_type": "online_text_entry",
           "submitted_at": "2017-04-05T15:12:45Z",
@@ -4614,7 +4619,7 @@ exports[`ContextCard shows points values when there is no grade 1`] = `
                       <Image
                         source={
                           Object {
-                            "testUri": "../../../src/images/Published.png",
+                            "testUri": "../../../src/images/publish-small.png",
                           }
                         }
                         style={

@@ -34,6 +34,8 @@ import { Heading1 } from '../../common/text'
 import { LinkButton } from '../../common/buttons'
 import { httpClient, isAbort } from '../../canvas-api'
 import RowSeparator from '../../common/components/rows/RowSeparator'
+import { isRegularDisplayMode } from '../../routing/utils'
+import type { TraitCollection } from '../../routing/Navigator'
 
 export type Props = NavigationProps & {
   onSelect: (selected: AddressBookResult[]) => void,
@@ -90,7 +92,6 @@ function localizedRoles (): { [string]: string } {
 }
 
 export class PeopleList extends Component<Props, any> {
-
   typeAhead: TypeAheadSearch
 
   constructor (props: Props) {
@@ -105,12 +106,25 @@ export class PeopleList extends Component<Props, any> {
       filters: [],
       showFilter: this.props.showFilter === undefined ? true : this.props.showFilter,
       marginBottom: global.tabBarHeight,
+      selectedRowID: null,
     }
   }
 
   componentDidMount () {
     const context = this._courseContext()
     this._fetchFilterOptions(context, this._fetchInitialActionSheetOptionsHandler)
+  }
+
+  componentWillMount () {
+    this._onTraitCollectionChange()
+  }
+
+  _onTraitCollectionChange () {
+    this.props.navigator.traitCollection((traits) => { this._traitCollectionDidChange(traits) })
+  }
+
+  _traitCollectionDidChange (traits: TraitCollection) {
+    this.setState({ isRegularScreenDisplayMode: isRegularDisplayMode(traits) })
   }
 
   _courseContext = (): string => {
@@ -185,6 +199,9 @@ export class PeopleList extends Component<Props, any> {
       this.showItem(item)
       return
     }
+
+    this.setState({ selectedRowID: item.id })
+
     this.props.navigator.show(
       `/courses/${this.props.course.id}/users/${item.id}`,
       undefined,
@@ -210,48 +227,57 @@ export class PeopleList extends Component<Props, any> {
     return item.id
   }
 
+  _isRowSelected (item: AddressBookResult): boolean {
+    if (this.state && this.state.selectedRowID) {
+      return this.state.isRegularScreenDisplayMode && this.state.selectedRowID === item.id
+    }
+
+    return false
+  }
+
   _renderRow = ({ item, index }) => {
     let border = 'bottom'
     if (index === 0) {
       border = 'both'
     }
 
+    const selected = this._isRowSelected(item)
     const membership = this._mapCourseMembership(item)
     const avatarName = item.id.startsWith('branch') ? i18n('All') : item.name
     const avatar = (<View style={styles.avatar}>
-                      <Avatar avatarURL={item.avatar_url} userName={avatarName}/>
-                    </View>)
+      <Avatar avatarURL={item.avatar_url} userName={avatarName}/>
+    </View>)
 
     return <Row title={item.full_name}
-                subtitle={membership}
-                border={border}
-                renderImage={() => avatar}
-                testID={item.id}
-                disclosureIndicator={isBranch(item.id)}
-                onPress={() => this._onSelectItem(item)} />
+      subtitle={membership}
+      border={border}
+      renderImage={() => avatar}
+      testID={item.id}
+      disclosureIndicator={isBranch(item.id)}
+      onPress={() => this._onSelectItem(item)}
+      selected={selected} />
   }
 
-  _renderSearchBar = () => {
-    return <View>
+  _renderSearchBar = () => (
+    <View>
       <TypeAheadSearch
-            ref={(r: any) => { this.typeAhead = r }}
-            endpoint='/search/recipients'
-            parameters={this._buildParams}
-            onRequestStarted={this._requestStarted}
-            onRequestFinished={this._requestFinished}
-            onNextRequestFinished={this._nextRequestFinished}
-            onChangeText={this._queryChanged}
-            defaultQuery=''
-            />
-            { this.state.showFilter &&
-            <View style={styles.headerContainer}>
-             <Heading1>{i18n('All People')}</Heading1>
-             {this._renderFilterButton()}
-            </View>
-            }
-
-            </View>
-  }
+        ref={(r: any) => { this.typeAhead = r }}
+        endpoint='/search/recipients'
+        parameters={this._buildParams}
+        onRequestStarted={this._requestStarted}
+        onRequestFinished={this._requestFinished}
+        onNextRequestFinished={this._nextRequestFinished}
+        onChangeText={this._queryChanged}
+        defaultQuery=''
+      />
+      { this.state.showFilter &&
+        <View style={styles.headerContainer}>
+          <Heading1>{i18n('All People')}</Heading1>
+          {this._renderFilterButton()}
+        </View>
+      }
+    </View>
+  )
 
   _renderFilterButton = () => {
     let title = i18n('Filter')
@@ -259,13 +285,13 @@ export class PeopleList extends Component<Props, any> {
     let onPress = this._chooseFilter
 
     return (<LinkButton
-              testID='peopleList.filterBy'
-              onPress={onPress}
-              style={styles.filterButton}
-              accessibilityLabel={ accessibilityLabel }
-              >
-              { title }
-            </LinkButton>)
+      testID='peopleList.filterBy'
+      onPress={onPress}
+      style={styles.filterButton}
+      accessibilityLabel={ accessibilityLabel }
+    >
+      { title }
+    </LinkButton>)
   }
 
   _currentFilter = () => {
@@ -314,18 +340,18 @@ export class PeopleList extends Component<Props, any> {
     const searchBar = this._renderSearchBar()
     const empty = <ListEmptyComponent title={i18n('No results')} />
     return (<View style={styles.container}>
-              <FlatList
-                keyboardDismissMode='on-drag'
-                data={this.state.searchResults}
-                renderItem={this._renderRow}
-                ListHeaderComponent={searchBar}
-                ListEmptyComponent={this.state.pending ? null : empty}
-                refreshing={this.state.pending}
-                onEndReached={() => this.typeAhead.next()}
-                ItemSeparatorComponent={RowSeparator}
-                keyExtractor={this.keyExtractor}
-              />
-            </View>)
+      <FlatList
+        keyboardDismissMode='on-drag'
+        data={this.state.searchResults}
+        renderItem={this._renderRow}
+        ListHeaderComponent={searchBar}
+        ListEmptyComponent={this.state.pending ? null : empty}
+        refreshing={this.state.pending}
+        onEndReached={() => this.typeAhead.next()}
+        ItemSeparatorComponent={RowSeparator}
+        keyExtractor={this.keyExtractor}
+      />
+    </View>)
   }
 
   render () {
@@ -336,6 +362,7 @@ export class PeopleList extends Component<Props, any> {
         drawUnderNavBar
         title={this.props.name || i18n('People')}
         subtitle={(this.props.course && this.props.course.name) || ''}
+        onTraitCollectionChange={this._onTraitCollectionChange.bind(this)}
       >
         { this._renderComponent() }
       </Screen>

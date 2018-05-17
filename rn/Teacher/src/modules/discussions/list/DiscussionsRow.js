@@ -24,6 +24,7 @@ import {
   Image,
 } from 'react-native'
 import i18n from 'format-message'
+import colors from '@common/colors'
 
 import Row from '@common/components/rows/Row'
 import AccessIcon from '@common/components/AccessIcon'
@@ -40,11 +41,12 @@ export type Props = {
   index: number,
   tintColor: ?string,
   onToggleDiscussionGrouping: Function,
+  selected: boolean,
 }
 
 export default class DiscussionsRow extends PureComponent<Props> {
   render () {
-    const discussion = this.props.discussion
+    const { selected, discussion } = this.props
     const points = this.points(discussion)
     const discussionDetails = this.discussionDetails(discussion)
     const unreadDot = this.renderUnreadDot(discussion)
@@ -61,6 +63,7 @@ export default class DiscussionsRow extends PureComponent<Props> {
             testID={`discussion-row-${this.props.index}`}
             onPress={this.onPress}
             height='auto'
+            selected={selected}
           >
             <View style={style.rowContent}>
               <View style={style.mainContentColumn} accessible={false}>
@@ -241,7 +244,7 @@ const style = StyleSheet.create({
     alignSelf: 'center',
     width: 18,
     height: 18,
-    tintColor: '#000',
+    tintColor: colors.grey5,
     transform: [{ rotate: '180deg' }],
   },
 })
