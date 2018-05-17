@@ -57,6 +57,7 @@ type State = {
   currentScore: ?number,
   loadingGrade: boolean,
   gradeError: boolean,
+  selectedRowID: ?string,
 }
 
 const { NativeAccessibility } = NativeModules
@@ -77,6 +78,7 @@ export class AssignmentList extends Component<AssignmentListProps, State> {
     currentScore: this.props.currentScore,
     loadingGrade: false,
     gradeError: false,
+    selectedRowID: null,
   }
 
   componentDidMount () {
@@ -97,6 +99,10 @@ export class AssignmentList extends Component<AssignmentListProps, State> {
       id === this.props.currentGradingPeriodID
     )
     if (index >= 0) this.updateFilter(index)
+  }
+
+  componentWillMount () {
+    this.onTraitCollectionChange()
   }
 
   componentWillReceiveProps (nextProps: AssignmentListProps) {
@@ -157,7 +163,7 @@ export class AssignmentList extends Component<AssignmentListProps, State> {
   }
 
   renderRow = ({ item, index }: { item: Assignment, index: number }) => {
-    let selected = this.isRegularScreenDisplayMode && this.props.selectedRowID === item.id
+    let selected = this.isRegularScreenDisplayMode && this.state.selectedRowID === item.id
     let ListRow = this.props.ListRow
     return (
       // $FlowFixMe - for some reason flow doesn't like the default prop
@@ -178,7 +184,7 @@ export class AssignmentList extends Component<AssignmentListProps, State> {
 
   selectedAssignment = (assignment: Assignment) => {
     this.props.updateCourseDetailsSelectedTabSelectedRow(assignment.id)
-
+    this.setState({ selectedRowID: assignment.id })
     if (assignment.quiz_id) {
       this.props.navigator.show(`/courses/${assignment.course_id}/quizzes/${assignment.quiz_id}`)
     } else if (assignment.discussion_topic && isTeacher()) {
@@ -220,10 +226,8 @@ export class AssignmentList extends Component<AssignmentListProps, State> {
     // don't do anything if the user hits cancel
     if (index === this.props.gradingPeriods.length) return
 
-    // get assignment info for grading period only if we don't have it yet
-    if (this.props.gradingPeriods[index].assignmentRefs.length === 0) {
-      this.props.refreshAssignmentList(this.props.courseID, this.props.gradingPeriods[index].id)
-    }
+    // always get assignment info for grading period, since it might be shared
+    this.props.refreshAssignmentList(this.props.courseID, this.props.gradingPeriods[index].id)
 
     // get the grade for the current grading period
     if (this.props.showTotalScore) {
@@ -285,8 +289,8 @@ export class AssignmentList extends Component<AssignmentListProps, State> {
                 {this.state.loadingGrade
                   ? <ActivityIndicator />
                   : this.state.currentScore
-                      ? <Text>{i18n.number(this.state.currentScore / 100, 'percent')}</Text>
-                      : <Text>{i18n('N/A')}</Text>
+                    ? <Text>{i18n.number(this.state.currentScore / 100, 'percent')}</Text>
+                    : <Text>{i18n('N/A')}</Text>
                 }
               </View>
             }

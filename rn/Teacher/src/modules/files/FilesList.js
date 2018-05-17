@@ -48,6 +48,8 @@ import uuid from 'uuid/v1'
 import { wait } from '../../utils/async-wait'
 import { isTeacher } from '../app'
 import color from '../../common/colors'
+import { isRegularDisplayMode } from '../../routing/utils'
+import type { TraitCollection } from '../../routing/Navigator'
 
 type FilesListProps = {
   data: any[], // The folders and files that are currently being shown
@@ -86,6 +88,8 @@ type State = {
   pending: boolean,
   uploadPending: boolean,
   uploadMessage: ?string,
+  selectedRowID: ?string,
+  isRegularScreenDisplayMode: ?boolean,
 }
 
 export class FilesList extends Component<Props, State> {
@@ -108,9 +112,12 @@ export class FilesList extends Component<Props, State> {
     pending: false,
     uploadPending: false,
     uploadMessage: null,
+    selectedRowID: null,
+    isRegularScreenDisplayMode: false,
   }
 
   componentWillMount () {
+    this.onTraitCollectionChange()
     this.update()
   }
 
@@ -132,6 +139,14 @@ export class FilesList extends Component<Props, State> {
       alertError(error)
     }
     this.setState({ pending: false })
+  }
+
+  onTraitCollectionChange () {
+    this.props.navigator.traitCollection((traits) => { this.traitCollectionDidChange(traits) })
+  }
+
+  traitCollectionDidChange (traits: TraitCollection) {
+    this.setState({ isRegularScreenDisplayMode: isRegularDisplayMode(traits) })
   }
 
   canEdit = (): boolean => {
@@ -164,6 +179,8 @@ export class FilesList extends Component<Props, State> {
     } = this.props
 
     if (item.type === 'file') {
+      this.setState({ selectedRowID: item.id })
+
       if (onSelectFile) {
         return onSelectFile(item)
       }
@@ -322,13 +339,23 @@ export class FilesList extends Component<Props, State> {
     this.attachmentPicker = ref
   }
 
+  isRowSelected (item: any): boolean {
+    if (this.state && this.state.selectedRowID) {
+      return Boolean(this.state.isRegularScreenDisplayMode) && this.state.selectedRowID === item.id
+    }
+
+    return false
+  }
+
   renderRow = ({ item, index }: any) => {
     let name
     let icon
     let subtitle
     let tintColor = color.grey5
     let statusOffset = {}
+    let selected = false
     if (item.type === 'file') {
+      selected = this.isRowSelected(item)
       name = item.display_name
       switch (item.mime_class) {
         case 'image':
@@ -356,27 +383,28 @@ export class FilesList extends Component<Props, State> {
     }
     const renderImage = () => {
       return <View style={styles.icon}>
-               <AccessIcon entry={item} image={icon} tintColor={tintColor} statusOffset={statusOffset} disableAppSpecificChecks={this.props.context === 'users'} />
-             </View>
+        <AccessIcon entry={item} image={icon} tintColor={tintColor} statusOffset={statusOffset} disableAppSpecificChecks={this.props.context === 'users'} />
+      </View>
     }
 
     return (<View>
-              <View>
-                <Row
-                  renderImage={renderImage}
-                  title={name}
-                  subtitle={subtitle}
-                  identifier={index}
-                  onPress={this.onSelectRow}
-                  disclosureIndicator
-                  testID={`file-list.file-list-row.cell-${item.key}`} />
-              </View>
-              {(item.hidden || item.lock_at || item.unlock_at) ? (
-                <View style={styles.restrictedIndicatorLine} />
-              ) : (
-                <AccessLine visible={!item.locked} disableAppSpecificChecks={this.props.context === 'users'} />
-              )}
-            </View>)
+      <View>
+        <Row
+          renderImage={renderImage}
+          title={name}
+          subtitle={subtitle}
+          identifier={index}
+          onPress={this.onSelectRow}
+          disclosureIndicator
+          testID={`file-list.file-list-row.cell-${item.key}`}
+          selected={selected} />
+      </View>
+      {(item.hidden || item.lock_at || item.unlock_at) ? (
+        <View style={styles.restrictedIndicatorLine} />
+      ) : (
+        <AccessLine visible={!item.locked} disableAppSpecificChecks={this.props.context === 'users'} />
+      )}
+    </View>)
   }
 
   render () {
@@ -409,6 +437,7 @@ export class FilesList extends Component<Props, State> {
         navBarColor={this.props.courseColor}
         navBarStyle={this.props.courseColor ? 'dark' : 'light'}
         rightBarButtons={rightBarButtons}
+        onTraitCollectionChange={this.onTraitCollectionChange.bind(this)}
       >
         <DropView style={{ flex: 1 }}>
           { this.state.uploadPending && <SavingBanner title={this.state.uploadMessage || ''} /> }
@@ -421,12 +450,12 @@ export class FilesList extends Component<Props, State> {
             ListHeaderComponent={this.props.data.length > 0 ? RowSeparator : null}
             ListFooterComponent={this.props.data.length > 0 ? RowSeparator : null}
             ListEmptyComponent={this.state.pending ? null : empty} />
-            <AttachmentPicker
-              style={styles.attachmentPicker}
-              ref={this.captureAttachmentPicker}
-              fileTypes={['all']}
-              navigator={this.props.navigator}
-            />
+          <AttachmentPicker
+            style={styles.attachmentPicker}
+            ref={this.captureAttachmentPicker}
+            fileTypes={['all']}
+            navigator={this.props.navigator}
+          />
         </DropView>
       </Screen>
     )

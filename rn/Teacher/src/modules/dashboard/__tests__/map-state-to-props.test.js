@@ -425,7 +425,9 @@ describe('sections', () => {
 describe('enrollments', () => {
   const a = courseTemplate.course({ id: 1, name: 'a', sections: [section()] })
   const b = courseTemplate.course({ id: 2, name: 'b', sections: [section()] })
-  const courseTemplates = [a, b]
+  const c = courseTemplate.course({ id: 3, name: 'c', sections: [section()] })
+  const d = courseTemplate.course({ id: 4, name: 'd', sections: [section()] })
+  const courseTemplates = [a, b, c, d]
   const favorites = ['1', '2']
 
   const courses = courseStates(courseTemplates)
@@ -436,10 +438,11 @@ describe('enrollments', () => {
       courses,
       groups: {},
       enrollments: {
-        '1': enrollment({ id: '1', course_id: '1' }),
-        '2': enrollment({ id: '2', course_id: '2' }),
-        '3': enrollment({ id: '3', course_id: '3' }),
-        '4': enrollment({ id: '4', course_id: '4' }),
+        '1': enrollment({ id: '1', course_id: '1', user_id: '1' }),
+        '2': enrollment({ id: '2', course_id: '2', user_id: '1' }),
+        '3': enrollment({ id: '3', course_id: '3', user_id: '2' }),
+        '4': enrollment({ id: '4', course_id: '4', user_id: '3' }),
+        '5': enrollment({ id: '5', course_id: '5', user_id: '1' }),
       },
     },
   })
@@ -448,8 +451,6 @@ describe('enrollments', () => {
     expect(mapStateToProps(true)(state).enrollments).toMatchObject([
       { course_id: '1', id: '1' },
       { course_id: '2', id: '2' },
-      { course_id: '3', id: '3' },
-      { course_id: '4', id: '4' },
     ])
   })
 })

@@ -16,15 +16,16 @@
 
 // @flow
 
-import { Alert } from 'react-native'
+import { Alert, NetInfo } from 'react-native'
 import type { MiddlewareAPI } from 'redux'
 import i18n from 'format-message'
 import loginVerify from '../../common/login-verify'
 
-export function alertError (error: any): void {
-  const title = defaultErrorTitle()
+export function alertError (error: any, alertTitle?: string, callback?: Function): void {
+  const title = alertTitle || defaultErrorTitle()
   const message = parseErrorMessage(error)
-  Alert.alert(title, message)
+  let buttons = [{ text: i18n('Dismiss'), onPress: () => { if (callback) callback() } }]
+  Alert.alert(title, message, buttons)
 }
 
 export function defaultErrorTitle (): string {
@@ -35,17 +36,33 @@ export function defaultErrorMessage (): string {
   return i18n('There was an unexpected error. Please try again.')
 }
 
-const showGlobalErrorAlertIfNecessary = (error: any) => {
-  // should only continue if:
-  // 1. error is not an api response error
-  // 2. error is an api response error and the status code is 500 or above and the user is online
-  let isOfflineError = error.message === 'Network Error'
+let showingGlobalErrorAlert = false
+const showGlobalErrorAlertIfNecessary = async (error: any) => {
+  if (showingGlobalErrorAlert) return
+  showingGlobalErrorAlert = true
   if (error.response != null) {
     error = error.response
   }
-  if (!isOfflineError) {
-    alertError(error)
-  }
+
+  let alertTitle
+
+  // https://github.com/facebook/react-native/issues/8615
+  NetInfo.isConnected.fetch().then(() => {
+    NetInfo.isConnected.fetch().then(isConnected => {
+      if (!isConnected) {
+        error = Error(i18n('It looks like your internet connection is offline. Reconnect to the internet and try again.'))
+        alertTitle = i18n('Internet Connection Offline')
+      }
+
+      alertError(error, alertTitle, () => {
+        resetGlobalErrorAlert()
+      })
+    })
+  })
+}
+
+export function resetGlobalErrorAlert () {
+  showingGlobalErrorAlert = false
 }
 
 const errorHandlerMiddleware: MiddlewareAPI = () => {
@@ -83,9 +100,9 @@ export function parseErrorMessage (error: any): string {
     return error.data.message
   } else if (error && error.data && error.data.errors && error.data.errors.length > 0) {
     return error.data.errors
-        .map(error => error.message)
-        .map(message => message.replace(/\.+$/, ''))
-        .join('. ')
+      .map(error => error.message)
+      .map(message => message.replace(/\.+$/, ''))
+      .join('. ')
   } else if (error && error.data && error.data.errors instanceof Object && Object.keys(error.data.errors).length > 0) {
     let data = error.data.errors
     let result = Object.keys(data)

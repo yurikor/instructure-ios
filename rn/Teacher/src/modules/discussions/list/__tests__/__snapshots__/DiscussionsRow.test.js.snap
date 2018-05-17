@@ -15,6 +15,7 @@ exports[`DiscussionsRow renders 1`] = `
       height="auto"
       onPress={[Function]}
       renderImage={[Function]}
+      selected={false}
       testID="discussion-row-0"
       title="Dear Ivy Iversen, your last name cannot start with your first name"
       titleProps={
@@ -129,7 +130,7 @@ exports[`DiscussionsRow renders 1`] = `
               Object {
                 "alignSelf": "center",
                 "height": 18,
-                "tintColor": "#000",
+                "tintColor": "#73818C",
                 "transform": Array [
                   Object {
                     "rotate": "180deg",
@@ -178,6 +179,7 @@ exports[`DiscussionsRow renders published 1`] = `
       height="auto"
       onPress={[Function]}
       renderImage={[Function]}
+      selected={false}
       testID="discussion-row-0"
       title="Dear Ivy Iversen, your last name cannot start with your first name"
       titleProps={
@@ -292,7 +294,7 @@ exports[`DiscussionsRow renders published 1`] = `
               Object {
                 "alignSelf": "center",
                 "height": 18,
-                "tintColor": "#000",
+                "tintColor": "#73818C",
                 "transform": Array [
                   Object {
                     "rotate": "180deg",
@@ -341,6 +343,7 @@ exports[`DiscussionsRow renders unpublished 1`] = `
       height="auto"
       onPress={[Function]}
       renderImage={[Function]}
+      selected={false}
       testID="discussion-row-0"
       title="Dear Ivy Iversen, your last name cannot start with your first name"
       titleProps={
@@ -455,7 +458,7 @@ exports[`DiscussionsRow renders unpublished 1`] = `
               Object {
                 "alignSelf": "center",
                 "height": 18,
-                "tintColor": "#000",
+                "tintColor": "#73818C",
                 "transform": Array [
                   Object {
                     "rotate": "180deg",
@@ -504,6 +507,7 @@ exports[`DiscussionsRow renders with no assignment 1`] = `
       height="auto"
       onPress={[Function]}
       renderImage={[Function]}
+      selected={false}
       testID="discussion-row-0"
       title="Dear Ivy Iversen, your last name cannot start with your first name"
       titleProps={
@@ -600,7 +604,7 @@ exports[`DiscussionsRow renders with no assignment 1`] = `
               Object {
                 "alignSelf": "center",
                 "height": 18,
-                "tintColor": "#000",
+                "tintColor": "#73818C",
                 "transform": Array [
                   Object {
                     "rotate": "180deg",
@@ -649,6 +653,7 @@ exports[`DiscussionsRow renders with no unread count 1`] = `
       height="auto"
       onPress={[Function]}
       renderImage={[Function]}
+      selected={false}
       testID="discussion-row-0"
       title="Dear Ivy Iversen, your last name cannot start with your first name"
       titleProps={
@@ -763,7 +768,7 @@ exports[`DiscussionsRow renders with no unread count 1`] = `
               Object {
                 "alignSelf": "center",
                 "height": 18,
-                "tintColor": "#000",
+                "tintColor": "#73818C",
                 "transform": Array [
                   Object {
                     "rotate": "180deg",
@@ -800,6 +805,7 @@ exports[`DiscussionsRow renders with points possible 1`] = `
       height="auto"
       onPress={[Function]}
       renderImage={[Function]}
+      selected={false}
       testID="discussion-row-0"
       title="Dear Ivy Iversen, your last name cannot start with your first name"
       titleProps={
@@ -914,7 +920,7 @@ exports[`DiscussionsRow renders with points possible 1`] = `
               Object {
                 "alignSelf": "center",
                 "height": 18,
-                "tintColor": "#000",
+                "tintColor": "#73818C",
                 "transform": Array [
                   Object {
                     "rotate": "180deg",
@@ -963,6 +969,7 @@ exports[`DiscussionsRow renders without points possible 1`] = `
       height="auto"
       onPress={[Function]}
       renderImage={[Function]}
+      selected={false}
       testID="discussion-row-0"
       title="Dear Ivy Iversen, your last name cannot start with your first name"
       titleProps={
@@ -1059,7 +1066,7 @@ exports[`DiscussionsRow renders without points possible 1`] = `
               Object {
                 "alignSelf": "center",
                 "height": 18,
-                "tintColor": "#000",
+                "tintColor": "#73818C",
                 "transform": Array [
                   Object {
                     "rotate": "180deg",
