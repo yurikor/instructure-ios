@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,6 +33,6 @@ export function enrollmentRefsForResponse ({ result }: EnrollmentsResponse): Arr
 
 export const enrollments: Reducer<AsyncRefs, any> = asyncRefsReducer(
   refreshEnrollments.toString(),
-  i18n('There was an error loading the list of enrollments'),
+  () => i18n('There was an error loading the list of enrollments'),
   enrollmentRefsForResponse,
 )

@@ -397,6 +397,9 @@
 "Observer" = "المراقب";
 
 /* No comment provided by engineer. */
+"Open in Safari" = "الفتح في Safari";
+
+/* No comment provided by engineer. */
 "Open in…" = "الفتح في...";
 
 /* Accessibility hint for the profile button */
@@ -502,8 +505,17 @@
 /* red course color button */
 "Red" = "أحمر";
 
+/* No comment provided by engineer. */
+"Remove" = "إزالة";
+
 /* Remove the formatting of the essay question text */
 "Remove Formatting" = "إزالة التنسيق";
+
+/* No comment provided by engineer. */
+"Removed %1$@" = "تمت الإزالة %1$@";
+
+/* No comment provided by engineer. */
+"Removed %1$@ by %2$@" = "تمت إزالة %1$@ بواسطة %2$@";
 
 /* No comment provided by engineer. */
 "Reply" = "رد";

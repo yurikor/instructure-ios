@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ export function getQuizzes (courseID: string): ApiPromise<Quiz[]> {
 
 export function getQuiz (courseID: string, quizID: string): ApiPromise<Quiz> {
   const url = `courses/${courseID}/quizzes/${quizID}`
-  return httpClient().get(url)
+  return httpClient.get(url)
 }
 
 export function getQuizSubmissions (courseID: string, quizID: string) {
@@ -53,5 +53,5 @@ export function updateQuiz (quiz: Quiz, courseID: string): ApiPromise<Quiz> {
     one_question_at_a_time: quiz.one_question_at_a_time || 0, // silly Canvas
   }
   const url = `courses/${courseID}/quizzes/${quiz.id}`
-  return httpClient().put(url, { quiz: params })
+  return httpClient.put(url, { quiz: params })
 }

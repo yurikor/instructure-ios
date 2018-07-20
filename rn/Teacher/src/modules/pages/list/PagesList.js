@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,6 @@ import {
 } from '../../../canvas-api/model-api'
 import { alertError } from '../../../redux/middleware/error-handler'
 import AccessIcon from '../../../common/components/AccessIcon'
-import AccessLine from '../../../common/components/AccessLine'
 import ListEmptyComponent from '../../../common/components/ListEmptyComponent'
 import { isTeacher } from '../../app'
 import currentWindowTraits, { type WindowTraits } from '../../../utils/windowTraits'
@@ -201,23 +200,20 @@ export class PagesList extends React.Component<Props, State> {
       </View>
     )
     return (
-      <View>
-        <Row
-          title={page.title}
-          subtitle={i18n("{ date, date, 'MMM d'} at { date, time, short }", {
-            date: page.createdAt,
-          })}
-          border='bottom'
-          height='auto'
-          disclosureIndicator
-          testID={`pages.list.page.row-${index}`}
-          identifier={page.url}
-          onPress={this.select}
-          renderImage={() => icon}
-          selected={selectedPageURL === page.url}
-        />
-        <AccessLine visible={page.published} />
-      </View>
+      <Row
+        title={page.title}
+        subtitle={i18n("{ date, date, 'MMM d'} at { date, time, short }", {
+          date: page.createdAt,
+        })}
+        border='bottom'
+        height='auto'
+        disclosureIndicator
+        testID={`pages.list.page.row-${index}`}
+        identifier={page.url}
+        onPress={this.select}
+        renderImage={() => icon}
+        selected={selectedPageURL === page.url}
+      />
     )
   }
 }

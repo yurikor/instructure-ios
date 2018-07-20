@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -242,7 +242,23 @@ open class HelmManager: NSObject {
         if let navigationController = topViewController.navigationController {
             pushOntoNav(navigationController)
             callback?()
-        } else {
+        }
+            //  This is a hack to fix coming from native assignment detail
+            //  with a NON-Helm splitviewController navigating to a child group discussion
+            //  As more code moves to RN this will probably lose it's need here,
+        else if let replace = options["replace"] as? Bool, replace,
+            let svc = topMostViewController() as? SplitViewController,
+            let nav = svc.viewControllers.last as? UINavigationController,
+            let helmViewController = viewController as? HelmViewController {
+                var viewControllers = nav.viewControllers
+                viewControllers.removeLast()
+                viewControllers.append(helmViewController)
+                nav.setViewControllers(viewControllers, animated: false)
+                helmViewController.loadViewIfNeeded()
+                helmViewController.onReadyToPresent = {}
+                callback?()
+        }
+        else {
             assertionFailure("\(#function) invalid controller: \(topViewController)")
         }
     }
@@ -425,7 +441,8 @@ extension HelmManager {
                 return splitViewController?.masterHelmNavigationController as? HelmNavigationController
             }
 
-            if (splitViewController?.detailHelmNavigationController == nil) {
+            let isDeepLink = options["deepLink"] as? Bool ?? false
+            if (splitViewController?.detailHelmNavigationController == nil && !isDeepLink) {
                 splitViewController?.primeEmptyDetailNavigationController()
             }
 
@@ -488,10 +505,7 @@ extension HelmManager {
         guard let view = titleView else { return nil }
 
         view.contentMode = .scaleAspectFit
-        let container = UIView(frame: CGRect(x: 0, y: 0, width: 32, height: 32))
-        view.frame = CGRect(x: 0, y: 0, width: 32, height: 32)
-        container.addSubview(view)
-
-        return container
+        view.frame = CGRect(x: 0, y: 0, width: 44, height: 44)
+        return view
     }
 }

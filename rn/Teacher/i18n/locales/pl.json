@@ -254,11 +254,17 @@
   "cancel_caeb1e68": {
     "message": "Anuluj"
   },
+  "canvas_guides_d65431": {
+    "message": "Przewodniki Canvas"
+  },
   "canvas_parent_app_f9236a3a": {
     "message": "Aplikacja nadrzędna Canvas"
   },
   "canvas_student_app_329567f": {
     "message": "Aplikacja uczestnika Canvas"
+  },
+  "canvas_teacher_app_9dc7d7ed": {
+    "message": "Aplikacja Canvas Teacher"
   },
   "change_discussiontitle_to_different_grouping_9f5ed8c1": {
     "message": "Zmień { discussionTitle } na różne grupowanie"
@@ -286,6 +292,9 @@
   },
   "clear_recording_5a97b475": {
     "message": "Wyczyść nagranie"
+  },
+  "close_d634289d": {
+    "message": "Zamknij"
   },
   "close_for_comments_ce0e5d00": {
     "message": "Zamknij dla komentarzy"
@@ -316,6 +325,9 @@
   },
   "compose_message_8abd180a": {
     "message": "Utwórz wiadomość"
+  },
+  "conferences_a0a8984b": {
+    "message": "Konferencje"
   },
   "conversation_options_8be926f3": {
     "message": "Opcje rozmowy"
@@ -566,6 +578,9 @@
   "excused_cf8792eb": {
     "message": "Usprawiedliwiony"
   },
+  "extensions_and_lastextension_f45d68e7": {
+    "message": "{ extensions } i { lastExtension }"
+  },
   "external_tool_c5a6410a": {
     "message": "Narzędzie zewnętrzne"
   },
@@ -596,8 +611,8 @@
   "favorite_courses_fbd356f0": {
     "message": "Ulubione kursy"
   },
-  "file_count_plural_one_file_other_files_8ae41de8": {
-    "message": "{ file_count, plural,    one {# plik} few {# pliki} many {# pliki} other {# pliki}}"
+  "file_types_6fa69505": {
+    "message": "Typy plików"
   },
   "files_c300e900": {
     "message": "Pliki"
@@ -701,6 +716,9 @@
   "help_4c4968b1": {
     "message": "Pomoc"
   },
+  "hidden_14a032a7": {
+    "message": "Ukryte"
+  },
   "hidden_files_inside_will_be_available_with_links_e9e3d233": {
     "message": "Ukryte. Pliki wewnątrz będą dostępne za pomocą łączy."
   },
@@ -722,6 +740,12 @@
   "i_hold_the_copyright_71ee91b1": {
     "message": "Posiadam prawa autorskie"
   },
+  "if_you_re_a_student_or_teacher_try_one_of_our_othe_f0ae9b33": {
+    "message": "Jeśli jesteś uczniem lub nauczycielem, wypróbuj nasze inne aplikacje poniżej."
+  },
+  "in_progress_9d1ce8b9": {
+    "message": "W toku"
+  },
   "incomplete_da3c2ea2": {
     "message": "Niekompletny"
   },
@@ -730,6 +754,9 @@
   },
   "insert_link_6dc23cae": {
     "message": "Umieść Łącze"
+  },
+  "internet_connection_offline_d7c02b88": {
+    "message": "Połączenie internetowe jest offline"
   },
   "invalid_field_54480fae": {
     "message": "Nieprawidłowe pole"
@@ -740,8 +767,17 @@
   "invite_declined_d0a9e398": {
     "message": "Odrzucono zaproszenie!"
   },
+  "it_looks_like_your_internet_connection_is_offline__cf4003": {
+    "message": "Wygląda na to, że połączenie internetowe jest offline. Ponów próbę połączenia i spróbuj ponownie."
+  },
+  "it_seems_there_aren_t_any_valid_submissions_to_gra_f136675": {
+    "message": "Wygląda na to, że brakuje prawidłowych materiałów do oceny."
+  },
   "italic_ac45200a": {
     "message": "Kursywa"
+  },
+  "item_count_plural_one_item_other_items_88319c63": {
+    "message": "{ item_count, plural,\n    one {# element}\n  other {# elementy(ów)}\n}"
   },
   "last_activity_on_lastactivity_date_mmmm_d_at_lasta_1a7e8430": {
     "message": "Ostatnia aktywność w dniu { lastActivity, date, 'MMMM d' } o godz. { lastActivity, time, short }"
@@ -779,11 +815,17 @@
   "lock_questions_after_answering_e0f61d7c": {
     "message": "Zablokuj pytania po udzieleniu odpowiedzi"
   },
+  "log_in_again_ec2b1f46": {
+    "message": "Zaloguj się ponownie"
+  },
   "log_out_379ba28a": {
     "message": "Wyloguj"
   },
   "long_description_7d89285c": {
     "message": "Długi opis"
+  },
+  "manage_children_a28d764e": {
+    "message": "Zarządzaj dziećmi"
   },
   "mark_all_as_read_8f3bdf57": {
     "message": "Oznacz wszystko jako przeczytane"
@@ -890,6 +932,9 @@
   "no_e16d9132": {
     "message": "Nie"
   },
+  "no_enrollments_6369cd31": {
+    "message": "Brak rejestracji"
+  },
   "no_grade_3b4d7f3e": {
     "message": "Brak oceny"
   },
@@ -910,6 +955,9 @@
   },
   "no_subject_58b7941c": {
     "message": "Brak tematu"
+  },
+  "no_submissions_to_display_6f1491cf": {
+    "message": "Brak materiałów do oceny"
   },
   "no_time_limit_2147d9bf": {
     "message": "Brak limitu czasu"
@@ -1289,6 +1337,9 @@
   "students_1b8cd07b": {
     "message": "Uczestnicy"
   },
+  "students_must_post_before_seeing_replies_1a57eeb2": {
+    "message": "Uczestnicy muszą opublikować komentarze przed wyświetleniem odpowiedzi"
+  },
   "subject_114b2e98": {
     "message": "Temat"
   },
@@ -1370,6 +1421,9 @@
   "there_are_no_comments_to_display_bde58f70": {
     "message": "Brak komentarzy do wyświetlenia."
   },
+  "there_are_no_conferences_to_display_400a0413": {
+    "message": "Brak konferencji do wyświetlenia."
+  },
   "there_are_no_discussions_to_display_37bc437f": {
     "message": "Brak dyskusji do wyświetlenia."
   },
@@ -1450,6 +1504,9 @@
   },
   "this_assignment_does_not_allow_submissions_30af1caa": {
     "message": "To zadanie nie umożliwia przesłania."
+  },
+  "this_assignment_doesn_t_have_a_description_e2f37ec3": {
+    "message": "To zadanie nie ma opisu."
   },
   "this_assignment_only_allows_on_paper_submissions_f478408a": {
     "message": "To zadanie umożliwia tylko przesłanie dokumentu papierowego."
@@ -1599,9 +1656,6 @@
   "user_id_bcace870": {
     "message": "ID użytkownika"
   },
-  "users_must_post_before_seeing_replies_d1761968": {
-    "message": "Użytkownicy powinni wysyłać przed ujrzeniem odpowiedzi"
-  },
   "video_b9f27375": {
     "message": "Wideo"
   },
@@ -1610,6 +1664,9 @@
   },
   "view_all_submissions_915a8b78": {
     "message": "Wyświetl wszystkie zgłoszenia"
+  },
+  "view_canvas_guides_a1c62a97": {
+    "message": "Wyświetl przewodniki Canvas"
   },
   "view_long_description_2b592c0e": {
     "message": "Wyświetl długi opis"
@@ -1646,6 +1703,9 @@
   },
   "you_must_enter_an_access_code_8c2c7ae0": {
     "message": "Należy wpisać kod dostępu"
+  },
+  "you_need_at_least_one_active_observer_enrollment_t_9c78bb6e": {
+    "message": "Potrzebujesz co najmniej jednego aktywnego obserwatora, aby użyć Canvas Parent."
   },
   "your_submission_comment_failed_to_send_5c8d2809": {
     "message": "Nie udało się wysłać komentarza do przesyłki."

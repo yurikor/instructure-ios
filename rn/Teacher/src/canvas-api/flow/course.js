@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ export type Course = {
   id: string,
   account_id: string,
   name: string,
+  original_name?: ?string,
   course_code: string,
   short_name?: string,
   image_download_url?: ?string,

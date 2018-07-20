@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2018-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -154,6 +154,10 @@ export default class DeveloperMenu extends Component<DeveloperMenuProps, any> {
     this.props.navigator.show('/route-history')
   }
 
+  manageRatingRequest = () => {
+    this.props.navigator.show('/rating-request')
+  }
+
   toggleExperimentalFeatures = async () => {
     if (this.state.featureFlagEnabled) {
       this.setState({
@@ -231,6 +235,8 @@ export default class DeveloperMenu extends Component<DeveloperMenuProps, any> {
             <Row title='View Page Views' disclosureIndicator onPress={this.viewPageViews} />
             <RowSeparator />
             <Row title='View Feature Flags' disclosureIndicator onPress={this.viewFeatureFlags} />
+            <RowSeparator />
+            <Row title='Manage Rating Request' disclosureIndicator onPress={this.manageRatingRequest} />
             <RowSeparator />
             <Row title='Purge Local Storage' disclosureIndicator onPress={this.purgeStorage} />
             <RowSeparator />

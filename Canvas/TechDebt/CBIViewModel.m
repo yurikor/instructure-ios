@@ -17,7 +17,6 @@
     
 
 #import "CBIViewModel.h"
-#import "CBILog.h"
 
 @implementation CBIViewModel
 
@@ -35,10 +34,7 @@
     };
 }
 
-- (void)viewControllerViewDidLoad:(UIViewController *)viewController
-{
-    DDLogVerbose(@"%@ - viewControllerViewDidLoad", NSStringFromClass([self class]));
-}
+- (void)viewControllerViewDidLoad:(UIViewController *)viewController {}
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"{%@ modelClass=%@, modelID=%@}", NSStringFromClass(self.class), NSStringFromClass(self.model.class), self.model.id];

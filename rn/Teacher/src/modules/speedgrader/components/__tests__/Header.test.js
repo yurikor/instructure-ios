@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -155,8 +155,7 @@ describe('mapStateToProps', () => {
       entities: {
         assignments: {
           '2': {
-            anonymousGradingOn: true,
-            data: {},
+            data: templates.assignment({ anonymize_students: true }),
           },
         },
         submissions: {
@@ -182,8 +181,7 @@ describe('mapStateToProps', () => {
       entities: {
         assignments: {
           '2': {
-            anonymousGradingOn: true,
-            data: {},
+            data: templates.assignment({ anonymize_students: true }),
           },
         },
         submissions: {
@@ -209,7 +207,6 @@ describe('mapStateToProps', () => {
       entities: {
         assignments: {
           '2': {
-            anonymousGradingOn: false,
             data: templates.assignment({ id: '2', quiz_id: '1' }),
           },
         },
@@ -226,7 +223,9 @@ describe('mapStateToProps', () => {
             selectedIndex: 3,
           },
         },
-        courses: {},
+        courses: {
+          '3': {},
+        },
       },
     })
 
@@ -236,13 +235,12 @@ describe('mapStateToProps', () => {
     })
   })
 
-  it('returns the correct data when the course has anonymous grading turned on', () => {
+  it('returns the correct data when the assignment has anonymous grading turned on', () => {
     let state = templates.appState({
       entities: {
         assignments: {
           '2': {
-            anonymousGradingOn: false,
-            data: templates.assignment({ id: '2' }),
+            data: templates.assignment({ id: '2', anonymize_students: true }),
           },
         },
         submissions: {
@@ -254,9 +252,7 @@ describe('mapStateToProps', () => {
           },
         },
         courses: {
-          '3': {
-            enabledFeatures: ['anonymous_grading'],
-          },
+          '3': {},
         },
       },
     })

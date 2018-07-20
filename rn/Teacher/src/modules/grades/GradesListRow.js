@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,9 +14,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-/**
-* @flow
-*/
+// @flow
 
 import React, { PureComponent } from 'react'
 import {
@@ -25,7 +23,6 @@ import {
 } from 'react-native'
 
 import AccessIcon from '../../common/components/AccessIcon'
-import AccessLine from '../../common/components/AccessLine'
 import Row from '../../common/components/rows/Row'
 import Images from '../../images'
 import { gradeProp, statusProp, dueDate } from '../submissions/list/get-submissions-props'
@@ -35,16 +32,16 @@ import { submissionTypeIsOnline } from '@common/submissionTypes'
 
 type Props = {
   assignment: Assignment,
-  tintColor: string,
-  onPress: (Assignment) => void,
-  selected: boolean,
-  user: SessionUser,
+  tintColor?: string,
+  onPress?: (Assignment) => void,
+  selected?: boolean,
+  user?: SessionUser,
 }
 
 export default class GradesListRow extends PureComponent<Props> {
   onPress = () => {
-    const assignment = this.props.assignment
-    this.props.onPress(assignment)
+    const { assignment, onPress } = this.props
+    onPress && onPress(assignment)
   }
 
   render () {
@@ -54,27 +51,22 @@ export default class GradesListRow extends PureComponent<Props> {
     const grade = gradeProp(submission)
     const status = statusProp(submission, dueDate(assignment, user))
     return (
-      <View>
-        <View>
-          <Row
-            renderImage={this._renderIcon}
-            title={assignment.name}
-            titleProps={{ ellipsizeMode: 'tail', numberOfLines: 2 }}
-            border='bottom'
-            disclosureIndicator
-            testID={`grades-list.grades-list-row.cell-${assignment.id}`}
-            onPress={this.onPress}
-            selected={selected}
-            height='auto'
-            accessories={submission ? <Grade grade={grade} gradingType={assignment.grading_type} /> : undefined}
-          >
-            {status &&
-              <SubmissionStatusLabel status={status} onlineSubmissionType={onlineSubmissionType} />
-            }
-          </Row>
-        </View>
-        <AccessLine visible={this.props.assignment.published} testIdPrefix={'grades-list-row'} />
-      </View>
+      <Row
+        renderImage={this._renderIcon}
+        title={assignment.name}
+        titleProps={{ ellipsizeMode: 'tail', numberOfLines: 2 }}
+        border='bottom'
+        disclosureIndicator
+        testID={`grades-list.grades-list-row.cell-${assignment.id}`}
+        onPress={this.onPress}
+        selected={selected}
+        height='auto'
+        accessories={submission ? <Grade grade={grade} gradingType={assignment.grading_type} /> : undefined}
+      >
+        {status && assignment.grading_type !== 'not_graded' &&
+          <SubmissionStatusLabel status={status} onlineSubmissionType={onlineSubmissionType} />
+        }
+      </Row>
     )
   }
 

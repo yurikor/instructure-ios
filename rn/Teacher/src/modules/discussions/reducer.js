@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ const {
 
 const list: Reducer<AsyncRefs, any> = asyncRefsReducer(
   refreshDiscussions.toString(),
-  i18n('There was a problem loading discussions.'),
+  () => i18n('There was a problem loading discussions.'),
   ({ result }) => result.data.map(discussion => discussion.id)
 )
 
@@ -274,7 +274,7 @@ export const discussionData: Reducer<DiscussionState, any> = handleActions({
       [discussionID]: {
         ...state[discussionID],
         data: {
-          ...state[discussionID].data,
+          ...(state[discussionID] && state[discussionID].data),
           ...result.data,
         },
       },

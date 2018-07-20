@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ function refsForResponse ({ result }: Response): EntityRefs {
 
 export const gradeableStudentsRefs: Reducer<AsyncRefs, any> = asyncRefsReducer(
   refreshGradeableStudents.toString(),
-  i18n('There was a problem loading the assignment submissions.'),
+  () => i18n('There was a problem loading the assignment submissions.'),
   refsForResponse
 )
 

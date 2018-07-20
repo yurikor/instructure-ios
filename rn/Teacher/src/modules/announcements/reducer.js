@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ const { createDiscussion, deleteDiscussion } = EditActions
 
 const list: Reducer<AsyncRefs, any> = asyncRefsReducer(
   refreshAnnouncements.toString(),
-  i18n('There was a problem loading the announcements.'),
+  () => i18n('There was a problem loading the announcements.'),
   ({ result }) => result.data.map(announcement => announcement.id)
 )
 

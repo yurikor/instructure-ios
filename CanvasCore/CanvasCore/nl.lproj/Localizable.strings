@@ -397,6 +397,9 @@
 "Observer" = "Waarnemer";
 
 /* No comment provided by engineer. */
+"Open in Safari" = "Openen in Safari";
+
+/* No comment provided by engineer. */
 "Open in…" = "Openen in...";
 
 /* Accessibility hint for the profile button */
@@ -502,8 +505,17 @@
 /* red course color button */
 "Red" = "Rood";
 
+/* No comment provided by engineer. */
+"Remove" = "Verwijderen";
+
 /* Remove the formatting of the essay question text */
 "Remove Formatting" = "Formattering verwijderen";
+
+/* No comment provided by engineer. */
+"Removed %1$@" = "Verwijderd %1$@";
+
+/* No comment provided by engineer. */
+"Removed %1$@ by %2$@" = "%1$@ verwijderd door %2$@";
 
 /* No comment provided by engineer. */
 "Reply" = "Antwoord";

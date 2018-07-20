@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,13 +24,18 @@ import Enzyme from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
 Enzyme.configure({ adapter: new Adapter() })
 
+import * as React from 'react'
+
 import * as template from '../../src/__templates__'
 
 import setupI18n from '../../i18n/setup'
 import { shouldTrackAsyncActions } from '../../src/redux/middleware/redux-promise'
+import { enableAllFeaturesFlagsForTesting } from '@common/feature-flags'
+
 setupI18n('en')
 shouldTrackAsyncActions(false)
 setSession(template.session())
+enableAllFeaturesFlagsForTesting()
 
 const { NativeModules } = require('react-native')
 
@@ -130,6 +135,16 @@ NativeModules.WebViewHacker = {
 
 NativeModules.APIBridge = {
   requestCompleted: jest.fn(),
+}
+
+NativeModules.AppStoreReview = {
+  handleSuccessfulSubmit: jest.fn(),
+  handleNavigateToAssignment: jest.fn(),
+  handleNavigateFromAssignment: jest.fn(),
+}
+
+NativeModules.CanvasAnalytics = {
+  logEvent: jest.fn(),
 }
 
 jest.mock('NativeEventEmitter')
@@ -242,6 +257,10 @@ NativeModules.NativeFileSystem = {
   convertToJPEG: jest.fn(() => Promise.resolve('/image.jpg')),
 }
 
+NativeModules.ModuleItemsProgress = {
+  viewedDiscussion: jest.fn(),
+}
+
 import './../../src/common/global-style'
 
 jest.mock('../../src/common/components/AuthenticatedWebView.js', () => 'AuthenticatedWebView')
@@ -254,3 +273,48 @@ jest.mock('react-native-device-info', () => {
 })
 
 jest.mock('../../src/canvas-api/httpClient')
+
+// makes tree.find('FlatList').dive() useful
+jest.mock('FlatList', () => function FlatList (props: Object) {
+  const empty = (
+    typeof props.ListEmptyComponent === 'function' && <props.ListEmptyComponent /> ||
+    props.ListEmptyComponent || null
+  )
+  return (
+    <list>
+      {props.data && props.data.length > 0
+        ? props.data.map((item, index) =>
+          <item key={item.key || props.keyExtractor(item, index)}>
+            {props.renderItem({ item, index })}
+          </item>
+        )
+        : empty
+      }
+    </list>
+  )
+})
+
+// makes tree.find('SectionList').dive() useful
+jest.mock('SectionList', () => function SectionList (props: Object) {
+  const empty = (
+    typeof props.ListEmptyComponent === 'function' && <props.ListEmptyComponent /> ||
+    props.ListEmptyComponent || null
+  )
+  return (
+    <list>
+      {props.sections && props.sections.length > 0
+        ? props.sections.map((section, index) =>
+          <section key={section.key || index}>
+            {props.renderSectionHeader && props.renderSectionHeader({ section })}
+            {section.data.map((item, index) =>
+              <item key={item.key || (section.keyExtractor || props.keyExtractor)(item, index)}>
+                {(section.renderItem || props.renderItem)({ item, index })}
+              </item>
+            )}
+          </section>
+        )
+        : empty
+      }
+    </list>
+  )
+})

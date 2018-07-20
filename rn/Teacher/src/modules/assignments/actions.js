@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,12 +22,28 @@ import { UPDATE_COURSE_DETAILS_SELECTED_TAB_SELECTED_ROW_ACTION } from '../cours
 
 export let AssignmentListActions = (api: CanvasApi): * => ({
   refreshAssignmentList: createAction('assignmentList.refresh', (courseID: string, gradingPeriodID?: string, includeSubmissions?: boolean = false) => {
-    const include = ['assignments', 'all_dates', 'overrides', 'discussion_topic']
+    const include = ['all_dates', 'overrides', 'discussion_topic', 'observed_users']
     if (includeSubmissions) {
       include.push('submission')
     }
+    const promise = Promise.all([
+      api.getAssignmentGroups(courseID, gradingPeriodID),
+      api.getAssignments(courseID, include),
+    ]).then(([ groupsResponse, { data: assignments } ]) => {
+      for (const group of groupsResponse.data) {
+        group.assignments = assignments.filter(({ assignment_group_id }) =>
+          group.id === assignment_group_id
+        )
+      }
+      for (const assignment of assignments) {
+        if (Array.isArray(assignment.submission)) {
+          assignment.submission = assignment.submission[0]
+        }
+      }
+      return groupsResponse
+    })
     return {
-      promise: api.getAssignmentGroups(courseID, gradingPeriodID, include),
+      promise,
       courseID,
       gradingPeriodID,
     }
@@ -73,9 +89,6 @@ export let AssignmentListActions = (api: CanvasApi): * => ({
   updateCourseDetailsSelectedTabSelectedRow: createAction(UPDATE_COURSE_DETAILS_SELECTED_TAB_SELECTED_ROW_ACTION, (rowID: string) => {
     return { rowID }
   }),
-  anonymousGrading: createAction('assignment.anonymous', (courseID: string, assignmentID: string, anonymous: boolean) => ({
-    courseID, assignmentID, anonymous,
-  })),
 })
 
 export default (AssignmentListActions(canvas): *)

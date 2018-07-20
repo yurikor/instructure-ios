@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2018-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,7 +50,6 @@ extension AppDelegate: RCTBridgeDelegate {
 
         registerScreen("/courses/:courseID/assignments/syllabus")
         
-        registerScreen("/courses/:courseID/assignments/:assignmentID")
         registerScreen("/courses/:courseID/quizzes")
         registerScreen("/courses/:courseID/quizzes/:quizID")
         registerScreen("/courses/:courseID/modules")
@@ -83,6 +82,19 @@ extension AppDelegate: RCTBridgeDelegate {
             guard let groupID = props["groupID"] as? String else { return nil }
 
             let url = URL(string: "api/v1/groups/\(groupID)/tabs")
+            return Router.shared().controller(forHandling: url)
+        })
+        
+        HelmManager.shared.registerNativeViewController(for: "/courses/:courseID/assignments/:assignmentID", factory: { props in
+            guard let assignmentID = props["assignmentID"] as? String else { return nil }
+            guard let courseID = props["courseID"] as? String else { return nil }
+            if FeatureFlags.featureFlagEnabled(.newStudentAssignmentView) {
+                return HelmViewController(
+                    moduleName: "/courses/:courseID/assignments/:assignmentID",
+                    props: ["assignmentID": assignmentID, "courseID": courseID]
+                )
+            }
+            guard let url = propsURL(props) else { return nil }
             return Router.shared().controller(forHandling: url)
         })
         
@@ -136,10 +148,11 @@ extension AppDelegate: RCTBridgeDelegate {
         Router.shared().addRoute(moduleName) { parameters, _ in
             var props = parametersToProps(parameters ?? [:]) ?? [:]
             props["location"] = [:]
-            return HelmViewController(moduleName: rnModuleName, props: props)
+            let viewController = HelmViewController(moduleName: rnModuleName, props: props)
+            return moduleItemDetailViewController(routerParameters: parameters ?? [:]) ?? viewController
         }
         HelmManager.shared.registerNativeViewController(for: moduleName, factory: { props in
-            return moduleItemDetailViewController(props) ?? HelmViewController(moduleName: rnModuleName, props: props)
+            return moduleItemDetailViewController(props: props) ?? HelmViewController(moduleName: rnModuleName, props: props)
         })
     }
 }
@@ -153,19 +166,34 @@ func hrefProp(_ props: [String: Any]) -> String? {
     return location["href"] as? String
 }
 
-func moduleItemDetailViewController(_ props: [String: Any]) -> ModuleItemDetailViewController? {
+func moduleItemDetailViewController(props: [String: Any]) -> ModuleItemDetailViewController? {
     guard let url = propsURL(props) else { return nil }
     guard let courseID = props["contextID"] as? String ?? props["courseID"] as? String else { return nil }
     if let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-        let moduleItemID = components.queryItems?.filter({ $0.name == "module_item_id" }).first?.value,
-        let session = CanvasKeymaster.the().currentClient?.authSession {
-        do {
-            return try ModuleItemDetailViewController(session: session, courseID: courseID, moduleItemID: moduleItemID) { (vc, url) in
-                Router.shared().route(from: vc, to: url)
-            }
-        } catch {
-            return nil
-        }
+        let moduleItemID = components.queryItems?.filter({ $0.name == "module_item_id" }).first?.value {
+        return moduleItemDetailViewController(courseID: courseID, moduleItemID: moduleItemID)
     }
     return nil
+}
+
+func moduleItemDetailViewController(routerParameters parameters: [String: Any]) -> ModuleItemDetailViewController? {
+    if let courseID = try? parameters.stringID("courseID"),
+        let query = parameters["query"] as? [String: Any],
+        let moduleItemID = query["module_item_id"] as? String {
+        return moduleItemDetailViewController(courseID: courseID, moduleItemID: moduleItemID)
+    }
+    return nil
+}
+
+func moduleItemDetailViewController(courseID: String, moduleItemID: String) -> ModuleItemDetailViewController? {
+    guard let session = CanvasKeymaster.the().currentClient?.authSession else {
+        return nil
+    }
+    do {
+        return try ModuleItemDetailViewController(session: session, courseID: courseID, moduleItemID: moduleItemID) { (vc, url) in
+            Router.shared().route(from: vc, to: url)
+        }
+    } catch {
+        return nil
+    }
 }

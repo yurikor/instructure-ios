@@ -17,11 +17,7 @@
     
 
 import Foundation
-
-
 import CanvasCore
-import CanvasCore
-
 
 typealias EventWeekPageSelectCalendarEventAction = (_ session: Session, _ observeeID: String, _ calendarEvent: CalendarEvent)->Void
 
@@ -36,14 +32,13 @@ class CalendarEventWeekPageViewController: UIViewController {
     @IBOutlet weak var headerLabel: UILabel!
     @IBOutlet weak var nextWeekButton: UIButton!
     @IBOutlet weak var prevWeekButton: UIButton!
-    var backgroundView: TriangleBackgroundGradientView?
     var pageViewController: UIPageViewController?
 
     var session: Session!
     var studentID: String!
     var initialReferenceDate: Date!
+    var currentStartDate: Date?
     var contextCodes: [String]!
-    var useBackgroundView = false
 
     var selectCalendarEventAction: EventWeekPageSelectCalendarEventAction? = nil {
         didSet {
@@ -71,6 +66,7 @@ class CalendarEventWeekPageViewController: UIViewController {
         controller.session = session
         controller.studentID = studentID
         controller.initialReferenceDate = initialReferenceDate.dateOnSundayAtTheBeginningOfTheWeek
+        controller.currentStartDate = controller.initialReferenceDate
         controller.contextCodes = contextCodes
         
         return controller
@@ -84,22 +80,21 @@ class CalendarEventWeekPageViewController: UIViewController {
 
         let nextImage = UIImage.RTLImage("icon_forward", renderingMode: .alwaysTemplate)
         let prevImage = UIImage.RTLImage("icon_back", renderingMode: .alwaysTemplate)
-        
-        nextWeekButton.tintColor = UIAccessibilityIsReduceTransparencyEnabled() ? UIColor.black : UIColor.white
+
+        nextWeekButton.tintColor = UIColor.white
         nextWeekButton.setImage(nextImage, for: .normal)
         nextWeekButton.accessibilityIdentifier = "next_week_button"
         nextWeekButton.accessibilityLabel = NSLocalizedString("Next Week", comment: "Next Week Button Accessibility Label")
         
-        prevWeekButton.tintColor = UIAccessibilityIsReduceTransparencyEnabled() ? UIColor.black : UIColor.white
+        prevWeekButton.tintColor = UIColor.white
         prevWeekButton.setImage(prevImage, for: .normal)
         prevWeekButton.accessibilityIdentifier = "last_week_button"
         prevWeekButton.accessibilityLabel = NSLocalizedString("Last Week", comment: "Last Week Button Accessibility Label")
         
         updateHeaderTitle()
 
-        if useBackgroundView {
-            backgroundView = insertBackgroundView()
-        }
+        let colorScheme = ColorCoordinator.colorSchemeForStudentID(studentID)
+        view.backgroundColor = colorScheme.secondaryColor
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -117,6 +112,7 @@ class CalendarEventWeekPageViewController: UIViewController {
             initialViewController.selectCalendarEventAction = selectCalendarEventAction
             pageVC.setViewControllers([initialViewController], direction: .forward, animated: false, completion: nil)
 
+            currentStartDate = startDate
             pageViewController = pageVC
         }
     }
@@ -133,33 +129,8 @@ class CalendarEventWeekPageViewController: UIViewController {
         headerLabel.text = "\(formatter.string(from: viewController.startDate)) - \(formatter.string(from: viewController.endDate - 1.secondsComponents))"
         headerLabel.accessibilityIdentifier = "week_header_label"
         headerLabel.accessibilityLabel = String(format: NSLocalizedString("%@ to %@", comment: "Something to Something"), formatter.string(from: viewController.startDate), formatter.string(from: viewController.endDate))
-        headerLabel.textColor = UIAccessibilityIsReduceTransparencyEnabled() ? UIColor.black : UIColor.white
+        headerLabel.textColor = UIColor.white
 
-    }
-
-    func insertBackgroundView() -> TriangleBackgroundGradientView {
-        if let oldBackgroundView = self.backgroundView {
-            oldBackgroundView.removeFromSuperview()
-        }
-
-        let colorScheme = ColorCoordinator.colorSchemeForStudentID(studentID)
-        let backgroundView = TriangleBackgroundGradientView(frame: CGRect.zero, tintTopColor: colorScheme.tintTopColor, tintBottomColor: colorScheme.tintBottomColor)
-        backgroundView.translatesAutoresizingMaskIntoConstraints = false
-        self.view.insertSubview(backgroundView, at: 0)
-        backgroundView.clipsToBounds = true
-
-        var barHeight: CGFloat = UIApplication.shared.statusBarFrame.height
-        if let navbarFrame = self.navigationController?.navigationBar.frame {
-            barHeight += navbarFrame.height
-        }
-
-        let offset = -barHeight
-
-        let horizontalAccountsConstraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[subview]-0-|", options: NSLayoutFormatOptions.directionLeadingToTrailing, metrics: nil, views: ["subview": backgroundView])
-        let verticalAccountsConstraints = NSLayoutConstraint.constraints(withVisualFormat: "V:|-offset-[subview]-0-|", options: NSLayoutFormatOptions.directionLeadingToTrailing, metrics: ["offset": offset], views: ["subview": backgroundView])
-        self.view.addConstraints(horizontalAccountsConstraints)
-        self.view.addConstraints(verticalAccountsConstraints)
-        return backgroundView
     }
 
     // ---------------------------------------------
@@ -203,22 +174,13 @@ class CalendarEventWeekPageViewController: UIViewController {
     // MARK: - Helper Functions
     // ---------------------------------------------
     func eventListController(_ startDate: Date) -> CalendarEventListViewController {
+        currentStartDate = startDate
         let endDate = startDate + Calendar.current.numberOfDaysInWeek.daysComponents
 
         // Failing on purpose here.  If this is broken it's programmer error
         let eventListViewController = try! CalendarEventListViewController(session: session, studentID: studentID, startDate: startDate, endDate: endDate, contextCodes: contextCodes)
         eventListViewController.selectCalendarEventAction = selectCalendarEventAction
         return eventListViewController
-    }
-
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-
-        coordinator.animate(alongsideTransition: nil, completion: {[unowned self] context in
-            if self.useBackgroundView {
-                self.backgroundView = self.insertTriangleBackgroundView()
-            }
-        })
     }
 }
 

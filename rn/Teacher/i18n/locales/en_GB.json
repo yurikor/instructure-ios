@@ -254,11 +254,17 @@
   "cancel_caeb1e68": {
     "message": "Cancel"
   },
+  "canvas_guides_d65431": {
+    "message": "Canvas Guides"
+  },
   "canvas_parent_app_f9236a3a": {
     "message": "Canvas Parent App"
   },
   "canvas_student_app_329567f": {
     "message": "Canvas Student App"
+  },
+  "canvas_teacher_app_9dc7d7ed": {
+    "message": "Canvas Teacher App"
   },
   "change_discussiontitle_to_different_grouping_9f5ed8c1": {
     "message": "Change { discussionTitle } to different grouping"
@@ -286,6 +292,9 @@
   },
   "clear_recording_5a97b475": {
     "message": "Clear recording"
+  },
+  "close_d634289d": {
+    "message": "Close"
   },
   "close_for_comments_ce0e5d00": {
     "message": "Close for comments"
@@ -316,6 +325,9 @@
   },
   "compose_message_8abd180a": {
     "message": "Compose message"
+  },
+  "conferences_a0a8984b": {
+    "message": "Conferences"
   },
   "conversation_options_8be926f3": {
     "message": "Conversation options"
@@ -566,6 +578,9 @@
   "excused_cf8792eb": {
     "message": "Excused"
   },
+  "extensions_and_lastextension_f45d68e7": {
+    "message": "{ extensions } and { lastExtension }"
+  },
   "external_tool_c5a6410a": {
     "message": "External tool"
   },
@@ -596,8 +611,8 @@
   "favorite_courses_fbd356f0": {
     "message": "Favourite courses"
   },
-  "file_count_plural_one_file_other_files_8ae41de8": {
-    "message": "{ file_count, plural,    one {# file} other {# files}}"
+  "file_types_6fa69505": {
+    "message": "File types"
   },
   "files_c300e900": {
     "message": "Files"
@@ -701,6 +716,9 @@
   "help_4c4968b1": {
     "message": "Help"
   },
+  "hidden_14a032a7": {
+    "message": "Hidden"
+  },
   "hidden_files_inside_will_be_available_with_links_e9e3d233": {
     "message": "Hidden. Files inside will be available with links."
   },
@@ -722,6 +740,12 @@
   "i_hold_the_copyright_71ee91b1": {
     "message": "I hold the copyright"
   },
+  "if_you_re_a_student_or_teacher_try_one_of_our_othe_f0ae9b33": {
+    "message": "If you''re a student or teacher, try one of our other apps below."
+  },
+  "in_progress_9d1ce8b9": {
+    "message": "In progress"
+  },
   "incomplete_da3c2ea2": {
     "message": "Incomplete"
   },
@@ -730,6 +754,9 @@
   },
   "insert_link_6dc23cae": {
     "message": "Insert link"
+  },
+  "internet_connection_offline_d7c02b88": {
+    "message": "Internet Connection Offline"
   },
   "invalid_field_54480fae": {
     "message": "Invalid field"
@@ -740,8 +767,17 @@
   "invite_declined_d0a9e398": {
     "message": "Invite declined!"
   },
+  "it_looks_like_your_internet_connection_is_offline__cf4003": {
+    "message": "It looks like your internet connection is offline. Reconnect to the internet and try again."
+  },
+  "it_seems_there_aren_t_any_valid_submissions_to_gra_f136675": {
+    "message": "It seems there aren't any valid submissions to grade."
+  },
   "italic_ac45200a": {
     "message": "Italic"
+  },
+  "item_count_plural_one_item_other_items_88319c63": {
+    "message": "{ item_count, plural,\n    one {# item}\n  other {# items}\n}"
   },
   "last_activity_on_lastactivity_date_mmmm_d_at_lasta_1a7e8430": {
     "message": "Last activity on { lastActivity, date, 'MMMM d' } at { lastActivity, time, short }"
@@ -779,11 +815,17 @@
   "lock_questions_after_answering_e0f61d7c": {
     "message": "Lock questions after answering"
   },
+  "log_in_again_ec2b1f46": {
+    "message": "Log in again"
+  },
   "log_out_379ba28a": {
     "message": "Log out"
   },
   "long_description_7d89285c": {
     "message": "Long description"
+  },
+  "manage_children_a28d764e": {
+    "message": "Manage children"
   },
   "mark_all_as_read_8f3bdf57": {
     "message": "Mark all as read"
@@ -890,6 +932,9 @@
   "no_e16d9132": {
     "message": "No"
   },
+  "no_enrollments_6369cd31": {
+    "message": "No enrolments"
+  },
   "no_grade_3b4d7f3e": {
     "message": "No mark"
   },
@@ -910,6 +955,9 @@
   },
   "no_subject_58b7941c": {
     "message": "No Subject"
+  },
+  "no_submissions_to_display_6f1491cf": {
+    "message": "No submissions to display"
   },
   "no_time_limit_2147d9bf": {
     "message": "No time limit"
@@ -1289,6 +1337,9 @@
   "students_1b8cd07b": {
     "message": "Students"
   },
+  "students_must_post_before_seeing_replies_1a57eeb2": {
+    "message": "Students must post before seeing replies"
+  },
   "subject_114b2e98": {
     "message": "Subject"
   },
@@ -1370,6 +1421,9 @@
   "there_are_no_comments_to_display_bde58f70": {
     "message": "There are no comments to display."
   },
+  "there_are_no_conferences_to_display_400a0413": {
+    "message": "There are no conferences to display."
+  },
   "there_are_no_discussions_to_display_37bc437f": {
     "message": "There are no discussions to display."
   },
@@ -1450,6 +1504,9 @@
   },
   "this_assignment_does_not_allow_submissions_30af1caa": {
     "message": "This assignment does not allow submissions."
+  },
+  "this_assignment_doesn_t_have_a_description_e2f37ec3": {
+    "message": "This assignment doesn't have a description."
   },
   "this_assignment_only_allows_on_paper_submissions_f478408a": {
     "message": "This assignment only allows on-paper submissions."
@@ -1599,9 +1656,6 @@
   "user_id_bcace870": {
     "message": "User ID"
   },
-  "users_must_post_before_seeing_replies_d1761968": {
-    "message": "Users must post before seeing replies"
-  },
   "video_b9f27375": {
     "message": "Video"
   },
@@ -1610,6 +1664,9 @@
   },
   "view_all_submissions_915a8b78": {
     "message": "View all submissions"
+  },
+  "view_canvas_guides_a1c62a97": {
+    "message": "View Canvas Guides"
   },
   "view_long_description_2b592c0e": {
     "message": "View Long Description"
@@ -1646,6 +1703,9 @@
   },
   "you_must_enter_an_access_code_8c2c7ae0": {
     "message": "You must enter an access code"
+  },
+  "you_need_at_least_one_active_observer_enrollment_t_9c78bb6e": {
+    "message": "You need at least one active observer enrollment to use Canvas Parent."
   },
   "your_submission_comment_failed_to_send_5c8d2809": {
     "message": "Submission comment failed to send."

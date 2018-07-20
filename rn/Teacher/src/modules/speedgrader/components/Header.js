@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ import type {
 } from '../../submissions/list/submission-prop-types'
 import SubmissionStatusLabel from '../../submissions/list/SubmissionStatusLabel'
 import Avatar from '../../../common/components/Avatar'
+import { isAssignmentAnonymous } from '../../../common/anonymous-grading'
 
 export class Header extends Component<HeaderProps, State> {
   state: State = {
@@ -162,19 +163,9 @@ const styles = StyleSheet.create({
 })
 
 export function mapStateToProps (state: AppState, ownProps: RouterProps) {
-  const entities = state.entities
   const { courseID, assignmentID } = ownProps
+  const anonymous = isAssignmentAnonymous(state, courseID, assignmentID)
 
-  const assignmentContent = entities.assignments[assignmentID]
-  const assignmentData = assignmentContent ? assignmentContent.data : null
-  let quiz
-  if (assignmentData && assignmentData.quiz_id && entities.quizzes[assignmentData.quiz_id]) {
-    quiz = entities.quizzes[assignmentData.quiz_id].data
-  }
-  const courseContent = state.entities.courses[courseID]
-  const anonymous = assignmentContent.anonymousGradingOn ||
-                  quiz && quiz.anonymous_submissions ||
-                  courseContent && courseContent.enabledFeatures.includes('anonymous_grading')
   return {
     anonymous,
   }

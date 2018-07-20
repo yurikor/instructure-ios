@@ -1,17 +1,17 @@
 //
 // Copyright (C) 2016-present Instructure, Inc.
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, version 3 of the License.
 //
-// http://www.apache.org/licenses/LICENSE-2.0
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 //
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
     
     
@@ -27,12 +27,14 @@ struct CanvadocsFileMetadata {
 
 struct CanvadocsAnnotationMetadata {
     enum Permissions: String {
+        case None = "none"
         case Read = "read"
         case ReadWrite = "readwrite"
         case ReadWriteManage = "readwritemanage"
     }
     
     let enabled: Bool
+    let userID: String?
     let userName: String?
     let permissions: Permissions?
 }
@@ -134,16 +136,17 @@ class CanvadocsAnnotationService: NSObject {
                 var annotationMetadata: CanvadocsAnnotationMetadata?
                 if let annotationSettings = json["annotations"] as? [String: AnyObject] {
                     let enabled = annotationSettings["enabled"] as? Bool ?? false
+                    let userID = annotationSettings["user_id"] as? String
                     let userName = annotationSettings["user_name"] as? String
                     
-                    var permissions: CanvadocsAnnotationMetadata.Permissions = .Read
+                    var permissions: CanvadocsAnnotationMetadata.Permissions = .None
                     if let permissionsStr = annotationSettings["permissions"] as? String, let annotationPermissions = CanvadocsAnnotationMetadata.Permissions(rawValue: permissionsStr) {
                         permissions = annotationPermissions
                     }
                     
-                    annotationMetadata = CanvadocsAnnotationMetadata(enabled: enabled, userName: userName, permissions: permissions)
+                    annotationMetadata = CanvadocsAnnotationMetadata(enabled: enabled, userID: userID, userName: userName, permissions: permissions)
                 } else {
-                    annotationMetadata = CanvadocsAnnotationMetadata(enabled: false, userName: nil, permissions: nil)
+                    annotationMetadata = CanvadocsAnnotationMetadata(enabled: false, userID: nil, userName: nil, permissions: nil)
                 }
                 
                 var pandaPushMetadata: PandaPushMetadata?

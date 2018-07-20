@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,10 +14,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-/**
- * @flow
- */
+// @flow
 
+import { StyleSheet } from 'react-native'
 import color, { isDark } from '../common/colors'
 
 export type BrandingConfiguration = {
@@ -42,6 +41,7 @@ export const branding: BrandingConfiguration = {
   primaryBrandColor: color.navBarColor,
 }
 
+const updates = []
 export function setupBrandingFromNativeBrandingInfo (obj: Object): void {
   branding.navBarColor = obj[`ic-brand-global-nav-bgd`] || branding.navBarColor
   branding.primaryButtonTextColor = obj[`ic-brand-button--primary-text`] || branding.primaryButtonTextColor
@@ -60,6 +60,16 @@ export function setupBrandingFromNativeBrandingInfo (obj: Object): void {
   color.primaryButtonColor = branding.primaryButtonColor
   color.primaryBrandColor = branding.primaryBrandColor
   color.statusBarStyle = isDark(color.navBarColor) ? 'light' : 'default'
+
+  // update style sheets
+  for (const update of updates) update(color)
+}
+
+type Styles = {[string]: Object}
+export function createStyleSheet<S: Styles> (factory: (typeof color) => S) {
+  const sheet = StyleSheet.create(factory(color))
+  updates.push(color => Object.assign(sheet, StyleSheet.create(factory(color))))
+  return sheet
 }
 
 export default branding

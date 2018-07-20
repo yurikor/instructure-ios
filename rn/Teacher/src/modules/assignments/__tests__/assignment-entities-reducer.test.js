@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-/* @flow */
+// @flow
 
 import { AssignmentListActions } from '../actions'
 import { assignments } from '../assignment-entities-reducer'
@@ -23,20 +23,16 @@ import { testAsyncReducer } from '../../../../test/helpers/async'
 import SubmissionActions from '../../submissions/list/actions'
 import { default as QuizDetailsActions } from '../../quizzes/details/actions'
 import { default as DiscussionDetailsActions } from '../../discussions/details/actions'
+import * as template from '../../../__templates__'
 
 const { refreshSubmissions, refreshSubmissionSummary, getUserSubmissions } = SubmissionActions
 const { refreshQuiz } = QuizDetailsActions
 const { refreshDiscussionEntries } = DiscussionDetailsActions
-const template = {
-  ...require('../../../__templates__/assignments'),
-  ...require('../../../__templates__/submissions'),
-  ...require('../../../__templates__/error'),
-}
 
 test('refresh assignments', async () => {
   const groups = [template.assignmentGroup()]
-  const assignment = template.assignment()
-  let action = AssignmentListActions({ getAssignmentGroups: apiResponse(groups) }).refreshAssignmentList(1, 2)
+  const assignment = groups[0].assignments[0]
+  let action = AssignmentListActions({ getAssignmentGroups: apiResponse(groups), getAssignments: apiResponse(groups[0].assignments) }).refreshAssignmentList(1, 2)
   let state = await testAsyncReducer(assignments, action)
 
   expect(state).toEqual([{}, {
@@ -121,7 +117,6 @@ test('reduces assignment content', () => {
       pending: 0,
       error: null,
       pendingComments: {},
-      anonymousGradingOn: false,
     },
   })
 })
@@ -160,7 +155,6 @@ test('refreshQuiz', () => {
       submissionSummary: { data: {}, pending: 0, error: null },
       gradeableStudents: { refs: [], pending: 0 },
       pendingComments: {},
-      anonymousGradingOn: false,
     },
   }
   const refreshedAssignment = {
@@ -201,38 +195,6 @@ test('refresh quiz with no assignment', () => {
   })
 })
 
-test('anonymousGrading', () => {
-  const assignment = template.assignment({
-    id: '1',
-    name: 'Old',
-  })
-  let actions = AssignmentListActions()
-  let state = {
-    '1': {
-      anonymousGradingOn: false,
-      data: assignment,
-      pending: 0,
-      submissions: { refs: [], pending: 0 },
-      submissionSummary: { data: {}, pending: 0, error: null },
-      gradeableStudents: { refs: [], pending: 0 },
-      pendingComments: {},
-    },
-  }
-  let action = {
-    type: actions.anonymousGrading,
-    payload: {
-      courseID: '1',
-      assignmentID: '1',
-      anonymous: true,
-    },
-  }
-  expect(assignments(state, action)).toMatchObject({
-    '1': {
-      anonymousGradingOn: true,
-    },
-  })
-})
-
 test('refreshDiscussionEntries', () => {
   const assignment = template.assignment({
     id: '1',
@@ -246,7 +208,6 @@ test('refreshDiscussionEntries', () => {
       submissionSummary: { data: {}, pending: 0, error: null },
       gradeableStudents: { refs: [], pending: 0 },
       pendingComments: {},
-      anonymousGradingOn: false,
     },
   }
   const refreshedAssignment = {
@@ -281,7 +242,6 @@ test('refreshDiscussionEntries with no assignment', () => {
       submissionSummary: { data: {}, pending: 0, error: null },
       gradeableStudents: { refs: [], pending: 0 },
       pendingComments: {},
-      anonymousGradingOn: false,
     },
   }
   const refreshedAssignment = null
@@ -317,7 +277,6 @@ test('refreshSubmissionSummary', () => {
       submissionSummary: { data: {}, pending: 0, error: null },
       gradeableStudents: { refs: [], pending: 0 },
       pendingComments: {},
-      anonymousGradingOn: false,
       error: null,
     },
   }
@@ -350,7 +309,6 @@ test('refreshSubmissionSummary with error', async () => {
       submissionSummary: { data: {}, pending: 0, error: null },
       gradeableStudents: { refs: [], pending: 0 },
       pendingComments: {},
-      anonymousGradingOn: false,
       error: null,
     },
   }
@@ -386,7 +344,6 @@ test('refreshSubmissionSummary pending', async () => {
       submissionSummary: { data: {}, pending: 0, error: null },
       gradeableStudents: { refs: [], pending: 0 },
       pendingComments: {},
-      anonymousGradingOn: false,
       error: null,
     },
   }
@@ -429,7 +386,6 @@ test('getUserSubmissions adds a submission ref to the assignment', () => {
       submissionSummary: { data: {}, pending: 0, error: null },
       gradeableStudents: { refs: [], pending: 0 },
       pendingComments: {},
-      anonymousGradingOn: false,
       error: null,
     },
     '2': {
@@ -439,7 +395,6 @@ test('getUserSubmissions adds a submission ref to the assignment', () => {
       submissionSummary: { data: {}, pending: 0, error: null },
       gradeableStudents: { refs: [], pending: 0 },
       pendingComments: {},
-      anonymousGradingOn: false,
       error: null,
     },
   }

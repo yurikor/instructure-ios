@@ -733,7 +733,7 @@
 "Media type selector. %@" = "Selecionar tipo de mídia: %@";
 
 /* (No Comment) */
-"Message Instructor" = "Instrutor de Mensagem";
+"Message Instructor" = "Adicionar um Comentário";
 
 /* (No Comment) */
 "Message Sent." = "Mensagem Enviada.";
@@ -1299,13 +1299,13 @@
 "Toggles selection of item" = "Alterna a seleção do item";
 
 /* (No Comment) */
-"Turn In" = "Ligar";
+"Turn In" = "Entregar";
 
 /* (No Comment) */
-"Turn In Again" = "Ligar Novamente";
+"Turn In Again" = "Entregar Novamente";
 
 /* (No Comment) */
-"Turn in %@" = "Ligar %@";
+"Turn in %@" = "Entregar %@";
 
 /* Label read aloud to describe module item type */
 "Type: %@" = "Tipo: %@";

@@ -18,12 +18,13 @@ import UIKit
 import TechDebt
 import PSPDFKit
 import CanvasKeymaster
-import Fabric
+//import Fabric
 import Crashlytics
 import CanvasCore
 import ReactiveSwift
 import BugsnagReactNative
 import UserNotifications
+//import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -40,6 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         ResetAppIfNecessary()
+        //FirebaseApp.configure()
         NotificationKitController.setupForPushNotifications(delegate: self)
         TheKeymaster.fetchesBranding = true
         TheKeymaster.delegate = loginConfig
@@ -103,11 +105,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 // MARK: Push notifications
 extension AppDelegate: UNUserNotificationCenterDelegate {
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        NotificationKitController.didRegisterForRemoteNotifications(deviceToken, errorHandler: handleError)
+        NotificationKitController.didRegisterForRemoteNotifications(deviceToken, errorHandler: handlePushNotificationRegistrationError)
     }
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        handleError((error as NSError).addingInfo())
+        handlePushNotificationRegistrationError((error as NSError).addingInfo())
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
@@ -130,9 +132,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.alert, .sound])
     }
-    
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        AppStoreReview.requestReview()
+
+    func handlePushNotificationRegistrationError(_ error: NSError) {
+        Crashlytics.sharedInstance().recordError(error, withAdditionalUserInfo: ["source": "push_notification_registration"])
     }
 }
 
@@ -142,14 +144,19 @@ extension AppDelegate {
     func postLaunchSetup() {
         PSPDFKit.license()
         prepareReactNative()
-        Analytics.prepare()
         NetworkMonitor.engage()
-        CBILogger.install(loginConfig.logFileManager)
         excludeHelmInBranding()
         Router.shared().addCanvasRoutes(handleError)
         setupDefaultErrorHandling()
         UIApplication.shared.reactive.applicationIconBadgeNumber
             <~ TabBarBadgeCounts.applicationIconBadgeNumber
+        CanvasAnalytics.setHandler(self)
+    }
+}
+
+extension AppDelegate: CanvasAnalyticsHandler {
+    func handleEvent(_ name: String, parameters: [String : Any]?) {
+       // Analytics.logEvent(name, parameters: parameters)
     }
 }
 
@@ -211,7 +218,9 @@ extension AppDelegate {
     }
     
     func handleError(_ error: NSError) {
-        ErrorReporter.reportError(error, from: window?.rootViewController)
+        DispatchQueue.main.async {
+            ErrorReporter.reportError(error, from: self.window?.rootViewController)
+        }
     }
 }
 
@@ -232,6 +241,9 @@ extension AppDelegate {
 // MARK: Launching URLS
 extension AppDelegate {
     @discardableResult func openCanvasURL(_ url: URL) -> Bool {
+        if TheKeymaster.numberOfClients == 0, let host = url.host {
+            TheKeymaster.login(withSuggestedDomain: host)
+        }
         // the student app doesn't have as predictable of a tab bar setup and for
         // several views, does not have a route configured for them so for now we
         // will hard code until we move more things over to helm
@@ -284,13 +296,19 @@ extension AppDelegate {
 }
 
 extension AppDelegate: NativeLoginManagerDelegate {
+    func willLogout() {
+        PageViewEventController.instance.userDidChange()
+    }
+    
     func didLogin(_ client: CKIClient) {
         let session = client.authSession
         self.session = session
-        
+        PageViewEventController.instance.userDidChange()
         LegacyModuleProgressShim.observeProgress(session)
         ModuleItem.beginObservingProgress(session)
         CKCanvasAPI.updateCurrentAPI()
+       // Analytics.setUserID(client.currentUser.id)
+       // Analytics.setUserProperty(client.baseURL?.absoluteString, forName: "base_url")
         
         if let brandingInfo = client.branding?.jsonDictionary() as? [String: Any] {
             Brand.setCurrent(Brand(webPayload: brandingInfo), applyInWindow: window)
@@ -298,6 +316,9 @@ extension AppDelegate: NativeLoginManagerDelegate {
     }
     
     func didLogout(_ controller: UIViewController) {
+        NotificationKitController.deregisterPushNotifications { _ in
+            // this is a no-op because we don't want errors to prevent logging out
+        }
         guard let window = self.window else { return }
         UIView.transition(with: window, duration: 0.5, options: .transitionCrossDissolve, animations: {
             window.rootViewController = controller

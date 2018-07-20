@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ import { isRegularDisplayMode } from '../../routing/utils'
 import ActivityIndicatorView from '../../common/components/ActivityIndicatorView'
 import ListEmptyComponent from '../../common/components/ListEmptyComponent'
 import { getGradesForGradingPeriod } from '../../canvas-api'
+import { logEvent } from '../../common/CanvasAnalytics'
 
 type State = {
   currentFilter: {
@@ -115,6 +116,13 @@ export class AssignmentList extends Component<AssignmentListProps, State> {
     }
   }
 
+  componentWillUnmount () {
+    const currentScore = this.state.currentScore || 0
+    if (this.props.showTotalScore && currentScore > 90) {
+      NativeModules.AppStoreReview.handleSuccessfulSubmit()
+    }
+  }
+
   onTraitCollectionChange () {
     this.props.navigator.traitCollection((traits) => { this.traitCollectionDidChange(traits) })
   }
@@ -129,7 +137,8 @@ export class AssignmentList extends Component<AssignmentListProps, State> {
 
   selectFirstListItemIfNecessary () {
     let assignment = null
-    if (!this.didSelectFirstItem && this.isRegularScreenDisplayMode && (assignment = this.firstAssignmentInList())) {
+    const isModal = this.props.navigator.isModal
+    if (!this.didSelectFirstItem && this.isRegularScreenDisplayMode && !isModal && (assignment = this.firstAssignmentInList())) {
       this.selectedAssignment(assignment)
       this.didSelectFirstItem = true
     }
@@ -183,6 +192,7 @@ export class AssignmentList extends Component<AssignmentListProps, State> {
   }
 
   selectedAssignment = (assignment: Assignment) => {
+    logEvent('assignment_selected')
     this.props.updateCourseDetailsSelectedTabSelectedRow(assignment.id)
     this.setState({ selectedRowID: assignment.id })
     if (assignment.quiz_id) {
@@ -320,20 +330,16 @@ const styles = StyleSheet.create({
   header: {
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: 'lightgrey',
-    paddingTop: 16,
-    paddingBottom: 8,
-    paddingHorizontal: 16,
+    paddingTop: global.style.defaultPadding,
+    paddingBottom: global.style.defaultPadding / 2,
+    paddingHorizontal: global.style.defaultPadding,
   },
   gradingPeriodHeader: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'space-between',
-    marginBottom: 8,
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#2d3b44',
     flex: 1,
   },
   filterButton: {

@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2018-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@
     [super viewDidLoad];
     
     self.logoImageView.image = TheKeymaster.delegate.logoForDomainPicker;
-    [self.closeButton setImage:[[UIImage imageNamed:@"x-icon" inBundle:[NSBundle bundleForClass:self.class] compatibleWithTraitCollection:nil] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    [self.closeButton setImage:[[UIImage imageNamed:@"Arrow-Back" inBundle:[NSBundle bundleForClass:self.class] compatibleWithTraitCollection:nil] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
     
     @weakify(self);
     [self.suggestionTableViewController.selectedSchoolSignal subscribeNext:^(CKIAccountDomain *school) {

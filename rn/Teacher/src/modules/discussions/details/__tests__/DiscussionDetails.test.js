@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import React from 'react'
 import {
   ActionSheetIOS,
   AlertIOS,
+  NativeModules,
 } from 'react-native'
 import renderer from 'react-test-renderer'
 
@@ -50,6 +51,7 @@ jest
   .mock('../../../../redux/middleware/error-handler', () => {
     return { alertError: jest.fn() }
   })
+  .unmock('FlatList')
 
 jest.useFakeTimers()
 
@@ -616,6 +618,15 @@ describe('DiscussionDetails', () => {
     expect(label.children).toEqual(['Oct 27 at 3:16 PM'])
   })
 
+  it('displays no post date', () => {
+    props.discussion = template.discussion({
+      delayed_post_at: null,
+      posted_at: null,
+    })
+    const label: any = explore(render(props).toJSON()).selectByID('discussion.details.post-date-lbl')
+    expect(label).toEqual(null)
+  })
+
   it('navigates to context card when pressing the avatar', () => {
     let avatar = explore(render(props).toJSON()).selectByID('discussion.details.avatar') || {}
     avatar.props.onPress()
@@ -643,6 +654,94 @@ describe('DiscussionDetails', () => {
     const screen = shallow(<DiscussionDetails {...props} />)
     screen.setProps({ error: 'ERROR!' })
     expect(alertError).toHaveBeenCalledWith('ERROR!')
+  })
+
+  it('informs app store review of navigation', () => {
+    const tree = shallow(<DiscussionDetails {...props} />)
+    expect(NativeModules.AppStoreReview.handleNavigateToAssignment)
+      .toHaveBeenCalled()
+    tree.unmount()
+    expect(NativeModules.AppStoreReview.handleNavigateFromAssignment)
+      .toHaveBeenCalled()
+  })
+
+  it('replaces with correct group discussion when received new props', () => {
+    props.discussion = null
+    props.context = 'courses'
+    props.navigator = template.navigator({ replace: jest.fn() })
+    props.groups = { '4': { group: template.group(), color: '' } }
+    const screen = shallow(<DiscussionDetails {...props} />)
+
+    const discussion = template.discussion({
+      id: '1',
+      group_category_id: '3',
+      group_topic_children: [
+        {
+          id: '49',
+          group_id: '4',
+        },
+      ],
+    })
+    screen.setProps({ discussion })
+
+    expect(props.navigator.replace).toHaveBeenCalledWith('/groups/4/discussion_topics/49')
+  })
+
+  it('replaces with correct group discussion when created', () => {
+    const discussion = template.discussion({
+      id: '1',
+      group_category_id: '3',
+      group_topic_children: [
+        {
+          id: '49',
+          group_id: '4',
+        },
+      ],
+    })
+    props.discussion = discussion
+    props.context = 'courses'
+    props.navigator = template.navigator({ replace: jest.fn() })
+    props.groups = { '4': { group: template.group(), color: '' } }
+    shallow(<DiscussionDetails {...props} />)
+
+    expect(props.navigator.replace).toHaveBeenCalledWith('/groups/4/discussion_topics/49')
+  })
+
+  it('marks discussion as viewed', () => {
+    const spy = jest.fn()
+    NativeModules.ModuleItemsProgress.viewedDiscussion = spy
+    props.discussion = null
+    props.context = 'courses'
+    props.contextID = '1'
+    props.discussionID = '2'
+    const screen = shallow(<DiscussionDetails {...props} />)
+    const discussion = template.discussion({ id: '2' })
+
+    screen.setProps({ discussion })
+
+    expect(spy).toHaveBeenCalledWith('1', '2')
+  })
+
+  it('wont replace with group discussion more than once', () => {
+    props.discussion = null
+    props.context = 'courses'
+    props.navigator = template.navigator({ replace: jest.fn() })
+    props.groups = { '4': { group: template.group(), color: '' } }
+    const screen = shallow(<DiscussionDetails {...props} />)
+
+    const discussion = template.discussion({
+      id: '1',
+      group_category_id: '3',
+      group_topic_children: [
+        {
+          id: '49',
+          group_id: '4',
+        },
+      ],
+    })
+    screen.setProps({ discussion })
+    screen.setProps({ discussion })
+    expect(props.navigator.replace).toHaveBeenCalledTimes(1)
   })
 
   function testRender (props: any) {

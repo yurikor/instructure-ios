@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,23 +14,18 @@
 // limitations under the License.
 //
 
-/* @flow */
+// @flow
 
 import { AssignmentListActions } from '../actions'
 import { apiResponse } from '../../../../test/helpers/apiMock'
 import { testAsyncAction } from '../../../../test/helpers/async'
 import { UPDATE_COURSE_DETAILS_SELECTED_TAB_SELECTED_ROW_ACTION } from '../../courses/actions'
-
-const template = {
-  ...require('../../../__templates__/assignments'),
-  ...require('../../../__templates__/course'),
-  ...require('../../../__templates__/submissions'),
-}
+import * as template from '../../../__templates__'
 
 test('refresh assignment list', async () => {
   const course = template.course()
   const groups = [template.assignmentGroup()]
-  let actions = AssignmentListActions({ getAssignmentGroups: apiResponse(groups) })
+  let actions = AssignmentListActions({ getAssignmentGroups: apiResponse(groups), getAssignments: apiResponse(groups[0].assignments) })
   const result = await testAsyncAction(actions.refreshAssignmentList(course.id), {})
 
   expect(result).toMatchObject([{
@@ -78,7 +73,7 @@ test('refresh single assignment', async () => {
 test('refresh assignment list can take an optional grading period id', async () => {
   const course = template.course()
   const groups = [template.assignmentGroup()]
-  let actions = AssignmentListActions({ getAssignmentGroups: apiResponse(groups) })
+  let actions = AssignmentListActions({ getAssignmentGroups: apiResponse(groups), getAssignments: apiResponse(groups[0].assignments) })
   const result = await testAsyncAction(actions.refreshAssignmentList(course.id, 1), {})
 
   expect(result).toMatchObject([{
@@ -119,19 +114,6 @@ test('should update selected assignment row', async () => {
     type: UPDATE_COURSE_DETAILS_SELECTED_TAB_SELECTED_ROW_ACTION,
     payload: {
       rowID: rowID,
-    },
-  })
-})
-
-test('should dispatch anonymous grading', () => {
-  let actions = AssignmentListActions()
-  let action = actions.anonymousGrading('1', '2', true)
-  expect(action).toEqual({
-    type: actions.anonymousGrading.toString(),
-    payload: {
-      courseID: '1',
-      assignmentID: '2',
-      anonymous: true,
     },
   })
 })

@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ import {
   View,
 } from 'react-native'
 import branding from '../branding'
-import { Heading1 } from '../text'
+import { Text } from '../text'
 
 type Props = {
   on: boolean,
@@ -61,6 +61,7 @@ export default class CircleToggle extends PureComponent<Props> {
   render () {
     let viewStyle = [circleButtonStyles.container, this.props.style]
     let textStyle = {
+      fontSize: 20,
       fontWeight: '500',
       color: '#8B969E',
     }
@@ -93,7 +94,7 @@ export default class CircleToggle extends PureComponent<Props> {
         <View style={viewStyle} ref={this.getRef}>
           {typeof this.props.children === 'object'
             ? this.props.children
-            : <Heading1 style={textStyle} accessible={false}>{this.props.children}</Heading1>
+            : <Text style={textStyle} accessible={false}>{this.props.children}</Text>
           }
         </View>
       </TouchableOpacity>

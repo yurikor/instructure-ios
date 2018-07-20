@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,22 +15,56 @@
 //
 
 import Foundation
+import SwiftGRPC
+import SwiftProtobuf
+import CanvasCore
 
-let address = "localhost:50051"
-let secure = false
-let assignmentsClient = Soseedy_SeedyAssignmentsServiceClient(address: address, secure: secure)
-let conversationsClient = Soseedy_SeedyConversationsServiceClient(address: address, secure: secure)
-let coursesClient = Soseedy_SeedyCoursesServiceClient(address: address, secure: secure)
-let discussionsClient = Soseedy_SeedyDiscussionsServiceClient(address: address, secure: secure)
-let enrollmentsClient = Soseedy_SeedyEnrollmentsServiceClient(address: address, secure: secure)
-let filesClient = Soseedy_SeedyFilesServiceClient(address: address, secure: secure)
-let generalClient = Soseedy_SeedyGeneralServiceClient(address: address, secure: secure)
-let gradingPeriodsClient = Soseedy_SeedyGradingPeriodsServiceClient(address: address, secure: secure)
-let groupsClient = Soseedy_SeedyGroupsServiceClient(address: address, secure: secure)
-let pagesClient = Soseedy_SeedyPagesServiceClient(address: address, secure: secure)
-let quizzesClient = Soseedy_SeedyQuizzesServiceClient(address: address, secure: secure)
-let sectionsClient = Soseedy_SeedySectionsServiceClient(address: address, secure: secure)
-let usersClient = Soseedy_SeedyUsersServiceClient(address: address, secure: secure)
+let hostname = "soseedy.endpoints.delta-essence-114723.cloud.goog"
+let address = "\(hostname):80"
+let apiKey = Secrets.fetch(.gRPCSoSeedyAPIKey)!
+
+func makeClient<T: ServiceClientBase >(_ client: T.Type) -> T {
+  let client = client.init(address: address,
+                     certificates: Certs.caCert,
+                     clientCertificates: Certs.clientCert,
+                     clientKey: Certs.clientPrivateKey,
+                     arguments: [.sslTargetNameOverride("example.com")])
+  try! client.metadata.add(key: "x-api-key", value: apiKey)
+  client.host = hostname
+  client.timeout = 5 * 60
+
+  return client
+}
+
+let assignmentsClient = makeClient(Soseedy_SeedyAssignmentsServiceClient.self)
+let conversationsClient = makeClient(Soseedy_SeedyConversationsServiceClient.self)
+let coursesClient = makeClient(Soseedy_SeedyCoursesServiceClient.self)
+let discussionsClient = makeClient(Soseedy_SeedyDiscussionsServiceClient.self)
+let enrollmentsClient = makeClient(Soseedy_SeedyEnrollmentsServiceClient.self)
+let filesClient = makeClient(Soseedy_SeedyFilesServiceClient.self)
+let generalClient = makeClient(Soseedy_SeedyGeneralServiceClient.self)
+let gradingPeriodsClient = makeClient(Soseedy_SeedyGradingPeriodsServiceClient.self)
+let groupsClient = makeClient(Soseedy_SeedyGroupsServiceClient.self)
+let pagesClient = makeClient(Soseedy_SeedyPagesServiceClient.self)
+let quizzesClient = makeClient(Soseedy_SeedyQuizzesServiceClient.self)
+let sectionsClient = makeClient(Soseedy_SeedySectionsServiceClient.self)
+let usersClient = makeClient(Soseedy_SeedyUsersServiceClient.self)
+
+// This function should wrap any calls made to data seeding methods on the above clients
+// It will use the request that is passed into it as the key for storing/finding recorded
+// data seeding responses.
+public func recorded<T: SwiftProtobuf.Message>(request: SwiftProtobuf.Message, block: () -> T) -> T {
+    let requestKey = try! request.jsonString()
+    let response: String? = VCR.shared().response(for: requestKey)
+    if let response = response {
+        return try! T(jsonString: response)
+    }
+    let blockResponse = block()
+    let blockResponseString = try! blockResponse.jsonString()
+    VCR.shared().recordResponse(blockResponseString, for: requestKey)
+    return blockResponse
+}
+
 
 // MARK: - Enrollments
 
@@ -44,7 +78,7 @@ public enum EnrollmentType: String {
     enrollRequest.courseID = course.id
     enrollRequest.userID = user.id
     enrollRequest.enrollmentType = type.rawValue
-    return try! enrollmentsClient.enrollUserInCourse(enrollRequest)
+    return recorded(request: enrollRequest) { try! enrollmentsClient.enrollUserInCourse(enrollRequest) }
 }
 
 public func enroll(_ user: Soseedy_CanvasUser, as type: EnrollmentType, inAll courses: [Soseedy_Course]) -> [Soseedy_Enrollment] {
@@ -52,7 +86,8 @@ public func enroll(_ user: Soseedy_CanvasUser, as type: EnrollmentType, inAll co
 }
 
 public func createUser() -> Soseedy_CanvasUser {
-    return try! usersClient.createCanvasUser(Soseedy_CreateCanvasUserRequest())
+    let createUserRequest = Soseedy_CreateCanvasUserRequest()
+    return recorded(request: createUserRequest) { try! usersClient.createCanvasUser(createUserRequest) }
 }
 
 public func createStudent(in course: Soseedy_Course = createCourse()) -> Soseedy_CanvasUser {
@@ -65,6 +100,10 @@ public func createStudent(inAll courses: [Soseedy_Course]) -> Soseedy_CanvasUser
     let user = createUser()
     courses.forEach { enroll(user, as: .teacher, in: $0) }
     return user
+}
+
+public func healthCheck() -> Soseedy_HealthCheck {
+  return try! generalClient.getHealthCheck(Soseedy_HealthCheckRequest())
 }
 
 public func createTeacher(in course: Soseedy_Course = createCourse()) -> Soseedy_CanvasUser {
@@ -103,14 +142,15 @@ public func getNativeLoginInfo(_ canvasUser:Soseedy_CanvasUser) -> [String: Any]
 // MARK: - Courses
 
 @discardableResult public func createCourse() -> Soseedy_Course {
-    return try! coursesClient.createCourse(Soseedy_CreateCourseRequest())
+    let createCourseRequest = Soseedy_CreateCourseRequest()
+    return recorded(request: createCourseRequest) { try! coursesClient.createCourse(createCourseRequest) }
 }
 
 @discardableResult public func favorite(_ course: Soseedy_Course, as user: Soseedy_CanvasUser) -> Soseedy_Favorite {
     var request = Soseedy_AddFavoriteCourseRequest()
     request.courseID = course.id
     request.token = user.token
-    return try! coursesClient.addFavoriteCourse(request)
+    return recorded(request: request) { try! coursesClient.addFavoriteCourse(request) }
 }
 
 // MARK: - Assignments
@@ -129,5 +169,5 @@ public func createAssignment(for course: Soseedy_Course = createCourse(), as tea
     request.teacherToken = teacher.token
     request.withDescription = withDescription
     request.submissionTypes = submissionTypes
-    return try! assignmentsClient.createAssignment(request)
+    return recorded(request: request) { try! assignmentsClient.createAssignment(request) }
 }

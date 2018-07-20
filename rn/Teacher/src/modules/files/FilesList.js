@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,7 +37,6 @@ import RowSeparator from '../../common/components/rows/RowSeparator'
 import find from 'lodash/find'
 import localeSort from '../../utils/locale-sort'
 import AccessIcon from '../../common/components/AccessIcon'
-import AccessLine from '../../common/components/AccessLine'
 import ListEmptyComponent from '../../common/components/ListEmptyComponent'
 import images from '../../images'
 import bytes, { unitFor } from '../../utils/locale-bytes'
@@ -50,6 +49,7 @@ import { isTeacher } from '../app'
 import color from '../../common/colors'
 import { isRegularDisplayMode } from '../../routing/utils'
 import type { TraitCollection } from '../../routing/Navigator'
+import { logEvent } from '@common/CanvasAnalytics'
 
 type FilesListProps = {
   data: any[], // The folders and files that are currently being shown
@@ -78,7 +78,7 @@ type Props =
     folderUpdated: Function,
     foldersUpdated: Function,
     filesUpdated: Function,
-    getContextFolder: Function,
+    getContextFolderHierarchy: Function,
     getFolderFolders: Function,
     getFolderFiles: Function,
     getFolder: Function,
@@ -94,7 +94,7 @@ type State = {
 
 export class FilesList extends Component<Props, State> {
   static defaultProps = {
-    getContextFolder: canvas.getContextFolder,
+    getContextFolderHierarchy: canvas.getContextFolderHierarchy,
     getFolderFolders: canvas.getFolderFolders,
     getFolderFiles: canvas.getFolderFiles,
     getFolder: canvas.getFolder,
@@ -124,10 +124,14 @@ export class FilesList extends Component<Props, State> {
   update = async () => {
     this.setState({ pending: true })
     try {
-      let { contextID, context, folder } = this.props
+      let { contextID, context, folder, subFolder } = this.props
       if (!folder) {
-        folder = (await this.props.getContextFolder(context, contextID, 'root')).data
-        this.props.foldersUpdated([folder], 'root', contextID, context)
+        const folders = (await this.props.getContextFolderHierarchy(context, contextID, subFolder || '')).data
+        for (const level of folders) {
+          this.props.folderUpdated(level, contextID, context)
+        }
+        this.props.foldersUpdated([folders[0]], 'root', contextID, context)
+        folder = folders[folders.length - 1]
       }
       const foldersPromise = this.props.getFolderFolders(folder.id)
       const filesPromise = this.props.getFolderFiles(folder.id)
@@ -179,6 +183,7 @@ export class FilesList extends Component<Props, State> {
     } = this.props
 
     if (item.type === 'file') {
+      logEvent('file_viewed')
       this.setState({ selectedRowID: item.id })
 
       if (onSelectFile) {
@@ -357,16 +362,12 @@ export class FilesList extends Component<Props, State> {
     if (item.type === 'file') {
       selected = this.isRowSelected(item)
       name = item.display_name
-      switch (item.mime_class) {
-        case 'image':
-          icon = { uri: item.thumbnail_url }
-          break
-        case 'video':
-          icon = images.files.media
-          break
-        default:
-          icon = images.document
-          break
+      if (item.mime_class === 'image' && item.thumbnail_url) {
+        icon = { uri: item.thumbnail_url }
+      } else if (item.mime_class === 'video') {
+        icon = images.files.media
+      } else {
+        icon = images.document
       }
       subtitle = bytes(item.size)
     } else {
@@ -399,11 +400,6 @@ export class FilesList extends Component<Props, State> {
           testID={`file-list.file-list-row.cell-${item.key}`}
           selected={selected} />
       </View>
-      {(item.hidden || item.lock_at || item.unlock_at) ? (
-        <View style={styles.restrictedIndicatorLine} />
-      ) : (
-        <AccessLine visible={!item.locked} disableAppSpecificChecks={this.props.context === 'users'} />
-      )}
     </View>)
   }
 
@@ -500,14 +496,6 @@ export function mapStateToProps (state: Object, props: FileListNavProps) {
 const styles = StyleSheet.create({
   icon: {
     alignSelf: 'flex-start',
-  },
-  restrictedIndicatorLine: {
-    backgroundColor: '#FF0000',
-    position: 'absolute',
-    top: 4,
-    bottom: 4,
-    left: 0,
-    width: 3,
   },
   attachmentPicker: {
     position: 'absolute',

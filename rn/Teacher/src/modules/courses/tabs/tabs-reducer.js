@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ export const tabs: Reducer<TabsState, any> = handleActions({
     resolved: (state, { result }) => {
       return {
         ...state,
-        tabs: result.data,
+        tabs: result.data.map(normalizeTab),
         pending: state.pending - 1,
         error: undefined,
       }
@@ -46,3 +46,16 @@ export const tabs: Reducer<TabsState, any> = handleActions({
     },
   }),
 }, defaultState)
+
+export const normalizeTab = (tab: Tab) => ({
+  ...tab,
+  html_url: normalizeUrl(tab.html_url),
+})
+
+export const normalizeUrl = (url: string) =>
+  url.replace(/\/\d+~\d+/, id => {
+    const [ shardID, contextID ] = id.slice(1).split('~')
+    // shardID * 10**13 + contextID
+    // 10**13 > Number.MAX_SAFE_INTEGER 😞
+    return `/${shardID}${contextID.padStart(13, '0')}`
+  })

@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -91,7 +91,7 @@ export function mapStateToProps ({ entities }: AppState, { courseID, navigator }
 
   let selectedRowID = entities.courseDetailsTabSelectedRow.rowID || ''
   let currentGradingPeriodID
-  for (const enroll of course.course.enrollments) {
+  for (const enroll of course.course.enrollments || []) {
     if (enroll.type === 'student' && enroll.current_grading_period_id) {
       currentGradingPeriodID = enroll.current_grading_period_id
       break

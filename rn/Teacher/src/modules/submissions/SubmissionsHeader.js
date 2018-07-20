@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,10 +35,6 @@ export type SubmissionsHeaderProps = {
   navigator: Navigator,
 }
 
-const anonymousSubtitle = i18n('Anonymous grading')
-const mutedSubtitle = i18n('Grades muted')
-const bothSubtitle = i18n('Grades muted, Anonymous grading')
-
 export default class SubmissionsHeader extends Component<SubmissionsHeaderProps, any> {
   navigateToFilter = () => {
     this.props.navigator.show('/filter', {
@@ -51,19 +47,16 @@ export default class SubmissionsHeader extends Component<SubmissionsHeaderProps,
 
     let subTitle = ''
     if (this.props.muted && this.props.anonymous) {
-      subTitle = bothSubtitle
+      subTitle = i18n('Grades muted, Anonymous grading')
     } else if (this.props.muted) {
-      subTitle = mutedSubtitle
+      subTitle = i18n('Grades muted')
     } else if (this.props.anonymous) {
-      subTitle = anonymousSubtitle
+      subTitle = i18n('Anonymous grading')
     }
 
     return (<View style={styles.headerWrapper}>
       <View style={styles.header}>
-        <Heading1
-          numberOfLines={1}
-          style={styles.headerTitle}
-        >
+        <Heading1 numberOfLines={1}>
           { title }
         </Heading1>
         {!!subTitle && <Text style={styles.subtitle}>{subTitle}</Text>}
@@ -108,11 +101,6 @@ const styles = StyleSheet.create({
   header: {
     flex: 1,
     flexDirection: 'column',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#2d3b44',
   },
   subtitle: {
     color: colors.grey4,

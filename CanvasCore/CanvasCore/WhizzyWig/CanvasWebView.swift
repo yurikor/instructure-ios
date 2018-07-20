@@ -1,9 +1,17 @@
 //
-//  CanvasWebView.swift
-//  CanvasCore
+// Copyright (C) 2017-present Instructure, Inc.
 //
-//  Created by Derrick Hathaway on 11/3/17.
-//  Copyright © 2017 Instructure, Inc. All rights reserved.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, version 3 of the License.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
 import WebKit
@@ -68,6 +76,8 @@ public class CanvasWebView: WKWebView {
     public weak var presentingViewController: UIViewController?
 
     fileprivate var externalToolLaunchDisposable: Disposable?
+
+    public var margin: Double = 0
     
     @objc
     public func setNavigationHandler(routeToURL: @escaping (URL) -> Void) {
@@ -190,6 +200,18 @@ public class CanvasWebView: WKWebView {
             self.onError?(error)
         }
     }
+
+    /*
+     Sets the document body margin to self.margin
+
+     Most of the time a 0 margin (default) is preferred to make aligning
+     with sibling views easier but occasionally a margin is necessary so this
+     allows us to set the margin after the document loads.
+     */
+    fileprivate func updateMargin() {
+        let js = "document.body.style.margin = '\(margin)px'"
+        evaluateJavaScript(js, completionHandler: nil)
+    }
 }
 
 extension CanvasWebView: WKNavigationDelegate {
@@ -244,6 +266,7 @@ extension CanvasWebView: WKNavigationDelegate {
     }
 
     public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        updateMargin()
         finishedLoading?()
     }
 

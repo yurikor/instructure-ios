@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -174,12 +174,32 @@ describe('AnnouncementsList', () => {
   it('displays delayed post at date for delayed announcements', () => {
     const announcement = template.discussion({
       delayed_post_at: '3019-10-28T14:16:00-07:00',
-      posted_at: '2017-10-27T14:16:00-07:00',
+      last_reply_at: '2017-10-27T14:16:00-07:00',
     })
     props.announcements = [announcement]
     const subtitle: any = explore(render(props).toJSON()).selectByID(`announcements.list.announcement.row-0.subtitle.custom-container`)
     expect(subtitle.children[0].children).toEqual(['Delayed until: '])
     expect(subtitle.children[1].children).toEqual(['Oct 28 at 3:16 PM'])
+  })
+
+  it('displays last reply at date for regular announcements', () => {
+    const announcement = template.discussion({
+      delayed_post_at: null,
+      last_reply_at: '2017-10-27T14:16:00-07:00',
+    })
+    props.announcements = [announcement]
+    const subtitle: any = explore(render(props).toJSON()).selectByID(`announcements.list.announcement.row-0.subtitle.custom-container`)
+    expect(subtitle.children[0].children).toEqual(['Last post Oct 27 at 3:16 PM'])
+  })
+
+  it('displays empty post date for announcements with no dates', () => {
+    const announcement = template.discussion({
+      delayed_post_at: null,
+      last_reply_at: null,
+    })
+    props.announcements = [announcement]
+    const subtitle: any = explore(render(props).toJSON()).selectByID(`announcements.list.announcement.row-0.subtitle.custom-container`)
+    expect(subtitle.children[0].children).toEqual([''])
   })
 
   function testRender (props: any) {

@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ import {
   View,
   LayoutAnimation,
   processColor,
+  NativeModules,
 } from 'react-native'
 
 type OwnProps = {
@@ -114,8 +115,14 @@ export class EditReply extends React.Component<Props, any> {
       return
     }
     if (this.state.pending && !props.pending) {
+      const isNew = !this.props.isEdit
       this.props.refreshDiscussionEntries(this.props.context, this.props.contextID, this.props.discussionID, true)
       this.props.navigator.dismissAllModals()
+        .then(() => {
+          if (isNew) {
+            NativeModules.AppStoreReview.handleSuccessfulSubmit()
+          }
+        })
       return
     }
   }

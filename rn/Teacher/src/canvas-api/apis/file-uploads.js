@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ async function requestUploadTarget (attachment: Attachment, options: UploadOptio
   if (options.parentFolderID) params.parent_folder_id = options.parentFolderID
   if (options.parentFolderPath) params.parent_folder_path = options.parentFolderPath
 
-  const response = await httpClient().post(options.path, params)
+  const response = await httpClient.post(options.path, params)
   if (response.data.attachments && response.attachments.length) {
     return response.data.attachments[0]
   }
@@ -72,9 +72,10 @@ async function postFile (uri: string, target: UploadTarget, options: UploadOptio
   formdata.append('file', {
     uri,
     type: 'multipart/form-data',
+    name: upload_params['filename'] || '',
   })
 
-  const uploading = httpClient().post(upload_url, formdata, {
+  const uploading = httpClient.post(upload_url, formdata, {
     headers: { // remove default auth & accept
       'Authorization': null,
       'Accept': 'application/json',

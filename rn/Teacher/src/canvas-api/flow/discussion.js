@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -84,6 +84,7 @@ export type Discussion = {
   locked?: boolean,
   sections?: Section[],
   is_section_specific: boolean,
+  group_topic_children?: DiscussionGroupTopicChildren[],
 }
 
 // api params

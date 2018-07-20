@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 /* eslint-disable flowtype/require-valid-file-annotation */
 
 import React from 'react'
-import { ActionSheetIOS } from 'react-native'
+import { ActionSheetIOS, NativeModules } from 'react-native'
 import { AssignmentList } from '../AssignmentList'
 import { shallow } from 'enzyme'
 import AssignmentListRow from '../components/AssignmentListRow'
@@ -60,7 +60,7 @@ beforeEach(() => {
     pending: 0,
     ListRow: AssignmentListRow,
   }
-  jest.resetAllMocks()
+  jest.clearAllMocks()
 })
 
 test('renders correctly', () => {
@@ -285,6 +285,22 @@ test('selects first item on regular horizontal trait collection', () => {
   expect(instance.didSelectFirstItem).toBe(true)
 })
 
+test('does not select first item on regular horizontal trait collection when is modal', () => {
+  defaultProps.navigator.isModal = true
+  let tree = shallow(
+    <AssignmentList {...defaultProps} />
+  )
+
+  let instance = tree.instance()
+  instance.didSelectFirstItem = false
+  instance.isRegularScreenDisplayMode = true
+  instance.selectedAssignment = jest.fn()
+  instance.selectFirstListItemIfNecessary()
+
+  expect(instance.selectedAssignment).toHaveBeenCalledTimes(0)
+  expect(instance.didSelectFirstItem).toBe(false)
+})
+
 test('does not select first item on empty data', () => {
   let tree = shallow(
     <AssignmentList {...defaultProps} />
@@ -370,4 +386,25 @@ test('calls refreshAssignmentList when a filter is updated', () => {
   const tree = shallow(<AssignmentList {...defaultProps} />)
   tree.instance().updateFilter(0)
   expect(defaultProps.refreshAssignmentList).toHaveBeenCalledWith(defaultProps.courseID, gradingPeriod.id)
+})
+
+test('tries to request app store review when closing', () => {
+  const tree = shallow(
+    <AssignmentList
+      {...defaultProps}
+      currentScore={89}
+      showTotalScore={false}
+    />
+  )
+  tree.unmount()
+  expect(NativeModules.AppStoreReview.handleSuccessfulSubmit)
+    .not.toHaveBeenCalled()
+  tree.setProps({ currentScore: 95 })
+  tree.unmount()
+  expect(NativeModules.AppStoreReview.handleSuccessfulSubmit)
+    .not.toHaveBeenCalled()
+  tree.setProps({ showTotalScore: true })
+  tree.unmount()
+  expect(NativeModules.AppStoreReview.handleSuccessfulSubmit)
+    .toHaveBeenCalled()
 })

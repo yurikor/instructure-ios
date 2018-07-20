@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,20 +25,22 @@ import {
 import Row from '../../../common/components/rows/Row'
 import { Text } from '../../../common/text'
 import AccessIcon from '../../../common/components/AccessIcon'
-import AccessLine from '../../../common/components/AccessLine'
 import colors from '../../../common/colors'
 import images from '../../../images/'
 import {
   fetchPropsFor,
+  type FetchProps,
   ToDoModel,
 } from '../../../canvas-api/model-api'
 
-type Props = {
-  courseName: ?string,
-  courseColor: string,
+type HocProps = {
   item: ToDoModel,
   onPress: (ToDoModel) => void,
 }
+type Props = HocProps & {
+  courseName: ?string,
+  courseColor: string,
+} & FetchProps
 
 export class ToDoListItem extends Component<Props> {
   handlePress = () => {
@@ -104,34 +106,31 @@ export class ToDoListItem extends Component<Props> {
     }`, { count }).toUpperCase()
 
     return (
-      <View>
-        <Row
-          title={title}
-          renderImage={renderIcon}
-          testID={`to-do.list.${ToDoModel.keyExtractor(this.props.item)}.row`}
-          onPress={this.handlePress}
-          disclosureIndicator
-          accessible
-        >
-          <View style={{ flex: 1, flexDirection: 'column' }}>
-            <Text
-              style={[styles.courseName, { color: this.props.courseColor || 'black' }]}
-            >
-              {this.props.courseName}
-            </Text>
-            <Text style={styles.dueDate}>{dueLabel}</Text>
-            <Text
-              style={[ styles.needsGrading, {
-                color: colors.primaryBrandColor,
-                borderColor: colors.primaryBrandColor,
-              } ]}
-            >
-              {text}
-            </Text>
-          </View>
-        </Row>
-        <AccessLine visible={entry.published} />
-      </View>
+      <Row
+        title={title}
+        renderImage={renderIcon}
+        testID={`to-do.list.${ToDoModel.keyExtractor(this.props.item)}.row`}
+        onPress={this.handlePress}
+        disclosureIndicator
+        accessible
+      >
+        <View style={{ flex: 1, flexDirection: 'column' }}>
+          <Text
+            style={[styles.courseName, { color: this.props.courseColor || 'black' }]}
+          >
+            {this.props.courseName}
+          </Text>
+          <Text style={styles.dueDate}>{dueLabel}</Text>
+          <Text
+            style={[ styles.needsGrading, {
+              color: colors.primaryBrandColor,
+              borderColor: colors.primaryBrandColor,
+            } ]}
+          >
+            {text}
+          </Text>
+        </View>
+      </Row>
     )
   }
 }
@@ -174,7 +173,7 @@ const styles = StyleSheet.create({
   },
 })
 
-export default fetchPropsFor(ToDoListItem, ({ item }, api) => {
+export default fetchPropsFor(ToDoListItem, ({ item }: HocProps, api) => {
   const course = api.getCourse(item.courseID || '')
   return {
     courseName: course && course.name || '',

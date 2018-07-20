@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,17 +22,13 @@ import renderer from 'react-test-renderer'
 import explore from '../../../../test/helpers/explore'
 import { registerScreens } from '../../../routing/register-screens'
 import DrawerState from '../utils/drawer-state'
+import * as templates from '../../../__templates__'
 
 registerScreens({})
 jest.mock('../components/GradePicker')
 jest.mock('TouchableOpacity', () => 'TouchableOpacity')
 jest.mock('TouchableHighlight', () => 'TouchableHighlight')
-
-const templates = {
-  ...require('../../../__templates__/rubric'),
-  ...require('../../../redux/__templates__/app-state'),
-  ...require('../../../__templates__/helm'),
-}
+jest.unmock('FlatList')
 
 let ownProps = {
   assignmentID: '1',

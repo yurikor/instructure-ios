@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -79,6 +79,10 @@ static const NSString *CBIKeychainClients = @"CBIKeychainClients";
     NSString *bundleID = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleIdentifierKey];
     if ([bundleID isEqualToString:@"com.instructure.ios.teacher"]) {
         return [FXKeychain defaultKeychain];
+    }
+    
+    if ([bundleID isEqualToString:@"com.instructure.parentapp"]) {
+        return [[FXKeychain alloc] initWithService:@"com.instructure.parentapp2" accessGroup:nil];
     }
     
     return [[FXKeychain alloc] initWithService:CBIKeychainServiceID accessGroup:CBIKeychainAccessGroup accessibility:FXKeychainAccessibleAfterFirstUnlock];

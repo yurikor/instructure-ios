@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -244,17 +244,14 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
     return [NSString stringWithFormat:@"%@/%@   %@/iOS %@", self.delegate.appNameForMobileVerify, appVersion, hardwarePlatform, [[UIDevice currentDevice] systemVersion]];
 }
 
-- (NSString *)logFilePath {
-    return self.delegate.logFilePath;
-}
-
 - (RACSignal *)clientForSuggestedDomain:(NSString *)host
 {
     self.domainPicker = [CKMDomainPickerViewController new];
     self.domainPickerNavigationController = [[UINavigationController alloc] initWithRootViewController:self.domainPicker];
     [self.domainPickerNavigationController setNavigationBarHidden:YES animated:NO];
-    
-    RACSignal *signalForClientForUsersDomain =  [[self.domainPicker selectedADomainSignal] flattenMap:^__kindof RACStream * _Nullable(CKIAccountDomain *domain) {
+
+    RACSignal *selectedADomainSignal = host ? [RACSignal return:[[CKIAccountDomain alloc] initWithDomain:host]] : [self.domainPicker selectedADomainSignal];
+    RACSignal *signalForClientForUsersDomain =  [selectedADomainSignal flattenMap:^__kindof RACStream * _Nullable(CKIAccountDomain *domain) {
         return [[self clientForMobileVerifiedDomain:domain] deliverOn:[RACScheduler mainThreadScheduler]];
     }];
     
@@ -270,7 +267,7 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
     [self loginWithSuggestedDomain:nil];
 }
 
-- (void)loginWithSuggestedDomain:(NSString *)host
+- (void)loginWithSuggestedDomain:(nullable NSString *)host
 {
     RACSignal *signalForClientForUsersDomain = [self clientForSuggestedDomain:host];
     
@@ -336,6 +333,7 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
 
 - (void)logout
 {
+    self.willLogout();
     [self logoutWithCompletionBlock:^{
         [self completeLogout];
     }];
@@ -368,6 +366,7 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
 
 - (void)switchUser
 {
+    self.willLogout();
     [self completeLogout];
 }
 
@@ -377,6 +376,7 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
 
 - (RACSignal *)masqueradeAsUserWithID:(NSString *)id domain:(NSString *)domain
 {
+    NSString * originalIDOfMasqueradingUser = self.currentClient.currentUser.id;
     if ([domain rangeOfString:@"."].location == NSNotFound) {
         // lets tack on a `.instructure.com`
         domain = [domain stringByAppendingString:@".instructure.com"];
@@ -407,6 +407,7 @@ static NSString *const DELETE_EXTRA_CLIENTS_USER_PREFS_KEY = @"delete_extra_clie
     [fetchUserID subscribeNext:^(CKIUser *masqueradingUser) {
         [newClient setValue:masqueradingUser forKeyPath:@"currentUser"];
         self.currentClient = newClient;
+        self.currentClient.originalIDOfMasqueradingUser = originalIDOfMasqueradingUser;
         [_subjectForClientLogin sendNext:newClient];
     }];
     

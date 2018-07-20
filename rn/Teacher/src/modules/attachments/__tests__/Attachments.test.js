@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,31 +23,7 @@ import {
   FlatList,
 } from 'react-native'
 import Attachments from '../Attachments'
-
-jest.mock('FlatList', () => {
-  return ({
-    ListEmptyComponent,
-    data,
-    renderItem,
-  }) => (
-    <view>
-      {data.length > 0
-        ? data.map((item, index) => (
-          <view key={index}>
-            {renderItem({ item, index })}
-          </view>
-        ))
-        : <ListEmptyComponent />
-      }
-    </view>
-  )
-})
-
-const template = {
-  ...require('../../../__templates__/attachment'),
-  ...require('../../../__templates__/file'),
-  ...require('../../../__templates__/helm'),
-}
+import * as template from '../../../__templates__'
 
 describe('Attachments', () => {
   let props

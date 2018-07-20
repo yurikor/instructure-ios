@@ -38,7 +38,7 @@ exports[`Attachments renders attachments 1`] = `
       }
     }
   >
-    <Component
+    <FlatList
       ItemSeparatorComponent={[Function]}
       ListEmptyComponent={[Function]}
       data={
@@ -123,6 +123,7 @@ exports[`Attachments renders attachments 1`] = `
           "dismissAllModals": [Function],
           "isModal": false,
           "pop": [Function],
+          "replace": [Function],
           "show": [Function],
           "traitCollection": [Function],
         }
@@ -180,7 +181,7 @@ exports[`Attachments renders empty state 1`] = `
       }
     }
   >
-    <Component
+    <FlatList
       ItemSeparatorComponent={[Function]}
       ListEmptyComponent={[Function]}
       data={Array []}
@@ -200,6 +201,7 @@ exports[`Attachments renders empty state 1`] = `
           "dismissAllModals": [Function],
           "isModal": false,
           "pop": [Function],
+          "replace": [Function],
           "show": [Function],
           "traitCollection": [Function],
         }

@@ -28,47 +28,61 @@ extension Course {
         return NSPredicate(format: "%K == %@", "id", courseID)
     }
     
-    public static func getCoursesFromAirwolf(_ session: Session, studentID: String) throws -> SignalProducer<[JSONObject], NSError> {
+    public static func getCourses(_ session: Session, studentID: String) throws -> SignalProducer<[JSONObject], NSError> {
         
         var coursesParams = getCoursesParameters
         coursesParams["enrollment_state"] = "active"
         
-        let request = try session.GET("/canvas/\(session.user.id)/\(studentID)/courses", parameters: coursesParams)
+        let request = try session.GET("/api/v1/courses", parameters: coursesParams)
         return session.paginatedJSONSignalProducer(request)
             
             // filter out restricted courses because their json is too sparse and will cause parsing issues
             .map { coursesJSON in
                 return coursesJSON.filter { json in
+                    // filter out restricted courses because their json is too sparse and will cause parsing issues
                     let restricted: Bool = (try? json <| "access_restricted_by_date") ?? false
-                    return !restricted
+                    if restricted {
+                        return false
+                    }
+
+                    // only include courses for this studentID
+                    let enrollments: [JSONObject] = (try? json <| "enrollments") ?? []
+                    let observing = enrollments.any { enrollment in
+                        let associated_user_id = try? enrollment.stringID("associated_user_id")
+                        return associated_user_id == studentID
+                    }
+                    return observing
                 }
         }
     }
     
-    public static func getCourseFromAirwolf(_ session: Session, studentID: String, courseID: String) throws -> SignalProducer<JSONObject, NSError> {
-        let request = try session.GET("/canvas/\(session.user.id)/\(studentID)/courses/\(courseID)", parameters: Course.getCourseParameters)
+    public static func getCourse(_ session: Session, studentID: String, courseID: String) throws -> SignalProducer<JSONObject, NSError> {
+        let request = try session.GET("/api/v1/courses/\(courseID)", parameters: Course.getCourseParameters)
         return session.JSONSignalProducer(request)
     }
     
     public static func airwolfCollectionRefresher(_ session: Session, studentID: String) throws -> Refresher {
-        let remote = try Course.getCoursesFromAirwolf(session, studentID: studentID)
+        let remote = try Course.getCourses(session, studentID: studentID)
         let context = try session.enrollmentManagedObjectContext(studentID)
         
-        let sync = Course.syncSignalProducer(inContext: context, fetchRemote: remote)
-
+        let courses = Course.syncSignalProducer(inContext: context, fetchRemote: remote).map { _ in () }
+        let students = try Student.observedStudentsSyncProducer(session).map { _ in () }
+        
+        let producer = SignalProducer.concat([courses, students])
+        
         let key = cacheKey(context, [studentID])
-        return SignalProducerRefresher(refreshSignalProducer: sync, scope: session.refreshScope, cacheKey: key)
+        return SignalProducerRefresher(refreshSignalProducer: producer, scope: session.refreshScope, cacheKey: key, ttl: ParentAppRefresherTTL)
     }
     
     public static func airwolfRefresher(_ session: Session, studentID: String, courseID: String) throws -> Refresher {
-        let remote = try Course.getCourseFromAirwolf(session, studentID: studentID, courseID: courseID).map { [$0] }
+        let remote = try Course.getCourse(session, studentID: studentID, courseID: courseID).map { [$0] }
         let context = try session.enrollmentManagedObjectContext(studentID)
         let predicate = Course.predicate(courseID)
         
         let sync = Course.syncSignalProducer(predicate, inContext: context, fetchRemote: remote)
         
         let key = cacheKey(context, [studentID])
-        return SignalProducerRefresher(refreshSignalProducer: sync, scope: session.refreshScope, cacheKey: key)
+        return SignalProducerRefresher(refreshSignalProducer: sync, scope: session.refreshScope, cacheKey: key, ttl: ParentAppRefresherTTL)
     }
 }
 

@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2018-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,6 +37,8 @@ import currentWindowTraits from '../../utils/windowTraits'
 import { isTeacher, isStudent } from '../app'
 import * as LTITools from '../../common/LTITools'
 import TabsList from '../tabs/TabsList'
+import { featureFlagEnabled } from '@common/feature-flags'
+import { logEvent } from '@common/CanvasAnalytics'
 
 type RoutingParams = {
   +courseID: string,
@@ -89,6 +91,7 @@ export class CourseNavigation extends Component<CourseNavigationProps, any> {
   }
 
   selectTab = (tab: Tab) => {
+    logEvent('course_tab_selected', { tabId: tab.id })
     if (tab.id === this.props.attendanceTabID && tab.url && this.props.course) {
       this.props.navigator.show('/attendance', {}, {
         launchURL: tab.url,
@@ -100,7 +103,10 @@ export class CourseNavigation extends Component<CourseNavigationProps, any> {
       if (tab.type === 'external' && tab.url) {
         LTITools.launchExternalTool(tab.url)
       } else {
-        if (isTeacher()) {
+        if (tab.id === 'pages') {
+          const url = `/courses/${this.props.courseID}/pages`
+          this.props.navigator.show(url)
+        } else if (isTeacher()) {
           this.props.navigator.show(tab.html_url)
         } else if (tab.id === 'home' && this.props.course && this.props.course.default_view === 'wiki') {
           const url = `/courses/${this.props.courseID}/pages/front_page`
@@ -112,6 +118,8 @@ export class CourseNavigation extends Component<CourseNavigationProps, any> {
           }
           const url = `native-route/courses/${this.props.courseID}/${view}`
           this.props.navigator.show(url, undefined, { color: processColor(this.props.color) })
+        } else if (tab.id === 'conferences' && featureFlagEnabled('conferences')) {
+          this.props.navigator.show(tab.html_url, undefined, { color: this.props.color, course: this.props.course })
         } else {
           const url = `/native-route-master${tab.html_url}`
           this.props.navigator.show(url)
@@ -229,7 +237,7 @@ export function mapStateToProps (state: AppState, { courseID }: RoutingParams): 
     .filter((tab) => {
       if (tab.id === attendanceTabID && tab.hidden) return false
       if (isStudent()) return !tab.hidden
-      return (availableCourseTabs.includes(tab.id) || tab.id.includes('external_tool')) && !tab.hidden
+      return availableCourseTabs.includes(tab.id) || tab.id.includes('external_tool')
     })
     .sort((t1, t2) => (t1.position - t2.position))
   const error = state.favoriteCourses.error || courseState.tabs.error

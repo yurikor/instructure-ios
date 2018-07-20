@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,12 @@ import { Alert, NetInfo } from 'react-native'
 import type { MiddlewareAPI } from 'redux'
 import i18n from 'format-message'
 import loginVerify from '../../common/login-verify'
+
+// https://github.com/facebook/react-native/issues/8615
+const onInitialNetConnection = isConnected => {
+  NetInfo.isConnected.removeEventListener('connectionChange', onInitialNetConnection)
+}
+NetInfo.isConnected.addEventListener('connectionChange', onInitialNetConnection)
 
 export function alertError (error: any, alertTitle?: string, callback?: Function): void {
   const title = alertTitle || defaultErrorTitle()
@@ -46,18 +52,14 @@ const showGlobalErrorAlertIfNecessary = async (error: any) => {
 
   let alertTitle
 
-  // https://github.com/facebook/react-native/issues/8615
-  NetInfo.isConnected.fetch().then(() => {
-    NetInfo.isConnected.fetch().then(isConnected => {
-      if (!isConnected) {
-        error = Error(i18n('It looks like your internet connection is offline. Reconnect to the internet and try again.'))
-        alertTitle = i18n('Internet Connection Offline')
-      }
+  const isConnected = await NetInfo.isConnected.fetch()
+  if (!isConnected) {
+    error = Error(i18n('It looks like your internet connection is offline. Reconnect to the internet and try again.'))
+    alertTitle = i18n('Internet Connection Offline')
+  }
 
-      alertError(error, alertTitle, () => {
-        resetGlobalErrorAlert()
-      })
-    })
+  alertError(error, alertTitle, () => {
+    resetGlobalErrorAlert()
   })
 }
 

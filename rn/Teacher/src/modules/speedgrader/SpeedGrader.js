@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,6 +53,8 @@ import i18n from 'format-message'
 import Images from '../../images'
 import shuffle from 'knuth-shuffle-seeded'
 import { Title } from '../../common/text'
+import CommentInput from './comments/CommentInput'
+import { isAssignmentAnonymous } from '../../common/anonymous-grading'
 
 const { NativeAccessibility } = NativeModules
 
@@ -228,6 +230,9 @@ export class SpeedGrader extends Component<SpeedGraderProps, State> {
 
   scrollEnded = (event: Object) => {
     const index = event.nativeEvent.contentOffset.x / this.state.size.width
+    if (index !== this.state.currentPageIndex) {
+      CommentInput.persistentComment.text = ''
+    }
     this.setState({ currentPageIndex: index })
     const submission = (this.state.submissions || [])[index]
     if (submission) {
@@ -364,11 +369,7 @@ export function mapStateToProps (state: AppState, ownProps: RoutingProps): Speed
   const assignmentData = assignmentContent && assignmentContent.data
   const quiz = assignmentData && assignmentData.quiz_id && entities.quizzes[assignmentData.quiz_id] && entities.quizzes[assignmentData.quiz_id].data
   const courseContent = state.entities.courses[courseID]
-  let anonymous = (
-    assignmentContent && assignmentContent.anonymousGradingOn ||
-    quiz && quiz.anonymous_submissions ||
-    courseContent && courseContent.enabledFeatures.includes('anonymous_grading')
-  )
+  let anonymous = isAssignmentAnonymous(state, courseID, assignmentID)
 
   let groupAssignment = null
   if (assignmentContent && assignmentContent.data) {

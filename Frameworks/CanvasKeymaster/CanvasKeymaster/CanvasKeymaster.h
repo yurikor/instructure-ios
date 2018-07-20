@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,7 +38,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) UIView *backgroundViewForDomainPicker;
 @property (nonatomic, readonly) UIImage *logoForDomainPicker;
 @property (nonatomic, readonly) UIImage *fullLogoForDomainPicker;
-@property (nonatomic, readonly, nullable) NSString *logFilePath;
+@property (nonatomic, readonly) BOOL supportsCanvasNetworkLogin;
+// A optional url that links to a web page to explain that there is new stuff in the app
+@property (nonatomic, readonly, nullable) NSString *whatsNewURL;
 @end
 
 @protocol CKMAnalyticsProvider
@@ -61,7 +63,10 @@ NS_ASSUME_NONNULL_BEGIN
  Fires on logout sending the login view controller
  */
 @property (nonatomic, readonly) RACSignal<UIViewController *> *signalForLogout;
-
+/**
+ Fires before logout
+ */
+@property (nonatomic, copy, nullable) void (^willLogout)(void);
 /**
     Signal for "can't login because we have more than one logged in user"
  */
@@ -115,7 +120,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (CKIClient *)clientWithMobileVerifiedDetails:(NSDictionary *)details accountDomain:(nullable CKIAccountDomain *)domain;
 
 - (void)loginWithMobileVerifyDetails:(NSDictionary *)details;
-
+- (void)loginWithSuggestedDomain:(nullable NSString *)host;
 @end
 
 @interface CKIClient (CanvasKeymaster)

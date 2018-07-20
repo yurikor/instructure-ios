@@ -56,47 +56,30 @@ public final class Soseedy_SeedyPagesServiceClient: ServiceClientBase, Soseedy_S
 }
 
 /// To build a server, implement a class that conforms to this protocol.
-public protocol Soseedy_SeedyPagesProvider {
+/// If one of the methods returning `ServerStatus?` returns nil,
+/// it is expected that you have already returned a status to the client by means of `session.close`.
+public protocol Soseedy_SeedyPagesProvider: ServiceProvider {
   func createCoursePage(request: Soseedy_CreateCoursePageRequest, session: Soseedy_SeedyPagesCreateCoursePageSession) throws -> Soseedy_Page
+}
+
+extension Soseedy_SeedyPagesProvider {
+  public var serviceName: String { return "soseedy.SeedyPages" }
+
+  /// Determines and calls the appropriate request handler, depending on the request's method.
+  /// Throws `HandleMethodError.unknownMethod` for methods not handled by this service.
+  public func handleMethod(_ method: String, handler: Handler) throws -> ServerStatus? {
+    switch method {
+    case "/soseedy.SeedyPages/CreateCoursePage":
+      return try Soseedy_SeedyPagesCreateCoursePageSessionBase(
+        handler: handler,
+        providerBlock: { try self.createCoursePage(request: $0, session: $1 as! Soseedy_SeedyPagesCreateCoursePageSessionBase) })
+          .run()
+    default:
+      throw HandleMethodError.unknownMethod
+    }
+  }
 }
 
 public protocol Soseedy_SeedyPagesCreateCoursePageSession: ServerSessionUnary {}
 
 fileprivate final class Soseedy_SeedyPagesCreateCoursePageSessionBase: ServerSessionUnaryBase<Soseedy_CreateCoursePageRequest, Soseedy_Page>, Soseedy_SeedyPagesCreateCoursePageSession {}
-
-
-/// Main server for generated service
-public final class Soseedy_SeedyPagesServer: ServiceServer {
-  private let provider: Soseedy_SeedyPagesProvider
-
-  public init(address: String, provider: Soseedy_SeedyPagesProvider) {
-    self.provider = provider
-    super.init(address: address)
-  }
-
-  public init?(address: String, certificateURL: URL, keyURL: URL, provider: Soseedy_SeedyPagesProvider) {
-    self.provider = provider
-    super.init(address: address, certificateURL: certificateURL, keyURL: keyURL)
-  }
-
-  public init?(address: String, certificateString: String, keyString: String, provider: Soseedy_SeedyPagesProvider) {
-    self.provider = provider
-    super.init(address: address, certificateString: certificateString, keyString: keyString)
-  }
-
-  /// Start the server.
-  public override func handleMethod(_ method: String, handler: Handler, queue: DispatchQueue) throws -> Bool {
-    let provider = self.provider
-    switch method {
-    case "/soseedy.SeedyPages/CreateCoursePage":
-      try Soseedy_SeedyPagesCreateCoursePageSessionBase(
-        handler: handler,
-        providerBlock: { try provider.createCoursePage(request: $0, session: $1 as! Soseedy_SeedyPagesCreateCoursePageSessionBase) })
-          .run(queue: queue)
-      return true
-    default:
-      return false
-    }
-  }
-}
-

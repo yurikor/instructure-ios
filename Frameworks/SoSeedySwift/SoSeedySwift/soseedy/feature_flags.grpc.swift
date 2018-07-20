@@ -56,47 +56,30 @@ public final class Soseedy_SeedyFeatureFlagsServiceClient: ServiceClientBase, So
 }
 
 /// To build a server, implement a class that conforms to this protocol.
-public protocol Soseedy_SeedyFeatureFlagsProvider {
+/// If one of the methods returning `ServerStatus?` returns nil,
+/// it is expected that you have already returned a status to the client by means of `session.close`.
+public protocol Soseedy_SeedyFeatureFlagsProvider: ServiceProvider {
   func setAccountFeatureFlag(request: Soseedy_SetAccountFeatureFlagRequest, session: Soseedy_SeedyFeatureFlagsSetAccountFeatureFlagSession) throws -> Soseedy_FeatureFlag
+}
+
+extension Soseedy_SeedyFeatureFlagsProvider {
+  public var serviceName: String { return "soseedy.SeedyFeatureFlags" }
+
+  /// Determines and calls the appropriate request handler, depending on the request's method.
+  /// Throws `HandleMethodError.unknownMethod` for methods not handled by this service.
+  public func handleMethod(_ method: String, handler: Handler) throws -> ServerStatus? {
+    switch method {
+    case "/soseedy.SeedyFeatureFlags/SetAccountFeatureFlag":
+      return try Soseedy_SeedyFeatureFlagsSetAccountFeatureFlagSessionBase(
+        handler: handler,
+        providerBlock: { try self.setAccountFeatureFlag(request: $0, session: $1 as! Soseedy_SeedyFeatureFlagsSetAccountFeatureFlagSessionBase) })
+          .run()
+    default:
+      throw HandleMethodError.unknownMethod
+    }
+  }
 }
 
 public protocol Soseedy_SeedyFeatureFlagsSetAccountFeatureFlagSession: ServerSessionUnary {}
 
 fileprivate final class Soseedy_SeedyFeatureFlagsSetAccountFeatureFlagSessionBase: ServerSessionUnaryBase<Soseedy_SetAccountFeatureFlagRequest, Soseedy_FeatureFlag>, Soseedy_SeedyFeatureFlagsSetAccountFeatureFlagSession {}
-
-
-/// Main server for generated service
-public final class Soseedy_SeedyFeatureFlagsServer: ServiceServer {
-  private let provider: Soseedy_SeedyFeatureFlagsProvider
-
-  public init(address: String, provider: Soseedy_SeedyFeatureFlagsProvider) {
-    self.provider = provider
-    super.init(address: address)
-  }
-
-  public init?(address: String, certificateURL: URL, keyURL: URL, provider: Soseedy_SeedyFeatureFlagsProvider) {
-    self.provider = provider
-    super.init(address: address, certificateURL: certificateURL, keyURL: keyURL)
-  }
-
-  public init?(address: String, certificateString: String, keyString: String, provider: Soseedy_SeedyFeatureFlagsProvider) {
-    self.provider = provider
-    super.init(address: address, certificateString: certificateString, keyString: keyString)
-  }
-
-  /// Start the server.
-  public override func handleMethod(_ method: String, handler: Handler, queue: DispatchQueue) throws -> Bool {
-    let provider = self.provider
-    switch method {
-    case "/soseedy.SeedyFeatureFlags/SetAccountFeatureFlag":
-      try Soseedy_SeedyFeatureFlagsSetAccountFeatureFlagSessionBase(
-        handler: handler,
-        providerBlock: { try provider.setAccountFeatureFlag(request: $0, session: $1 as! Soseedy_SeedyFeatureFlagsSetAccountFeatureFlagSessionBase) })
-          .run(queue: queue)
-      return true
-    default:
-      return false
-    }
-  }
-}
-

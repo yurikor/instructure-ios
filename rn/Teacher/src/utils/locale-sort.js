@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,6 @@
 // @flow
 import { NativeModules } from 'react-native'
 import { sanitizeLocale } from '../../i18n/setup'
-
-declare var Intl: any
 
 export default function localeSort (first: any, second: any, locale?: string): number {
   locale = sanitizeLocale(locale || NativeModules.SettingsManager.settings.AppleLocale)

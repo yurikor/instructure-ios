@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,16 +20,22 @@ import httpClient from '../httpClient'
 import cloneDeep from 'lodash/cloneDeep'
 import { paginate, exhaust } from '../utils/pagination'
 
+export function getAssignments (courseID: string, include: string[] = []): ApiPromise<Assignment[]> {
+  const url = `courses/${courseID}/assignments`
+  const options = { params: { include } }
+  return exhaust(paginate(url, options))
+}
+
 export function getAssignment (courseID: string, assignmentID: string): ApiPromise<Assignment> {
   const url = `courses/${courseID}/assignments/${assignmentID}`
   const options = {
     params: {
-      include: ['overrides'],
+      include: ['overrides', 'observed_users'],
       all_dates: true,
     },
   }
 
-  return httpClient().get(url, options)
+  return httpClient.get(url, options)
 }
 
 export function updateAssignment (courseID: string, assignment: Assignment): ApiPromise<Assignment> {
@@ -41,7 +47,7 @@ export function updateAssignment (courseID: string, assignment: Assignment): Api
   }
 
   const url = `courses/${courseID}/assignments/${assignment.id}`
-  return httpClient().put(url, {
+  return httpClient.put(url, {
     assignment: updatedAssignment,
   })
 }

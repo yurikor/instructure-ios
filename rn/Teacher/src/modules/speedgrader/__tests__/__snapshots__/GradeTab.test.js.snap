@@ -99,6 +99,7 @@ exports[`Rubric has the correct score 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -179,8 +180,8 @@ exports[`Rubric has the correct score 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -307,7 +308,6 @@ exports[`Rubric has the correct score 1`] = `
                 }
               >
                 <Text
-                  accessibilityTraits="header"
                   accessible={false}
                   allowFontScaling={true}
                   ellipsizeMode="tail"
@@ -318,12 +318,15 @@ exports[`Rubric has the correct score 1`] = `
                       },
                       Object {
                         "color": "#2D3B45",
-                        "fontFamily": ".SFUIDisplay-semibold",
-                        "fontSize": 20,
+                        "fontSize": 16,
                       },
                       Object {
                         "color": "#8B969E",
+                        "fontSize": 20,
                         "fontWeight": "500",
+                      },
+                      Object {
+                        "fontFamily": ".SFUIDisplay-medium",
                       },
                     ]
                   }
@@ -375,7 +378,6 @@ exports[`Rubric has the correct score 1`] = `
                 }
               >
                 <Text
-                  accessibilityTraits="header"
                   accessible={false}
                   allowFontScaling={true}
                   ellipsizeMode="tail"
@@ -386,12 +388,15 @@ exports[`Rubric has the correct score 1`] = `
                       },
                       Object {
                         "color": "#2D3B45",
-                        "fontFamily": ".SFUIDisplay-semibold",
-                        "fontSize": 20,
+                        "fontSize": 16,
                       },
                       Object {
                         "color": "#8B969E",
+                        "fontSize": 20,
                         "fontWeight": "500",
+                      },
+                      Object {
+                        "fontFamily": ".SFUIDisplay-medium",
                       },
                     ]
                   }
@@ -443,7 +448,6 @@ exports[`Rubric has the correct score 1`] = `
                 }
               >
                 <Text
-                  accessibilityTraits="header"
                   accessible={false}
                   allowFontScaling={true}
                   ellipsizeMode="tail"
@@ -454,12 +458,15 @@ exports[`Rubric has the correct score 1`] = `
                       },
                       Object {
                         "color": "#2D3B45",
-                        "fontFamily": ".SFUIDisplay-semibold",
-                        "fontSize": 20,
+                        "fontSize": 16,
                       },
                       Object {
                         "color": "#8B969E",
+                        "fontSize": 20,
                         "fontWeight": "500",
+                      },
+                      Object {
+                        "fontFamily": ".SFUIDisplay-medium",
                       },
                     ]
                   }
@@ -561,15 +568,9 @@ exports[`Rubric has the correct score 1`] = `
                       Array [
                         Object {
                           "color": "#374A59",
-                          "fontSize": 14,
+                          "fontSize": 16,
+                          "fontWeight": "500",
                         },
-                        Object {
-                          "fontFamily": ".SFUIDisplay-bold",
-                        },
-                        Object {
-                          "color": "#374A59",
-                        },
-                        Object {},
                         Object {
                           "fontSize": 14,
                           "fontWeight": "500",
@@ -695,6 +696,7 @@ exports[`Rubric renders a rubric 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -775,8 +777,8 @@ exports[`Rubric renders a rubric 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -903,7 +905,6 @@ exports[`Rubric renders a rubric 1`] = `
                 }
               >
                 <Text
-                  accessibilityTraits="header"
                   accessible={false}
                   allowFontScaling={true}
                   ellipsizeMode="tail"
@@ -914,12 +915,15 @@ exports[`Rubric renders a rubric 1`] = `
                       },
                       Object {
                         "color": "#2D3B45",
-                        "fontFamily": ".SFUIDisplay-semibold",
-                        "fontSize": 20,
+                        "fontSize": 16,
                       },
                       Object {
                         "color": "#8B969E",
+                        "fontSize": 20,
                         "fontWeight": "500",
+                      },
+                      Object {
+                        "fontFamily": ".SFUIDisplay-medium",
                       },
                     ]
                   }
@@ -971,7 +975,6 @@ exports[`Rubric renders a rubric 1`] = `
                 }
               >
                 <Text
-                  accessibilityTraits="header"
                   accessible={false}
                   allowFontScaling={true}
                   ellipsizeMode="tail"
@@ -982,12 +985,15 @@ exports[`Rubric renders a rubric 1`] = `
                       },
                       Object {
                         "color": "#2D3B45",
-                        "fontFamily": ".SFUIDisplay-semibold",
-                        "fontSize": 20,
+                        "fontSize": 16,
                       },
                       Object {
                         "color": "#8B969E",
+                        "fontSize": 20,
                         "fontWeight": "500",
+                      },
+                      Object {
+                        "fontFamily": ".SFUIDisplay-medium",
                       },
                     ]
                   }
@@ -1039,7 +1045,6 @@ exports[`Rubric renders a rubric 1`] = `
                 }
               >
                 <Text
-                  accessibilityTraits="header"
                   accessible={false}
                   allowFontScaling={true}
                   ellipsizeMode="tail"
@@ -1050,12 +1055,15 @@ exports[`Rubric renders a rubric 1`] = `
                       },
                       Object {
                         "color": "#2D3B45",
-                        "fontFamily": ".SFUIDisplay-semibold",
-                        "fontSize": 20,
+                        "fontSize": 16,
                       },
                       Object {
                         "color": "#8B969E",
+                        "fontSize": 20,
                         "fontWeight": "500",
+                      },
+                      Object {
+                        "fontFamily": ".SFUIDisplay-medium",
                       },
                     ]
                   }
@@ -1157,15 +1165,9 @@ exports[`Rubric renders a rubric 1`] = `
                       Array [
                         Object {
                           "color": "#374A59",
-                          "fontSize": 14,
+                          "fontSize": 16,
+                          "fontWeight": "500",
                         },
-                        Object {
-                          "fontFamily": ".SFUIDisplay-bold",
-                        },
-                        Object {
-                          "color": "#374A59",
-                        },
-                        Object {},
                         Object {
                           "fontSize": 14,
                           "fontWeight": "500",
@@ -1291,6 +1293,7 @@ exports[`Rubric renders the comment input when openCommentKeyboard is called 1`]
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -1371,8 +1374,8 @@ exports[`Rubric renders the comment input when openCommentKeyboard is called 1`]
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -1549,15 +1552,9 @@ exports[`Rubric renders the comment input when openCommentKeyboard is called 1`]
                       Array [
                         Object {
                           "color": "#374A59",
-                          "fontSize": 14,
+                          "fontSize": 16,
+                          "fontWeight": "500",
                         },
-                        Object {
-                          "fontFamily": ".SFUIDisplay-bold",
-                        },
-                        Object {
-                          "color": "#374A59",
-                        },
-                        Object {},
                         Object {
                           "fontSize": 14,
                           "fontWeight": "500",
@@ -1630,15 +1627,9 @@ exports[`Rubric renders the comment input when openCommentKeyboard is called 1`]
                       Array [
                         Object {
                           "color": "#374A59",
-                          "fontSize": 14,
+                          "fontSize": 16,
+                          "fontWeight": "500",
                         },
-                        Object {
-                          "fontFamily": ".SFUIDisplay-bold",
-                        },
-                        Object {
-                          "color": "#374A59",
-                        },
-                        Object {},
                         Object {
                           "fontSize": 14,
                           "fontWeight": "500",
@@ -1809,6 +1800,7 @@ exports[`Rubric renders the grade picker when there is no rubric 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -1948,6 +1940,7 @@ exports[`Rubric shows the activity indicator when saving a rubric score 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -2028,8 +2021,8 @@ exports[`Rubric shows the activity indicator when saving a rubric score 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -2162,7 +2155,6 @@ exports[`Rubric shows the activity indicator when saving a rubric score 1`] = `
                 }
               >
                 <Text
-                  accessibilityTraits="header"
                   accessible={false}
                   allowFontScaling={true}
                   ellipsizeMode="tail"
@@ -2173,12 +2165,15 @@ exports[`Rubric shows the activity indicator when saving a rubric score 1`] = `
                       },
                       Object {
                         "color": "#2D3B45",
-                        "fontFamily": ".SFUIDisplay-semibold",
-                        "fontSize": 20,
+                        "fontSize": 16,
                       },
                       Object {
                         "color": "#8B969E",
+                        "fontSize": 20,
                         "fontWeight": "500",
+                      },
+                      Object {
+                        "fontFamily": ".SFUIDisplay-medium",
                       },
                     ]
                   }
@@ -2230,7 +2225,6 @@ exports[`Rubric shows the activity indicator when saving a rubric score 1`] = `
                 }
               >
                 <Text
-                  accessibilityTraits="header"
                   accessible={false}
                   allowFontScaling={true}
                   ellipsizeMode="tail"
@@ -2241,12 +2235,15 @@ exports[`Rubric shows the activity indicator when saving a rubric score 1`] = `
                       },
                       Object {
                         "color": "#2D3B45",
-                        "fontFamily": ".SFUIDisplay-semibold",
-                        "fontSize": 20,
+                        "fontSize": 16,
                       },
                       Object {
                         "color": "#8B969E",
+                        "fontSize": 20,
                         "fontWeight": "500",
+                      },
+                      Object {
+                        "fontFamily": ".SFUIDisplay-medium",
                       },
                     ]
                   }
@@ -2298,7 +2295,6 @@ exports[`Rubric shows the activity indicator when saving a rubric score 1`] = `
                 }
               >
                 <Text
-                  accessibilityTraits="header"
                   accessible={false}
                   allowFontScaling={true}
                   ellipsizeMode="tail"
@@ -2309,12 +2305,15 @@ exports[`Rubric shows the activity indicator when saving a rubric score 1`] = `
                       },
                       Object {
                         "color": "#2D3B45",
-                        "fontFamily": ".SFUIDisplay-semibold",
-                        "fontSize": 20,
+                        "fontSize": 16,
                       },
                       Object {
                         "color": "#8B969E",
+                        "fontSize": 20,
                         "fontWeight": "500",
+                      },
+                      Object {
+                        "fontFamily": ".SFUIDisplay-medium",
                       },
                     ]
                   }
@@ -2416,15 +2415,9 @@ exports[`Rubric shows the activity indicator when saving a rubric score 1`] = `
                       Array [
                         Object {
                           "color": "#374A59",
-                          "fontSize": 14,
+                          "fontSize": 16,
+                          "fontWeight": "500",
                         },
-                        Object {
-                          "fontFamily": ".SFUIDisplay-bold",
-                        },
-                        Object {
-                          "color": "#374A59",
-                        },
-                        Object {},
                         Object {
                           "fontSize": 14,
                           "fontWeight": "500",

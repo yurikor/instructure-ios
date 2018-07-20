@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -75,11 +75,14 @@ import TermsOfUse from '../modules/tos/TermsOfUse'
 import PushNotifications from '../modules/developer-menu/PushNotifications'
 import SectionSelector from '../modules/announcements/edit/SectionSelector'
 import FeatureFlags from '../modules/developer-menu/FeatureFlags'
+import RatingRequest from '../modules/developer-menu/RatingRequest'
 import GradesList from '../modules/grades/GradesList'
 import PageViewEvents from '../modules/developer-menu/PageViewEvents'
+import NotAParent from '../modules/parent/NotAParent'
+import ConferenceList from '../modules/courses/conferences/ConferenceList'
 import { Store } from 'redux'
 import { registerScreen } from './'
-import { isTeacher, isStudent } from '../modules/app'
+import { isTeacher, isStudent, isParent } from '../modules/app'
 
 export function wrap (name: any): Function {
   return () => name
@@ -95,8 +98,6 @@ function fileListRouter (props: any) {
 export function registerScreens (store: Store): void {
   registerScreen('', wrap(Dashboard), store, { deepLink: true })
   registerScreen('/', wrap(Dashboard), store, { deepLink: true })
-  registerScreen('/groups/:groupID', wrap(CourseNavigation), store, { canBecomeMaster: true, deepLink: true })
-  registerScreen('/groups/:groupID/tabs', wrap(CourseNavigation), store, { canBecomeMaster: true, deepLink: true })
   registerScreen('/courses', wrap(AllCourseList), store, { canBecomeMaster: true, deepLink: true })
   registerScreen('/course_favorites', wrap(EditFavorites), store, { deepLink: true })
   registerScreen('/courses/:courseID', wrap(CourseNavigation), store, { canBecomeMaster: true, deepLink: true })
@@ -129,7 +130,6 @@ export function registerScreens (store: Store): void {
   registerScreen('/:context/:contextID/files/:fileID/edit', wrap(EditFile), store)
   registerScreen('/folders/:folderID/edit', wrap(EditFolder), store)
   registerScreen('/picker', wrap(PickerPage), store)
-  registerScreen('/groups/:groupID/users', wrap(GroupList), store)
   registerScreen('/conversations', wrap(Inbox), store, { canBecomeMaster: true, deepLink: true })
   registerScreen('/conversations/compose', wrap(Compose), store)
   registerScreen('/conversations/:conversationID/add_message', wrap(Compose), store)
@@ -154,7 +154,7 @@ export function registerScreens (store: Store): void {
   registerScreen('/attendance')
   registerScreen('/filter', wrap(Filter), store)
   registerScreen('/to-do', wrap(ToDoList), store, { canBecomeMaster: true, deepLink: true })
-  registerScreen('/courses/:courseID/wiki', wrap(PagesList), store, { canBecomeMaster: true, deepLink: true })
+  registerScreen('/courses/:courseID/wiki', wrap(PageDetails), store, { deepLink: true })
   registerScreen('/courses/:courseID/pages', wrap(PagesList), store, { canBecomeMaster: true, deepLink: true })
   registerScreen('/terms-of-use', wrap(TermsOfUse), store)
   registerScreen('/profile/settings')
@@ -163,7 +163,7 @@ export function registerScreens (store: Store): void {
   registerScreen('/push-notifications', wrap(PushNotifications), store)
   registerScreen('/page-view-events', wrap(PageViewEvents), store)
   registerScreen('/feature-flags', wrap(FeatureFlags), store)
-  registerScreen('/courses/:courseID/grades', wrap(GradesList), store, { canBecomeMaster: true, deepLink: true })
+  registerScreen('/rating-request', wrap(RatingRequest), store)
 
   if (isTeacher()) {
     // Files
@@ -200,10 +200,20 @@ export function registerScreens (store: Store): void {
     registerScreen('/courses/:courseID/modules/:moduleID', null, store, { deepLink: true })
     registerScreen('/courses/:courseID/modules/:moduleID/items/:itemID', null, store, { deepLink: true })
     registerScreen('/courses/:courseID/modules/items/:itemID', null, store, { deepLink: true })
+    registerScreen('/courses/:courseID/conferences', wrap(ConferenceList), store, { deepLink: true })
+    registerScreen('/groups/:groupID', wrap(CourseNavigation), store, { canBecomeMaster: true, deepLink: true })
+    registerScreen('/groups/:groupID/tabs', wrap(CourseNavigation), store, { canBecomeMaster: true, deepLink: true })
+    registerScreen('/groups/:groupID/users', wrap(GroupList), store)
+    registerScreen('/courses/:courseID/grades', wrap(GradesList), store, { canBecomeMaster: true, deepLink: true })
 
     // Calls the old routing method
     registerScreen('/native-route/*route')
     // Calls the old routing method as well, but with the canBecomeMaster option
     registerScreen('/native-route-master/*route', null, null, { canBecomeMaster: true })
+  }
+
+  if (isParent()) {
+    registerScreen('/parent/manage-children', null, null, { canBecomeMaster: true })
+    registerScreen('/parent/notAParent', wrap(NotAParent), store)
   }
 }

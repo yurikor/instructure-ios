@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ const { refreshAssignmentList } = AssignmentActions
 
 export const refs: Reducer<AsyncRefs, any> = asyncRefsReducer(
   refreshGradingPeriods.toString(),
-  i18n('There was a problem loading the grading periods.'),
+  () => i18n('There was a problem loading the grading periods.'),
   ({ result }) => result.data.grading_periods.map(gp => gp.id)
 )
 

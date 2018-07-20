@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 /* eslint-disable flowtype/require-valid-file-annotation */
 
 import Navigator from '../../routing/Navigator'
+import { isTeacher } from '../app'
 
 export type AssignmentDetailsState = {
   +assignmentDetails: Assignment,
@@ -55,13 +56,18 @@ export function mapStateToProps (state: AppState, ownProps: AssignmentDetailsPro
   let enrollment = course && course.enrollments && course.enrollments[0]
   let pending = course && course.assignmentGroups ? course.assignmentGroups.pending : 0
 
+  let showSubmissionSummary = false
+  if (isTeacher() && enrollment) {
+    showSubmissionSummary = enrollment.type !== 'designer'
+  }
+
   return {
     assignmentDetails: assignment,
     course: course,
     courseColor: courseEntity && courseEntity.color,
     courseName,
     pending,
-    showSubmissionSummary: enrollment && enrollment.type !== 'designer' || false,
+    showSubmissionSummary,
   }
 }
 

@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,6 +53,7 @@ import { type TraitCollection } from '../../../routing/Navigator'
 import { isRegularDisplayMode } from '../../../routing/utils'
 import { isTeacher } from '../../app'
 import { alertError } from '../../../redux/middleware/error-handler'
+import { logEvent } from '../../../common/CanvasAnalytics'
 
 type OwnProps = {
   announcementID: string,
@@ -73,6 +74,7 @@ type State = {
   courseName: string,
   canRate: boolean,
   initialPostRequired: boolean,
+  groups: GroupsState,
 }
 
 type ViewableReply = {
@@ -89,7 +91,7 @@ const {
   markAllAsRead,
   markEntryAsRead,
 } = DetailActions
-const { NativeAccessibility } = NativeModules
+const { NativeAccessibility, ModuleItemsProgress } = NativeModules
 const { deleteDiscussion } = EditActions
 
 const Actions = {
@@ -113,6 +115,8 @@ export type Props
 }
 
 export class DiscussionDetails extends Component<Props, any> {
+  hasReplaced: boolean = false
+
   constructor (props: Props) {
     super(props)
     this.state = {
@@ -122,18 +126,43 @@ export class DiscussionDetails extends Component<Props, any> {
       unread_entries: props.unreadEntries || [],
       entry_ratings: props.entryRatings || {},
     }
-    this.state.flatReplies = this.rootRepliesData(props.discussion, [], this.state.maxReplyNodeDepth)
+    const groupDiscussion = this.groupDiscussion(props)
+    if (groupDiscussion && this.showingWrongDiscussionForGroups(props)) {
+      // We're showing the wrong discussion. Replace with group version.
+      const { group_id, id } = groupDiscussion
+      this.hasReplaced = true
+      this.props.navigator.replace(`/groups/${group_id}/discussion_topics/${id}`)
+    } else {
+      this.state.flatReplies = this.rootRepliesData(props.discussion, [], this.state.maxReplyNodeDepth)
+      NativeModules.AppStoreReview.handleNavigateToAssignment()
+    }
   }
 
   componentWillUnmount () {
     if (this.props.discussion) {
       this.props.refreshSingleDiscussion(this.props.context, this.props.contextID, this.props.discussionID)
     }
+    NativeModules.AppStoreReview.handleNavigateFromAssignment()
   }
 
   componentWillReceiveProps (nextProps: Props) {
+    const groupDiscussion = this.groupDiscussion(nextProps)
+    if (!this.hasReplaced && groupDiscussion && this.showingWrongDiscussionForGroups(nextProps)) {
+      // We're showing the wrong discussion. Replace with group version.
+      const { group_id, id } = groupDiscussion
+      this.hasReplaced = true
+      this.props.navigator.replace(`/groups/${group_id}/discussion_topics/${id}`)
+      return
+    }
+
     if (nextProps.error && nextProps.error !== this.props.error) {
       alertError(nextProps.error)
+    }
+
+    const { discussion } = nextProps
+    if (discussion) {
+      // Mark this discussion as viewed
+      ModuleItemsProgress.viewedDiscussion(nextProps.contextID, nextProps.discussionID)
     }
 
     if (this.state.deletePending && !nextProps.pending && !nextProps.error && !nextProps.discussion) {
@@ -145,6 +174,7 @@ export class DiscussionDetails extends Component<Props, any> {
       this.props.navigator.pop()
       return
     }
+
     this.setState({
       unread_entries: nextProps.unreadEntries,
       entry_ratings: nextProps.entryRatings || {},
@@ -164,6 +194,25 @@ export class DiscussionDetails extends Component<Props, any> {
     })
   }
 
+  showingWrongDiscussionForGroups = (props: Props) => {
+    const { discussion } = props
+    // True if we're not in a group context and this is a group discussion
+    return discussion &&
+      props.context !== 'groups' &&
+      discussion.group_category_id &&
+      discussion.group_topic_children
+  }
+
+  groupDiscussion = (props: Props) => {
+    const { discussion } = props
+    if (!discussion || !discussion.group_topic_children) {
+      return null
+    }
+    const groups = Object.keys(props.groups)
+    const groupDiscussion = discussion.group_topic_children.find(({ group_id }) => groups.includes(group_id))
+    return groupDiscussion
+  }
+
   navigateToContextCard = () => {
     if (this.props.discussion) {
       this.props.navigator.show(
@@ -178,6 +227,7 @@ export class DiscussionDetails extends Component<Props, any> {
     const points = this._points(discussion)
     let user = discussion.author
     const assignmentID = this.props.assignment ? this.props.assignment.id : null
+    const hasValidDate = discussion.delayed_post_at || discussion.posted_at
     const date = new Date(discussion.delayed_post_at || discussion.posted_at)
     const sections = discussion.sections || []
     return (
@@ -236,7 +286,7 @@ export class DiscussionDetails extends Component<Props, any> {
             }
             <View style={[style.authorInfoContainer, { marginLeft: (user && user.display_name) ? global.style.defaultPadding : 0 }]}>
               { user && user.display_name && <Text style={style.authorName}>{user.display_name}</Text> }
-              <Text style={style.authorDate} testID='discussion.details.post-date-lbl'>{i18n("{ date, date, 'MMM d'} at { date, time, short }", { date })}</Text>
+              { hasValidDate && <Text style={style.authorDate} testID='discussion.details.post-date-lbl'>{i18n("{ date, date, 'MMM d'} at { date, time, short }", { date })}</Text> }
             </View>
           </View>
 
@@ -345,6 +395,7 @@ export class DiscussionDetails extends Component<Props, any> {
           canRate={this.props.canRate}
           showRating={discussion.allow_rating}
           isLastReply={this.state.flatReplies.length - 1 === index}
+          isAnnouncement={Boolean(this.props.isAnnouncement)}
         />
       </View>
     )
@@ -543,6 +594,11 @@ export class DiscussionDetails extends Component<Props, any> {
   _onPressReply = () => {
     let lastReplyAt = this.props.discussion && this.props.discussion.last_reply_at
     let permissions = this.props.discussion && this.props.discussion.permissions
+    if (this.props.isAnnouncement) {
+      logEvent('announcement_replied', { nested: false })
+    } else {
+      logEvent('discussion_topic_replied', { nested: false })
+    }
     this.props.navigator.show(`/${this.props.context}/${this.props.contextID}/discussion_topics/${this.props.discussionID}/reply`, { modal: true }, { indexPath: [], lastReplyAt, permissions })
   }
 
@@ -769,6 +825,7 @@ export function mapStateToProps ({ entities }: AppState, ownProps: OwnProps): St
       }
     }
   }
+
   return {
     discussion,
     unreadEntries,
@@ -784,6 +841,7 @@ export function mapStateToProps ({ entities }: AppState, ownProps: OwnProps): St
     isAnnouncement,
     canRate,
     initialPostRequired,
+    groups: entities.groups,
   }
 }
 

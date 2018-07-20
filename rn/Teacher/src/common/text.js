@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  * @flow
  */
 
-import React from 'react'
+import * as React from 'react'
 import ReactNative, {
   View,
   StyleSheet,
@@ -43,6 +43,7 @@ export function Text ({ style, ...props }: Object) {
 }
 
 Text.propTypes = ReactNative.Text.propTypes
+type TextProps = React.ElementConfig<typeof ReactNative.Text>
 
 export function Heading1 ({ style, ...props }: Object) {
   return <ReactNative.Text style={[styles.font, styles.h1, style]} {...props} accessibilityTraits='header' />
@@ -66,6 +67,10 @@ export function Paragraph ({ style, ...props }: Object) {
 
 export function Heavy ({ style, ...props }: Object) {
   return <ReactNative.Text style={[styles.heavy, style]} {...props} />
+}
+
+export function FormLabel ({ style, ...props }: TextProps) {
+  return <ReactNative.Text style={[styles.formLabel, style]} accessibilityTraits='header' {...props} />
 }
 
 export function TextInput ({ style, ...props }: Object) {
@@ -168,9 +173,9 @@ const styles = StyleSheet.create({
     fontFamily: REGULAR_FONT,
   },
   h1: {
-    fontSize: 20,
+    fontSize: 24,
     color: colors.darkText,
-    fontFamily: SEMI_BOLD_FONT,
+    fontFamily: HEAVY_FONT,
   },
   h2: {
     fontSize: 16,
@@ -199,6 +204,14 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     color: colors.darkText,
+  },
+  formLabel: {
+    color: colors.grey5,
+    fontSize: 14,
+    fontFamily: SEMI_BOLD_FONT,
+    marginLeft: global.style.defaultPadding,
+    marginTop: global.style.defaultPadding,
+    marginBottom: global.style.defaultPadding / 2,
   },
   textInput: {
     fontSize: 17,

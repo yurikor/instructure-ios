@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,8 @@
 */
 
 import React from 'react'
-import { SafeAreaView } from 'react-native'
+import { SafeAreaView, Image } from 'react-native'
+import i18n from 'format-message'
 
 import Images from '../../images'
 import Row from '../../common/components/rows/Row'
@@ -70,6 +71,9 @@ export default class TabRow extends React.Component<Props> {
         selected={this.props.selected}
         testID={`courses-details.${tab.id}-cell`}
         titleStyles={{ fontWeight: '500' }}
+        accessories={tab.hidden &&
+            <Image source={Images.invisible} accessibilityLabel={i18n('Hidden')} />
+        }
       />
     </SafeAreaView>)
   }

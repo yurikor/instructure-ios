@@ -254,11 +254,17 @@
   "cancel_caeb1e68": {
     "message": "Отменить"
   },
+  "canvas_guides_d65431": {
+    "message": "Руководства Canvas"
+  },
   "canvas_parent_app_f9236a3a": {
     "message": "Основное приложение Canvas"
   },
   "canvas_student_app_329567f": {
     "message": "Приложение Canvas для студентов"
+  },
+  "canvas_teacher_app_9dc7d7ed": {
+    "message": "Приложение Canvas для преподавателей"
   },
   "change_discussiontitle_to_different_grouping_9f5ed8c1": {
     "message": "Изменить { discussionTitle } на другое группирование"
@@ -286,6 +292,9 @@
   },
   "clear_recording_5a97b475": {
     "message": "Удалить запись"
+  },
+  "close_d634289d": {
+    "message": "Закрыть"
   },
   "close_for_comments_ce0e5d00": {
     "message": "Закрыто для комментариев"
@@ -316,6 +325,9 @@
   },
   "compose_message_8abd180a": {
     "message": "Написать сообщение"
+  },
+  "conferences_a0a8984b": {
+    "message": "Конференции"
   },
   "conversation_options_8be926f3": {
     "message": "Опции дискуссии"
@@ -566,6 +578,9 @@
   "excused_cf8792eb": {
     "message": "По уважительной причине"
   },
+  "extensions_and_lastextension_f45d68e7": {
+    "message": "{ extensions } и { lastExtension }"
+  },
   "external_tool_c5a6410a": {
     "message": "Внешний инструмент"
   },
@@ -596,8 +611,8 @@
   "favorite_courses_fbd356f0": {
     "message": "Избранные курсы"
   },
-  "file_count_plural_one_file_other_files_8ae41de8": {
-    "message": "{ file_count, plural,    one {# файл} few {# файла/файлов} many {# файла/файлов} other {# файла/файлов}}"
+  "file_types_6fa69505": {
+    "message": "Типы файлов"
   },
   "files_c300e900": {
     "message": "Файлы"
@@ -701,6 +716,9 @@
   "help_4c4968b1": {
     "message": "Справка"
   },
+  "hidden_14a032a7": {
+    "message": "Скрыто"
+  },
   "hidden_files_inside_will_be_available_with_links_e9e3d233": {
     "message": "Скрыто. Находящиеся внутри файлы будут доступны по ссылкам."
   },
@@ -722,6 +740,12 @@
   "i_hold_the_copyright_71ee91b1": {
     "message": "Я являюсь правообладателем"
   },
+  "if_you_re_a_student_or_teacher_try_one_of_our_othe_f0ae9b33": {
+    "message": "Если вы студент или преподаватель, попробуйте одно из наших приложений ниже."
+  },
+  "in_progress_9d1ce8b9": {
+    "message": "Выполняется"
+  },
   "incomplete_da3c2ea2": {
     "message": "Не завершено"
   },
@@ -730,6 +754,9 @@
   },
   "insert_link_6dc23cae": {
     "message": "Вставить ссылку"
+  },
+  "internet_connection_offline_d7c02b88": {
+    "message": "Нет подключения к Интернету"
   },
   "invalid_field_54480fae": {
     "message": "Недействительное поле"
@@ -740,8 +767,17 @@
   "invite_declined_d0a9e398": {
     "message": "Приглашение отклонено!"
   },
+  "it_looks_like_your_internet_connection_is_offline__cf4003": {
+    "message": "Похоже, что вы не подключены к Интернету. Подключитесь к Интернету и попробуйте еще раз."
+  },
+  "it_seems_there_aren_t_any_valid_submissions_to_gra_f136675": {
+    "message": "По-видимому, нет актуальных сданных работ для проверки."
+  },
   "italic_ac45200a": {
     "message": "Курсив"
+  },
+  "item_count_plural_one_item_other_items_88319c63": {
+    "message": "{ item_count, plural,\n    one {# элемент}\n  other {# элементы}\n}"
   },
   "last_activity_on_lastactivity_date_mmmm_d_at_lasta_1a7e8430": {
     "message": "Последняя работа на { lastActivity, date, 'MMMM d' } в { lastActivity, time, short }"
@@ -779,11 +815,17 @@
   "lock_questions_after_answering_e0f61d7c": {
     "message": "Заблокировать вопросы после ответа на них"
   },
+  "log_in_again_ec2b1f46": {
+    "message": "Войдите заново"
+  },
   "log_out_379ba28a": {
     "message": "Выйти"
   },
   "long_description_7d89285c": {
     "message": "Длинное описание"
+  },
+  "manage_children_a28d764e": {
+    "message": "Управление детьми"
   },
   "mark_all_as_read_8f3bdf57": {
     "message": "Отметить все как прочитанное"
@@ -890,6 +932,9 @@
   "no_e16d9132": {
     "message": "Нет"
   },
+  "no_enrollments_6369cd31": {
+    "message": "Нет зачислений"
+  },
   "no_grade_3b4d7f3e": {
     "message": "Нет оценки"
   },
@@ -910,6 +955,9 @@
   },
   "no_subject_58b7941c": {
     "message": "Нет темы"
+  },
+  "no_submissions_to_display_6f1491cf": {
+    "message": "Нет сданных работ для отображения"
   },
   "no_time_limit_2147d9bf": {
     "message": "Нет ограничения времени"
@@ -1289,6 +1337,9 @@
   "students_1b8cd07b": {
     "message": "Студенты"
   },
+  "students_must_post_before_seeing_replies_1a57eeb2": {
+    "message": "Студенты должны публиковать сообщения, прежде чем увидят ответы"
+  },
   "subject_114b2e98": {
     "message": "Тема"
   },
@@ -1370,6 +1421,9 @@
   "there_are_no_comments_to_display_bde58f70": {
     "message": "Нет доступных для отображения комментариев."
   },
+  "there_are_no_conferences_to_display_400a0413": {
+    "message": "Нет доступных для отображения конференций."
+  },
   "there_are_no_discussions_to_display_37bc437f": {
     "message": "Нет доступных для отображения обсуждений."
   },
@@ -1450,6 +1504,9 @@
   },
   "this_assignment_does_not_allow_submissions_30af1caa": {
     "message": "Это задание не может быть отправлено."
+  },
+  "this_assignment_doesn_t_have_a_description_e2f37ec3": {
+    "message": "Это задание не имеет описания."
   },
   "this_assignment_only_allows_on_paper_submissions_f478408a": {
     "message": "Это задание может быть отправлено только в печатном виде."
@@ -1599,9 +1656,6 @@
   "user_id_bcace870": {
     "message": "Идентификатор пользователя"
   },
-  "users_must_post_before_seeing_replies_d1761968": {
-    "message": "Пользователи должны публиковать сообщения, прежде чем увидят ответы"
-  },
   "video_b9f27375": {
     "message": "Видео"
   },
@@ -1610,6 +1664,9 @@
   },
   "view_all_submissions_915a8b78": {
     "message": "Просмотреть все отправки"
+  },
+  "view_canvas_guides_a1c62a97": {
+    "message": "Просмотр руководств Canvas"
   },
   "view_long_description_2b592c0e": {
     "message": "Просмотреть длинное описание"
@@ -1646,6 +1703,9 @@
   },
   "you_must_enter_an_access_code_8c2c7ae0": {
     "message": "Вы должны ввести код доступа"
+  },
+  "you_need_at_least_one_active_observer_enrollment_t_9c78bb6e": {
+    "message": "Вам необходимо как минимум одно активное зачисление оценщика для использования Canvas Parent."
   },
   "your_submission_comment_failed_to_send_5c8d2809": {
     "message": "Не удалось отправить ваш комментарий к отправке."

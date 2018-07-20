@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -189,8 +189,10 @@ NSString *const CKIClientAccessTokenExpiredNotification = @"CKIClientAccessToken
     if (method == CKIAuthenticationMethodForcedCanvasLogin) {
         urlString = [urlString stringByAppendingString:@"&canvas_login=1"];
     }
-
-    if (self.authenticationProvider) {
+    
+    // sometimes for canvas auth the authenticationProvider is an empty string
+    // which causes this if to still pass and then breaks the login
+    if ([self.authenticationProvider length]) {
         urlString = [urlString stringByAppendingString:[NSString stringWithFormat:@"&authentication_provider=%@", self.authenticationProvider]];
     }
     

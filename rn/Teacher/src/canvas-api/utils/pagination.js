@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ export function parseNext (response: any): ?string {
 }
 
 export function paginate<T> (url: string, config: ApiConfig = {}): ApiPromise<T> {
-  return httpClient().get(url, config).then((response: any) => {
+  return httpClient.get(url, config).then((response: any) => {
     const next = parseNext(response)
     return {
       ...response,

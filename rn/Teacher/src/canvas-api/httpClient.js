@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -163,14 +163,12 @@ function xhr (method: Method, url: string, data: Body, config: ApiConfig = {}) {
   return promise
 }
 
-const client = {
+export default {
   get: (url: string, config?: ApiConfig) => xhr('GET', url, null, config),
   delete: (url: string, config?: ApiConfig) => xhr('DELETE', url, null, config),
   post: (url: string, data?: Body, config?: ApiConfig) => xhr('POST', url, data, config),
   put: (url: string, data?: Body, config?: ApiConfig) => xhr('PUT', url, data, config),
 }
-
-export default function httpClient () { return client }
 
 /*
  * Assumptions:

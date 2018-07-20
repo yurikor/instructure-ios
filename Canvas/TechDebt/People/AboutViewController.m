@@ -18,15 +18,11 @@
 
 #import <QuartzCore/QuartzCore.h>
 #import <CanvasKit1/CanvasKit1.h>
-#import "UIViewController+AnalyticsTracking.h"
 #import <CanvasKit1/CKActionSheetWithBlocks.h>
 #import "UIAlertController+TechDebt.h"
-
 #import "AboutViewController.h"
 #import "WebBrowserViewController.h"
-#import "Analytics.h"
 @import CanvasCore;
-#import "CBILog.h"
 
 typedef NS_ENUM(NSInteger, AboutSections) {
     InfoSection,
@@ -120,10 +116,6 @@ typedef NS_ENUM(NSInteger, LegalRows) {
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
-    DDLogVerbose(@"%@ - viewDidAppear", NSStringFromClass([self class]));
-    
-    [Analytics logScreenView:kGAIScreenAbout];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -273,10 +265,10 @@ typedef NS_ENUM(NSInteger, LegalRows) {
         }
         
         if (indexPath.row == EULARow) {
-            urlAddress = @"http://www.canvaslms.com/policies/end-user-license-agreement";
+            urlAddress = @"https://www.canvaslms.com/policies/end-user-license-agreement";
         }
         if (indexPath.row == PrivacyRow) {
-            urlAddress = @"http://www.canvaslms.com/policies/privacy-policy";
+            urlAddress = @"https://www.instructure.com/policies/privacy/";
         }
         
         NSURL *url = [NSURL URLWithString:urlAddress];

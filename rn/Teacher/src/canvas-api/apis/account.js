@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,9 +29,9 @@ export function getAccountNotifications (): ApiPromise<AccountNotification[]> {
 }
 
 export function deleteAccountNotification (id: string): ApiPromise<null> {
-  return httpClient().delete(`accounts/self/users/self/account_notifications/${id}`)
+  return httpClient.delete(`accounts/self/users/self/account_notifications/${id}`)
 }
 
 export function getTermsOfService (): ApiPromise<TermsOfService> {
-  return httpClient().get(`accounts/self/terms_of_service`)
+  return httpClient.get(`accounts/self/terms_of_service`)
 }

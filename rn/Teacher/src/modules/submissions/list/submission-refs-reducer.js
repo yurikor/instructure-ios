@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ function submissionRefsForResponse ({ result }: Response): EntityRefs {
 
 export const submissionsList: Reducer<AsyncRefs, any> = asyncRefsReducer(
   refreshSubmissions.toString(),
-  i18n('There was a problem loading the assignment submissions.'),
+  () => i18n('There was a problem loading the assignment submissions.'),
   submissionRefsForResponse
 )
 
@@ -49,7 +49,7 @@ function quizSubmissionRefsForResponse ({ result }: QuizResponse): EntityRefs {
 
 export const quizSubmissionsList: Reducer<AsyncRefs, any> = asyncRefsReducer(
   refreshQuizSubmissions.toString(),
-  i18n('There was a problem loading the quiz submissions.'),
+  () => i18n('There was a problem loading the quiz submissions.'),
   quizSubmissionRefsForResponse
 )
 

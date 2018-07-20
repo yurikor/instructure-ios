@@ -254,11 +254,17 @@
   "cancel_caeb1e68": {
     "message": "Annuller"
   },
+  "canvas_guides_d65431": {
+    "message": "Canvas-vejledningerne"
+  },
   "canvas_parent_app_f9236a3a": {
     "message": "Canvas-app til forældre"
   },
   "canvas_student_app_329567f": {
     "message": "Canvas-app til studerende"
+  },
+  "canvas_teacher_app_9dc7d7ed": {
+    "message": "Canvas-app til lærere"
   },
   "change_discussiontitle_to_different_grouping_9f5ed8c1": {
     "message": "Skift { discussionTitle } til anden gruppering"
@@ -286,6 +292,9 @@
   },
   "clear_recording_5a97b475": {
     "message": "Ryd optagelse"
+  },
+  "close_d634289d": {
+    "message": "Luk"
   },
   "close_for_comments_ce0e5d00": {
     "message": "Luk for kommentarer"
@@ -316,6 +325,9 @@
   },
   "compose_message_8abd180a": {
     "message": "Skriv besked"
+  },
+  "conferences_a0a8984b": {
+    "message": "Konferencer"
   },
   "conversation_options_8be926f3": {
     "message": "Samtaleindstillinger"
@@ -566,6 +578,9 @@
   "excused_cf8792eb": {
     "message": "Undskyldt"
   },
+  "extensions_and_lastextension_f45d68e7": {
+    "message": "{ extensions } og { lastExtension }"
+  },
   "external_tool_c5a6410a": {
     "message": "Eksternt værktøj"
   },
@@ -596,8 +611,8 @@
   "favorite_courses_fbd356f0": {
     "message": "Favoritfag"
   },
-  "file_count_plural_one_file_other_files_8ae41de8": {
-    "message": "{ file_count, plural,    one {# fil} other {# filer}}"
+  "file_types_6fa69505": {
+    "message": "Filtyper"
   },
   "files_c300e900": {
     "message": "Filer"
@@ -701,6 +716,9 @@
   "help_4c4968b1": {
     "message": "Hjælp"
   },
+  "hidden_14a032a7": {
+    "message": "Skjult"
+  },
   "hidden_files_inside_will_be_available_with_links_e9e3d233": {
     "message": "Skjult. Filerne inde i vil være tilgængelige med links."
   },
@@ -722,6 +740,12 @@
   "i_hold_the_copyright_71ee91b1": {
     "message": "Jeg er rettighedshaveren"
   },
+  "if_you_re_a_student_or_teacher_try_one_of_our_othe_f0ae9b33": {
+    "message": "Hvis du er studerende eller lærer, kan du prøve en af ​​vores andre apps nedenfor."
+  },
+  "in_progress_9d1ce8b9": {
+    "message": "I gang"
+  },
   "incomplete_da3c2ea2": {
     "message": "Ufuldstændig"
   },
@@ -730,6 +754,9 @@
   },
   "insert_link_6dc23cae": {
     "message": "Indsæt link"
+  },
+  "internet_connection_offline_d7c02b88": {
+    "message": "Internetforbindelse offline"
   },
   "invalid_field_54480fae": {
     "message": "Ugyldigt felt"
@@ -740,8 +767,17 @@
   "invite_declined_d0a9e398": {
     "message": "Invitation afvist!"
   },
+  "it_looks_like_your_internet_connection_is_offline__cf4003": {
+    "message": "Det ser ud til, at din internetforbindelse er offline. Opret forbindelse til internettet, og prøv igen."
+  },
+  "it_seems_there_aren_t_any_valid_submissions_to_gra_f136675": {
+    "message": "Det ser ud til, at der ikke er nogen gyldige afleveringer at bedømme."
+  },
   "italic_ac45200a": {
     "message": "Kursiv"
+  },
+  "item_count_plural_one_item_other_items_88319c63": {
+    "message": "{ item_count, plural,\n    one {# element}\n  other {# elementer}\n}"
   },
   "last_activity_on_lastactivity_date_mmmm_d_at_lasta_1a7e8430": {
     "message": "Seneste aktivitet d. { lastActivity, date, 'MMMM d' } kl. { lastActivity, time, short }"
@@ -779,11 +815,17 @@
   "lock_questions_after_answering_e0f61d7c": {
     "message": "Lås spørgsmål efter besvarelse"
   },
+  "log_in_again_ec2b1f46": {
+    "message": "Log på igen"
+  },
   "log_out_379ba28a": {
     "message": "Log ud"
   },
   "long_description_7d89285c": {
     "message": "Lang beskrivelse"
+  },
+  "manage_children_a28d764e": {
+    "message": "Administrer børn"
   },
   "mark_all_as_read_8f3bdf57": {
     "message": "Markér alle som \"læst\""
@@ -890,6 +932,9 @@
   "no_e16d9132": {
     "message": "Nej"
   },
+  "no_enrollments_6369cd31": {
+    "message": "Ingen tilmeldinger"
+  },
   "no_grade_3b4d7f3e": {
     "message": "Ingen vurderinger"
   },
@@ -910,6 +955,9 @@
   },
   "no_subject_58b7941c": {
     "message": "Intet emne"
+  },
+  "no_submissions_to_display_6f1491cf": {
+    "message": "Ingen afleveringer at vise"
   },
   "no_time_limit_2147d9bf": {
     "message": "Ingen tidsbegrænsning"
@@ -1289,6 +1337,9 @@
   "students_1b8cd07b": {
     "message": "Studerende"
   },
+  "students_must_post_before_seeing_replies_1a57eeb2": {
+    "message": "Studerende skal lægge opslag ud, inden de kan se svar"
+  },
   "subject_114b2e98": {
     "message": "Emne"
   },
@@ -1370,6 +1421,9 @@
   "there_are_no_comments_to_display_bde58f70": {
     "message": "Der er ikke nogen kommentarer at vise."
   },
+  "there_are_no_conferences_to_display_400a0413": {
+    "message": "Der er ikke nogen konferencer at vise."
+  },
   "there_are_no_discussions_to_display_37bc437f": {
     "message": "Der er ikke nogen diskussioner at vise."
   },
@@ -1450,6 +1504,9 @@
   },
   "this_assignment_does_not_allow_submissions_30af1caa": {
     "message": "Denne opgave tillader ikke afleveringer."
+  },
+  "this_assignment_doesn_t_have_a_description_e2f37ec3": {
+    "message": "Denne opgave har ikke nogen beskrivelse"
   },
   "this_assignment_only_allows_on_paper_submissions_f478408a": {
     "message": "Denne opgave tillader kun aflevering på papir."
@@ -1599,9 +1656,6 @@
   "user_id_bcace870": {
     "message": "Bruger-id"
   },
-  "users_must_post_before_seeing_replies_d1761968": {
-    "message": "Brugere skal lægge indlæg ud, inden de ser svar"
-  },
   "video_b9f27375": {
     "message": "Video"
   },
@@ -1610,6 +1664,9 @@
   },
   "view_all_submissions_915a8b78": {
     "message": "Se alle afleveringer"
+  },
+  "view_canvas_guides_a1c62a97": {
+    "message": "Vis Canvas-guider"
   },
   "view_long_description_2b592c0e": {
     "message": "Se lang beskrivelse"
@@ -1646,6 +1703,9 @@
   },
   "you_must_enter_an_access_code_8c2c7ae0": {
     "message": "Du skal indtaste en adgangskode"
+  },
+  "you_need_at_least_one_active_observer_enrollment_t_9c78bb6e": {
+    "message": "Du har brug for mindst en aktiv observatørtilmelding for at bruge Canvas Parent."
   },
   "your_submission_comment_failed_to_send_5c8d2809": {
     "message": "Din afleveringskommentar blev ikke sendt."

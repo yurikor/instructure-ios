@@ -100,10 +100,40 @@ public final class Soseedy_SeedyEnrollmentsServiceClient: ServiceClientBase, Sos
 }
 
 /// To build a server, implement a class that conforms to this protocol.
-public protocol Soseedy_SeedyEnrollmentsProvider {
+/// If one of the methods returning `ServerStatus?` returns nil,
+/// it is expected that you have already returned a status to the client by means of `session.close`.
+public protocol Soseedy_SeedyEnrollmentsProvider: ServiceProvider {
   func createEnrollmentTerm(request: Soseedy_CreateEnrollmentTermRequest, session: Soseedy_SeedyEnrollmentsCreateEnrollmentTermSession) throws -> Soseedy_EnrollmentTerm
   func enrollUserInCourse(request: Soseedy_EnrollUserRequest, session: Soseedy_SeedyEnrollmentsEnrollUserInCourseSession) throws -> Soseedy_Enrollment
   func enrollUserInSection(request: Soseedy_EnrollUserInSectionRequest, session: Soseedy_SeedyEnrollmentsEnrollUserInSectionSession) throws -> Soseedy_Enrollment
+}
+
+extension Soseedy_SeedyEnrollmentsProvider {
+  public var serviceName: String { return "soseedy.SeedyEnrollments" }
+
+  /// Determines and calls the appropriate request handler, depending on the request's method.
+  /// Throws `HandleMethodError.unknownMethod` for methods not handled by this service.
+  public func handleMethod(_ method: String, handler: Handler) throws -> ServerStatus? {
+    switch method {
+    case "/soseedy.SeedyEnrollments/CreateEnrollmentTerm":
+      return try Soseedy_SeedyEnrollmentsCreateEnrollmentTermSessionBase(
+        handler: handler,
+        providerBlock: { try self.createEnrollmentTerm(request: $0, session: $1 as! Soseedy_SeedyEnrollmentsCreateEnrollmentTermSessionBase) })
+          .run()
+    case "/soseedy.SeedyEnrollments/EnrollUserInCourse":
+      return try Soseedy_SeedyEnrollmentsEnrollUserInCourseSessionBase(
+        handler: handler,
+        providerBlock: { try self.enrollUserInCourse(request: $0, session: $1 as! Soseedy_SeedyEnrollmentsEnrollUserInCourseSessionBase) })
+          .run()
+    case "/soseedy.SeedyEnrollments/EnrollUserInSection":
+      return try Soseedy_SeedyEnrollmentsEnrollUserInSectionSessionBase(
+        handler: handler,
+        providerBlock: { try self.enrollUserInSection(request: $0, session: $1 as! Soseedy_SeedyEnrollmentsEnrollUserInSectionSessionBase) })
+          .run()
+    default:
+      throw HandleMethodError.unknownMethod
+    }
+  }
 }
 
 public protocol Soseedy_SeedyEnrollmentsCreateEnrollmentTermSession: ServerSessionUnary {}
@@ -117,52 +147,3 @@ fileprivate final class Soseedy_SeedyEnrollmentsEnrollUserInCourseSessionBase: S
 public protocol Soseedy_SeedyEnrollmentsEnrollUserInSectionSession: ServerSessionUnary {}
 
 fileprivate final class Soseedy_SeedyEnrollmentsEnrollUserInSectionSessionBase: ServerSessionUnaryBase<Soseedy_EnrollUserInSectionRequest, Soseedy_Enrollment>, Soseedy_SeedyEnrollmentsEnrollUserInSectionSession {}
-
-
-/// Main server for generated service
-public final class Soseedy_SeedyEnrollmentsServer: ServiceServer {
-  private let provider: Soseedy_SeedyEnrollmentsProvider
-
-  public init(address: String, provider: Soseedy_SeedyEnrollmentsProvider) {
-    self.provider = provider
-    super.init(address: address)
-  }
-
-  public init?(address: String, certificateURL: URL, keyURL: URL, provider: Soseedy_SeedyEnrollmentsProvider) {
-    self.provider = provider
-    super.init(address: address, certificateURL: certificateURL, keyURL: keyURL)
-  }
-
-  public init?(address: String, certificateString: String, keyString: String, provider: Soseedy_SeedyEnrollmentsProvider) {
-    self.provider = provider
-    super.init(address: address, certificateString: certificateString, keyString: keyString)
-  }
-
-  /// Start the server.
-  public override func handleMethod(_ method: String, handler: Handler, queue: DispatchQueue) throws -> Bool {
-    let provider = self.provider
-    switch method {
-    case "/soseedy.SeedyEnrollments/CreateEnrollmentTerm":
-      try Soseedy_SeedyEnrollmentsCreateEnrollmentTermSessionBase(
-        handler: handler,
-        providerBlock: { try provider.createEnrollmentTerm(request: $0, session: $1 as! Soseedy_SeedyEnrollmentsCreateEnrollmentTermSessionBase) })
-          .run(queue: queue)
-      return true
-    case "/soseedy.SeedyEnrollments/EnrollUserInCourse":
-      try Soseedy_SeedyEnrollmentsEnrollUserInCourseSessionBase(
-        handler: handler,
-        providerBlock: { try provider.enrollUserInCourse(request: $0, session: $1 as! Soseedy_SeedyEnrollmentsEnrollUserInCourseSessionBase) })
-          .run(queue: queue)
-      return true
-    case "/soseedy.SeedyEnrollments/EnrollUserInSection":
-      try Soseedy_SeedyEnrollmentsEnrollUserInSectionSessionBase(
-        handler: handler,
-        providerBlock: { try provider.enrollUserInSection(request: $0, session: $1 as! Soseedy_SeedyEnrollmentsEnrollUserInSectionSessionBase) })
-          .run(queue: queue)
-      return true
-    default:
-      return false
-    }
-  }
-}
-

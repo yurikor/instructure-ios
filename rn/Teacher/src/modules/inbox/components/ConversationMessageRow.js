@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@ import Images from '../../../images'
 import Video from '../../../common/components/Video'
 import { LinkButton } from '../../../common/buttons'
 import Hyperlink from 'react-native-hyperlink'
+import { logEvent } from '@common/CanvasAnalytics'
 
 export type ConversationMessageProps = {
   conversation: Conversation,
@@ -58,6 +59,7 @@ export default class ConversationMessageRow extends Component<ConversationMessag
   }
 
   _replyButtonPressed = () => {
+    logEvent('inbox_message_replied')
     this.props.navigator.show(`/conversations/${this.props.conversation.id}/add_message`, { modal: true }, {
       recipients: this.props.conversation.participants.filter(p => this.props.conversation.audience.includes(p.id)),
       contextName: this.props.conversation.context_name,
@@ -104,8 +106,12 @@ export default class ConversationMessageRow extends Component<ConversationMessag
 
   _audience = (): ConversationParticipant[] => {
     const participants = this.props.conversation.participants
-    const audience = this.props.conversation.audience
-    return audience.map((id) => find(participants, { id })).filter((a) => a)
+    const audience = this.props.message.participating_user_ids || this.props.conversation.audience
+    const me = getSession().user
+    return audience.map((id) => find(participants, { id })).filter((a) => {
+      if (!a) return false
+      return me.id !== a.id
+    })
   }
 
   // The count of participants minus the author and me
@@ -134,7 +140,7 @@ export default class ConversationMessageRow extends Component<ConversationMessag
         recipientName = i18n('to {count} others', { count: audience.length })
       }
     } else {
-      const extras = (this._extraParicipipantCount() - 1)
+      const extras = this._extraParicipipantCount()
       if (extras > 0) {
         authorName = i18n('{name} + {count, plural, one {# other} other {# others}}', { name: authorName, count: extras })
       }
@@ -203,7 +209,6 @@ export default class ConversationMessageRow extends Component<ConversationMessag
               testID='inbox.conversation-message-row.reply-button'
               onPress={this._replyButtonPressed}
               style={styles.replyButton}
-              textStyle={styles.replyButtonText}
             >
               {i18n('Reply')}
             </LinkButton>
@@ -277,10 +282,6 @@ const styles = StyleSheet.create({
   },
   replyButton: {
     marginTop: global.style.defaultPadding / 2,
-  },
-  replyButtonText: {
-    fontSize: 16,
-    fontWeight: '500',
   },
   avatar: {
     width: 32,

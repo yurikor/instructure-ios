@@ -56,47 +56,30 @@ public final class Soseedy_SeedyUsersServiceClient: ServiceClientBase, Soseedy_S
 }
 
 /// To build a server, implement a class that conforms to this protocol.
-public protocol Soseedy_SeedyUsersProvider {
+/// If one of the methods returning `ServerStatus?` returns nil,
+/// it is expected that you have already returned a status to the client by means of `session.close`.
+public protocol Soseedy_SeedyUsersProvider: ServiceProvider {
   func createCanvasUser(request: Soseedy_CreateCanvasUserRequest, session: Soseedy_SeedyUsersCreateCanvasUserSession) throws -> Soseedy_CanvasUser
+}
+
+extension Soseedy_SeedyUsersProvider {
+  public var serviceName: String { return "soseedy.SeedyUsers" }
+
+  /// Determines and calls the appropriate request handler, depending on the request's method.
+  /// Throws `HandleMethodError.unknownMethod` for methods not handled by this service.
+  public func handleMethod(_ method: String, handler: Handler) throws -> ServerStatus? {
+    switch method {
+    case "/soseedy.SeedyUsers/CreateCanvasUser":
+      return try Soseedy_SeedyUsersCreateCanvasUserSessionBase(
+        handler: handler,
+        providerBlock: { try self.createCanvasUser(request: $0, session: $1 as! Soseedy_SeedyUsersCreateCanvasUserSessionBase) })
+          .run()
+    default:
+      throw HandleMethodError.unknownMethod
+    }
+  }
 }
 
 public protocol Soseedy_SeedyUsersCreateCanvasUserSession: ServerSessionUnary {}
 
 fileprivate final class Soseedy_SeedyUsersCreateCanvasUserSessionBase: ServerSessionUnaryBase<Soseedy_CreateCanvasUserRequest, Soseedy_CanvasUser>, Soseedy_SeedyUsersCreateCanvasUserSession {}
-
-
-/// Main server for generated service
-public final class Soseedy_SeedyUsersServer: ServiceServer {
-  private let provider: Soseedy_SeedyUsersProvider
-
-  public init(address: String, provider: Soseedy_SeedyUsersProvider) {
-    self.provider = provider
-    super.init(address: address)
-  }
-
-  public init?(address: String, certificateURL: URL, keyURL: URL, provider: Soseedy_SeedyUsersProvider) {
-    self.provider = provider
-    super.init(address: address, certificateURL: certificateURL, keyURL: keyURL)
-  }
-
-  public init?(address: String, certificateString: String, keyString: String, provider: Soseedy_SeedyUsersProvider) {
-    self.provider = provider
-    super.init(address: address, certificateString: certificateString, keyString: keyString)
-  }
-
-  /// Start the server.
-  public override func handleMethod(_ method: String, handler: Handler, queue: DispatchQueue) throws -> Bool {
-    let provider = self.provider
-    switch method {
-    case "/soseedy.SeedyUsers/CreateCanvasUser":
-      try Soseedy_SeedyUsersCreateCanvasUserSessionBase(
-        handler: handler,
-        providerBlock: { try provider.createCanvasUser(request: $0, session: $1 as! Soseedy_SeedyUsersCreateCanvasUserSessionBase) })
-          .run(queue: queue)
-      return true
-    default:
-      return false
-    }
-  }
-}
-

@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -52,6 +52,7 @@ import AccountNotificationActions from './account-notification-actions'
 import { extractGradeInfo } from '@utils/course-grades'
 import { extractDateFromString } from '@utils/dateUtils'
 import { featureFlagEnabled } from '@common/feature-flags'
+import { logEvent } from '@common/CanvasAnalytics'
 
 type ColorfulCourse = { color: string } & Course
 type Props = {
@@ -72,13 +73,16 @@ type Props = {
   rejectEnrollment?: (string, string) => any,
   hideInvite?: (string) => any,
   showGrades?: boolean,
+  pending: number,
 }
 type State = {
   width?: number,
+  height?: number,
   cardSize?: number,
   contentWidth?: number,
   showingModal: boolean,
   fetchingEnrollments: boolean,
+  noCoursesLayout: ?{ y: number },
 }
 type SectionListSection = {
   sectionID: string,
@@ -107,9 +111,12 @@ const padding = 8
 const MIN_CARD_SIZE = 150
 
 export class Dashboard extends React.Component<Props, State> {
+  noCourses: ?View
+
   state: State = {
     showingModal: false,
     fetchingEnrollments: false,
+    noCoursesLayout: null,
   }
 
   componentWillReceiveProps (newProps: Props) {
@@ -127,15 +134,16 @@ export class Dashboard extends React.Component<Props, State> {
     }
   }
 
-  calculateLayout = (width: number) => {
+  calculateLayout = (width: number, height: number) => {
     const contentWidth = width - padding - padding
     const columns = Math.floor(contentWidth / MIN_CARD_SIZE)
     const cardSize = contentWidth / columns
-    this.setState({ cardSize, width, contentWidth })
+    this.setState({ cardSize, width, contentWidth, height })
   }
 
-  onLayout = ({ nativeEvent }: { nativeEvent: { layout: { width: number }}}) => {
-    this.calculateLayout(nativeEvent.layout.width)
+  onLayout = ({ nativeEvent }: { nativeEvent: { layout: { width: number, height: number }}}) => {
+    const { width, height } = nativeEvent.layout
+    this.calculateLayout(width, height)
   }
 
   handleInvite = (courseId: string, enrollmentId: string, action: string) => {
@@ -224,14 +232,43 @@ export class Dashboard extends React.Component<Props, State> {
 
   renderNoFavorites = () => {
     const { contentWidth } = this.state
+    const height = this.state.height || 0
+
+    // center empty state vertically in this section
+    let calculatedHeight
+    if (this.showGroups()) {
+      // make it a percentage of the screen height
+      // so that groups show just enough on all phone sizes
+      calculatedHeight = height * 0.7
+    } else {
+      // fill all remaining space
+      const noCoursesLayout = this.state.noCoursesLayout || { y: 0 }
+      const y = noCoursesLayout ? noCoursesLayout.y : 0
+      const headerHeight = 60
+      calculatedHeight = height - y - headerHeight
+    }
 
     return (
-      <NoCourses
-        key='no-courses'
-        onAddCoursePressed={this.showFavoritesList}
-        style={{ width: contentWidth, height: 300 }}
-      />
+      <View onLayout={this.measureNoCourses} ref={this.captureNoCourses}>
+        <NoCourses
+          key='no-courses'
+          onAddCoursePressed={this.showFavoritesList}
+          style={[styles.noCourses, { width: contentWidth, height: calculatedHeight }]}
+        />
+      </View>
     )
+  }
+
+  captureNoCourses = (ref: ?View) => {
+    this.noCourses = ref
+  }
+
+  measureNoCourses = () => {
+    if (this.noCourses && !this.state.noCoursesLayout) {
+      this.noCourses.measure((vx, vy, width, height, x, y) => {
+        this.setState({ noCoursesLayout: { y } })
+      })
+    }
   }
 
   renderGroup = ({ item }: { item: GroupRowProps }) => {
@@ -313,9 +350,7 @@ export class Dashboard extends React.Component<Props, State> {
     }
 
     // Groups
-    if (isStudent() &&
-        this.props.groups &&
-        this.props.groups.length > 0) {
+    if (this.showGroups()) {
       sections.push({
         sectionID: 'dashboard.groups',
         title: i18n('Groups'),
@@ -326,6 +361,10 @@ export class Dashboard extends React.Component<Props, State> {
     }
 
     return sections
+  }
+
+  showGroups = () => {
+    return isStudent() && this.props.groups && this.props.groups.length > 0
   }
 
   renderDashboard = () => {
@@ -344,6 +383,7 @@ export class Dashboard extends React.Component<Props, State> {
         onLayout={this.onLayout}
         sections={sections}
         renderItem={() => {}}
+        windowSize={100}
         // this prop is only necessary because renderItem is not listed as an optional prop
         // https://github.com/facebook/react-native/pull/17262
       />
@@ -359,6 +399,7 @@ export class Dashboard extends React.Component<Props, State> {
   }
 
   selectCourse = (course: Course) => {
+    logEvent('course_card_selected', { course_id: course.id })
     this.props.navigator.show(`/courses/${course.id}`)
   }
 
@@ -371,6 +412,7 @@ export class Dashboard extends React.Component<Props, State> {
   }
 
   showGroup = (groupID: string) => {
+    logEvent('group_card_selected', { group_id: groupID })
     this.props.navigator.show(`/groups/${groupID}`)
   }
 
@@ -383,7 +425,7 @@ export class Dashboard extends React.Component<Props, State> {
           title: i18n('Edit'),
           testID: 'dashboard.edit-btn',
           action: this.showFavoritesList,
-          disabled: !this.props.totalCourseCount,
+          disabled: !this.props.totalCourseCount || Boolean(this.props.pending),
         }],
         leftBarButtons: [
           {
@@ -404,9 +446,9 @@ export class Dashboard extends React.Component<Props, State> {
         navBarColor={color.navBarColor}
         navBarButtonColor={color.navBarTextColor}
         statusBarStyle={color.statusBarStyle}
-      >{
-          this.renderDashboard()
-        }</Screen>
+      >
+        {this.renderDashboard()}
+      </Screen>
     )
   }
 }
@@ -423,6 +465,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     padding,
+  },
+  noCourses: {
+    flexDirection: 'column',
+    justifyContent: 'center',
   },
 })
 
@@ -478,6 +524,8 @@ export function mapStateToProps (isFullDashboard: boolean) {
     if (isFullDashboard) {
       // we only want favorite courses here
       courseStates = courseRefs.map(ref => allCourses[ref])
+        // $FlowFixMe
+        .filter(c => c.enrollments.refs.length > 0)
     } else {
       // all courses view
       const blacklist = ['invited', 'rejected'] // except invited and rejected

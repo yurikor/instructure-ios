@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import { asyncRefsReducer } from '../async-refs-reducer'
 describe('refs reducer', () => {
   const refs = asyncRefsReducer(
     'foobar.baz',
-    'The quick brown fox fails to jump over the lazy dog',
+    () => 'The quick brown fox fails to jump over the lazy dog',
     payload => payload.things.map(thing => thing.id)
   )
 

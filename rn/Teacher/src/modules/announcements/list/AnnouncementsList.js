@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -120,9 +120,14 @@ export class AnnouncementsList extends Component<Props, any> {
   }
 
   renderRow = ({ item, index }: { item: Discussion, index: number }) => {
-    let lastReplyDateStr = i18n("{ date, date, 'MMM d'} at { date, time, short }", { date: new Date(item.delayed_post_at || item.last_reply_at) })
+    let lastReplyDateStr = ''
+    let hasValidDate = false
+    if (item.delayed_post_at || item.last_reply_at) {
+      hasValidDate = true
+      lastReplyDateStr = i18n("{ date, date, 'MMM d'} at { date, time, short }", { date: new Date(item.delayed_post_at || item.last_reply_at) })
+    }
     const showDelayedText = item.delayed_post_at && new Date(item.delayed_post_at) > new Date()
-    const subtitle = !showDelayedText ? i18n('Last post {lastReplyDateStr}', { lastReplyDateStr }) : lastReplyDateStr
+    const subtitle = !showDelayedText && hasValidDate ? i18n('Last post {lastReplyDateStr}', { lastReplyDateStr }) : lastReplyDateStr
     const selected = this.isRowSelected(item)
 
     return (

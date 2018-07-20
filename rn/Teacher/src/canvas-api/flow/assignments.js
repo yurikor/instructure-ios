@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -84,12 +84,14 @@ export type Assignment = {
   rubric_assessment: {
     [string]: RubricAssessment,
   },
+  assignment_group_id?: ?string,
   group_category_id: ?string,
   grade_group_students_individually: boolean,
   quiz_id?: string,
   discussion_topic?: Discussion,
   external_tool_tag_attributes?: { url: ?string },
   submission?: Submission,
+  allowed_extensions?: [string],
 }
 
 export type AssignmentDate = {

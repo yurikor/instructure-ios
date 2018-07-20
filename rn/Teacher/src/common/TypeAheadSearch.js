@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ export default class TypeAheadSearch extends Component<Props> {
 
     this.props.onRequestStarted && this.props.onRequestStarted()
     try {
-      const fetching = httpClient().get(url, { params })
+      const fetching = httpClient.get(url, { params })
       if (fetching.request) {
         this.cancel = () => fetching.request && fetching.request.abort()
       }

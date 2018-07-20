@@ -254,11 +254,17 @@
   "cancel_caeb1e68": {
     "message": "取消"
   },
+  "canvas_guides_d65431": {
+    "message": "Canvas 指南"
+  },
   "canvas_parent_app_f9236a3a": {
     "message": "Canvas Parent 應用程式"
   },
   "canvas_student_app_329567f": {
     "message": "Canvas Student 應用程式"
+  },
+  "canvas_teacher_app_9dc7d7ed": {
+    "message": "Canvas 教師應用程式"
   },
   "change_discussiontitle_to_different_grouping_9f5ed8c1": {
     "message": "更改 { discussionTitle } 至其他群組"
@@ -286,6 +292,9 @@
   },
   "clear_recording_5a97b475": {
     "message": "清除錄製"
+  },
+  "close_d634289d": {
+    "message": "關閉"
   },
   "close_for_comments_ce0e5d00": {
     "message": "結束以徵求意見"
@@ -316,6 +325,9 @@
   },
   "compose_message_8abd180a": {
     "message": "編輯訊息"
+  },
+  "conferences_a0a8984b": {
+    "message": "會議"
   },
   "conversation_options_8be926f3": {
     "message": "交談選項"
@@ -566,6 +578,9 @@
   "excused_cf8792eb": {
     "message": "已豁免"
   },
+  "extensions_and_lastextension_f45d68e7": {
+    "message": "{ extensions } 和 { lastExtension }"
+  },
   "external_tool_c5a6410a": {
     "message": "外部工具"
   },
@@ -596,8 +611,8 @@
   "favorite_courses_fbd356f0": {
     "message": "最喜愛的課程"
   },
-  "file_count_plural_one_file_other_files_8ae41de8": {
-    "message": "{ file_count, plural,    other {# 檔案}}"
+  "file_types_6fa69505": {
+    "message": "檔案類型"
   },
   "files_c300e900": {
     "message": "資料夾"
@@ -701,6 +716,9 @@
   "help_4c4968b1": {
     "message": "支援"
   },
+  "hidden_14a032a7": {
+    "message": "已隱藏"
+  },
   "hidden_files_inside_will_be_available_with_links_e9e3d233": {
     "message": "已隱藏。透過連結可獲取裡面的檔案。"
   },
@@ -722,6 +740,12 @@
   "i_hold_the_copyright_71ee91b1": {
     "message": "我持有該版權"
   },
+  "if_you_re_a_student_or_teacher_try_one_of_our_othe_f0ae9b33": {
+    "message": "如果您是學生或教師，可以試試使用以下其中一個應用程式。"
+  },
+  "in_progress_9d1ce8b9": {
+    "message": "進行中"
+  },
   "incomplete_da3c2ea2": {
     "message": "未完成"
   },
@@ -730,6 +754,9 @@
   },
   "insert_link_6dc23cae": {
     "message": "插入連結"
+  },
+  "internet_connection_offline_d7c02b88": {
+    "message": "網絡連線離線"
   },
   "invalid_field_54480fae": {
     "message": "無效字段"
@@ -740,8 +767,17 @@
   "invite_declined_d0a9e398": {
     "message": "拒絕邀請！"
   },
+  "it_looks_like_your_internet_connection_is_offline__cf4003": {
+    "message": "似乎您的網絡連線已離線。重新連線到網絡並重試。"
+  },
+  "it_seems_there_aren_t_any_valid_submissions_to_gra_f136675": {
+    "message": "好像沒有任何有效的提交項目可以評分。"
+  },
   "italic_ac45200a": {
     "message": "斜體"
+  },
+  "item_count_plural_one_item_other_items_88319c63": {
+    "message": "{ item_count, plural,\n    one {# 項目}\n  other {# 項目}\n}"
   },
   "last_activity_on_lastactivity_date_mmmm_d_at_lasta_1a7e8430": {
     "message": "上次活躍時間於 { lastActivity, date, 'MMMM d' } { lastActivity, time, short }"
@@ -779,11 +815,17 @@
   "lock_questions_after_answering_e0f61d7c": {
     "message": "回答後鎖定問題"
   },
+  "log_in_again_ec2b1f46": {
+    "message": "重新登入"
+  },
   "log_out_379ba28a": {
     "message": "登出"
   },
   "long_description_7d89285c": {
     "message": "完整描述"
+  },
+  "manage_children_a28d764e": {
+    "message": "管理兒童"
   },
   "mark_all_as_read_8f3bdf57": {
     "message": "全部標記為已讀"
@@ -890,6 +932,9 @@
   "no_e16d9132": {
     "message": "否"
   },
+  "no_enrollments_6369cd31": {
+    "message": "無登記入學"
+  },
   "no_grade_3b4d7f3e": {
     "message": "無評分"
   },
@@ -910,6 +955,9 @@
   },
   "no_subject_58b7941c": {
     "message": "無主題"
+  },
+  "no_submissions_to_display_6f1491cf": {
+    "message": "沒有可顯示的提交項目"
   },
   "no_time_limit_2147d9bf": {
     "message": "沒有時間限制"
@@ -1289,6 +1337,9 @@
   "students_1b8cd07b": {
     "message": "學生"
   },
+  "students_must_post_before_seeing_replies_1a57eeb2": {
+    "message": "學生必須發佈，然後才能看到回覆"
+  },
   "subject_114b2e98": {
     "message": "課程"
   },
@@ -1370,6 +1421,9 @@
   "there_are_no_comments_to_display_bde58f70": {
     "message": "沒有可顯示的評論。"
   },
+  "there_are_no_conferences_to_display_400a0413": {
+    "message": "沒有可顯示的會議。"
+  },
   "there_are_no_discussions_to_display_37bc437f": {
     "message": "沒有可顯示的討論。"
   },
@@ -1450,6 +1504,9 @@
   },
   "this_assignment_does_not_allow_submissions_30af1caa": {
     "message": "此作業不允許提交。"
+  },
+  "this_assignment_doesn_t_have_a_description_e2f37ec3": {
+    "message": "此作業沒有描述。"
   },
   "this_assignment_only_allows_on_paper_submissions_f478408a": {
     "message": "此作業只能以紙本提交。"
@@ -1599,9 +1656,6 @@
   "user_id_bcace870": {
     "message": "使用者 ID"
   },
-  "users_must_post_before_seeing_replies_d1761968": {
-    "message": "使用者必須發佈，然後才能看到回復"
-  },
   "video_b9f27375": {
     "message": "視頻"
   },
@@ -1610,6 +1664,9 @@
   },
   "view_all_submissions_915a8b78": {
     "message": "檢視所有提交項目"
+  },
+  "view_canvas_guides_a1c62a97": {
+    "message": "查看 Canvas 指南"
   },
   "view_long_description_2b592c0e": {
     "message": "查看完整描述"
@@ -1646,6 +1703,9 @@
   },
   "you_must_enter_an_access_code_8c2c7ae0": {
     "message": "您必須輸入訪問碼"
+  },
+  "you_need_at_least_one_active_observer_enrollment_t_9c78bb6e": {
+    "message": "您需要至少一個有效的觀察者註冊，方可使用 Canvas Parent。"
   },
   "your_submission_comment_failed_to_send_5c8d2809": {
     "message": "您提交的評論並未發出。"

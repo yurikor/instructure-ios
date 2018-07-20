@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -144,8 +144,24 @@ describe('DiscussionEdit', () => {
   })
 
   it('dismisses on successful save', async () => {
+    const dismiss = Promise.resolve()
+    props.navigator.dismissAllModals = jest.fn(() => dismiss)
+    let tree
+    props.updateDiscussion = jest.fn(() => {
+      tree.setProps({ pending: 0 })
+    })
+    tree = shallow(<DiscussionEdit {...props} />)
+    await tapDone(tree)
+    expect(props.navigator.dismissAllModals).toHaveBeenCalled()
+    await dismiss
+    expect(NativeModules.AppStoreReview.handleSuccessfulSubmit)
+      .not.toHaveBeenCalled()
+  })
+
+  it('requests app store review on successful create', async () => {
+    const dismiss = Promise.resolve()
     props.discussionID = null
-    props.navigator.dismissAllModals = jest.fn()
+    props.navigator.dismissAllModals = jest.fn(() => dismiss)
     let tree
     props.createDiscussion = jest.fn(() => {
       tree.setProps({ pending: 0 })
@@ -153,6 +169,9 @@ describe('DiscussionEdit', () => {
     tree = shallow(<DiscussionEdit {...props} />)
     await tapDone(tree)
     expect(props.navigator.dismissAllModals).toHaveBeenCalled()
+    await dismiss
+    expect(NativeModules.AppStoreReview.handleSuccessfulSubmit)
+      .toHaveBeenCalled()
   })
 
   it('updates with new props', async () => {

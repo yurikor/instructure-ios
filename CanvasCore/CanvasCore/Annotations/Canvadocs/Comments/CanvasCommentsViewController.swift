@@ -1,17 +1,17 @@
 //
 // Copyright (C) 2016-present Instructure, Inc.
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, version 3 of the License.
 //
-// http://www.apache.org/licenses/LICENSE-2.0
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 //
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
     
     
@@ -24,15 +24,17 @@ class CanvadocsCommentsViewController: UIViewController {
     var annotation: PSPDFAnnotation!
     var comments = [CanvadocsCommentReplyAnnotation]()
     var pdfDocument: PSPDFDocument!
+    var metadata: CanvadocsAnnotationMetadata!
     
     var tableView: UITableView!
     var replyToolbar: CommentReplyView!
     var replyToolbarBottom: NSLayoutConstraint?
     
-    static func new(_ annotation: PSPDFAnnotation, pdfDocument: PSPDFDocument) -> CanvadocsCommentsViewController {
+    static func new(_ annotation: PSPDFAnnotation, pdfDocument: PSPDFDocument, metadata: CanvadocsAnnotationMetadata) -> CanvadocsCommentsViewController {
         let vc = CanvadocsCommentsViewController(nibName: nil, bundle: nil)
         vc.annotation = annotation
         vc.pdfDocument = pdfDocument
+        vc.metadata = metadata
         vc.tableView = UITableView(frame: CGRect.zero, style: .plain)
         vc.replyToolbar = CommentReplyView.instantiate()
         return vc
@@ -66,21 +68,29 @@ class CanvadocsCommentsViewController: UIViewController {
             return comment1.creationDate ?? Date() < comment2.creationDate ?? Date()
         })
         
-        replyToolbar.sendAction = { [unowned self] in
-            if !self.replyToolbar.replyTextView.text.isEmpty { // make sure they actually entered something
-                let newAnnotation = CanvadocsCommentReplyAnnotation(contents: self.replyToolbar.replyTextView.text)
-                newAnnotation.pageIndex = self.annotation.pageIndex
-                newAnnotation.inReplyToName = self.annotation.name
-                self.comments.append(newAnnotation)
-                self.pdfDocument.add([newAnnotation], options: [:])
-                self.replyToolbar.clearText()
-                self.tableView.reloadData()
+        let permissions = metadata.permissions ?? .None
+        if permissions == .ReadWrite || permissions == .ReadWriteManage {
+            replyToolbar.isHidden = false
+            replyToolbar.sendAction = { [unowned self] in
+                if !self.replyToolbar.replyTextView.text.isEmpty { // make sure they actually entered something
+                    let newAnnotation = CanvadocsCommentReplyAnnotation(contents: self.replyToolbar.replyTextView.text)
+                    newAnnotation.pageIndex = self.annotation.pageIndex
+                    newAnnotation.inReplyToName = self.annotation.name
+                    newAnnotation.user = self.metadata.userID
+                    newAnnotation.userName = self.metadata.userName
+                    self.comments.append(newAnnotation)
+                    self.pdfDocument.add([newAnnotation], options: [:])
+                    self.replyToolbar.clearText()
+                    self.tableView.reloadData()
+                }
             }
+            replyToolbar.translatesAutoresizingMaskIntoConstraints = false
+            replyToolbarBottom = NSLayoutConstraint(item: view, attribute: NSLayoutAttribute.bottom, relatedBy: NSLayoutRelation.equal, toItem: replyToolbar, attribute: NSLayoutAttribute.bottom, multiplier: 1.0, constant: 0.0)
+            view.addConstraint(replyToolbarBottom!)
+            view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[replyToolbar]|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["replyToolbar": replyToolbar]))
+        } else {
+            replyToolbar.isHidden = true
         }
-        replyToolbar.translatesAutoresizingMaskIntoConstraints = false
-        replyToolbarBottom = NSLayoutConstraint(item: view, attribute: NSLayoutAttribute.bottom, relatedBy: NSLayoutRelation.equal, toItem: replyToolbar, attribute: NSLayoutAttribute.bottom, multiplier: 1.0, constant: 0.0)
-        view.addConstraint(replyToolbarBottom!)
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[replyToolbar]|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["replyToolbar": replyToolbar]))
         
         navigationItem.title = NSLocalizedString("Comments", tableName: "Localizable", bundle: Bundle(for: type(of: self)), value: "", comment: "")
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(CanvadocsCommentsViewController.close(_:)))
@@ -141,7 +151,7 @@ extension CanvadocsCommentsViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CommentCell") as! CommentTableViewCell
         
         if let annotation = annotationForIndex(indexPath.row) {
-            cell.set(annotation: annotation, delegate: self)
+            cell.set(annotation: annotation, delegate: self, metadata: metadata)
         }
         
         return cell

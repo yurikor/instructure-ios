@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -96,6 +96,7 @@ const images = {
   noTeacher: {
     parent: require('./Canvas-Parent.png'),
     student: require('./Canvas-Student.png'),
+    teacher: require('./Canvas-Teacher.png'),
   },
   attachments: {
     complete: require('./attachments/complete-icon.png'),
@@ -150,6 +151,7 @@ const images = {
   share: require('./share.png'),
   relax: require('./relax.png'),
   hamburger: require('./hamburger.png'),
+  invisible: require('./invisible.png'),
 }
 
 export default (images: *)

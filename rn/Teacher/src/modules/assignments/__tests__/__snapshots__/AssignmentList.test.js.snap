@@ -36,7 +36,6 @@ exports[`renders correctly 1`] = `
             "alignItems": "flex-end",
             "flexDirection": "row",
             "justifyContent": "space-between",
-            "marginBottom": 8,
           }
         }
         testID="assignment-list.filter-header-view"
@@ -44,10 +43,7 @@ exports[`renders correctly 1`] = `
         <Heading1
           style={
             Object {
-              "color": "#2d3b44",
               "flex": 1,
-              "fontSize": 20,
-              "fontWeight": "600",
             }
           }
           testID="assignment-list.filter-title-lbl"
@@ -73,24 +69,18 @@ exports[`renders correctly 1`] = `
           title="There are no assignments to display."
         />
       }
-      data={Array []}
-      disableVirtualization={false}
-      horizontal={false}
-      initialNumToRender={10}
       keyExtractor={[Function]}
-      maxToRenderPerBatch={10}
-      onEndReachedThreshold={2}
       onRefresh={[Function]}
       refreshing={false}
       renderItem={[Function]}
       renderSectionHeader={[Function]}
-      scrollEventThrottle={50}
       sections={
         Array [
           Object {
             "assignments": Array [
               Object {
-                "assignment_group_id": 1376,
+                "anonymize_students": false,
+                "assignment_group_id": "1",
                 "automatic_peer_reviews": false,
                 "course_id": "987654321",
                 "created_at": "2017-03-17T19:15:25Z",
@@ -127,7 +117,8 @@ exports[`renders correctly 1`] = `
             ],
             "data": Array [
               Object {
-                "assignment_group_id": 1376,
+                "anonymize_students": false,
+                "assignment_group_id": "1",
                 "automatic_peer_reviews": false,
                 "course_id": "987654321",
                 "created_at": "2017-03-17T19:15:25Z",
@@ -172,10 +163,7 @@ exports[`renders correctly 1`] = `
           },
         ]
       }
-      stickySectionHeadersEnabled={true}
       testID="assignment-list.list"
-      updateCellsBatchingPeriod={50}
-      windowSize={21}
     />
   </View>
 </Screen>

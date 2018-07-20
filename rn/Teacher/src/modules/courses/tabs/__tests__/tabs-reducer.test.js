@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -78,5 +78,19 @@ describe('refresh tabs', () => {
       { pending: 1, tabs: [] },
       { pending: 0, tabs: [], error: DEFAULT_ERROR_MESSAGE },
     ])
+  })
+
+  it('expands short cross-shard ids in html_url', async () => {
+    const response = [
+      template.tab({ html_url: '/courses/1234~5678' }),
+      template.tab({ html_url: '/courses/1234~890/page' }),
+      template.tab({ html_url: '/courses/1234890/link' }),
+    ]
+    const action = TabsActions({ getCourseTabs: apiResponse(response) }).refreshTabs('1')
+    const states = await testAsyncReducer(tabs, action)
+
+    expect(states[1].tabs[0].html_url).toBe('/courses/12340000000005678')
+    expect(states[1].tabs[1].html_url).toBe('/courses/12340000000000890/page')
+    expect(states[1].tabs[2].html_url).toBe('/courses/1234890/link')
   })
 })

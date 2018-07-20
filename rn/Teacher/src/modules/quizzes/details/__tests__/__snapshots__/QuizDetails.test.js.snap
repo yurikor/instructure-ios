@@ -93,8 +93,8 @@ exports[`QuizDetails displays "Lock Questions After Answering" 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -798,6 +798,7 @@ exports[`QuizDetails displays "Lock Questions After Answering" 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -1512,8 +1513,8 @@ exports[`QuizDetails displays access code 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -2217,6 +2218,7 @@ exports[`QuizDetails displays access code 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -2931,8 +2933,8 @@ exports[`QuizDetails does not render Show Correct Answers when hide_results is n
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -3636,6 +3638,7 @@ exports[`QuizDetails does not render Show Correct Answers when hide_results is n
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -4234,8 +4237,8 @@ exports[`QuizDetails renders 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -4939,6 +4942,7 @@ exports[`QuizDetails renders 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -5595,8 +5599,8 @@ exports[`QuizDetails renders One Question At A Time: 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -6300,6 +6304,7 @@ exports[`QuizDetails renders One Question At A Time: 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -7014,8 +7019,8 @@ exports[`QuizDetails renders One Question At A Time: 2`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -7719,6 +7724,7 @@ exports[`QuizDetails renders One Question At A Time: 2`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -8375,8 +8381,8 @@ exports[`QuizDetails renders Show Correct Answers dates 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -9080,6 +9086,7 @@ exports[`QuizDetails renders Show Correct Answers dates 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -9736,8 +9743,8 @@ exports[`QuizDetails renders Show Correct Answers dates 2`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -10441,6 +10448,7 @@ exports[`QuizDetails renders Show Correct Answers dates 2`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -11097,8 +11105,8 @@ exports[`QuizDetails renders Show Correct Answers dates 3`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -11802,6 +11810,7 @@ exports[`QuizDetails renders Show Correct Answers dates 3`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -12458,8 +12467,8 @@ exports[`QuizDetails renders Show Correct Answers: After Last Attempt 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -13163,6 +13172,7 @@ exports[`QuizDetails renders Show Correct Answers: After Last Attempt 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -13819,8 +13829,8 @@ exports[`QuizDetails renders Show Correct Answers: After Last Attempt 2`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -14524,6 +14534,7 @@ exports[`QuizDetails renders Show Correct Answers: After Last Attempt 2`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -15122,8 +15133,8 @@ exports[`QuizDetails renders allowed attempts 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -15827,6 +15838,7 @@ exports[`QuizDetails renders allowed attempts 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -16483,8 +16495,8 @@ exports[`QuizDetails renders allowed attempts 2`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -17188,6 +17200,7 @@ exports[`QuizDetails renders allowed attempts 2`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -17844,8 +17857,8 @@ exports[`QuizDetails renders assignment due dates 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -18581,6 +18594,7 @@ exports[`QuizDetails renders assignment due dates 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -19237,8 +19251,8 @@ exports[`QuizDetails renders assignment group 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -19942,6 +19956,7 @@ exports[`QuizDetails renders assignment group 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -20656,8 +20671,8 @@ exports[`QuizDetails renders published state 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -21361,6 +21376,7 @@ exports[`QuizDetails renders published state 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -22017,8 +22033,8 @@ exports[`QuizDetails renders published state 2`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -22722,6 +22738,7 @@ exports[`QuizDetails renders published state 2`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -23378,8 +23395,8 @@ exports[`QuizDetails renders quiz type 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -24083,6 +24100,7 @@ exports[`QuizDetails renders quiz type 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -24739,8 +24757,8 @@ exports[`QuizDetails renders quiz type 2`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -25444,6 +25462,7 @@ exports[`QuizDetails renders quiz type 2`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -26100,8 +26119,8 @@ exports[`QuizDetails renders scoring policy 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -26805,6 +26824,7 @@ exports[`QuizDetails renders scoring policy 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -27461,8 +27481,8 @@ exports[`QuizDetails renders scoring policy 2`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -28166,6 +28186,7 @@ exports[`QuizDetails renders scoring policy 2`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -28822,8 +28843,8 @@ exports[`QuizDetails renders scoring policy 3`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -29527,6 +29548,7 @@ exports[`QuizDetails renders scoring policy 3`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -30183,8 +30205,8 @@ exports[`QuizDetails renders show correct answers 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -30888,6 +30910,7 @@ exports[`QuizDetails renders show correct answers 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -31544,8 +31567,8 @@ exports[`QuizDetails renders show correct answers 2`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -32249,6 +32272,7 @@ exports[`QuizDetails renders show correct answers 2`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -32905,8 +32929,8 @@ exports[`QuizDetails renders shuffle answers 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -33610,6 +33634,7 @@ exports[`QuizDetails renders shuffle answers 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -34266,8 +34291,8 @@ exports[`QuizDetails renders shuffle answers 2`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -34971,6 +34996,7 @@ exports[`QuizDetails renders shuffle answers 2`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -35627,8 +35653,8 @@ exports[`QuizDetails renders time limit 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -36332,6 +36358,7 @@ exports[`QuizDetails renders time limit 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -36988,8 +37015,8 @@ exports[`QuizDetails renders time limit 2`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -37693,6 +37720,7 @@ exports[`QuizDetails renders time limit 2`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -38349,8 +38377,8 @@ exports[`QuizDetails renders view responses 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -39054,6 +39082,7 @@ exports[`QuizDetails renders view responses 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -39710,8 +39739,8 @@ exports[`QuizDetails renders view responses 2`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -40415,6 +40444,7 @@ exports[`QuizDetails renders view responses 2`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -41013,8 +41043,8 @@ exports[`QuizDetails renders view responses 3`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -41718,6 +41748,7 @@ exports[`QuizDetails renders view responses 3`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -42316,8 +42347,8 @@ exports[`QuizDetails renders without a description 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]

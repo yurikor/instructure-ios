@@ -1,17 +1,17 @@
 //
 // Copyright (C) 2018-present Instructure, Inc.
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, version 3 of the License.
 //
-// http://www.apache.org/licenses/LICENSE-2.0
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 //
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
 import Foundation
@@ -22,6 +22,8 @@ typealias ErrorHandler = (Error?) -> Void
 @objc(PageViewEventController)
 open class PageViewEventController: NSObject {
     open static let instance = PageViewEventController()
+    private var requestManager = PageViewEventRequestManager()
+    private let session = PageViewSession()
     
     deinit {
         NotificationCenter.default.removeObserver(self)
@@ -38,19 +40,41 @@ open class PageViewEventController: NSObject {
     
     //  MARK: - Public
     func logPageView(_ eventNameOrPath: String, attributes: [String: Any]? = nil, eventDurationInSeconds: TimeInterval = 0) {
-        guard NSClassFromString("EarlGreyImpl") == nil else { return }
-        guard FeatureFlags.featureFlagEnabled(.pageViewLogging) else { return }
-        guard let userID = CanvasKeymaster.the().currentClient?.currentUser.id else { return }
-        
+        if(!appCanLogEvents()) { return }
+        guard let authSession = CanvasKeymaster.the().currentClient?.authSession else {
+            return
+        }
+
+        let userID = authSession.user.id
         var mutableAttributes = attributes?.convertToPageViewEventDictionary() ?? PageViewEventDictionary()
+        mutableAttributes["session_id"] = try? CodableValue(session.ID)
+        mutableAttributes["app_name"] = try? CodableValue("Canvas Student for iOS")
+        mutableAttributes["user_id"] = try? CodableValue(userID)
+        mutableAttributes["agent"] = try? CodableValue(CanvasCore.defaultHTTPHeaders["User-Agent"] ?? "Unknown")
+        if let masqueradeID = CanvasKeymaster.the().currentClient?.actAsUserID, let originalUserID = CanvasKeymaster.the().currentClient?.originalIDOfMasqueradingUser {
+            mutableAttributes["user_id"] = try? CodableValue(masqueradeID)
+            mutableAttributes["real_user_id"] = try? CodableValue(originalUserID)
+        }
         if let url = cleanupUrl(url: eventNameOrPath, attributes: mutableAttributes), let codableUrl = try? CodableValue(url) {
             mutableAttributes["url"] = codableUrl
+            if let parsedUrlPieces = parsePageViewParts(url) {
+                mutableAttributes["domain"] = try? CodableValue(parsedUrlPieces.domain ?? authSession.baseURL.host)
+                mutableAttributes["context_type"] = try? CodableValue(parsedUrlPieces.context)
+                mutableAttributes["context_id"] = try? CodableValue(parsedUrlPieces.contextID)
+            }
         }
         
         let event = PageViewEvent(eventName: eventNameOrPath, attributes: mutableAttributes, userID: userID, eventDuration: eventDurationInSeconds)
         Persistency.instance.addToQueue(event)
     }
-    
+
+    public func userDidChange() {
+        sync({ [weak self] in
+            self?.requestManager.cleanup()
+            self?.session.resetSessionInfo()
+        })
+    }
+
     //  MARK: - App Lifecycle
     
     @objc private func didEnterBackground(_ notification: Notification) {
@@ -67,21 +91,25 @@ open class PageViewEventController: NSObject {
     
     //  MARK: - Helpers
     
+    fileprivate func appCanLogEvents() -> Bool {
+        let isNotTest = NSClassFromString("EarlGreyImpl") == nil
+        let isStudent = NativeLoginManager.shared().app == CanvasApp.student
+        return isNotTest && isStudent
+    }
+    
     fileprivate func enableAppLifeCycleNotifications(_ enable: Bool) {
         if enable {
             NotificationCenter.default.addObserver(self, selector: #selector(PageViewEventController.didEnterBackground(_:)), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(PageViewEventController.willEnterForeground(_:)), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(PageViewEventController.appWillTerminate(_:)), name: NSNotification.Name.UIApplicationWillTerminate, object: nil)
-            CanvasKeymaster.the().signalForLogout.subscribeNext({ [weak self] (_) in
-                self?.sync()
-            })
         } else {
             NotificationCenter.default.removeObserver(self)
         }
     }
     
     fileprivate func sync(_ handler: EmptyHandler? = nil) {
-        sendEvents { error in
+        if(!appCanLogEvents()) { handler?(); return }
+        requestManager.sendEvents { error in
             handler?()
         }
     }
@@ -120,16 +148,43 @@ open class PageViewEventController: NSObject {
         
         return baseURL.appendingPathComponent(path).absoluteString
     }
-}
-
-extension PageViewEventController {
-    // TODO - send events here
-    fileprivate func sendEvents(handler: ErrorHandler?) {
-        //  let eventsToSync = Persistency.instance.batchOfEvents(3) // or use Persistency.instance.queueCount
-        //  .... send events to server
-        //  when successful response comes back, dequeue events from disk
-        //  Persistency.isnstance.dequeue(3, handler: handler)
-        handler?(nil)
+    
+    private enum Context: String {
+        case courses = "courses"
+        case groups = "groups"
+        case users = "users"
+        case accounts = "accounts"
+        
+        func properName() -> String {
+            switch(self) {
+            case .courses:
+                return "Course"
+            case .groups:
+                return "Group"
+            case .users:
+                return "User"
+            case .accounts:
+                return "Account"
+            }
+         }
+    }
+    
+    private func parsePageViewParts(_ url: String) -> (domain: String?, context: String?, contextID: String?)? {
+        guard let urlObj = URL(string: url) else { return nil }
+        let comps = urlObj.pathComponents
+        let host = urlObj.host
+        var context: String? = nil
+        var contextID: String? = nil
+        for i in 0..<comps.count {
+            if let c = Context(rawValue: comps[i]) {
+                context = c.properName()
+                if(i + 1 < comps.count) {
+                    contextID = comps[i+1]
+                }
+                break
+            }
+        }
+        return (host, context, contextID)
     }
 }
 
@@ -147,10 +202,11 @@ extension PageViewEventController {
 
     //  MARK: - Dev menu
     open func clearAllEvents(handler: (() -> Void)?) {
-        Persistency.instance.dequeue(Persistency.instance.queueCount, handler: {
+        Persistency.instance.dequeue(Persistency.instance.queueCount) {
             handler?()
-        })
+        }
     }
 }
+
 
 

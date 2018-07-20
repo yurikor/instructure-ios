@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ import ReactNative, {
   TouchableOpacity,
   Image,
   LayoutAnimation,
+  NativeModules,
   Alert,
   processColor,
 } from 'react-native'
@@ -138,6 +139,7 @@ export class Compose extends PureComponent<ComposeProps & OwnProps, ComposeState
     promise.then((response) => {
       this.props.refreshInboxSent()
       this.props.navigator.dismissAllModals()
+        .then(() => NativeModules.AppStoreReview.handleSuccessfulSubmit())
     }).catch((thrown) => {
       this.setState({
         pending: false,

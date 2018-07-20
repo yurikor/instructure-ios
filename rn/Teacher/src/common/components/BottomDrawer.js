@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,13 +37,6 @@ import DrawerState, {
 } from '../../modules/speedgrader/utils/drawer-state'
 
 let { height, width } = Dimensions.get('window')
-
-const cycleText = i18n('Open Drawer')
-const snapPointStates = [
-  i18n('Full screen'),
-  i18n('Half screen'),
-  i18n('Closed'),
-]
 
 const DrawerHandle = requireNativeComponent('DrawerHandleView')
 
@@ -134,6 +127,13 @@ export default class BottomDrawer extends Component<Props, State> {
   }
 
   render () {
+    const cycleText = i18n('Open Drawer')
+    const snapPointStates = [
+      i18n('Full screen'),
+      i18n('Half screen'),
+      i18n('Closed'),
+    ]
+
     let width = Math.min(700, this.state.width)
     let position = (this.state.width - width) / 2
 

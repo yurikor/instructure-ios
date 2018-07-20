@@ -1,25 +1,25 @@
 PODS:
-  - AFNetworking (3.2.0):
-    - AFNetworking/NSURLSession (= 3.2.0)
-    - AFNetworking/Reachability (= 3.2.0)
-    - AFNetworking/Security (= 3.2.0)
-    - AFNetworking/Serialization (= 3.2.0)
-    - AFNetworking/UIKit (= 3.2.0)
-  - AFNetworking/NSURLSession (3.2.0):
+  - AFNetworking (3.2.1):
+    - AFNetworking/NSURLSession (= 3.2.1)
+    - AFNetworking/Reachability (= 3.2.1)
+    - AFNetworking/Security (= 3.2.1)
+    - AFNetworking/Serialization (= 3.2.1)
+    - AFNetworking/UIKit (= 3.2.1)
+  - AFNetworking/NSURLSession (3.2.1):
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
-  - AFNetworking/Reachability (3.2.0)
-  - AFNetworking/Security (3.2.0)
-  - AFNetworking/Serialization (3.2.0)
-  - AFNetworking/UIKit (3.2.0):
+  - AFNetworking/Reachability (3.2.1)
+  - AFNetworking/Security (3.2.1)
+  - AFNetworking/Serialization (3.2.1)
+  - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
-  - BoringSSL (10.0.2):
-    - BoringSSL/Implementation (= 10.0.2)
-    - BoringSSL/Interface (= 10.0.2)
-  - BoringSSL/Implementation (10.0.2):
-    - BoringSSL/Interface (= 10.0.2)
-  - BoringSSL/Interface (10.0.2)
+  - BoringSSL (10.0.3):
+    - BoringSSL/Implementation (= 10.0.3)
+    - BoringSSL/Interface (= 10.0.3)
+  - BoringSSL/Implementation (10.0.3):
+    - BoringSSL/Interface (= 10.0.3)
+  - BoringSSL/Interface (10.0.3)
   - BugsnagReactNative (2.9.1):
     - BugsnagReactNative/Core (= 2.9.1)
     - React
@@ -28,48 +28,47 @@ PODS:
   - BVLinearGradient (2.4.0):
     - React
   - Cartography (1.1.0)
-  - CocoaLumberjack (3.4.1):
-    - CocoaLumberjack/Default (= 3.4.1)
-    - CocoaLumberjack/Extensions (= 3.4.1)
-  - CocoaLumberjack/Default (3.4.1)
-  - CocoaLumberjack/Extensions (3.4.1):
+  - CocoaLumberjack (3.4.2):
+    - CocoaLumberjack/Default (= 3.4.2)
+    - CocoaLumberjack/Extensions (= 3.4.2)
+  - CocoaLumberjack/Default (3.4.2)
+  - CocoaLumberjack/Extensions (3.4.2):
     - CocoaLumberjack/Default
-  - Crashlytics (3.10.1):
-    - Fabric (~> 1.7.5)
-  - DeviceKit (1.6.0)
-  - EarlGrey (1.13.0)
+  - Crashlytics (3.10.2):
+    - Fabric (~> 1.7.7)
+  - DeviceKit (1.7.0)
+  - EarlGrey (1.14.0)
   - Eureka (3.0.0)
-  - Fabric (1.7.6)
-  - FirebaseAnalytics (3.9.0):
-    - FirebaseCore (~> 3.6)
-    - FirebaseInstanceID (~> 1.0)
+  - Fabric (1.7.7)
+  - Firebase/Core (5.4.0):
+    - Firebase/CoreOnly
+    - FirebaseAnalytics (= 5.0.1)
+  - Firebase/CoreOnly (5.4.0):
+    - FirebaseCore (= 5.0.5)
+  - FirebaseAnalytics (5.0.1):
+    - FirebaseCore (~> 5.0)
+    - FirebaseInstanceID (~> 3.0)
     - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
-  - FirebaseCore (3.6.0):
+    - nanopb (~> 0.3)
+  - FirebaseCore (5.0.5):
     - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
-  - FirebaseInstanceID (1.0.10):
-    - FirebaseCore (~> 3.6)
+  - FirebaseInstanceID (3.1.1):
+    - FirebaseCore (~> 5.0)
   - fishhook (0.2)
   - FXKeychain (1.5.3)
-  - Google/Analytics (3.1.0):
-    - Google/Core
-    - GoogleAnalytics (~> 3.12)
-  - Google/Core (3.1.0):
-    - FirebaseAnalytics (~> 3.2)
-  - GoogleAnalytics (3.17.0)
-  - GoogleToolboxForMac/Defines (2.1.3)
-  - "GoogleToolboxForMac/NSData+zlib (2.1.3)":
-    - GoogleToolboxForMac/Defines (= 2.1.3)
-  - gRPC-Core (1.11.0-pre2):
-    - gRPC-Core/Implementation (= 1.11.0-pre2)
-    - gRPC-Core/Interface (= 1.11.0-pre2)
-  - gRPC-Core/Implementation (1.11.0-pre2):
+  - GoogleToolboxForMac/Defines (2.1.4)
+  - "GoogleToolboxForMac/NSData+zlib (2.1.4)":
+    - GoogleToolboxForMac/Defines (= 2.1.4)
+  - gRPC-Core (1.12.0):
+    - gRPC-Core/Implementation (= 1.12.0)
+    - gRPC-Core/Interface (= 1.12.0)
+  - gRPC-Core/Implementation (1.12.0):
     - BoringSSL (~> 10.0)
-    - gRPC-Core/Interface (= 1.11.0-pre2)
+    - gRPC-Core/Interface (= 1.12.0)
     - nanopb (~> 0.3)
-  - gRPC-Core/Interface (1.11.0-pre2)
+  - gRPC-Core/Interface (1.12.0)
   - Interactable (0.0.9):
     - React
-  - JSTokenField (1.1)
   - Kingfisher (3.13.1)
   - Mantle (1.5.8):
     - Mantle/extobjc (= 1.5.8)
@@ -81,9 +80,9 @@ PODS:
     - nanopb/encode (= 0.3.8)
   - nanopb/decode (0.3.8)
   - nanopb/encode (0.3.8)
-  - PSPDFKit (7.5.0):
-    - PSPDFKit/Core (= 7.5.0)
-  - PSPDFKit/Core (7.5.0)
+  - PSPDFKit (7.6.2):
+    - PSPDFKit/Core (= 7.6.2)
+  - PSPDFKit/Core (7.6.2)
   - RCTSFSafariViewController (0.2.4):
     - React
   - Reachability (3.2)
@@ -160,15 +159,15 @@ PODS:
     - RNSound/Core (= 0.10.4)
   - RNSound/Core (0.10.4):
     - React/Core
-  - SDWebImage (4.3.3):
-    - SDWebImage/Core (= 4.3.3)
-  - SDWebImage/Core (4.3.3)
+  - SDWebImage (4.4.1):
+    - SDWebImage/Core (= 4.4.1)
+  - SDWebImage/Core (4.4.1)
   - SVGKit (2.0.1):
     - CocoaLumberjack (~> 3.x)
   - SVProgressHUD (2.2.5)
-  - SwiftGRPC (0.4.0):
+  - SwiftGRPC (0.4.3):
     - BoringSSL (~> 10.0)
-    - gRPC-Core (~> 1.11.0-pre2)
+    - gRPC-Core (~> 1.12.0)
     - SwiftProtobuf (~> 1.0.3)
   - SwiftProtobuf (1.0.3)
   - SwiftSimplify (0.2.0)
@@ -181,22 +180,20 @@ DEPENDENCIES:
   - BugsnagReactNative (from `./rn/Teacher/node_modules/bugsnag-react-native`)
   - BVLinearGradient (from `./rn/Teacher/node_modules/react-native-linear-gradient`)
   - Cartography (~> 1.1)
-  - CocoaLumberjack (~> 3.0)
-  - Crashlytics (~> 3.8)
+  - Crashlytics (~> 3.10.2)
   - DeviceKit (~> 1.0)
   - EarlGrey (~> 1.1)
   - Eureka (from `https://github.com/xmartlabs/Eureka`, branch `Swift-3.3`)
-  - Fabric (~> 1.6)
+  - Fabric (~> 1.7.7)
+  - Firebase/Core
   - fishhook
   - FXKeychain (~> 1.5)
-  - Google/Analytics
   - Interactable (from `./rn/Teacher/node_modules/react-native-interactable`)
-  - JSTokenField (~> 1.1)
   - Kingfisher (~> 3.2)
   - Mantle (~> 1.5.5)
   - Marshal (~> 1.1)
   - Masonry (~> 1.0)
-  - PSPDFKit (from `https://customers.pspdfkit.com/cocoapods/8YzxfVzsGsqs4HKYsejmoeD6WEJ9ma/pspdfkit/7.5.0.podspec`)
+  - PSPDFKit (from `https://customers.pspdfkit.com/cocoapods/8YzxfVzsGsqs4HKYsejmoeD6WEJ9ma/pspdfkit/7.6.2.podspec`)
   - RCTSFSafariViewController (from `./rn/Teacher/node_modules/react-native-sfsafariviewcontroller`)
   - Reachability (~> 3.2)
   - react-native-blur (from `./rn/Teacher/node_modules/react-native-blur`)
@@ -239,9 +236,7 @@ DEPENDENCIES:
   - yoga (from `./rn/Teacher/node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
-  "git@github.com:instructure/ios-podspecs.git":
-    - JSTokenField
-  https://github.com/CocoaPods/Specs.git:
+  https://github.com/cocoapods/specs.git:
     - AFNetworking
     - BoringSSL
     - Cartography
@@ -250,13 +245,12 @@ SPEC REPOS:
     - DeviceKit
     - EarlGrey
     - Fabric
+    - Firebase
     - FirebaseAnalytics
     - FirebaseCore
     - FirebaseInstanceID
     - fishhook
     - FXKeychain
-    - Google
-    - GoogleAnalytics
     - GoogleToolboxForMac
     - gRPC-Core
     - Kingfisher
@@ -288,7 +282,7 @@ EXTERNAL SOURCES:
   Interactable:
     :path: "./rn/Teacher/node_modules/react-native-interactable"
   PSPDFKit:
-    :podspec: https://customers.pspdfkit.com/cocoapods/8YzxfVzsGsqs4HKYsejmoeD6WEJ9ma/pspdfkit/7.5.0.podspec
+    :podspec: https://customers.pspdfkit.com/cocoapods/8YzxfVzsGsqs4HKYsejmoeD6WEJ9ma/pspdfkit/7.6.2.podspec
   RCTSFSafariViewController:
     :path: "./rn/Teacher/node_modules/react-native-sfsafariviewcontroller"
   React:
@@ -326,41 +320,39 @@ CHECKOUT OPTIONS:
     :commit: 8fcc11477411b1ac96339d3d9d0973956ed05151
     :git: https://github.com/xmartlabs/Eureka
   SVGKit:
-    :commit: 0799e49c6ccd387888c5a6592b93f8b42e41bfeb
+    :commit: d239c2b1b1476667e0470fc7d794649f70cff5a1
     :git: https://github.com/SVGKit/SVGKit.git
   SwiftGRPC:
-    :commit: cc23b0531a5922af09ed7bb386c02fb7f39e5af0
+    :commit: e8b61208332acabb83dcfa39edae393aff80834e
     :git: https://github.com/grpc/grpc-swift.git
 
 SPEC CHECKSUMS:
-  AFNetworking: 8ac6017b94ea105479f7776e5288e48ae9c59bb4
-  BoringSSL: 60dd24df4af296bf41d78e5841dbb95d75f88c0d
+  AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
+  BoringSSL: c46efb47593135382bc0934196f16d2f726f5f36
   BugsnagReactNative: 0b7626917d3612281d07aea84e5041f123290fee
   BVLinearGradient: 4b3f3bdf1ac1a52a5ef5e65c9585d793a7c3f825
   Cartography: 0538ccb4044acbbda2266335fc58cb4228794d90
-  CocoaLumberjack: 2e258a064cacc8eb9a2aca318e24d02a0a7fd56d
-  Crashlytics: aee1a064cbbf99b32efa3f056a5f458d846bc8ff
-  DeviceKit: 3de509f9db7ae93bf676da5e97b945517bc957cd
-  EarlGrey: 9c50bc1f8e47e361dc2fe2053288bdcaebf9a3e5
+  CocoaLumberjack: db7cc9e464771f12054c22ff6947c5a58d43a0fd
+  Crashlytics: 0360624eea1c978a743feddb2fb1ef8b37fb7a0d
+  DeviceKit: 6a5bdeb103c03757bb94aef1ccb01e08bc8ef4ee
+  EarlGrey: 334a8a524345243392a8cf5f15f7d2ad030441f7
   Eureka: 5b9418d7bfdc21ca977d69d124a6409f3e9af2c7
-  Fabric: f8d42c893bb187326a7968b62abe55c36a987a46
-  FirebaseAnalytics: e5fe8486efc01bec33f6bf82e2fa9fce4b124052
-  FirebaseCore: 9691ee2ade70c098d7cf92440f4303f16d83ca75
-  FirebaseInstanceID: b9eedd6846fb5e1f0f7279e1deaa7a7e4cf8392e
+  Fabric: bda89e242bce1b7b8ab264248cf3407774ce0095
+  Firebase: d66f4f29c23f22d96808d9abc174d81d8eee968f
+  FirebaseAnalytics: b3628aea54c50464c32c393fb2ea032566e7ecc2
+  FirebaseCore: 42b3267233bd21a5abd54117ccc38ca3dd0f8e83
+  FirebaseInstanceID: f3f0657372592ecdfdfe2cac604a5a75758376a6
   fishhook: ea19933abfe8f2f52c55fd8b6e2718467d3ebc89
   FXKeychain: 2fe54573946ffef634f4e2a2851e6c8f4ea15e76
-  Google: 98da4b1a60ed0beb80a290387a28333406a1eb90
-  GoogleAnalytics: f42cc53a87a51fe94334821868d9c8481ff47a7b
-  GoogleToolboxForMac: 2501e2ad72a52eb3dfe7bd9aee7dad11b858bd20
-  gRPC-Core: d116537e4d53ef38dbd0d8d0f54895f21ed9cd8d
+  GoogleToolboxForMac: 91c824d21e85b31c2aae9bb011c5027c9b4e738f
+  gRPC-Core: 9696b220565b283e021cf2722d473a4a74b7622a
   Interactable: b69c171636bec426b3010e0fc3ef59212ce09dd6
-  JSTokenField: f619bc91e942f05b2bf4e67fe46aabd9e7891f5a
   Kingfisher: ed9707a409cc47fddafbcd12a43a9757e3600af5
   Mantle: f03b2b606c3f0cabd80214ad8a2fed6b464a7359
   Marshal: 8e04e6624e506921db7143b0bfd83caee03f32d6
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
-  PSPDFKit: a4788124e38a8dfede59a3da3981d1e7a5329575
+  PSPDFKit: e25886c778c089c39d3ef14b4e8703c92592af3e
   RCTSFSafariViewController: b0753f1bd08fa489fc54c4bed1bbc13e213c2b88
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   React: 541ba768b9855e10cdc76f55427a5cd0653ca806
@@ -379,16 +371,16 @@ SPEC CHECKSUMS:
   RNDeviceInfo: b375b3374cda3203d6d48cea8c07e46ba1169e26
   RNFS: fefeffc4f25a76144c1b53dc0a3258cf64c99962
   RNSound: d0818fe2435254fe30540fae48a429c5ffb72e09
-  SDWebImage: de4d90b5bff3571eae7bd16202b1f43135409fa5
+  SDWebImage: 47e9b5b925cbce75946c23f0c42dd19464189af4
   SVGKit: 4055d9e809b5db8633755979cfb3b02dc5a8c20d
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
-  SwiftGRPC: 8520ab1a4e98f4c15443f7d59facb8042ffc3290
+  SwiftGRPC: eff15c250c3503e57e436e35e2c6d546717c2e2e
   SwiftProtobuf: 5ccc0e4054e37c75800e5744acb2aa80bb72b39c
   SwiftSimplify: 374ead1c360c6e236539543d6ce5b3abda011080
   TBBModal: 376820c480cac24b262c2e10c0178c67bb288390
   TPKeyboardAvoiding: cb69d5ddbe90ce0170e4bc2db1e5e41d4a3ad9a4
   yoga: 17521bbb0dd54a47c0b3ac43253e78cdac7488e0
 
-PODFILE CHECKSUM: 0d666a02f25aeea0eef7ce4e3669b1f34ad056dc
+PODFILE CHECKSUM: 412a365e24541db8f4246bceff42ae536b3d8cdc
 
-COCOAPODS: 1.5.0
+COCOAPODS: 1.5.3

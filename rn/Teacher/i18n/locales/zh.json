@@ -254,11 +254,17 @@
   "cancel_caeb1e68": {
     "message": "取消"
   },
+  "canvas_guides_d65431": {
+    "message": "Canvas 指南"
+  },
   "canvas_parent_app_f9236a3a": {
     "message": "Canvas 家长应用"
   },
   "canvas_student_app_329567f": {
     "message": "Canvas 学生应用"
+  },
+  "canvas_teacher_app_9dc7d7ed": {
+    "message": "Canvas 教师应用"
   },
   "change_discussiontitle_to_different_grouping_9f5ed8c1": {
     "message": "将 { discussionTitle } 更改到不同分组"
@@ -286,6 +292,9 @@
   },
   "clear_recording_5a97b475": {
     "message": "清除录制"
+  },
+  "close_d634289d": {
+    "message": "关闭"
   },
   "close_for_comments_ce0e5d00": {
     "message": "关闭评论"
@@ -316,6 +325,9 @@
   },
   "compose_message_8abd180a": {
     "message": "撰写消息"
+  },
+  "conferences_a0a8984b": {
+    "message": "会议"
   },
   "conversation_options_8be926f3": {
     "message": "对话选项"
@@ -566,6 +578,9 @@
   "excused_cf8792eb": {
     "message": "免除"
   },
+  "extensions_and_lastextension_f45d68e7": {
+    "message": "{ extensions } 和 { lastExtension }"
+  },
   "external_tool_c5a6410a": {
     "message": "外部工具"
   },
@@ -596,8 +611,8 @@
   "favorite_courses_fbd356f0": {
     "message": "最喜欢的课程"
   },
-  "file_count_plural_one_file_other_files_8ae41de8": {
-    "message": "{ file_count, plural,    other {#文件}}"
+  "file_types_6fa69505": {
+    "message": "文件类型"
   },
   "files_c300e900": {
     "message": "文件"
@@ -701,6 +716,9 @@
   "help_4c4968b1": {
     "message": "帮助"
   },
+  "hidden_14a032a7": {
+    "message": "隐藏"
+  },
   "hidden_files_inside_will_be_available_with_links_e9e3d233": {
     "message": "隐藏。使用链接可获取里面的文件。"
   },
@@ -722,6 +740,12 @@
   "i_hold_the_copyright_71ee91b1": {
     "message": "我持有版权"
   },
+  "if_you_re_a_student_or_teacher_try_one_of_our_othe_f0ae9b33": {
+    "message": "如果您是学生或老师，请尝试我们在下方列出的其他应用程序。"
+  },
+  "in_progress_9d1ce8b9": {
+    "message": "进行中"
+  },
   "incomplete_da3c2ea2": {
     "message": "未完成"
   },
@@ -730,6 +754,9 @@
   },
   "insert_link_6dc23cae": {
     "message": "插入链接"
+  },
+  "internet_connection_offline_d7c02b88": {
+    "message": "网络连接断开"
   },
   "invalid_field_54480fae": {
     "message": "无效的字段"
@@ -740,8 +767,17 @@
   "invite_declined_d0a9e398": {
     "message": "已拒绝邀请！"
   },
+  "it_looks_like_your_internet_connection_is_offline__cf4003": {
+    "message": "您的网络连接似乎已断开。重新连接网络并重试。"
+  },
+  "it_seems_there_aren_t_any_valid_submissions_to_gra_f136675": {
+    "message": "似乎没有要评分的有效提交项。"
+  },
   "italic_ac45200a": {
     "message": "斜体"
+  },
+  "item_count_plural_one_item_other_items_88319c63": {
+    "message": "{ item_count, plural,\n    one {#项目}\n  other {#项目}\n}"
   },
   "last_activity_on_lastactivity_date_mmmm_d_at_lasta_1a7e8430": {
     "message": "上次活动日期 { lastActivity, date, 'MMMM d' }{ lastActivity, time, short }"
@@ -779,11 +815,17 @@
   "lock_questions_after_answering_e0f61d7c": {
     "message": "回答后锁定问题"
   },
+  "log_in_again_ec2b1f46": {
+    "message": "再次登录"
+  },
   "log_out_379ba28a": {
     "message": "退出"
   },
   "long_description_7d89285c": {
     "message": "长说明"
+  },
+  "manage_children_a28d764e": {
+    "message": "管理儿童"
   },
   "mark_all_as_read_8f3bdf57": {
     "message": "全部标记为已读"
@@ -890,6 +932,9 @@
   "no_e16d9132": {
     "message": "不、非"
   },
+  "no_enrollments_6369cd31": {
+    "message": "无注册学员"
+  },
   "no_grade_3b4d7f3e": {
     "message": "没有评分"
   },
@@ -910,6 +955,9 @@
   },
   "no_subject_58b7941c": {
     "message": "无主题"
+  },
+  "no_submissions_to_display_6f1491cf": {
+    "message": "没有要显示的提交项。"
   },
   "no_time_limit_2147d9bf": {
     "message": "无时间限制"
@@ -1289,6 +1337,9 @@
   "students_1b8cd07b": {
     "message": "学生"
   },
+  "students_must_post_before_seeing_replies_1a57eeb2": {
+    "message": "学生必须发帖才能看到回复"
+  },
   "subject_114b2e98": {
     "message": "主题"
   },
@@ -1370,6 +1421,9 @@
   "there_are_no_comments_to_display_bde58f70": {
     "message": "没有评论可显示。"
   },
+  "there_are_no_conferences_to_display_400a0413": {
+    "message": "没有要显示的会议。"
+  },
   "there_are_no_discussions_to_display_37bc437f": {
     "message": "没有要显示的讨论。"
   },
@@ -1450,6 +1504,9 @@
   },
   "this_assignment_does_not_allow_submissions_30af1caa": {
     "message": "此作业不允许提交。"
+  },
+  "this_assignment_doesn_t_have_a_description_e2f37ec3": {
+    "message": "此作业没有描述。"
   },
   "this_assignment_only_allows_on_paper_submissions_f478408a": {
     "message": "此作业仅允许纸上提交。"
@@ -1599,9 +1656,6 @@
   "user_id_bcace870": {
     "message": "用户 ID"
   },
-  "users_must_post_before_seeing_replies_d1761968": {
-    "message": "用户必须先发布本人信息才能阅读他人回复"
-  },
   "video_b9f27375": {
     "message": "视频"
   },
@@ -1610,6 +1664,9 @@
   },
   "view_all_submissions_915a8b78": {
     "message": "查看所有提交项"
+  },
+  "view_canvas_guides_a1c62a97": {
+    "message": "查看 Canvas 指南"
   },
   "view_long_description_2b592c0e": {
     "message": "查看长描述"
@@ -1646,6 +1703,9 @@
   },
   "you_must_enter_an_access_code_8c2c7ae0": {
     "message": "您必须输入访问代码"
+  },
+  "you_need_at_least_one_active_observer_enrollment_t_9c78bb6e": {
+    "message": "您需要有至少一个活跃的观察者注册学员才能使用 Canvas Parent。"
   },
   "your_submission_comment_failed_to_send_5c8d2809": {
     "message": "您的提交评论发送失败。"

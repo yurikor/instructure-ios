@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@ import {
 import i18n from 'format-message'
 import { formattedDueDateWithStatus } from '../../../common/formatters'
 import AccessIcon from '../../../common/components/AccessIcon'
-import AccessLine from '../../../common/components/AccessLine'
 import AssignmentDates from '../../../common/AssignmentDates'
 import { Text } from '../../../common/text'
 import Row from '../../../common/components/rows/Row'
@@ -95,7 +94,6 @@ export default class AssignmentListRow extends PureComponent<Props> {
             {this.ungradedBubble(assignment)}
           </Row>
         </View>
-        <AccessLine visible={assignment.published} />
       </View>
     )
   }
@@ -131,8 +129,8 @@ const styles = StyleSheet.create({
     borderColor: '#008EE2',
     borderWidth: 1,
     backgroundColor: 'white',
-    paddingTop: 3,
-    paddingBottom: 1,
+    paddingTop: 2,
+    paddingBottom: 2,
     paddingLeft: 6,
     paddingRight: 6,
     marginTop: 4,

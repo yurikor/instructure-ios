@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,17 +31,6 @@ jest.mock('../../../../redux/middleware/error-handler', () => {
 jest.mock('../../../tabbar/badge-counts', () => ({
   updateBadgeCounts: jest.fn(),
 }))
-
-const diveList = (list: any) =>
-  shallow(
-    <list>
-      {list.prop('data').map((item, index) =>
-        <item key={list.prop('keyExtractor')(item)}>
-          {list.prop('renderItem')({ item, index })}
-        </item>
-      )}
-    </list>
-  )
 
 describe('ToDoList', () => {
   let props
@@ -125,7 +114,7 @@ describe('ToDoList', () => {
       assignment: template.assignment({ id: '1' }),
     })]
     const tree = shallow(<ToDoList {...props} />)
-    diveList(tree.find('FlatList')).find('ToDoListItem')
+    tree.find('FlatList').dive().find('ToDoListItem')
       .simulate('Press', props.list[0])
     expect(props.navigator.show).toHaveBeenCalledWith(
       '/courses/222/gradebook/speed_grader',
@@ -147,7 +136,7 @@ describe('ToDoList', () => {
       quiz: template.quiz({ id: '2', assignment_id: '1' }),
     })]
     const tree = shallow(<ToDoList {...props} />)
-    diveList(tree.find('FlatList')).find('ToDoListItem')
+    tree.find('FlatList').dive().find('ToDoListItem')
       .simulate('Press', props.list[0])
     expect(props.navigator.show).toHaveBeenCalledWith(
       '/courses/222/gradebook/speed_grader',

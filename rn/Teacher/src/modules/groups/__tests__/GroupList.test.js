@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,12 +19,7 @@
 import React from 'react'
 import { GroupList, mapStateToProps } from '../GroupList'
 import renderer from 'react-native-test-utils'
-
-const template = {
-  ...require('../../../__templates__/helm'),
-  ...require('../../../__templates__/group'),
-  ...require('../../../redux/__templates__/app-state'),
-}
+import * as template from '../../../__templates__'
 
 let defaultProps = {
   group: template.group(),

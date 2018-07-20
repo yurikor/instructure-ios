@@ -8,8 +8,8 @@ exports[`comments render properly 1`] = `
     }
   }
 >
-  <view>
-    <view>
+  <list>
+    <item>
       <View
         style={
           Array [
@@ -55,8 +55,8 @@ exports[`comments render properly 1`] = `
                   },
                   Object {
                     "color": "#2D3B45",
-                    "fontFamily": ".SFUIDisplay-semibold",
-                    "fontSize": 20,
+                    "fontFamily": ".SFUIDisplay-heavy",
+                    "fontSize": 24,
                   },
                   Array [
                     Object {
@@ -247,8 +247,8 @@ exports[`comments render properly 1`] = `
           </View>
         </View>
       </View>
-    </view>
-    <view>
+    </item>
+    <item>
       <View
         style={
           Array [
@@ -356,8 +356,8 @@ exports[`comments render properly 1`] = `
                   },
                   Object {
                     "color": "#2D3B45",
-                    "fontFamily": ".SFUIDisplay-semibold",
-                    "fontSize": 20,
+                    "fontFamily": ".SFUIDisplay-heavy",
+                    "fontSize": 24,
                   },
                   Array [
                     Object {
@@ -485,8 +485,8 @@ exports[`comments render properly 1`] = `
           </View>
         </View>
       </View>
-    </view>
-    <view>
+    </item>
+    <item>
       <View
         style={
           Array [
@@ -532,8 +532,8 @@ exports[`comments render properly 1`] = `
                   },
                   Object {
                     "color": "#2D3B45",
-                    "fontFamily": ".SFUIDisplay-semibold",
-                    "fontSize": 20,
+                    "fontFamily": ".SFUIDisplay-heavy",
+                    "fontSize": 24,
                   },
                   Array [
                     Object {
@@ -654,8 +654,8 @@ exports[`comments render properly 1`] = `
           <View />
         </View>
       </View>
-    </view>
-    <view>
+    </item>
+    <item>
       <View
         style={
           Array [
@@ -763,8 +763,8 @@ exports[`comments render properly 1`] = `
                   },
                   Object {
                     "color": "#2D3B45",
-                    "fontFamily": ".SFUIDisplay-semibold",
-                    "fontSize": 20,
+                    "fontFamily": ".SFUIDisplay-heavy",
+                    "fontSize": 24,
                   },
                   Array [
                     Object {
@@ -821,8 +821,8 @@ exports[`comments render properly 1`] = `
           }
         />
       </View>
-    </view>
-    <view>
+    </item>
+    <item>
       <View
         style={
           Array [
@@ -868,8 +868,8 @@ exports[`comments render properly 1`] = `
                   },
                   Object {
                     "color": "#2D3B45",
-                    "fontFamily": ".SFUIDisplay-semibold",
-                    "fontSize": 20,
+                    "fontFamily": ".SFUIDisplay-heavy",
+                    "fontSize": 24,
                   },
                   Array [
                     Object {
@@ -994,8 +994,8 @@ exports[`comments render properly 1`] = `
           />
         </View>
       </View>
-    </view>
-    <view>
+    </item>
+    <item>
       <View
         style={
           Array [
@@ -1103,8 +1103,8 @@ exports[`comments render properly 1`] = `
                   },
                   Object {
                     "color": "#2D3B45",
-                    "fontFamily": ".SFUIDisplay-semibold",
-                    "fontSize": 20,
+                    "fontFamily": ".SFUIDisplay-heavy",
+                    "fontSize": 24,
                   },
                   Array [
                     Object {
@@ -1261,8 +1261,8 @@ exports[`comments render properly 1`] = `
           </View>
         </View>
       </View>
-    </view>
-  </view>
+    </item>
+  </list>
   <CommentInput
     addMedia={[Function]}
     disabled={false}
@@ -1304,7 +1304,7 @@ exports[`comments render properly 1`] = `
 
 exports[`mapStateToProps returns comment and submission rows 1`] = `
 Object {
-  "anonymous": true,
+  "anonymous": false,
   "commentRows": Array [
     Object {
       "avatarURL": "http://www.fillmurray.com/100/100",

@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import * as templates from '../../../__templates__/index'
 
 describe('AssignmentList mapStateToProps', () => {
   let assignmentGroup = templates.assignmentGroup()
-  let assignment = templates.assignment()
+  let assignment = assignmentGroup.assignments[0]
   let gradingPeriod = templates.gradingPeriod({ id: 1 })
   let gradingPeriodTwo = templates.gradingPeriod({ id: 2 })
   let course = templates.course({

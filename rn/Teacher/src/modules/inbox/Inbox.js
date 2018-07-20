@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ import color from '../../common/colors'
 import RowSeparator from '../../common/components/rows/RowSeparator'
 import CourseActions from '../courses/actions'
 import App from '../app'
+import { logEvent } from '../../common/CanvasAnalytics'
 
 export type InboxProps = {
   conversations: Conversation[],
@@ -64,11 +65,13 @@ export class Inbox extends Component<InboxProps, any> {
   }
 
   _onSelectConversation = (conversationID: string) => {
+    logEvent('conversation_selected')
     const path = `/conversations/${conversationID}`
     this.props.navigator.show(path)
   }
 
   addMessage = () => {
+    logEvent('new_message_composed')
     this.props.navigator.show('/conversations/compose', { modal: true })
   }
 

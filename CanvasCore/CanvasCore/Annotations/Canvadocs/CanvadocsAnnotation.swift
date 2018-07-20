@@ -1,20 +1,37 @@
 //
-//  CanvadocsAnnotation.swift
-//  SoAnnotated
+// Copyright (C) 2017-present Instructure, Inc.
 //
-//  Created by Ben Kraus on 9/14/17.
-//  Copyright © 2017 Instructure. All rights reserved.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, version 3 of the License.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
 import UIKit
 import PSPDFKit
 import SwiftSimplify
 
+fileprivate var annotationUserNameKey: UInt8 = 0
 fileprivate var annotationDeletedAtKey: UInt8 = 0
 fileprivate var annotationDeletedByKey: UInt8 = 0
 fileprivate var annotationDeletedByIDKey: UInt8 = 0
 
 extension PSPDFAnnotation {
+    var userName: String? {
+        get {
+            return objc_getAssociatedObject(self, &annotationUserNameKey) as? String
+        }
+        set(newValue) {
+            objc_setAssociatedObject(self, &annotationUserNameKey, newValue, .OBJC_ASSOCIATION_COPY)
+        }
+    }
     var deletedAt: Date? {
         get {
             return objc_getAssociatedObject(self, &annotationDeletedAtKey) as? Date
@@ -266,8 +283,8 @@ struct CanvadocsAnnotation: Codable {
     init?(pspdfAnnotation: PSPDFAnnotation, onDocument document: PSPDFDocument) {
         self.id = pspdfAnnotation.name
         self.documentID = nil
-        self.userID = nil
-        self.userName = ""
+        self.userID = pspdfAnnotation.user
+        self.userName = pspdfAnnotation.userName ?? ""
         self.page = pspdfAnnotation.pageIndex
         self.createdAt = pspdfAnnotation.creationDate
         self.modifiedAt = pspdfAnnotation.lastModified
@@ -385,7 +402,8 @@ struct CanvadocsAnnotation: Codable {
         }
         
         pspdfAnnotation?.name = self.id
-        pspdfAnnotation?.user = self.userName
+        pspdfAnnotation?.user = self.userID
+        pspdfAnnotation?.userName = self.userName
         pspdfAnnotation?.pageIndex = self.page
         pspdfAnnotation?.creationDate = self.createdAt
         pspdfAnnotation?.lastModified = self.modifiedAt

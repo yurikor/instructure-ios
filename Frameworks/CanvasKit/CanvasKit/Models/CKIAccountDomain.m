@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,9 +39,15 @@
 
 - (instancetype)initWithDomain:(NSString *)domain
 {
-    if ((self = [super init])) {
+    if ((self = [self init])) {
         self.domain = domain;
     }
+    return self;
+}
+
+- (instancetype)init {
+    self = [super init];
+    self.type = CKIAccountDomainTypeNormal;
     return self;
 }
 
@@ -59,9 +65,15 @@
 }
 
 + (CKIAccountDomain *)cantFindSchool {
-    CKIAccountDomain *canvasNetSchool = [CKIAccountDomain new];
-    canvasNetSchool.name = NSLocalizedStringFromTableInBundle(@"Can't find your school? Try typing the full school URL.", nil, [NSBundle bundleForClass:[self class]], @"Help label when user can't find their school.");
-    return canvasNetSchool;
+    CKIAccountDomain *domain = [CKIAccountDomain new];
+    domain.type = CKIAccountDomainTypeCantFindSchool;
+    return domain;
+}
+
++ (CKIAccountDomain *)howDoIFindMySchool {
+    CKIAccountDomain *domain = [CKIAccountDomain new];
+    domain.type = CKIAccountDomainTypeHowDoIFindMySchool;
+    return domain;
 }
 
 + (NSArray *)developmentSchools {

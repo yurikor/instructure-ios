@@ -145,21 +145,15 @@ exports[`SpeedGrader only sets submissions once 1`] = `
           },
         ]
       }
-      disableVirtualization={false}
       getItemLayout={[Function]}
       horizontal={true}
       initialNumToRender={null}
       initialScrollIndex={0}
-      keyExtractor={[Function]}
       keyboardShouldPersistTaps="handled"
-      maxToRenderPerBatch={10}
-      numColumns={1}
-      onEndReachedThreshold={2}
       onLayout={[Function]}
       onMomentumScrollEnd={[Function]}
       pagingEnabled={true}
       renderItem={[Function]}
-      scrollEventThrottle={50}
       showsHorizontalScrollIndicator={false}
       style={
         Object {
@@ -167,7 +161,6 @@ exports[`SpeedGrader only sets submissions once 1`] = `
           "marginRight": -10,
         }
       }
-      updateCellsBatchingPeriod={50}
       windowSize={5}
     />
     <Tutorial
@@ -294,6 +287,7 @@ exports[`SpeedGrader renders submissions if there are some 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               },
@@ -345,6 +339,7 @@ exports[`SpeedGrader renders submissions if there are some 1`] = `
                                           "dismissAllModals": [Function],
                                           "isModal": false,
                                           "pop": [Function],
+                                          "replace": [Function],
                                           "show": [Function],
                                           "traitCollection": [Function],
                                         }
@@ -450,6 +445,7 @@ exports[`SpeedGrader renders submissions if there are some 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               },
@@ -529,6 +525,7 @@ exports[`SpeedGrader renders submissions if there are some 1`] = `
                                           "dismissAllModals": [Function],
                                           "isModal": false,
                                           "pop": [Function],
+                                          "replace": [Function],
                                           "show": [Function],
                                           "traitCollection": [Function],
                                         }
@@ -618,21 +615,15 @@ exports[`SpeedGrader renders submissions if there are some 1`] = `
                                                                   },
                                                                 ]
                                           }
-                                          disableVirtualization={false}
                                           getItemLayout={[Function]}
                                           horizontal={true}
                                           initialNumToRender={null}
                                           initialScrollIndex={0}
-                                          keyExtractor={[Function]}
                                           keyboardShouldPersistTaps="handled"
-                                          maxToRenderPerBatch={10}
-                                          numColumns={1}
-                                          onEndReachedThreshold={2}
                                           onLayout={[Function]}
                                           onMomentumScrollEnd={[Function]}
                                           pagingEnabled={true}
                                           renderItem={[Function]}
-                                          scrollEventThrottle={50}
                                           showsHorizontalScrollIndicator={false}
                                           style={
                                                       Object {
@@ -640,7 +631,6 @@ exports[`SpeedGrader renders submissions if there are some 1`] = `
                                                                   "marginRight": -10,
                                                                 }
                                           }
-                                          updateCellsBatchingPeriod={50}
                                           windowSize={5}
                               />
                               <Tutorial
@@ -686,6 +676,7 @@ exports[`SpeedGrader renders submissions if there are some 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               },
@@ -756,6 +747,7 @@ exports[`SpeedGrader renders submissions if there are some 1`] = `
                                           "dismissAllModals": [Function],
                                           "isModal": false,
                                           "pop": [Function],
+                                          "replace": [Function],
                                           "show": [Function],
                                           "traitCollection": [Function],
                                         }
@@ -837,21 +829,15 @@ exports[`SpeedGrader renders submissions if there are some 1`] = `
                                                                   },
                                                                 ]
                                           }
-                                          disableVirtualization={false}
                                           getItemLayout={[Function]}
                                           horizontal={true}
                                           initialNumToRender={null}
                                           initialScrollIndex={0}
-                                          keyExtractor={[Function]}
                                           keyboardShouldPersistTaps="handled"
-                                          maxToRenderPerBatch={10}
-                                          numColumns={1}
-                                          onEndReachedThreshold={2}
                                           onLayout={[Function]}
                                           onMomentumScrollEnd={[Function]}
                                           pagingEnabled={true}
                                           renderItem={[Function]}
-                                          scrollEventThrottle={50}
                                           showsHorizontalScrollIndicator={false}
                                           style={
                                                       Object {
@@ -859,7 +845,6 @@ exports[`SpeedGrader renders submissions if there are some 1`] = `
                                                                   "marginRight": -10,
                                                                 }
                                           }
-                                          updateCellsBatchingPeriod={50}
                                           windowSize={5}
                               />
                               <Tutorial
@@ -905,6 +890,7 @@ exports[`SpeedGrader renders submissions if there are some 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               },
@@ -975,6 +961,7 @@ exports[`SpeedGrader renders submissions if there are some 1`] = `
                                           "dismissAllModals": [Function],
                                           "isModal": false,
                                           "pop": [Function],
+                                          "replace": [Function],
                                           "show": [Function],
                                           "traitCollection": [Function],
                                         }
@@ -1056,21 +1043,15 @@ exports[`SpeedGrader renders submissions if there are some 1`] = `
                                                                   },
                                                                 ]
                                           }
-                                          disableVirtualization={false}
                                           getItemLayout={[Function]}
                                           horizontal={true}
                                           initialNumToRender={null}
                                           initialScrollIndex={0}
-                                          keyExtractor={[Function]}
                                           keyboardShouldPersistTaps="handled"
-                                          maxToRenderPerBatch={10}
-                                          numColumns={1}
-                                          onEndReachedThreshold={2}
                                           onLayout={[Function]}
                                           onMomentumScrollEnd={[Function]}
                                           pagingEnabled={true}
                                           renderItem={[Function]}
-                                          scrollEventThrottle={50}
                                           showsHorizontalScrollIndicator={false}
                                           style={
                                                       Object {
@@ -1078,7 +1059,6 @@ exports[`SpeedGrader renders submissions if there are some 1`] = `
                                                                   "marginRight": -10,
                                                                 }
                                           }
-                                          updateCellsBatchingPeriod={50}
                                           windowSize={5}
                               />
                               <Tutorial
@@ -1123,6 +1103,7 @@ exports[`SpeedGrader renders submissions if there are some 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               },
@@ -1174,6 +1155,7 @@ exports[`SpeedGrader renders submissions if there are some 1`] = `
                                           "dismissAllModals": [Function],
                                           "isModal": false,
                                           "pop": [Function],
+                                          "replace": [Function],
                                           "show": [Function],
                                           "traitCollection": [Function],
                                         }
@@ -1278,6 +1260,7 @@ exports[`SpeedGrader renders submissions if there are some 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               },
@@ -1329,6 +1312,7 @@ exports[`SpeedGrader renders submissions if there are some 1`] = `
                                           "dismissAllModals": [Function],
                                           "isModal": false,
                                           "pop": [Function],
+                                          "replace": [Function],
                                           "show": [Function],
                                           "traitCollection": [Function],
                                         }
@@ -1433,6 +1417,7 @@ exports[`SpeedGrader renders submissions if there are some 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               },
@@ -1503,6 +1488,7 @@ exports[`SpeedGrader renders submissions if there are some 1`] = `
                                           "dismissAllModals": [Function],
                                           "isModal": false,
                                           "pop": [Function],
+                                          "replace": [Function],
                                           "show": [Function],
                                           "traitCollection": [Function],
                                         }
@@ -1584,21 +1570,15 @@ exports[`SpeedGrader renders submissions if there are some 1`] = `
                                                                   },
                                                                 ]
                                           }
-                                          disableVirtualization={false}
                                           getItemLayout={[Function]}
                                           horizontal={true}
                                           initialNumToRender={null}
                                           initialScrollIndex={0}
-                                          keyExtractor={[Function]}
                                           keyboardShouldPersistTaps="handled"
-                                          maxToRenderPerBatch={10}
-                                          numColumns={1}
-                                          onEndReachedThreshold={2}
                                           onLayout={[Function]}
                                           onMomentumScrollEnd={[Function]}
                                           pagingEnabled={true}
                                           renderItem={[Function]}
-                                          scrollEventThrottle={50}
                                           showsHorizontalScrollIndicator={false}
                                           style={
                                                       Object {
@@ -1606,7 +1586,6 @@ exports[`SpeedGrader renders submissions if there are some 1`] = `
                                                                   "marginRight": -10,
                                                                 }
                                           }
-                                          updateCellsBatchingPeriod={50}
                                           windowSize={5}
                               />
                               <Tutorial
@@ -1643,6 +1622,7 @@ exports[`SpeedGrader renders submissions if there are some 1`] = `
         "dismissAllModals": [Function],
         "isModal": false,
         "pop": [Function],
+        "replace": [Function],
         "show": [Function],
         "traitCollection": [Function],
       }

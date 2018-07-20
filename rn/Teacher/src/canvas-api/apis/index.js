@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ import * as fileUploads from './file-uploads'
 import * as files from './files'
 import * as accounts from './accounts'
 import * as userCustomData from './user-custom-data'
+import * as pageViewEvents from './page-view-events'
 
 export default {
   ...accountApi,
@@ -54,4 +55,5 @@ export default {
   ...files,
   ...accounts,
   ...userCustomData,
+  ...pageViewEvents,
 }

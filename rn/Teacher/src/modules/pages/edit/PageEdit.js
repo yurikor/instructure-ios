@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ import ReactNative, {
 } from 'react-native'
 import Screen from '../../../routing/Screen'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { Heading1 } from '../../../common/text'
+import { FormLabel } from '../../../common/text'
 import RowWithTextInput from '../../../common/components/rows/RowWithTextInput'
 import RowWithSwitch from '../../../common/components/rows/RowWithSwitch'
 import RowWithDetail from '../../../common/components/rows/RowWithDetail'
@@ -36,26 +36,22 @@ import RichTextEditor from '../../../common/components/rich-text-editor/RichText
 import colors from '../../../common/colors'
 import {
   fetchPropsFor,
+  type FetchProps,
   PageModel,
-  API,
 } from '../../../canvas-api/model-api'
 import { alertError } from '../../../redux/middleware/error-handler'
 
 const PickerItem = PickerIOS.Item
 
-type Props = {
+type HocProps = {
   courseID: string,
-  url: ?string,
+  url?: ?string,
   navigator: Navigator,
-  page: ?PageModel,
   onChange?: PageModel => void,
-  api: API,
-  isLoading: boolean,
-  isSaving: boolean,
-  loadError: ?Error,
-  saveError: ?Error,
-  refresh: () => void,
 }
+type Props = HocProps & {
+  page: ?PageModel,
+} & FetchProps
 
 type State = {
   title: ?string,
@@ -119,7 +115,7 @@ export class PageEdit extends Component<Props, State> {
             ref={(r) => { this.scrollView = r }}
             keyboardDismissMode='on-drag'
           >
-            <Heading1 style={style.heading}>{i18n('Title')}</Heading1>
+            <FormLabel>{i18n('Title')}</FormLabel>
             <RowWithTextInput
               defaultValue={this.state.title}
               border='both'
@@ -129,7 +125,7 @@ export class PageEdit extends Component<Props, State> {
               onFocus={this._scrollToInput}
             />
 
-            <Heading1 style={style.heading}>{i18n('Description')}</Heading1>
+            <FormLabel>{i18n('Description')}</FormLabel>
             <View
               style={style.description}
             >
@@ -147,7 +143,7 @@ export class PageEdit extends Component<Props, State> {
               />
             </View>
 
-            <Heading1 style={style.heading}>{i18n('Details')}</Heading1>
+            <FormLabel>{i18n('Details')}</FormLabel>
             { !this.state.isFrontPage &&
               <RowWithSwitch
                 title={i18n('Publish')}
@@ -273,12 +269,6 @@ const style = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F5F5',
   },
-  heading: {
-    color: colors.darkText,
-    marginLeft: global.style.defaultPadding,
-    marginTop: global.style.defaultPadding,
-    marginBottom: global.style.defaultPadding / 2,
-  },
   description: {
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: colors.seperatorColor,
@@ -289,6 +279,6 @@ const style = StyleSheet.create({
   },
 })
 
-export default fetchPropsFor(PageEdit, ({ courseID, url }, api) => ({
+export default fetchPropsFor(PageEdit, ({ courseID, url }: HocProps, api) => ({
   page: !url ? PageModel.newPage : api.getPage('courses', courseID, url),
 }))

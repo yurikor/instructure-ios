@@ -100,27 +100,29 @@ extension Router {
             Page.colorfulPageViewModel(session: session, page: page)
         }
 
-        let pagesListFactory: (ContextID, [String: Any]) throws -> UIViewController? = { contextID, _ in
+        let pagesFrontFactory: (ContextID, [String: Any]) throws -> UIViewController? = { contextID, _ in
+            if let url = URL(string: "/\(contextID.context.pathComponent)/\(contextID.id)/pages/front_page") {
+                return Router.shared().controller(forHandling: url)
+            }
+            return nil
+        }
+
+        addContextRoute([.course, .group], subPath: "front_page", handler: pagesFrontFactory)
+        addContextRoute([.course, .group], subPath: "wiki", handler: pagesFrontFactory)
+
+        addContextRoute([.course], subPath: "pages", handler: { contextID, _ in
             return HelmViewController(
                 moduleName: "/courses/:courseID/pages",
                 props: ["courseID": contextID.id]
             )
-        }
+        })
 
-        let oldPagesListFactory: (ContextID, [String: Any]) throws -> UIViewController? = { contextID, _ in
+        addContextRoute([.group], subPath: "pages", handler: { contextID, _ in
             guard let currentSession = currentSession else { return nil }
             let controller = try Page.TableViewController(session: currentSession, contextID: contextID, viewModelFactory: pagesListViewModelFactory, route: route)
             return controller
-        }
+        })
 
-        addContextRoute([.course], subPath: "front_page", handler: pagesListFactory)
-        addContextRoute([.course], subPath: "pages", handler: pagesListFactory)
-        addContextRoute([.course], subPath: "wiki", handler: pagesListFactory)
-
-        addContextRoute([.group], subPath: "front_page", handler: oldPagesListFactory)
-        addContextRoute([.group], subPath: "pages", handler: oldPagesListFactory)
-        addContextRoute([.group], subPath: "wiki", handler: oldPagesListFactory)
-        
         let fileListFactory = { (contextID: ContextID) -> UIViewController in
             var props = ["context": contextID.context.pathComponent, "contextID": contextID.id]
             if contextID.context == .user {
@@ -144,9 +146,44 @@ extension Router {
             return nil
         }
 
-        addRoute("/files/folder/*subFolder") { parameters, _ in
+        let downloadFile: RouteHandler = { parameters, _ in
+            guard let parameters = parameters else {
+                return nil
+            }
+            let fileVC = FileViewController()
+            fileVC.applyRoutingParameters(parameters)
+            return fileVC
+        }
+
+        addRoute("/groups/:groupID/files/:fileIdent", handler: downloadFile)
+        addRoute("/groups/:groupID/files/:fileIdent/download", handler: downloadFile)
+        addRoute("/courses/:courseID/files/:fileIdent") { parameters, sender in
+            // This route might have a module_item_id param
+            // If so, it needs to be embedded in ModuleItemDetailViewController
+            if let parameters = parameters, let moduleItem = moduleItemDetailViewController(routerParameters: parameters) {
+                return moduleItem
+            }
+            return downloadFile(parameters, sender)
+        }
+        addRoute("/courses/:courseID/files/:fileIdent/download", handler: downloadFile)
+        addRoute("/users/:userID/files/:fileIdent", handler: downloadFile)
+        addRoute("/users/:userID/files/:fileIdent/download", handler: downloadFile)
+        addRoute("/files/:fileIdent/download", handler: downloadFile)
+        addRoute("/files/:fileIdent", handler: downloadFile)
+
+        // The :ignored part is usually users_{id}, but canvas ignores it, it can be anything and
+        // you will still see your files, and the actual folder path doesn't start until after it.
+        addRoute("/files/folder/:ignored") { parameters, _ in
+            if let url = URL(string: "/users/self/files") {
+                return Router.shared().controller(forHandling: url)
+            }
+
+            return nil
+        }
+        addRoute("/files/folder/:ignored/*subFolder") { parameters, _ in
             if  let subFolder = parameters?["subFolder"] as? String,
-                let url = URL(string: "/users/self/files/folder/\(subFolder)") {
+                let path = subFolder.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlPathAllowed),
+                let url = URL(string: "/users/self/files/folder/\(path)") {
                 return Router.shared().controller(forHandling: url)
             }
 
@@ -318,7 +355,13 @@ extension Router {
             }
             return eventVC
         }
-
+        
+        addContextRoute([.course], subPath: "users/:userID") { (contextID, parameters) -> UIViewController? in
+            guard let userID = try? parameters.stringID("userID") else { return nil }
+            let props = ["userID": userID, "courseID": contextID.id]
+            return HelmViewController(moduleName: "/courses/:courseID/users/:userID", props: props)
+        }
+        
         CBIConversationStarter.setConversationStarter { recipients, context in
             guard
                 let contextID = ContextID(canvasContext: context),

@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -299,6 +299,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     padding: global.style.defaultPadding,
+    paddingBottom: global.style.defaultPadding / 2,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: color.seperatorColor,
   },

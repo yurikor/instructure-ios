@@ -15,6 +15,9 @@
 		2CAF046C2033A2A1007BC62D /* x-icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CAF04692033A2A0007BC62D /* x-icon@3x.png */; };
 		2CAF046D2033A2A1007BC62D /* x-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CAF046A2033A2A0007BC62D /* x-icon.png */; };
 		2CAF046E2033A2A1007BC62D /* x-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CAF046B2033A2A1007BC62D /* x-icon@2x.png */; };
+		2CB7238F20B5F5CE001C8C3F /* Arrow-Back.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CB7238C20B5F5CE001C8C3F /* Arrow-Back.png */; };
+		2CB7239020B5F5CE001C8C3F /* Arrow-Back@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CB7238D20B5F5CE001C8C3F /* Arrow-Back@2x.png */; };
+		2CB7239120B5F5CE001C8C3F /* Arrow-Back@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2CB7238E20B5F5CE001C8C3F /* Arrow-Back@3x.png */; };
 		2CF6EF4D209912A400B97582 /* preload-account-info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2CF6EF4C209912A400B97582 /* preload-account-info.plist */; };
 		3BCAF3CC1F63B12200EEF0A7 /* CanvasKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1ADC6FE1C90F9EA00E85895 /* CanvasKit.framework */; };
 		49C0FB30190B167900572CA1 /* LaunchImage.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49C0FB2F190B167900572CA1 /* LaunchImage.xcassets */; };
@@ -115,6 +118,9 @@
 		2CAF04692033A2A0007BC62D /* x-icon@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "x-icon@3x.png"; sourceTree = "<group>"; };
 		2CAF046A2033A2A0007BC62D /* x-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "x-icon.png"; sourceTree = "<group>"; };
 		2CAF046B2033A2A1007BC62D /* x-icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "x-icon@2x.png"; sourceTree = "<group>"; };
+		2CB7238C20B5F5CE001C8C3F /* Arrow-Back.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Arrow-Back.png"; path = "../../../../CanvasCore/CanvasCore/CanvasCore.xcassets/back_arrow.imageset/Arrow-Back.png"; sourceTree = "<group>"; };
+		2CB7238D20B5F5CE001C8C3F /* Arrow-Back@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Arrow-Back@2x.png"; path = "../../../../CanvasCore/CanvasCore/CanvasCore.xcassets/back_arrow.imageset/Arrow-Back@2x.png"; sourceTree = "<group>"; };
+		2CB7238E20B5F5CE001C8C3F /* Arrow-Back@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Arrow-Back@3x.png"; path = "../../../../CanvasCore/CanvasCore/CanvasCore.xcassets/back_arrow.imageset/Arrow-Back@3x.png"; sourceTree = "<group>"; };
 		2CF6EF4C209912A400B97582 /* preload-account-info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "preload-account-info.plist"; path = "../../../../preload-account-info.plist"; sourceTree = "<group>"; };
 		4917EDAE1D947C9D009D58B5 /* AFNetworking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AFNetworking.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		499F7FDC1C9B6812005CCD00 /* Reachability.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Reachability.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -149,6 +155,12 @@
 		49E9589E1909979C00A1BFB7 /* CKMDomainSuggestionTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CKMDomainSuggestionTableViewController.m; sourceTree = "<group>"; };
 		49E958A31909A66B00A1BFB7 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		49E958A51909A67500A1BFB7 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		5B58B4B720DF8189008B8856 /* cy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cy; path = cy.lproj/Main.strings; sourceTree = "<group>"; };
+		5B58B4B820DF818A008B8856 /* cy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cy; path = cy.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5B58B4B920DF818A008B8856 /* cy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cy; path = cy.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5B58B4BA20DF818A008B8856 /* cy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cy; path = cy.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5B58B4BB20DF818A008B8856 /* cy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cy; path = cy.lproj/SupportTicket.strings; sourceTree = "<group>"; };
+		5B58B4BC20DF818A008B8856 /* cy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cy; path = cy.lproj/CKMDomainPickerViewController.strings; sourceTree = "<group>"; };
 		5B63522A40D7F33C56E0E141 /* Pods-defaults-CanvasKeymaster.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-defaults-CanvasKeymaster.release.xcconfig"; path = "../../Pods/Target Support Files/Pods-defaults-CanvasKeymaster/Pods-defaults-CanvasKeymaster.release.xcconfig"; sourceTree = "<group>"; };
 		5E274A401914434100E04789 /* icon_cancel_light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_cancel_light.png; sourceTree = "<group>"; };
 		5E274A411914434100E04789 /* icon_cancel_light@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_cancel_light@2x.png"; sourceTree = "<group>"; };
@@ -485,6 +497,9 @@
 				5E274A401914434100E04789 /* icon_cancel_light.png */,
 				5E274A411914434100E04789 /* icon_cancel_light@2x.png */,
 				5E274A421914434100E04789 /* icon_profile@2x.png */,
+				2CB7238C20B5F5CE001C8C3F /* Arrow-Back.png */,
+				2CB7238D20B5F5CE001C8C3F /* Arrow-Back@2x.png */,
+				2CB7238E20B5F5CE001C8C3F /* Arrow-Back@3x.png */,
 			);
 			name = Resources;
 			path = CanvasKeymaster/Resources;
@@ -683,8 +698,11 @@
 				2CAF046E2033A2A1007BC62D /* x-icon@2x.png in Resources */,
 				B1FC3B0A1C98B60E00A8001F /* icon_cancel_light@2x.png in Resources */,
 				B1FC3B071C98B60E00A8001F /* icon_help.png in Resources */,
+				2CB7239020B5F5CE001C8C3F /* Arrow-Back@2x.png in Resources */,
 				B1FC3B221C98B60E00A8001F /* CKMDomainHelpViewController.storyboard in Resources */,
 				B10E9F7B1E2FDB88000F5D01 /* InfoPlist.strings in Resources */,
+				2CB7238F20B5F5CE001C8C3F /* Arrow-Back.png in Resources */,
+				2CB7239120B5F5CE001C8C3F /* Arrow-Back@3x.png in Resources */,
 				2CF6EF4D209912A400B97582 /* preload-account-info.plist in Resources */,
 				B1FC3B031C98B60E00A8001F /* icon_forward_arrow@1x.png in Resources */,
 				B181D2AA1DFB211500114ACE /* SupportTicket.storyboard in Resources */,
@@ -794,6 +812,7 @@
 				B10E9FF31E2FDCAE000F5D01 /* sv */,
 				B10E9FFA1E2FDCCF000F5D01 /* zh-HK */,
 				B10EA0011E2FDCDA000F5D01 /* zh */,
+				5B58B4BA20DF818A008B8856 /* cy */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -822,6 +841,7 @@
 				B10E9FF11E2FDCAC000F5D01 /* sv */,
 				B10E9FF81E2FDCCD000F5D01 /* zh-HK */,
 				B10E9FFF1E2FDCD9000F5D01 /* zh */,
+				5B58B4B720DF8189008B8856 /* cy */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -849,6 +869,7 @@
 				B10E9FF21E2FDCAD000F5D01 /* sv */,
 				B10E9FF91E2FDCCE000F5D01 /* zh-HK */,
 				B10EA0001E2FDCDA000F5D01 /* zh */,
+				5B58B4B820DF818A008B8856 /* cy */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -876,6 +897,7 @@
 				B10E9FF41E2FDCAF000F5D01 /* sv */,
 				B10E9FFB1E2FDCCF000F5D01 /* zh-HK */,
 				B10EA0021E2FDCDB000F5D01 /* zh */,
+				5B58B4B920DF818A008B8856 /* cy */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -904,6 +926,7 @@
 				B10E9FF51E2FDCAF000F5D01 /* sv */,
 				B10E9FFC1E2FDCD0000F5D01 /* zh-HK */,
 				B10EA0031E2FDCDC000F5D01 /* zh */,
+				5B58B4BC20DF818A008B8856 /* cy */,
 			);
 			name = CKMDomainPickerViewController.storyboard;
 			sourceTree = "<group>";
@@ -932,6 +955,7 @@
 				B10E9FF01E2FDCAC000F5D01 /* sv */,
 				B10E9FF71E2FDCCD000F5D01 /* zh-HK */,
 				B10E9FFE1E2FDCD9000F5D01 /* zh */,
+				5B58B4BB20DF818A008B8856 /* cy */,
 			);
 			name = SupportTicket.storyboard;
 			sourceTree = "<group>";

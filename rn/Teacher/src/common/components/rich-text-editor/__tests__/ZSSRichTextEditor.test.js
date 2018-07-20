@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -346,6 +346,11 @@ describe('ZSSRichTextEditor', () => {
 
     it('pastes plain text', async () => {
       await paste('plain text')
+      expect(js.mock.calls).toMatchSnapshot()
+    })
+
+    it('replaces newlines with <br>', async () => {
+      await paste('Line One\nLine Two')
       expect(js.mock.calls).toMatchSnapshot()
     })
 

@@ -1,9 +1,17 @@
 //
-//  FeatureFlags.swift
-//  CanvasCore
+// Copyright (C) 2018-present Instructure, Inc.
 //
-//  Created by Matt Sessions on 3/7/18.
-//  Copyright © 2018 Instructure, Inc. All rights reserved.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, version 3 of the License.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
 import Foundation
@@ -14,9 +22,10 @@ import CanvasKeymaster
 // This will help when we go to remove a flag we can remove it
 // from here and see where the compiler tells us we are still trying to use it
 public enum FeatureFlagName: String {
-    case pageViewLogging
     case favoriteGroups
     case newGroupNavigation
+    case newStudentAssignmentView
+    case conferences
 }
 
 @objc(FeatureFlags)
@@ -27,10 +36,6 @@ open class FeatureFlags: NSObject {
     // The logic in this method is duplicated from ./rn/Teacher/src/common/feature-flags.js
     // Any changes here should be duplicated into that file
     public class func featureFlagEnabled(_ flagName: FeatureFlagName) -> Bool {
-        // always return true if in development
-        #if DEBUG
-        return true
-        #else
         guard let baseURL = CanvasKeymaster.the().currentClient?.baseURL?.absoluteString else { return false }
         // return true if the domain is in the list of always on domains
         if exemptDomains.contains(baseURL) {
@@ -56,7 +61,6 @@ open class FeatureFlags: NSObject {
         // if the feature flag exists or for any other reason not accounted for
         // turn off the feature flag
         return false
-        #endif
     }
     
     // For obj-c

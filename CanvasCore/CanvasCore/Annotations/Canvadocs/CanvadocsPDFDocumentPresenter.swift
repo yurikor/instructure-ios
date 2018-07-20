@@ -1,17 +1,17 @@
 //
 // Copyright (C) 2016-present Instructure, Inc.
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, version 3 of the License.
 //
-// http://www.apache.org/licenses/LICENSE-2.0
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 //
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
     
     
@@ -136,14 +136,14 @@ open class CanvadocsPDFDocumentPresenter: NSObject {
         let highlightPresets = highlightCanvadocsColors.map { return PSPDFColorPreset(color: $0) }
         let inkPresets = standardCanvadocsColors.map { return PSPDFColorPreset(color: $0) }
         let textPresets = standardCanvadocsColors.map { return PSPDFColorPreset(color: $0, fill: .white, alpha: 1) }
-        styleManager.setPresets(highlightPresets, forKey: .highlight, type: PSPDFStyleManagerColorPresetKey)
-        styleManager.setPresets(inkPresets, forKey: PSPDFAnnotationStateVariantIdentifier(.ink, .inkVariantPen), type: PSPDFStyleManagerColorPresetKey)
-        styleManager.setPresets(inkPresets, forKey: .square, type: PSPDFStyleManagerColorPresetKey)
-        styleManager.setPresets(inkPresets, forKey: .circle, type: PSPDFStyleManagerColorPresetKey)
-        styleManager.setPresets(inkPresets, forKey: .line, type: PSPDFStyleManagerColorPresetKey)
-        styleManager.setPresets(inkPresets, forKey: .strikeOut, type: PSPDFStyleManagerColorPresetKey)
-        styleManager.setPresets(inkPresets, forKey: .stamp, type: PSPDFStyleManagerColorPresetKey)
-        styleManager.setPresets(textPresets, forKey: .freeText, type: PSPDFStyleManagerColorPresetKey)
+        styleManager.setPresets(highlightPresets, forKey: .highlight, type: .colorPreset)
+        styleManager.setPresets(inkPresets, forKey: PSPDFAnnotationStateVariantIdentifier(.ink, .inkVariantPen), type: .colorPreset)
+        styleManager.setPresets(inkPresets, forKey: .square, type: .colorPreset)
+        styleManager.setPresets(inkPresets, forKey: .circle, type: .colorPreset)
+        styleManager.setPresets(inkPresets, forKey: .line, type: .colorPreset)
+        styleManager.setPresets(inkPresets, forKey: .strikeOut, type: .colorPreset)
+        styleManager.setPresets(inkPresets, forKey: .stamp, type: .colorPreset)
+        styleManager.setPresets(textPresets, forKey: .freeText, type: .colorPreset)
 
         styleManager.setLastUsedValue(CanvadocsHighlightColor.yellow.color, forProperty: "color", forKey: .highlight)
         styleManager.setLastUsedValue(CanvadocsAnnotationColor.red.color, forProperty: "color", forKey: PSPDFAnnotationStateVariantIdentifier(.ink, .inkVariantPen))
@@ -179,11 +179,11 @@ extension CanvadocsPDFDocumentPresenter: PSPDFViewControllerDelegate {
     }
 
     public func pdfViewController(_ pdfController: PSPDFViewController, shouldShow menuItems: [PSPDFMenuItem], atSuggestedTargetRect rect: CGRect, for annotations: [PSPDFAnnotation]?, in annotationRect: CGRect, on pageView: PSPDFPageView) -> [PSPDFMenuItem] {
-        if annotations?.count == 1, let annotation = annotations?.first {
+        if annotations?.count == 1, let annotation = annotations?.first, let metadata = service.metadata?.annotationMetadata {
             var realMenuItems = [PSPDFMenuItem]()
             realMenuItems.append(PSPDFMenuItem(title: NSLocalizedString("Comments", tableName: "Localizable", bundle: Bundle(for: type(of: self)), value: "", comment: ""), block: {
                 if let pdfDocument = pdfController.document {
-                    let commentsVC = CanvadocsCommentsViewController.new(annotation, pdfDocument: pdfDocument)
+                    let commentsVC = CanvadocsCommentsViewController.new(annotation, pdfDocument: pdfDocument, metadata: metadata)
                     commentsVC.comments = self.annotationProvider?.getReplies(to: annotation) ?? []
                     let navigationController = UINavigationController(rootViewController: commentsVC)
                     pdfController.present(navigationController, options: nil, animated: true, sender: nil, completion: nil)
@@ -195,9 +195,20 @@ extension CanvadocsPDFDocumentPresenter: PSPDFViewControllerDelegate {
                 if identifier == PSPDFAnnotationMenuInspector {
                     $0.title = NSLocalizedString("Style", tableName: "Localizable", bundle: Bundle(for: type(of: self)), value: "", comment: "")
                 }
-                return identifier != PSPDFAnnotationMenuCopy && identifier != PSPDFAnnotationMenuNote && !DisabledMenuItems.contains(identifier)
+                return (
+                    identifier != PSPDFAnnotationMenuRemove &&
+                    identifier != PSPDFAnnotationMenuCopy &&
+                    identifier != PSPDFAnnotationMenuNote &&
+                    !DisabledMenuItems.contains(identifier)
+                )
             }
             realMenuItems.append(contentsOf: filteredMenuItems)
+
+            if annotation.isEditable || metadata.permissions == .ReadWriteManage {
+                realMenuItems.append(PSPDFMenuItem(title: NSLocalizedString("Remove", tableName: "Localizable", bundle: Bundle(for: type(of: self)), value: "", comment: ""), image: .icon(.trash), block: {
+                    pdfController.document?.remove([annotation], options: nil)
+                }, identifier: PSPDFAnnotationMenuRemove))
+            }
             return realMenuItems
         }
 
@@ -216,15 +227,17 @@ extension CanvadocsPDFDocumentPresenter: PSPDFViewControllerDelegate {
     
     public func pdfViewController(_ pdfController: PSPDFViewController, didTapOn pageView: PSPDFPageView, at viewPoint: CGPoint) -> Bool {
         let state = pdfController.annotationStateManager
-        if state.state == .stamp, let pdfDocument = pdfController.document {
+        if state.state == .stamp, let pdfDocument = pdfController.document, let metadata = service.metadata?.annotationMetadata {
             let pointAnnotation = CanvadocsPointAnnotation()
+            pointAnnotation.user = metadata.userID
+            pointAnnotation.userName = metadata.userName
             pointAnnotation.color = state.drawColor
             pointAnnotation.boundingBox = CGRect(x: 0, y: 0, width: 17 * 2 / 3, height: 24 * 2 / 3)
             pointAnnotation.pageIndex = pageView.pageIndex
             pageView.center(pointAnnotation, aroundPDFPoint: pageView.convertPoint(toPDFPoint: viewPoint))
             pdfDocument.add([ pointAnnotation ], options: nil)
 
-            let commentsVC = CanvadocsCommentsViewController.new(pointAnnotation, pdfDocument: pdfDocument)
+            let commentsVC = CanvadocsCommentsViewController.new(pointAnnotation, pdfDocument: pdfDocument, metadata: metadata)
             let navigationController = UINavigationController(rootViewController: commentsVC)
             pdfController.present(navigationController, options: nil, animated: true, sender: nil, completion: nil)
 

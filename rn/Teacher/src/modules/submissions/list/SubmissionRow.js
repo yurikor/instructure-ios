@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -127,7 +127,7 @@ class SubmissionRow extends Component<SubmissionRowProps, any> {
             style={styles.title}
             ellipsizeMode='tail'
             numberOfLines={2}>{name}</Text>
-          {status &&
+          {status && gradingType !== 'not_graded' &&
             <SubmissionStatusLabel status={status} />
           }
           {grade === 'ungraded' && gradingType !== 'not_graded' &&

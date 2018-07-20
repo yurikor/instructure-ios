@@ -1,12 +1,15 @@
-/* Class = "UILabel"; text = "Label"; ObjectID = "0dp-Vg-UGf"; */
-"0dp-Vg-UGf.text" = "Make";
+/* Class = "UITabBarItem"; title = "Courses"; ObjectID = "BPk-vK-62u"; */
+"BPk-vK-62u.title" = "Kou";
 
-/* Class = "UILabel"; text = "Label"; ObjectID = "Cyr-5h-ISn"; */
-"Cyr-5h-ISn.text" = "Make";
+/* Class = "UILabel"; text = "Peter"; ObjectID = "JVX-Up-gUl"; */
+"JVX-Up-gUl.text" = "Pyè";
 
-/* Class = "UILabel"; text = "-"; ObjectID = "ax4-W0-zFC"; */
-"ax4-W0-zFC.text" = "-";
+/* Class = "UIButton"; accessibilityLabel = "Settings"; ObjectID = "LhY-UH-BvJ"; */
+"LhY-UH-BvJ.accessibilityLabel" = "Paramèt";
 
-/* Class = "UILabel"; text = "Label"; ObjectID = "kwx-oe-CqA"; */
-"kwx-oe-CqA.text" = "Make";
+/* Class = "UITabBarItem"; title = "Week"; ObjectID = "W2P-Wd-gLR"; */
+"W2P-Wd-gLR.title" = "Semenn";
+
+/* Class = "UITabBarItem"; title = "Alerts"; ObjectID = "nta-AM-F42"; */
+"nta-AM-F42.title" = "Alèt";
 

@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,19 +33,19 @@ const { quizUpdated } = EditActions
 
 export const refs: Reducer<AsyncRefs, any> = asyncRefsReducer(
   refreshQuizzes.toString(),
-  i18n('There was a problem loading the quizzes.'),
+  () => i18n('There was a problem loading the quizzes.'),
   ({ result }) => result.data.map(quiz => quiz.id)
 )
 
 export const quizSubmissions: Reducer<AsyncRefs, any> = asyncRefsReducer(
   refreshQuizSubmissions.toString(),
-  i18n('There was a problem loading the quiz submissions.'),
+  () => i18n('There was a problem loading the quiz submissions.'),
   ({ result }) => result.data.quiz_submissions.map(qs => qs.id)
 )
 
 export const submissions: Reducer<AsyncRefs, any> = asyncRefsReducer(
   refreshQuizSubmissions.toString(),
-  i18n('There was a problem loading the quiz submissions.'),
+  () => i18n('There was a problem loading the quiz submissions.'),
   ({ result }) => result.data.submissions.map(s => s.id)
 )
 

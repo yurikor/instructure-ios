@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,17 +22,9 @@
 #import "CLLocation+CKMDistance.h"
 @import Mantle;
 @import CanvasKit;
-@import CocoaLumberjack;
 
 static double const CKMDistanceThreshold = 50.0;
 static CKMLocationSchoolSuggester* _sharedInstance = nil;
-
-int ddLogLevel =
-#ifdef DEBUG
-    DDLogLevelVerbose;
-#else
-    DDLogLevelError;
-#endif
 
 @interface CKMLocationSchoolSuggester ()
 @property (nonatomic, strong) NSMutableSet *availableSchools;
@@ -73,7 +65,6 @@ int ddLogLevel =
         [self.availableSchools addObjectsFromArray:accountDomains];
         self.schoolSearchString = [self.schoolSearchString copy];
     } error:^(NSError *error) {
-        DDLogError(@"ERROR DOWNLOADING ACCOUNT DOMAINS: %@", error.localizedDescription);
         self.fetching = NO;
     } completed:^{
         self.fetching = NO;
@@ -141,10 +132,13 @@ int ddLogLevel =
 }
 
 - (void)addStandardDomainsToArray:(NSMutableArray *)array {
+    
 #if DEBUG
     NSArray *developmentDomains = [CKIAccountDomain developmentSchools];
     [array insertObjects:developmentDomains atIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, developmentDomains.count)]];
 #endif
+    
+    [array insertObject:[CKIAccountDomain howDoIFindMySchool] atIndex:0];
 }
 
 @end

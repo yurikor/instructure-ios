@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ export type Enrollment = {
   role: string,
   role_id: string,
   user_id: string,
+  associated_user_id?: ?string,
   user: User,
   type: EnrollmentType,
   enrollment_state: EnrollmentState,
@@ -45,7 +46,7 @@ export type Enrollment = {
   current_period_computed_current_score?: string,
   current_period_computed_final_grade?: string,
   current_period_computed_final_score?: string,
-  grades: Grades,
+  grades?: Grades,
 }
 
 export type Grades = {

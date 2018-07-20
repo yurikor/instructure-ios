@@ -32,7 +32,7 @@ extension ParentAppDelegate: RCTBridgeDelegate {
                     guard let weakSelf = self, let window = weakSelf.window else { return }
                     
                     let dashboardHandler = Router.sharedInstance.parentDashboardHandler()
-                    let root = dashboardHandler(nil)
+                    guard let root = dashboardHandler(nil) else { return }
                     
                     weakSelf.addClearCacheGesture(root.view)
                     
@@ -77,6 +77,9 @@ extension ParentAppDelegate: RCTBridgeDelegate {
         
         HelmManager.shared.registerNativeViewController(for: "/native-route/*route", factory: nativeFactory)
         HelmManager.shared.registerNativeViewController(for: "/native-route-master/*route", factory: nativeFactory)
+        HelmManager.shared.registerNativeViewController(for: "/parent/manage-children", factory: { (props) -> UIViewController? in
+            return Router.sharedInstance.matchURL(Router.sharedInstance.settingsRoute())
+        })
         
         CanvasCore.registerSharedNativeViewControllers()
     }

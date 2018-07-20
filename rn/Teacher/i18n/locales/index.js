@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,10 +14,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-/* @flow */
+// @flow
 
-export default ({
+// needs to be commonjs so eslint-plugin-format-message can read it
+module.exports = {
   ar: require('./ar.json'),
+  cy: require('./cy.json'),
   da: require('./da.json'),
   de: require('./de.json'),
   'en-AU': require('./en_AU.json'),
@@ -38,4 +40,4 @@ export default ({
   sv: require('./sv.json'),
   'zh-HK': require('./zh_HK.json'),
   zh: require('./zh.json'),
-}: { [string]: { [string]: { message: string, description?: string } } })
+}

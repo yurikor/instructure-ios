@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -153,6 +153,7 @@ const loginHandler = async ({
 }
 
 if (NativeLogin.isTesting) {
+  require('./test/helpers/xhr-recorder')
   const loginInfo = NativeLogin.loginInformation()
   if (loginInfo) {
     loginHandler(loginInfo)
@@ -163,7 +164,8 @@ const emitter = new NativeEventEmitter(NativeLogin)
 emitter.addListener('Login', loginHandler)
 
 AppState.addEventListener('change', (nextAppState) => {
-  if (nextAppState === 'active') {
+  let session = getSessionUnsafe()
+  if (session && nextAppState === 'active') {
     loginVerify()
     updateBadgeCounts()
   }

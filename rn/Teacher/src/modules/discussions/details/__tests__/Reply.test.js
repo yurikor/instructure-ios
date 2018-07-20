@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -54,6 +54,7 @@ describe('DiscussionReplies', () => {
       canRate: false,
       rateEntry: jest.fn(),
       isLastReply: false,
+      isAnnouncement: false,
     }
     jest.clearAllMocks()
   })
@@ -232,7 +233,7 @@ describe('DiscussionReplies', () => {
       const evaluateJavaScript = jest.fn()
       const url = 'https://canvas.instructure.com/files/1/preview?verifier=1234'
       const promise = Promise.resolve({ data: template.file({ url }) })
-      httpClient().get = jest.fn(() => promise)
+      httpClient.get = jest.fn(() => promise)
       let imageReply = template.discussionReply({ id: '1', message: `<img src="${url}" />` })
 
       const screen = shallow(<Reply {...props} reply={imageReply} />)

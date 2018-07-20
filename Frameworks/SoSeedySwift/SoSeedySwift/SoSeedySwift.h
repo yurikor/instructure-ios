@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2018-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,5 +23,5 @@ FOUNDATION_EXPORT double SoSeedySwiftVersionNumber;
 FOUNDATION_EXPORT const unsigned char SoSeedySwiftVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <SoSeedySwift/PublicHeader.h>
-
+#import <SoSeedySwift/VCR.h>
 

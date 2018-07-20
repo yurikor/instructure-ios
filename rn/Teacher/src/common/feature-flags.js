@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2018-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,18 +39,24 @@ const { FeatureFlagsManager } = NativeModules
 // from here and see where flow tells us we are still trying to use it
 // This should be an enum so when adding more feature flags it should look like
 // type FeatureFlagName = 'someFeatureFlag' | 'otherFeatureFlag'
-export type FeatureFlagName = 'pageViewLogging' | 'favoriteGroups' | 'newGroupNavigation' | 'rceUserFiles' | 'simpleDiscussionRenderer'
+export type FeatureFlagName = 'favoriteGroups' |
+                              'newGroupNavigation' |
+                              'simpleDiscussionRenderer' |
+                              'newStudentAssignmentView' |
+                              'conferences' |
+                              'assignmentLevelAnonymousGrading'
 
 // if a feature is listed here it will be turned off
 // unless in development, the current user is on a domain
 // that should always have every feature flag turned on
 // or the domain has been added as an exceptions
 export const featureFlags: { [FeatureFlagName]: FeatureFlag } = {
-  pageViewLogging: {},
   favoriteGroups: {},
   newGroupNavigation: {},
-  rceUserFiles: { exempt: { apps: ['teacher'] } },
   simpleDiscussionRenderer: {},
+  newStudentAssignmentView: {},
+  conferences: {},
+  assignmentLevelAnonymousGrading: {},
 }
 
 export const exemptDomains = []
@@ -61,7 +67,7 @@ var enableAllFeatureFlags = false
 // CanvasCore/CanvasCore/FeatureFlags/FeatureFlags.swift as the logic
 // is duplicated there for native
 export function featureFlagEnabled (flagName: FeatureFlagName): boolean {
-  if (global.__DEV__ || enableAllFeatureFlags) {
+  if (enableAllFeatureFlags) {
     return true
   }
 
@@ -94,4 +100,12 @@ export async function featureFlagSetup (): Promise<*> {
   }
 
   return FeatureFlagsManager.syncFeatureFlags(featureFlags, exemptDomains)
+}
+
+export function enableAllFeaturesFlagsForTesting () {
+  enableAllFeatureFlags = true
+}
+
+export function disableAllFeatureFlagsForTesting () {
+  enableAllFeatureFlags = false
 }

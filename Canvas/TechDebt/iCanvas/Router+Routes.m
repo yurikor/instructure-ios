@@ -33,7 +33,6 @@
 #import "CBIFilesTabViewModel.h"
 #import "CBIFolderViewModel.h"
 #import "CBISyllabusDetailViewController.h"
-#import "UIViewController+AnalyticsTracking.h"
 
 #import "UnsupportedViewController.h"
 #import "CBIFileViewModel.h"
@@ -46,7 +45,6 @@
 
 #import "CBIAssignmentViewModel.h"
 #import "CBIAssignmentDetailViewController.h"
-#import "UIViewController+AnalyticsTracking.h"
 
 #import <CanvasKit/CanvasKit.h>
 #import "CKCanvasAPI+CurrentAPI.h"
@@ -72,7 +70,6 @@ typedef UIViewController *(^ViewControllerRouteBlock)(NSDictionary *params, id v
 {
     MLVCTableViewController *tableViewController = [[MLVCTableViewController alloc] initWithStyle:style];
     tableViewController.url = url;
-    [tableViewController trackScreenViewWithScreenName:name];
     tableViewController.viewModel = viewModel;
     return tableViewController;
 }
@@ -138,10 +135,7 @@ typedef UIViewController *(^ViewControllerRouteBlock)(NSDictionary *params, id v
         ((CBIColorfulViewModel *)viewModel).tintColor = [self tintColorForContextID:params[@"contextID"] contextClass:type];
 
         CBIPeopleDetailViewController *detailViewController = [CBIPeopleDetailViewController new];
-        [detailViewController trackScreenViewWithScreenName:@"People Detail Screen"];
-
         detailViewController.viewModel = viewModel;
-
         return detailViewController;
     };
 }
@@ -229,7 +223,6 @@ typedef UIViewController *(^ViewControllerRouteBlock)(NSDictionary *params, id v
 
             ((CBIColorfulViewModel *)viewModel).tintColor = [TheKeymaster.currentClient.authSession colorForCourse:[params[@"courseID"] description]];
             UIViewController *viewController = [CBIAssignmentDetailViewController new];
-            [viewController trackScreenViewWithScreenName:@"Assignment Detail Screen"];
             ((CBIAssignmentDetailViewController *)viewController).viewModel = viewModel;
         
             return viewController;
@@ -237,18 +230,16 @@ typedef UIViewController *(^ViewControllerRouteBlock)(NSDictionary *params, id v
         
 
         @"/courses/:courseID/assignments/:assignmentID/submissions/:submissionID" : ^ (NSDictionary *params, id viewModel) {
-            if(viewModel == nil){
+            if (viewModel == nil) {
                 CKICourse *course = [CKICourse modelWithID:[params[@"courseID"] description]];
                 CKIAssignment *assignment = [CKIAssignment modelWithID:[params[@"assignmentID"] description] context:course];
                 viewModel = [CBIAssignmentViewModel viewModelForModel:assignment];
             }
 
-        ((CBIColorfulViewModel *)viewModel).tintColor = [TheKeymaster.currentClient.authSession colorForCourse:[params[@"courseID"] description]];
+            ((CBIColorfulViewModel *)viewModel).tintColor = [TheKeymaster.currentClient.authSession colorForCourse:[params[@"courseID"] description]];
             CBIAssignmentDetailViewController *assignmentDetailViewController = [CBIAssignmentDetailViewController new];
-            [assignmentDetailViewController trackScreenViewWithScreenName:@"Assignment Detail Screen"];
-
             assignmentDetailViewController.viewModel = viewModel;
-        
+            assignmentDetailViewController.initialTab = SUBMISSION_TAB_INDEX;
             return assignmentDetailViewController;
         },
         @"/groups/:contextID/files" : [self filesBlockForClass:[CKIGroup class]],
@@ -279,12 +270,8 @@ typedef UIViewController *(^ViewControllerRouteBlock)(NSDictionary *params, id v
             }
 
         ((CBIColorfulViewModel *)viewModel).tintColor = [TheKeymaster.currentClient.authSession colorForCourse:[params[@"courseID"] description]];
-    
             CBISyllabusDetailViewController *syllabusViewController = [CBISyllabusDetailViewController new];
-            [syllabusViewController trackScreenViewWithScreenName:@"Syllabus Detail Screen"];
-
             syllabusViewController.viewModel = viewModel;
-            
             return syllabusViewController;
         },
         @"/courses/:courseID/quizzes": ^(NSDictionary *params, CBIQuizzesTabViewModel *quizzesTabViewModel) {
@@ -378,17 +365,6 @@ typedef UIViewController *(^ViewControllerRouteBlock)(NSDictionary *params, id v
         [fileVC applyRoutingParameters:params];
         return (UIViewController *)fileVC;
     };
-    
-    [self addRoutesWithDictionary:@{
-        @"/groups/:groupIdent/files/:fileIdent" : fileDownloadConstructor,
-        @"/groups/:groupIdent/files/:fileIdent/download" : fileDownloadConstructor,
-        @"/courses/:courseIdent/files/:fileIdent" : fileDownloadConstructor,
-        @"/courses/:courseIdent/files/:fileIdent/download" : fileDownloadConstructor,
-        @"/users/:userIdent/files/:fileIdent" : fileDownloadConstructor,
-        @"/users/:userIdent/files/:fileIdent/download" : fileDownloadConstructor,
-        @"/files/:fileIdent/download" : fileDownloadConstructor,
-        @"/files/:fileIdent" : fileDownloadConstructor,
-    }];
     
     [WhizzyWigView setOpenURLHandler:^(NSURL *url) {
         if ([url.host isEqualToString:TheKeymaster.currentClient.baseURL.host]) {

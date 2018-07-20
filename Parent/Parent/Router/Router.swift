@@ -17,7 +17,7 @@
 import UIKit
 import CanvasCore
 
-typealias RouteHandler = (_ params: [String : Any]?) -> UIViewController
+typealias RouteHandler = (_ params: [String : Any]?) -> UIViewController?
 typealias FallbackHandler = (_ url: URL?) -> UIViewController?
 
 class Router {
@@ -144,7 +144,7 @@ class Router {
     
      Returns: A View Controller created from the handler if possible, if not it returns nil
     */
-    fileprivate func matchURL(_ matchURL: URL) -> UIViewController? {
+    func matchURL(_ matchURL: URL) -> UIViewController? {
         
         // Without a path, how can we route anywhere
         var urlComponents: [String] = []

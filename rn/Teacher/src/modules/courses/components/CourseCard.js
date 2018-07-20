@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ import {
   TouchableHighlight,
 } from 'react-native'
 import i18n from 'format-message'
-import { Text, Heading1 } from '../../../common/text'
+import { Text } from '../../../common/text'
 import Images from '../../../images'
 import A11yGroup from '../../../common/components/A11yGroup'
 import { type CourseGradeInfo } from '../../../utils/course-grades'
@@ -34,7 +34,7 @@ type Props = {
   grade: ?CourseGradeInfo,
   showGrade?: boolean,
   color: string,
-  style: any,
+  style: ViewStyleProp,
   onPress: Function,
   initialHeight?: number,
   onCoursePreferencesPressed: (courseId: string) => void,
@@ -80,10 +80,6 @@ export default class CourseCard extends Component<Props, State> {
 
   render () {
     const { course, grade, showGrade } = this.props
-    const style = {
-      ...this.props.style,
-      height: this.state.height,
-    }
     let gradeDisplay = null
     if (showGrade) {
       if (grade && grade.currentDisplay) {
@@ -96,7 +92,7 @@ export default class CourseCard extends Component<Props, State> {
       <A11yGroup>
         <TouchableHighlight
           onLayout={this.onLayout}
-          style={[styles.card, style]}
+          style={[styles.card, this.props.style, { height: this.state.height }]}
           testID={'course-' + course.id}
           onPress={this.onPress}
           accessible={false}
@@ -114,11 +110,11 @@ export default class CourseCard extends Component<Props, State> {
               />
               { showGrade &&
                 <View style={styles.gradePill}>
-                  <Heading1
+                  <Text
                     numberOfLines={2}
                     style={[styles.gradeText, { color: this.props.color }]}>
                     { gradeDisplay }
-                  </Heading1>
+                  </Text>
                 </View>
               }
               <TouchableHighlight
@@ -165,6 +161,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   imageWrapper: {
+    borderTopLeftRadius: 4,
+    borderTopRightRadius: 4,
+    overflow: 'hidden',
     flex: 1,
   },
   image: {
@@ -199,6 +198,7 @@ const styles = StyleSheet.create({
   },
   title: {
     marginTop: 8,
+    fontSize: 18,
     fontWeight: '600',
   },
   code: {
@@ -220,5 +220,6 @@ const styles = StyleSheet.create({
   },
   gradeText: {
     fontSize: 14,
+    fontWeight: '600',
   },
 })

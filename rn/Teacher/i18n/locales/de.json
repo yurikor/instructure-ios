@@ -254,11 +254,17 @@
   "cancel_caeb1e68": {
     "message": "Abbrechen"
   },
+  "canvas_guides_d65431": {
+    "message": "Canvas-Leitfäden"
+  },
   "canvas_parent_app_f9236a3a": {
     "message": "Canvas Parent-App"
   },
   "canvas_student_app_329567f": {
     "message": "Canvas Parent-App"
+  },
+  "canvas_teacher_app_9dc7d7ed": {
+    "message": "Canvas-Lehrer-App"
   },
   "change_discussiontitle_to_different_grouping_9f5ed8c1": {
     "message": "{ discussionTitle } zu unterschiedlicher Gruppierung ändern"
@@ -286,6 +292,9 @@
   },
   "clear_recording_5a97b475": {
     "message": "Aufzeichnung löschen"
+  },
+  "close_d634289d": {
+    "message": "Schließen"
   },
   "close_for_comments_ce0e5d00": {
     "message": "Für Kommentare schließen"
@@ -316,6 +325,9 @@
   },
   "compose_message_8abd180a": {
     "message": "Nachricht verfassen"
+  },
+  "conferences_a0a8984b": {
+    "message": "Konferenzen"
   },
   "conversation_options_8be926f3": {
     "message": "Gesprächsoptionen"
@@ -566,6 +578,9 @@
   "excused_cf8792eb": {
     "message": "Entschuldigt"
   },
+  "extensions_and_lastextension_f45d68e7": {
+    "message": "{ extensions } und { lastExtension }"
+  },
   "external_tool_c5a6410a": {
     "message": "Externe Tools"
   },
@@ -596,8 +611,8 @@
   "favorite_courses_fbd356f0": {
     "message": "Lieblingskurse"
   },
-  "file_count_plural_one_file_other_files_8ae41de8": {
-    "message": "{ file_count, plural,    one {# Datei} other {# Dateien}}"
+  "file_types_6fa69505": {
+    "message": "Dateitypen"
   },
   "files_c300e900": {
     "message": "Dateien"
@@ -701,6 +716,9 @@
   "help_4c4968b1": {
     "message": "Hilfe"
   },
+  "hidden_14a032a7": {
+    "message": "Ausgeblendet"
+  },
   "hidden_files_inside_will_be_available_with_links_e9e3d233": {
     "message": "Ausgeblendet. Darin enthaltene Dateien sind über Links verfügbar."
   },
@@ -722,6 +740,12 @@
   "i_hold_the_copyright_71ee91b1": {
     "message": "Ich bin der Urheberrechtsinhaber"
   },
+  "if_you_re_a_student_or_teacher_try_one_of_our_othe_f0ae9b33": {
+    "message": "Falls Sie ein Student oder Lehrer sind, probieren Sie eine unserer anderen Apps unten."
+  },
+  "in_progress_9d1ce8b9": {
+    "message": "In Arbeit"
+  },
   "incomplete_da3c2ea2": {
     "message": "Unvollständig"
   },
@@ -730,6 +754,9 @@
   },
   "insert_link_6dc23cae": {
     "message": "Link einfügen"
+  },
+  "internet_connection_offline_d7c02b88": {
+    "message": "Internet-Verbindung offline"
   },
   "invalid_field_54480fae": {
     "message": "Ungültiges Feld"
@@ -740,8 +767,17 @@
   "invite_declined_d0a9e398": {
     "message": "Einladung abgelehnt"
   },
+  "it_looks_like_your_internet_connection_is_offline__cf4003": {
+    "message": "Ihre Internetverbindung scheint offline zu sein. Stellen Sie erneut eine Verbindung zum Internet her, und versuchen Sie es erneut."
+  },
+  "it_seems_there_aren_t_any_valid_submissions_to_gra_f136675": {
+    "message": "Es scheint, es gibt keine gültigen zu benotenden Abgaben."
+  },
   "italic_ac45200a": {
     "message": "Kursiv"
+  },
+  "item_count_plural_one_item_other_items_88319c63": {
+    "message": "{ item_count, plural,\n    one {# Objekt}\n  other {# Objekte}\n}"
   },
   "last_activity_on_lastactivity_date_mmmm_d_at_lasta_1a7e8430": {
     "message": "letzte Aktivität am { lastActivity, date, 'MMMM d' } um { lastActivity, time, short }"
@@ -779,11 +815,17 @@
   "lock_questions_after_answering_e0f61d7c": {
     "message": "Fragen nach der Beantwortung sperren"
   },
+  "log_in_again_ec2b1f46": {
+    "message": "Erneut anmelden"
+  },
   "log_out_379ba28a": {
     "message": "Abmelden"
   },
   "long_description_7d89285c": {
     "message": "Ausführliche Beschreibung"
+  },
+  "manage_children_a28d764e": {
+    "message": "Kinder verwalten"
   },
   "mark_all_as_read_8f3bdf57": {
     "message": "Alle als gelesen markieren"
@@ -890,6 +932,9 @@
   "no_e16d9132": {
     "message": "Kein"
   },
+  "no_enrollments_6369cd31": {
+    "message": "Keine Einschreibungen"
+  },
   "no_grade_3b4d7f3e": {
     "message": "Keine Note"
   },
@@ -910,6 +955,9 @@
   },
   "no_subject_58b7941c": {
     "message": "Kein Betreff"
+  },
+  "no_submissions_to_display_6f1491cf": {
+    "message": "Keine Abgaben anzuzeigen"
   },
   "no_time_limit_2147d9bf": {
     "message": "Kein Zeitlimit"
@@ -1289,6 +1337,9 @@
   "students_1b8cd07b": {
     "message": "Studenten"
   },
+  "students_must_post_before_seeing_replies_1a57eeb2": {
+    "message": "Teilnehmer müssen gepostet haben, bevor sie Antworten sehen können."
+  },
   "subject_114b2e98": {
     "message": "Betreff"
   },
@@ -1370,6 +1421,9 @@
   "there_are_no_comments_to_display_bde58f70": {
     "message": "Es gibt keine Kommentar zum Anzeigen"
   },
+  "there_are_no_conferences_to_display_400a0413": {
+    "message": "Es sind keine Konferenzen anzuzeigen."
+  },
   "there_are_no_discussions_to_display_37bc437f": {
     "message": "Es sind keine Diskussionen anzuzeigen"
   },
@@ -1450,6 +1504,9 @@
   },
   "this_assignment_does_not_allow_submissions_30af1caa": {
     "message": "Diese Aufgabe lässt keine Abgaben zu."
+  },
+  "this_assignment_doesn_t_have_a_description_e2f37ec3": {
+    "message": "Für diese Aufgabe gibt es keine Beschreibung."
   },
   "this_assignment_only_allows_on_paper_submissions_f478408a": {
     "message": "Diese Aufgabe erlaubt nur Abgaben auf Papier."
@@ -1599,9 +1656,6 @@
   "user_id_bcace870": {
     "message": "Benutzer-ID"
   },
-  "users_must_post_before_seeing_replies_d1761968": {
-    "message": "Benutzer müssen einen Post einstellen, bevor sie Antworten sehen können."
-  },
   "video_b9f27375": {
     "message": "Video"
   },
@@ -1610,6 +1664,9 @@
   },
   "view_all_submissions_915a8b78": {
     "message": "Alle Abgaben anzeigen"
+  },
+  "view_canvas_guides_a1c62a97": {
+    "message": "Canvas-Anleitungen anzeigen"
   },
   "view_long_description_2b592c0e": {
     "message": "Lange Beschreibung anzeigen"
@@ -1646,6 +1703,9 @@
   },
   "you_must_enter_an_access_code_8c2c7ae0": {
     "message": "Sie müssen einen Zugriffscode eingeben."
+  },
+  "you_need_at_least_one_active_observer_enrollment_t_9c78bb6e": {
+    "message": "Sie benötigen mindestens ein Anmeldung als aktiver Beobachter um Canvas Parent zu nutzen."
   },
   "your_submission_comment_failed_to_send_5c8d2809": {
     "message": "Ihr Abgabekommentar wurde nicht gesendet."

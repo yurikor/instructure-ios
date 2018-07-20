@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2018-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ export function refreshGroupFavorites (userID: string): ApiPromise<EntityRefs> {
       ns: constructNamespace(),
     },
   }
-  return httpClient().get(url, options)
+  return httpClient.get(url, options)
 }
 
 export function updateGroupFavorites (userID: string, favorites: string[]): ApiPromise<EntityRefs> {
@@ -35,7 +35,7 @@ export function updateGroupFavorites (userID: string, favorites: string[]): ApiP
     ns: constructNamespace(),
     data: favorites,
   }
-  return httpClient().put(url, options)
+  return httpClient.put(url, options)
 }
 
 export function constructNamespace (): string {

@@ -254,11 +254,17 @@
   "cancel_caeb1e68": {
     "message": "Annuler"
   },
+  "canvas_guides_d65431": {
+    "message": "Guides de Canvas"
+  },
   "canvas_parent_app_f9236a3a": {
     "message": "Application Canvas parent"
   },
   "canvas_student_app_329567f": {
     "message": "Application Canvas élève"
+  },
+  "canvas_teacher_app_9dc7d7ed": {
+    "message": "Application Canvas pour enseignants"
   },
   "change_discussiontitle_to_different_grouping_9f5ed8c1": {
     "message": "Déplacer { discussionTitle } vers un groupement différent"
@@ -286,6 +292,9 @@
   },
   "clear_recording_5a97b475": {
     "message": "Effacer l’enregistrement"
+  },
+  "close_d634289d": {
+    "message": "Fermer"
   },
   "close_for_comments_ce0e5d00": {
     "message": "Fermer les commentaires"
@@ -316,6 +325,9 @@
   },
   "compose_message_8abd180a": {
     "message": "Composer un message"
+  },
+  "conferences_a0a8984b": {
+    "message": "Conférences"
   },
   "conversation_options_8be926f3": {
     "message": "Options de conversation"
@@ -566,6 +578,9 @@
   "excused_cf8792eb": {
     "message": "Exempté"
   },
+  "extensions_and_lastextension_f45d68e7": {
+    "message": "{ extensions } et { lastExtension }"
+  },
   "external_tool_c5a6410a": {
     "message": "Outil externe"
   },
@@ -596,8 +611,8 @@
   "favorite_courses_fbd356f0": {
     "message": "Cours favoris"
   },
-  "file_count_plural_one_file_other_files_8ae41de8": {
-    "message": "{ file_count, plural,    one {# fichier} other {# fichiers}}"
+  "file_types_6fa69505": {
+    "message": "Types de fichiers"
   },
   "files_c300e900": {
     "message": "Fichiers"
@@ -701,6 +716,9 @@
   "help_4c4968b1": {
     "message": "Aide"
   },
+  "hidden_14a032a7": {
+    "message": "Masqué"
+  },
   "hidden_files_inside_will_be_available_with_links_e9e3d233": {
     "message": "Masqué. Les fichiers à l’intérieur seront disponibles via un lien."
   },
@@ -708,7 +726,7 @@
     "message": "Masquer le contenu pour { name }"
   },
   "hide_correct_answers_at_b1a59408": {
-    "message": "Masquer les réponses correctes à"
+    "message": "Masquer les réponses correctes le"
   },
   "hide_date_cannot_be_before_show_date_cfaa35f0": {
     "message": "La « Date de masquage » ne peut être antérieure à la « Date d'affichage »"
@@ -722,6 +740,12 @@
   "i_hold_the_copyright_71ee91b1": {
     "message": "Je détiens les droits d’auteur"
   },
+  "if_you_re_a_student_or_teacher_try_one_of_our_othe_f0ae9b33": {
+    "message": "Si vous êtes un élève ou un enseignant, essayez l'une de nos applications ci-dessous."
+  },
+  "in_progress_9d1ce8b9": {
+    "message": "En cours"
+  },
   "incomplete_da3c2ea2": {
     "message": "Incomplet"
   },
@@ -730,6 +754,9 @@
   },
   "insert_link_6dc23cae": {
     "message": "Insérer un lien"
+  },
+  "internet_connection_offline_d7c02b88": {
+    "message": "Connexion Internet hors ligne"
   },
   "invalid_field_54480fae": {
     "message": "Champ invalide"
@@ -740,8 +767,17 @@
   "invite_declined_d0a9e398": {
     "message": "Invitation refusée !"
   },
+  "it_looks_like_your_internet_connection_is_offline__cf4003": {
+    "message": "On dirait que votre connexion Internet est hors ligne. Reconnectez-vous à Internet et réessayez."
+  },
+  "it_seems_there_aren_t_any_valid_submissions_to_gra_f136675": {
+    "message": "Il semble qu'il n'y a aucune soumission valide pour la note."
+  },
   "italic_ac45200a": {
     "message": "Italique"
+  },
+  "item_count_plural_one_item_other_items_88319c63": {
+    "message": "{ item_count, plural,\n    one {# élément}\n  other {# éléments}\n}"
   },
   "last_activity_on_lastactivity_date_mmmm_d_at_lasta_1a7e8430": {
     "message": "Dernière activité le { lastActivity, date, 'MMMM d' } à { lastActivity, time, short }"
@@ -779,11 +815,17 @@
   "lock_questions_after_answering_e0f61d7c": {
     "message": "Verrouiller les questions après les réponses"
   },
+  "log_in_again_ec2b1f46": {
+    "message": "S’identifier à nouveau"
+  },
   "log_out_379ba28a": {
     "message": "Se déconnecter"
   },
   "long_description_7d89285c": {
     "message": "Description longue"
+  },
+  "manage_children_a28d764e": {
+    "message": "Gérer les enfants"
   },
   "mark_all_as_read_8f3bdf57": {
     "message": "Marquer tout comme lu"
@@ -890,6 +932,9 @@
   "no_e16d9132": {
     "message": "Non"
   },
+  "no_enrollments_6369cd31": {
+    "message": "Pas d’inscriptions"
+  },
   "no_grade_3b4d7f3e": {
     "message": "Aucune note"
   },
@@ -910,6 +955,9 @@
   },
   "no_subject_58b7941c": {
     "message": "Aucun sujet"
+  },
+  "no_submissions_to_display_6f1491cf": {
+    "message": "Aucune soumission à afficher"
   },
   "no_time_limit_2147d9bf": {
     "message": "Aucune limite de temps"
@@ -1289,6 +1337,9 @@
   "students_1b8cd07b": {
     "message": "Étudiants"
   },
+  "students_must_post_before_seeing_replies_1a57eeb2": {
+    "message": "Les étudiants doivent publier avant de voir les réponses."
+  },
   "subject_114b2e98": {
     "message": "Sujet"
   },
@@ -1370,6 +1421,9 @@
   "there_are_no_comments_to_display_bde58f70": {
     "message": "Il n'y a pas de commentaires à afficher."
   },
+  "there_are_no_conferences_to_display_400a0413": {
+    "message": "Aucune conférence à afficher."
+  },
   "there_are_no_discussions_to_display_37bc437f": {
     "message": "Aucune discussion à afficher."
   },
@@ -1450,6 +1504,9 @@
   },
   "this_assignment_does_not_allow_submissions_30af1caa": {
     "message": "Cette tâche ne permet pas les envois."
+  },
+  "this_assignment_doesn_t_have_a_description_e2f37ec3": {
+    "message": "Ce travail n'a pas de description."
   },
   "this_assignment_only_allows_on_paper_submissions_f478408a": {
     "message": "Cette tâche ne permet que les envois sur papier."
@@ -1599,9 +1656,6 @@
   "user_id_bcace870": {
     "message": "ID utilisateur"
   },
-  "users_must_post_before_seeing_replies_d1761968": {
-    "message": "Les utilisateurs doivent publier quelque chose pour voir les réponses."
-  },
   "video_b9f27375": {
     "message": "Vidéo"
   },
@@ -1610,6 +1664,9 @@
   },
   "view_all_submissions_915a8b78": {
     "message": "Voir toutes les soumissions"
+  },
+  "view_canvas_guides_a1c62a97": {
+    "message": "Afficher les manuels Canvas"
   },
   "view_long_description_2b592c0e": {
     "message": "Afficher la description longue"
@@ -1646,6 +1703,9 @@
   },
   "you_must_enter_an_access_code_8c2c7ae0": {
     "message": "Vous devez entrer un code d’accès"
+  },
+  "you_need_at_least_one_active_observer_enrollment_t_9c78bb6e": {
+    "message": "Vous avez besoin d'au moins une inscription d’observateur active pour utiliser Canvas Parent."
   },
   "your_submission_comment_failed_to_send_5c8d2809": {
     "message": "Échec de l''envoi de votre commentaire de soumission."

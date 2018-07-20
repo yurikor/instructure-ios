@@ -1,9 +1,17 @@
 //
-//  LTILaunch.swift
-//  CanvasCore
+// Copyright (C) 2018-present Instructure, Inc.
 //
-//  Created by Nathan Armstrong on 1/30/18.
-//  Copyright © 2018 Instructure, Inc. All rights reserved.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, version 3 of the License.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
 import Foundation
@@ -51,6 +59,7 @@ public class ExternalToolManager: NSObject {
     */
     @objc
     public func launch(_ launchURL: URL, in session: Session, from viewController: UIViewController, fallbackURL: URL?, completionHandler: (() -> Void)? = nil) {
+        CanvasAnalytics.logEvent("external_tool_launched", parameters: ["launchUrl": launchURL])
         getSessionlessLaunchURL(forLaunchURL: launchURL.ensureHTTPS(), in: session) { [weak self, weak viewController] url, pageViewPath, error in
             guard let me = self, let vc = viewController else { return }
             if let url = url {

@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,5 +25,5 @@ export function getAuthenticatedSessionURL (url: string): ApiPromise<any> {
     },
     excludeVersion: true,
   }
-  return httpClient().get('login/session_token', options)
+  return httpClient.get('login/session_token', options)
 }

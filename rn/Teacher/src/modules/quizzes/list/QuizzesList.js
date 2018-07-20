@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,13 +53,6 @@ type State = {
 
 export type Props = State & typeof Actions & {
   navigator: Navigator,
-}
-
-const HEADERS = {
-  'assignment': i18n('Assignments'),
-  'practice_quiz': i18n('Practice Quiz'),
-  'graded_survey': i18n('Graded Survey'),
-  'survey': i18n('Survey'),
 }
 
 export class QuizzesList extends Component<Props, any> {
@@ -119,6 +112,12 @@ export class QuizzesList extends Component<Props, any> {
   }
 
   renderSectionHeader = ({ section }: any) => {
+    const HEADERS = {
+      'assignment': i18n('Assignments'),
+      'practice_quiz': i18n('Practice Quiz'),
+      'graded_survey': i18n('Graded Survey'),
+      'survey': i18n('Survey'),
+    }
     return <SectionHeader title={HEADERS[section.key]} sectionKey={section.key} top={section.index === 0} />
   }
 

@@ -46,6 +46,9 @@ class ModuleItemViewModel: NSObject {
                 switch content {
                 case .externalURL(url: let url):
                     let webView = CanvasWebView()
+                    webView.finishedLoading = { [weak self] in
+                        self?.markAsViewedAction.apply(()).start()
+                    }
                     webView.load(source: .url(url))
                     return CanvasWebViewController(webView: webView, showDoneButton: false, showShareButton: true)
                 case .externalTool(_, _):
@@ -111,6 +114,7 @@ class ModuleItemViewModel: NSObject {
                 guard let next = self.nextModuleItem.value else {
                     fatalError("This action should only be enabled if there is a next item")
                 }
+                CanvasAnalytics.logEvent("module_item_content_selected_next")
                 self.observer = try ModuleItem.observer(self.session, moduleItemID: next.id)
             }
         }
@@ -121,6 +125,7 @@ class ModuleItemViewModel: NSObject {
                 guard let previous = self.previousModuleItem.value else {
                     fatalError("This action should only be enabled if there is a previous item")
                 }
+                CanvasAnalytics.logEvent("module_item_content_selected_previous")
                 self.observer = try ModuleItem.observer(self.session, moduleItemID: previous.id)
             }
         }
@@ -339,24 +344,6 @@ class ModuleItemViewModel: NSObject {
             try Assignment.invalidateDetailsCache(session: session, courseID: courseID, id: id)
         default:
             break
-        }
-    }
-}
-
-
-// MARK: - WebBrowserViewControllerDelegate
-extension ModuleItemViewModel: WebBrowserViewControllerDelegate {
-    func webBrowser(_ webBrowser: WebBrowserViewController!, didFinishLoading webView: WKWebView!) {
-        if moduleItemMatches(webBrowser.url) {
-            markAsViewedAction.apply(()).start()
-        }
-    }
-
-    fileprivate func moduleItemMatches(_ externalURL: URL) -> Bool {
-        switch self.moduleItem.value?.content {
-        case let .some(.externalURL(url)):
-            return externalURL == url
-        default: return false
         }
     }
 }

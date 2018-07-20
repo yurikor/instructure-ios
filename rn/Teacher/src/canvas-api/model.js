@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2018-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -92,4 +92,15 @@ export class ToDoModel extends Model<ToDoItem> {
   contextType = this.raw.context_type
   courseID = this.raw.course_id
   groupID = this.raw.group_id
+}
+
+export class ConferenceModel extends Model<Conference> {
+  static keyExtractor (conference: ConferenceModel) {
+    return conference.id
+  }
+
+  id = this.raw.id
+  title = this.raw.title
+  description = this.raw.description
+  join_url = this.raw.join_url
 }

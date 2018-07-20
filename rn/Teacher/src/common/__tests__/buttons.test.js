@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,26 +14,37 @@
 // limitations under the License.
 //
 
-/**
- * @flow
- */
+// @flow
 
-import React from 'react'
+import { shallow } from 'enzyme'
+import * as React from 'react'
 import { Button, LinkButton } from '../buttons'
-import renderer from 'react-test-renderer'
 
-jest.mock('react-native-button', () => 'Button')
+describe('common buttons', () => {
+  describe('<Button>', () => {
+    it('adds additional styles to the base button', () => {
+      const tree = shallow(
+        <Button
+          containerStyle={5}
+          style={42}
+        >
+          push
+        </Button>
+      )
+      expect(tree).toMatchSnapshot()
+    })
+  })
 
-test('renders button correctly', () => {
-  let tree = renderer.create(
-    <Button />
-  ).toJSON()
-  expect(tree).toMatchSnapshot()
-})
-
-test('renders link correctly', () => {
-  let tree = renderer.create(
-    <LinkButton />
-  ).toJSON()
-  expect(tree).toMatchSnapshot()
+  describe('<LinkButton>', () => {
+    it('adds additional styles to the base button', () => {
+      const tree = shallow(
+        <LinkButton
+          textStyle={42}
+        >
+          push
+        </LinkButton>
+      )
+      expect(tree).toMatchSnapshot()
+    })
+  })
 })

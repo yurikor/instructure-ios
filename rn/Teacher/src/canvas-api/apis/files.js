@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,16 +42,15 @@ export function getFolderFolders (folderID: string): ApiPromise<Folder[]> {
   return exhaust(files)
 }
 
-// Get a single folder for a context by id
-// To get the root folder, pass `root` for `folderID`
-export function getContextFolder (context: CanvasContext, contextID: string, folderID: string): ApiPromise<Folder[]> {
-  const url = `${context}/${contextID}/folders/${folderID}`
+// Get the whole folder hierachy from root to this path inclusive
+export function getContextFolderHierarchy (context: CanvasContext, contextID: string, path: string): ApiPromise<Folder[]> {
+  const url = `${context}/${contextID}/folders/by_path/${path}`
   const options = {
     params: {
       include: ['usage_rights'],
     },
   }
-  return httpClient().get(url, options)
+  return httpClient.get(url, options)
 }
 
 export function getFolder (folderID: string): ApiPromise<Folder> {
@@ -61,35 +60,35 @@ export function getFolder (folderID: string): ApiPromise<Folder> {
       include: ['usage_rights'],
     },
   }
-  return httpClient().get(url, options)
+  return httpClient.get(url, options)
 }
 
 export function getFile (fileID: string): ApiPromise<File> {
-  return httpClient().get(`files/${fileID}`)
+  return httpClient.get(`files/${fileID}`)
 }
 
 export function createFolder (context: CanvasContext, contextID: string, folder: NewFolder): ApiPromise<Folder> {
-  return httpClient().post(`${context}/${contextID}/folders`, folder)
+  return httpClient.post(`${context}/${contextID}/folders`, folder)
 }
 
 export function updateFolder (folderID: string, folder: UpdateFolderParameters): ApiPromise<Folder> {
-  return httpClient().put(`folders/${folderID}`, folder)
+  return httpClient.put(`folders/${folderID}`, folder)
 }
 
 export function deleteFolder (folderID: string, force?: boolean): ApiPromise<null> {
-  return httpClient().delete(`folders/${folderID}`, { params: { force } })
+  return httpClient.delete(`folders/${folderID}`, { params: { force } })
 }
 
 export function updateFile (fileID: string, file: UpdateFileParameters): ApiPromise<File> {
-  return httpClient().put(`files/${fileID}`, file)
+  return httpClient.put(`files/${fileID}`, file)
 }
 
 export function deleteFile (fileID: string): ApiPromise<null> {
-  return httpClient().delete(`files/${fileID}`)
+  return httpClient.delete(`files/${fileID}`)
 }
 
 export function updateCourseFileUsageRights (courseID: string, fileID: string, params: UpdateUsageRightsParameters): ApiPromise<UsageRights> {
-  return httpClient().put(`courses/${courseID}/usage_rights`, {
+  return httpClient.put(`courses/${courseID}/usage_rights`, {
     file_ids: [ fileID ],
     usage_rights: params,
   })

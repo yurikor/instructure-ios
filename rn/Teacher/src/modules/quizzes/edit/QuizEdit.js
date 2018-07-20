@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ import {
   NativeModules,
 } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { Heading1 } from '../../../common/text'
+import { FormLabel } from '../../../common/text'
 import colors from '../../../common/colors'
 import images from '../../../images'
 import RowWithTextInput from '../../../common/components/rows/RowWithTextInput'
@@ -163,7 +163,7 @@ export class QuizEdit extends Component<Props, any> {
             keyboardShouldPersistTaps='handled'
             ref={scrollView => { this.scrollView = scrollView }}
           >
-            <Heading1 style={style.heading}>{i18n('Title')}</Heading1>
+            <FormLabel>{i18n('Title')}</FormLabel>
             <RowWithTextInput
               defaultValue={quiz.title}
               border='both'
@@ -172,7 +172,7 @@ export class QuizEdit extends Component<Props, any> {
             />
             <RequiredFieldSubscript title={i18n('A title is required')} visible={!this.state.validation.title} />
 
-            <Heading1 style={style.heading}>{i18n('Description')}</Heading1>
+            <FormLabel>{i18n('Description')}</FormLabel>
             <Row
               disclosureIndicator={true}
               border='both'
@@ -185,7 +185,7 @@ export class QuizEdit extends Component<Props, any> {
               </View>
             </Row>
 
-            <Heading1 style={style.heading} accessible={false}> </Heading1>
+            <FormLabel accessible={false}> </FormLabel>
             <RowWithDetail
               title={i18n('Quiz Type')}
               detailSelected={this.state.pickers.quiz_type}
@@ -200,11 +200,11 @@ export class QuizEdit extends Component<Props, any> {
                 selectedValue={quiz.quiz_type}
                 onValueChange={this._updateQuiz('quiz_type', null, false)}
                 testID='quizzes.edit.quiz-type-picker'>
-                {Object.keys(QUIZ_TYPES).map((type) => (
+                {Object.keys(QUIZ_TYPES()).map((type) => (
                   <PickerItem
                     key={type}
                     value={type}
-                    label={QUIZ_TYPES[type]}
+                    label={QUIZ_TYPES()[type]}
                   />
                 ))}
               </PickerIOS>
@@ -273,7 +273,7 @@ export class QuizEdit extends Component<Props, any> {
               />
             }
 
-            <Heading1 style={style.heading} accessible={false}> </Heading1>
+            <FormLabel accessible={false}> </FormLabel>
             <RowWithSwitch
               title={i18n('Allow Multiple Attempts')}
               border='both'
@@ -295,11 +295,11 @@ export class QuizEdit extends Component<Props, any> {
                     selectedValue={quiz.scoring_policy}
                     onValueChange={this._updateQuiz('scoring_policy', null, false)}
                     testID='quizzes.edit.scoring-policy-picker'>
-                    {Object.keys(SCORING_POLICIES).map((key) => (
+                    {Object.keys(SCORING_POLICIES()).map((key) => (
                       <PickerItem
                         key={key}
                         value={key}
-                        label={SCORING_POLICIES[key]}
+                        label={SCORING_POLICIES()[key]}
                       />
                     ))}
                   </PickerIOS>
@@ -316,7 +316,7 @@ export class QuizEdit extends Component<Props, any> {
               </View>
             }
 
-            <Heading1 style={style.heading} accessible={false}> </Heading1>
+            <FormLabel accessible={false}> </FormLabel>
             <RowWithSwitch
               title={i18n('Let Students See Their Quiz Responses')}
               border='both'
@@ -398,7 +398,7 @@ export class QuizEdit extends Component<Props, any> {
             }
             <RequiredFieldSubscript title={i18n("'Hide Date' cannot be before 'Show Date'")} visible={!this.state.validation.showCorrectAnswerDates} />
 
-            <Heading1 style={style.heading} accessible={false}> </Heading1>
+            <FormLabel accessible={false}> </FormLabel>
             <RowWithSwitch
               title={i18n('Show One Question at a Time')}
               border='both'
@@ -421,7 +421,7 @@ export class QuizEdit extends Component<Props, any> {
               />
             }
 
-            <Heading1 style={style.heading} accessible={false}> </Heading1>
+            <FormLabel accessible={false}> </FormLabel>
             <RowWithSwitch
               title={i18n('Require an Access Code')}
               border='both'
@@ -616,12 +616,6 @@ const style = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
-  },
-  heading: {
-    color: colors.darkText,
-    marginLeft: global.style.defaultPadding,
-    marginTop: global.style.defaultPadding,
-    marginBottom: global.style.defaultPadding / 2,
   },
   buttonInnerContainer: {
     flex: 1,

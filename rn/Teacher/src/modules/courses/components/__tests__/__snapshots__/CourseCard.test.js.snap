@@ -11,6 +11,7 @@ exports[`renders 1`] = `
         Object {
           "height": 160,
         },
+        Object {},
         Object {
           "height": 100,
         },
@@ -40,7 +41,10 @@ exports[`renders 1`] = `
       <View
         style={
           Object {
+            "borderTopLeftRadius": 4,
+            "borderTopRightRadius": 4,
             "flex": 1,
+            "overflow": "hidden",
           }
         }
       >
@@ -134,6 +138,7 @@ exports[`renders 1`] = `
               },
               Object {
                 "color": "#333",
+                "fontSize": 18,
                 "fontWeight": "600",
                 "marginTop": 8,
               },
@@ -190,6 +195,7 @@ exports[`renders with a grade 1`] = `
         Object {
           "height": 160,
         },
+        Object {},
         Object {
           "height": 100,
         },
@@ -219,7 +225,10 @@ exports[`renders with a grade 1`] = `
       <View
         style={
           Object {
+            "borderTopLeftRadius": 4,
+            "borderTopRightRadius": 4,
             "flex": 1,
+            "overflow": "hidden",
           }
         }
       >
@@ -269,7 +278,6 @@ exports[`renders with a grade 1`] = `
           }
         >
           <Text
-            accessibilityTraits="header"
             accessible={true}
             allowFontScaling={true}
             ellipsizeMode="tail"
@@ -281,17 +289,20 @@ exports[`renders with a grade 1`] = `
                 },
                 Object {
                   "color": "#2D3B45",
-                  "fontFamily": ".SFUIDisplay-semibold",
-                  "fontSize": 20,
+                  "fontSize": 16,
                 },
                 Array [
                   Object {
                     "fontSize": 14,
+                    "fontWeight": "600",
                   },
                   Object {
                     "color": "#333",
                   },
                 ],
+                Object {
+                  "fontFamily": ".SFUIDisplay-semibold",
+                },
               ]
             }
           >
@@ -358,6 +369,7 @@ exports[`renders with a grade 1`] = `
               },
               Object {
                 "color": "#333",
+                "fontSize": 18,
                 "fontWeight": "600",
                 "marginTop": 8,
               },
@@ -414,6 +426,7 @@ exports[`renders with a grade even if the grade does not exist 1`] = `
         Object {
           "height": 160,
         },
+        Object {},
         Object {
           "height": 100,
         },
@@ -443,7 +456,10 @@ exports[`renders with a grade even if the grade does not exist 1`] = `
       <View
         style={
           Object {
+            "borderTopLeftRadius": 4,
+            "borderTopRightRadius": 4,
             "flex": 1,
+            "overflow": "hidden",
           }
         }
       >
@@ -493,7 +509,6 @@ exports[`renders with a grade even if the grade does not exist 1`] = `
           }
         >
           <Text
-            accessibilityTraits="header"
             accessible={true}
             allowFontScaling={true}
             ellipsizeMode="tail"
@@ -505,17 +520,20 @@ exports[`renders with a grade even if the grade does not exist 1`] = `
                 },
                 Object {
                   "color": "#2D3B45",
-                  "fontFamily": ".SFUIDisplay-semibold",
-                  "fontSize": 20,
+                  "fontSize": 16,
                 },
                 Array [
                   Object {
                     "fontSize": 14,
+                    "fontWeight": "600",
                   },
                   Object {
                     "color": "#333",
                   },
                 ],
+                Object {
+                  "fontFamily": ".SFUIDisplay-semibold",
+                },
               ]
             }
           >
@@ -582,6 +600,7 @@ exports[`renders with a grade even if the grade does not exist 1`] = `
               },
               Object {
                 "color": "#333",
+                "fontSize": 18,
                 "fontWeight": "600",
                 "marginTop": 8,
               },
@@ -638,6 +657,7 @@ exports[`renders with empty image url 1`] = `
         Object {
           "height": 160,
         },
+        Object {},
         Object {
           "height": 100,
         },
@@ -667,7 +687,10 @@ exports[`renders with empty image url 1`] = `
       <View
         style={
           Object {
+            "borderTopLeftRadius": 4,
+            "borderTopRightRadius": 4,
             "flex": 1,
+            "overflow": "hidden",
           }
         }
       >
@@ -749,6 +772,7 @@ exports[`renders with empty image url 1`] = `
               },
               Object {
                 "color": "#333",
+                "fontSize": 18,
                 "fontWeight": "600",
                 "marginTop": 8,
               },
@@ -805,6 +829,7 @@ exports[`renders with image url 1`] = `
         Object {
           "height": 160,
         },
+        Object {},
         Object {
           "height": 100,
         },
@@ -834,7 +859,10 @@ exports[`renders with image url 1`] = `
       <View
         style={
           Object {
+            "borderTopLeftRadius": 4,
+            "borderTopRightRadius": 4,
             "flex": 1,
+            "overflow": "hidden",
           }
         }
       >
@@ -928,6 +956,7 @@ exports[`renders with image url 1`] = `
               },
               Object {
                 "color": "#333",
+                "fontSize": 18,
                 "fontWeight": "600",
                 "marginTop": 8,
               },
@@ -984,6 +1013,7 @@ exports[`renders without image url 1`] = `
         Object {
           "height": 160,
         },
+        Object {},
         Object {
           "height": 100,
         },
@@ -1013,7 +1043,10 @@ exports[`renders without image url 1`] = `
       <View
         style={
           Object {
+            "borderTopLeftRadius": 4,
+            "borderTopRightRadius": 4,
             "flex": 1,
+            "overflow": "hidden",
           }
         }
       >
@@ -1095,6 +1128,7 @@ exports[`renders without image url 1`] = `
               },
               Object {
                 "color": "#333",
+                "fontSize": 18,
                 "fontWeight": "600",
                 "marginTop": 8,
               },

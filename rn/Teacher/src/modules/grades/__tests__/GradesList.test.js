@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2018-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-/* @flow */
+// @flow
 
 import { mapStateToProps } from '../GradesList'
 import * as templates from '../../../__templates__/index'
@@ -23,13 +23,13 @@ import GradesListRow from '../GradesListRow'
 
 describe('mapStateToProps', () => {
   let assignmentGroup = templates.assignmentGroup()
-  let assignment = templates.assignment()
+  let assignment = assignmentGroup.assignments[0]
   let gradingPeriod = templates.gradingPeriod({ id: 1 })
   let gradingPeriodTwo = templates.gradingPeriod({ id: 2 })
   let course = templates.course({
     enrollments: [
       { type: 'teacher', current_grading_period_id: gradingPeriod.id },
-      { type: 'student', current_grading_period_id: gradingPeriodTwo.id },
+      { type: 'student', current_grading_period_id: gradingPeriodTwo.id, computed_current_score: 92 },
     ],
   })
   let enrollment = templates.enrollment({ course_id: course.id, user_id: '10' })
@@ -136,7 +136,8 @@ describe('mapStateToProps', () => {
   })
 
   it('returns the current_score from the enrollment', () => {
-    expect(mapStateToProps(defaultState, defaultProps).currentScore).toEqual(enrollment.grades.current_score)
+    // $FlowFixMe
+    expect(mapStateToProps(defaultState, defaultProps).currentScore).toEqual(course.enrollments[1].computed_current_score)
   })
 
   it('returns the static props for AssignmentList', () => {

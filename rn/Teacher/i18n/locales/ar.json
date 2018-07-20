@@ -254,11 +254,17 @@
   "cancel_caeb1e68": {
     "message": "إلغاء"
   },
+  "canvas_guides_d65431": {
+    "message": "Canvas Guides"
+  },
   "canvas_parent_app_f9236a3a": {
     "message": "تطبيق Canvas Parent"
   },
   "canvas_student_app_329567f": {
     "message": "تطبيق Canvas Student"
+  },
+  "canvas_teacher_app_9dc7d7ed": {
+    "message": "تطبيق Canvas Teacher"
   },
   "change_discussiontitle_to_different_grouping_9f5ed8c1": {
     "message": "تغيير { discussionTitle } إلى تجميع مختلف"
@@ -286,6 +292,9 @@
   },
   "clear_recording_5a97b475": {
     "message": "مسح التسجيل"
+  },
+  "close_d634289d": {
+    "message": "إغلاق"
   },
   "close_for_comments_ce0e5d00": {
     "message": "التعليقات مغلقة"
@@ -316,6 +325,9 @@
   },
   "compose_message_8abd180a": {
     "message": "إنشاء رسالة"
+  },
+  "conferences_a0a8984b": {
+    "message": "المؤتمرات"
   },
   "conversation_options_8be926f3": {
     "message": "خيارات المحادثة"
@@ -566,6 +578,9 @@
   "excused_cf8792eb": {
     "message": "غير إجباري"
   },
+  "extensions_and_lastextension_f45d68e7": {
+    "message": "{ extensions } و{ lastExtension }"
+  },
   "external_tool_c5a6410a": {
     "message": "أداة خارجية"
   },
@@ -596,8 +611,8 @@
   "favorite_courses_fbd356f0": {
     "message": "المساقات المفضلة"
   },
-  "file_count_plural_one_file_other_files_8ae41de8": {
-    "message": "{ file_count, plural,    zero {# ملفات} one {# ملف} two {# ملفات} few {# ملفات} many {# ملفات} other {# ملفات}}"
+  "file_types_6fa69505": {
+    "message": "أنواع الملفات"
   },
   "files_c300e900": {
     "message": "ملفات"
@@ -701,6 +716,9 @@
   "help_4c4968b1": {
     "message": "المساعدة"
   },
+  "hidden_14a032a7": {
+    "message": "مخفي"
+  },
   "hidden_files_inside_will_be_available_with_links_e9e3d233": {
     "message": "مخفي. ستتوفر الملفات الداخلية بارتباطات."
   },
@@ -722,6 +740,12 @@
   "i_hold_the_copyright_71ee91b1": {
     "message": "أمتلك حقوق النشر"
   },
+  "if_you_re_a_student_or_teacher_try_one_of_our_othe_f0ae9b33": {
+    "message": "إذا كنت طالبًا أو معلمًا، جرب إحدى تطبيقاتنا الأخرى أدناه."
+  },
+  "in_progress_9d1ce8b9": {
+    "message": "قيد التقدم"
+  },
   "incomplete_da3c2ea2": {
     "message": "غير مكتمل"
   },
@@ -730,6 +754,9 @@
   },
   "insert_link_6dc23cae": {
     "message": "إدراج ارتباط"
+  },
+  "internet_connection_offline_d7c02b88": {
+    "message": "الإنترنت غير متصل"
   },
   "invalid_field_54480fae": {
     "message": "حقل غير صالح"
@@ -740,8 +767,17 @@
   "invite_declined_d0a9e398": {
     "message": "تم رفض الدعوة!"
   },
+  "it_looks_like_your_internet_connection_is_offline__cf4003": {
+    "message": "يبدو أنك غير متصل بالإنترنت. أعد الاتصال بالإنترنت وأعد المحاولة."
+  },
+  "it_seems_there_aren_t_any_valid_submissions_to_gra_f136675": {
+    "message": "يبدو أنه لا توجد أي إرسالات صالحة للدرجة."
+  },
   "italic_ac45200a": {
     "message": "مائل"
+  },
+  "item_count_plural_one_item_other_items_88319c63": {
+    "message": "{ item_count, plural,\n    one {# عنصر}\n  other {# من العناصر}\n}"
   },
   "last_activity_on_lastactivity_date_mmmm_d_at_lasta_1a7e8430": {
     "message": "آخر نشاط في { lastActivity, date, 'MMMM d' } في { lastActivity, time, short }"
@@ -779,11 +815,17 @@
   "lock_questions_after_answering_e0f61d7c": {
     "message": "تأمين الأسئلة بعد الإجابة"
   },
+  "log_in_again_ec2b1f46": {
+    "message": "تسجيل الدخول مجددًا"
+  },
   "log_out_379ba28a": {
     "message": "تسجيل الخروج"
   },
   "long_description_7d89285c": {
     "message": "الوصف الطويل"
+  },
+  "manage_children_a28d764e": {
+    "message": "إدارة الفرعية"
   },
   "mark_all_as_read_8f3bdf57": {
     "message": "وضع علامة على الكل كمقروء"
@@ -890,6 +932,9 @@
   "no_e16d9132": {
     "message": "لا"
   },
+  "no_enrollments_6369cd31": {
+    "message": "لا توجد تسجيلات"
+  },
   "no_grade_3b4d7f3e": {
     "message": "لا توجد أي درجة"
   },
@@ -910,6 +955,9 @@
   },
   "no_subject_58b7941c": {
     "message": "لا يوجد موضوع"
+  },
+  "no_submissions_to_display_6f1491cf": {
+    "message": "لا توجد إرسالات للعرض"
   },
   "no_time_limit_2147d9bf": {
     "message": "لا يوجد حد زمني"
@@ -1289,6 +1337,9 @@
   "students_1b8cd07b": {
     "message": "الطلاب"
   },
+  "students_must_post_before_seeing_replies_1a57eeb2": {
+    "message": "يجب على الطلاب النشر قبل رؤية الردود"
+  },
   "subject_114b2e98": {
     "message": "الموضوع"
   },
@@ -1370,6 +1421,9 @@
   "there_are_no_comments_to_display_bde58f70": {
     "message": "لا توجد أي تعليقات للعرض."
   },
+  "there_are_no_conferences_to_display_400a0413": {
+    "message": "لا توجد أي مؤتمرات للعرض."
+  },
   "there_are_no_discussions_to_display_37bc437f": {
     "message": "لا توجد أي نقاشات للعرض."
   },
@@ -1450,6 +1504,9 @@
   },
   "this_assignment_does_not_allow_submissions_30af1caa": {
     "message": "لا تسمح هذه المهمة بإرسالات."
+  },
+  "this_assignment_doesn_t_have_a_description_e2f37ec3": {
+    "message": "لا تحتوي هذه المهمة على وصف."
   },
   "this_assignment_only_allows_on_paper_submissions_f478408a": {
     "message": "لا تسمح هذه المهمة إلا بالإرسالات الورقية."
@@ -1599,9 +1656,6 @@
   "user_id_bcace870": {
     "message": "معرف المستخدم"
   },
-  "users_must_post_before_seeing_replies_d1761968": {
-    "message": "يجب على المستخدمين النشر قبل رؤية الردود"
-  },
   "video_b9f27375": {
     "message": "فيديو"
   },
@@ -1610,6 +1664,9 @@
   },
   "view_all_submissions_915a8b78": {
     "message": "عرض جميع الإرسالات"
+  },
+  "view_canvas_guides_a1c62a97": {
+    "message": "عرض Canvas Guides"
   },
   "view_long_description_2b592c0e": {
     "message": "عرض وصف طويل"
@@ -1646,6 +1703,9 @@
   },
   "you_must_enter_an_access_code_8c2c7ae0": {
     "message": "يجب إدخال رمز وصول"
+  },
+  "you_need_at_least_one_active_observer_enrollment_t_9c78bb6e": {
+    "message": "تحتاج لتسجيل مراقب نشط واحد على الأقل لاستخدام Canvas Parent."
   },
   "your_submission_comment_failed_to_send_5c8d2809": {
     "message": "فشل إرسال تعليق الإرسال الخاص بك."

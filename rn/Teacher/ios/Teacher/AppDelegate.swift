@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ import CanvasKeymaster
 import ReactiveSwift
 import UserNotifications
 import PSPDFKit
-import Fabric
+//import Fabric
 import Crashlytics
 import CanvasCore
 import React
@@ -124,7 +124,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         if (!uiTesting) {
-            AppStoreReview.requestReview()
+            AppStoreReview.handleLaunch()
         }
     }
     

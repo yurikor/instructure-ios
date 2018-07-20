@@ -1,4 +1,3 @@
-source 'git@github.com:instructure/ios-podspecs.git'
 source 'https://github.com/CocoaPods/Specs.git'
 
 workspace 'AllTheThings.xcworkspace'
@@ -54,8 +53,6 @@ abstract_target 'defaults' do
   pod 'Cartography', '~> 1.1'
   pod 'ReactiveSwift'
   pod 'Kingfisher', '~> 3.2'
-  pod 'JSTokenField', '~> 1.1'
-  pod 'CocoaLumberjack', '~> 3.0'
   pod 'Masonry', '~> 1.0'
   pod 'SVProgressHUD', '~> 2.0'
   pod 'TBBModal', '~> 1.0'
@@ -64,37 +61,35 @@ abstract_target 'defaults' do
   pod 'AFNetworking', '~> 3.0'
   pod 'FXKeychain', '~> 1.5'
   pod 'Reachability', '~> 3.2'
-  pod 'Fabric', '~> 1.6'
   pod 'Mantle', '~> 1.5.5'
   pod 'DeviceKit', '~> 1.0'
   pod 'TPKeyboardAvoiding', '~> 1.3'
   pod 'SwiftSimplify'
-  pod 'PSPDFKit', podspec: 'https://customers.pspdfkit.com/cocoapods/8YzxfVzsGsqs4HKYsejmoeD6WEJ9ma/pspdfkit/7.5.0.podspec'
+  pod 'PSPDFKit', podspec: 'https://customers.pspdfkit.com/cocoapods/8YzxfVzsGsqs4HKYsejmoeD6WEJ9ma/pspdfkit/7.6.2.podspec'
 
   target 'Parent' do
     project 'Parent/Parent.xcodeproj'
-    pod 'Fabric', '~> 1.6'
-    pod 'Crashlytics', '~> 3.8'
+    pod 'Fabric', '~> 1.7.7'
+    pod 'Crashlytics', '~> 3.10.2'
     pod 'Eureka', :git => 'https://github.com/xmartlabs/Eureka', :branch => 'Swift-3.3'
   end
 
   target 'Teacher' do
     project 'rn/Teacher/ios/Teacher.xcodeproj'
-
-    pod 'Fabric', '~> 1.6'
-    pod 'Crashlytics', '~> 3.8'
+    pod 'Fabric', '~> 1.7.7'
+    pod 'Crashlytics', '~> 3.10.2'
   end
 
   target 'TechDebt' do
     project 'Canvas/Canvas.xcodeproj'
-    pod 'JSTokenField', '~> 1.1'
-    pod 'Google/Analytics'
     pod 'FXKeychain', '~> 1.5'
-    pod 'Crashlytics', '~> 3.8'
   end
 
   target 'Canvas' do
     project 'Canvas/Canvas.xcodeproj'
+    pod 'Fabric', '~> 1.7.7'
+    pod 'Crashlytics', '~> 3.10.2'
+    pod 'Firebase/Core'
   end
 
   target 'CanvasCore' do
@@ -173,4 +168,3 @@ post_install do |installer|
     end
   end
 end
-

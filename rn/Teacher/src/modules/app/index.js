@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 
 // @flow
 
-export type AppId = 'student' | 'teacher'
+export type AppId = 'student' | 'teacher' | 'parent'
 export type App = {
   appId: AppId,
   filterCourse: (course: Course) => boolean,
@@ -44,6 +44,11 @@ const student = {
   filterCourse: (course: Course): boolean => !course.access_restricted_by_date,
 }
 
+const parent = {
+  appId: 'parent',
+  filterCourse: (course: Course): boolean => true,
+}
+
 let current: App = teacher
 
 const app = {
@@ -55,6 +60,9 @@ const app = {
       case 'teacher':
         current = teacher
         break
+      case 'parent':
+        current = parent
+        break
     }
   },
   current: (): App => current,
@@ -65,6 +73,10 @@ export function isTeacher (): boolean {
 }
 export function isStudent (): boolean {
   return app.current().appId === 'student'
+}
+
+export function isParent (): boolean {
+  return app.current().appId === 'parent'
 }
 
 export default app

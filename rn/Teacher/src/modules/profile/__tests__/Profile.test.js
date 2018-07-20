@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -97,11 +97,31 @@ describe('Profile Tests', () => {
 
   it('renders correctly for students', () => {
     app.setCurrentApp('student')
-    const tree = renderer.create(
+    const tree = shallow(
       <Profile { ...defaultProps } />
-    ).toJSON()
+    )
 
     expect(tree).toMatchSnapshot()
+    expect(tree.find('[testID="profile.navigation-settings-btn"]').length).toEqual(1)
+  })
+
+  it('renders correctly for parents', () => {
+    app.setCurrentApp('parent')
+    const tree = shallow(
+      <Profile { ...defaultProps } />
+    )
+
+    expect(tree).toMatchSnapshot()
+    expect(tree.find('[testID="profile.navigation-settings-btn"]').length).toEqual(0)
+  })
+
+  it('navigate to manage children screen', async () => {
+    app.setCurrentApp('parent')
+    const instance = renderer.create(
+      <Profile { ...defaultProps } />
+    ).getInstance()
+    await instance.manageObserverStudents()
+    expect(defaultProps.navigator.show).toHaveBeenCalledWith('/parent/manage-children', { modal: false })
   })
 
   it('renders correctly without masquerade', () => {

@@ -78,9 +78,34 @@ public final class Soseedy_SeedyDiscussionsServiceClient: ServiceClientBase, Sos
 }
 
 /// To build a server, implement a class that conforms to this protocol.
-public protocol Soseedy_SeedyDiscussionsProvider {
+/// If one of the methods returning `ServerStatus?` returns nil,
+/// it is expected that you have already returned a status to the client by means of `session.close`.
+public protocol Soseedy_SeedyDiscussionsProvider: ServiceProvider {
   func createAnnouncement(request: Soseedy_CreateAnnouncementRequest, session: Soseedy_SeedyDiscussionsCreateAnnouncementSession) throws -> Soseedy_Discussion
   func createDiscussion(request: Soseedy_CreateDiscussionRequest, session: Soseedy_SeedyDiscussionsCreateDiscussionSession) throws -> Soseedy_Discussion
+}
+
+extension Soseedy_SeedyDiscussionsProvider {
+  public var serviceName: String { return "soseedy.SeedyDiscussions" }
+
+  /// Determines and calls the appropriate request handler, depending on the request's method.
+  /// Throws `HandleMethodError.unknownMethod` for methods not handled by this service.
+  public func handleMethod(_ method: String, handler: Handler) throws -> ServerStatus? {
+    switch method {
+    case "/soseedy.SeedyDiscussions/CreateAnnouncement":
+      return try Soseedy_SeedyDiscussionsCreateAnnouncementSessionBase(
+        handler: handler,
+        providerBlock: { try self.createAnnouncement(request: $0, session: $1 as! Soseedy_SeedyDiscussionsCreateAnnouncementSessionBase) })
+          .run()
+    case "/soseedy.SeedyDiscussions/CreateDiscussion":
+      return try Soseedy_SeedyDiscussionsCreateDiscussionSessionBase(
+        handler: handler,
+        providerBlock: { try self.createDiscussion(request: $0, session: $1 as! Soseedy_SeedyDiscussionsCreateDiscussionSessionBase) })
+          .run()
+    default:
+      throw HandleMethodError.unknownMethod
+    }
+  }
 }
 
 public protocol Soseedy_SeedyDiscussionsCreateAnnouncementSession: ServerSessionUnary {}
@@ -90,46 +115,3 @@ fileprivate final class Soseedy_SeedyDiscussionsCreateAnnouncementSessionBase: S
 public protocol Soseedy_SeedyDiscussionsCreateDiscussionSession: ServerSessionUnary {}
 
 fileprivate final class Soseedy_SeedyDiscussionsCreateDiscussionSessionBase: ServerSessionUnaryBase<Soseedy_CreateDiscussionRequest, Soseedy_Discussion>, Soseedy_SeedyDiscussionsCreateDiscussionSession {}
-
-
-/// Main server for generated service
-public final class Soseedy_SeedyDiscussionsServer: ServiceServer {
-  private let provider: Soseedy_SeedyDiscussionsProvider
-
-  public init(address: String, provider: Soseedy_SeedyDiscussionsProvider) {
-    self.provider = provider
-    super.init(address: address)
-  }
-
-  public init?(address: String, certificateURL: URL, keyURL: URL, provider: Soseedy_SeedyDiscussionsProvider) {
-    self.provider = provider
-    super.init(address: address, certificateURL: certificateURL, keyURL: keyURL)
-  }
-
-  public init?(address: String, certificateString: String, keyString: String, provider: Soseedy_SeedyDiscussionsProvider) {
-    self.provider = provider
-    super.init(address: address, certificateString: certificateString, keyString: keyString)
-  }
-
-  /// Start the server.
-  public override func handleMethod(_ method: String, handler: Handler, queue: DispatchQueue) throws -> Bool {
-    let provider = self.provider
-    switch method {
-    case "/soseedy.SeedyDiscussions/CreateAnnouncement":
-      try Soseedy_SeedyDiscussionsCreateAnnouncementSessionBase(
-        handler: handler,
-        providerBlock: { try provider.createAnnouncement(request: $0, session: $1 as! Soseedy_SeedyDiscussionsCreateAnnouncementSessionBase) })
-          .run(queue: queue)
-      return true
-    case "/soseedy.SeedyDiscussions/CreateDiscussion":
-      try Soseedy_SeedyDiscussionsCreateDiscussionSessionBase(
-        handler: handler,
-        providerBlock: { try provider.createDiscussion(request: $0, session: $1 as! Soseedy_SeedyDiscussionsCreateDiscussionSessionBase) })
-          .run(queue: queue)
-      return true
-    default:
-      return false
-    }
-  }
-}
-

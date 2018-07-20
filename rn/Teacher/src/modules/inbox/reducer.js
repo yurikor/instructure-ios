@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ const {
 export function createScopeHandler (action: string): Function {
   return asyncRefsReducer(
     action,
-    i18n('There was an problem loading your messages.'),
+    () => i18n('There was an problem loading your messages.'),
     ({ result }) => {
       return result.data.map(c => c.id)
     }

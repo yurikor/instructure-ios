@@ -16,16 +16,13 @@
     
     
 #import <CanvasKit1/CKAssignment.h>
-#import "UIViewController+AnalyticsTracking.h"
 #import <QuartzCore/QuartzCore.h>
-
 #import "AssignmentDetailsViewController.h"
 #import "iCanvasErrorHandler.h"
 #import "Router.h"
 #import "CBIModuleProgressNotifications.h"
 #import "NSURL+TechDebt.h"
 @import CanvasKit;
-#import "CBILog.h"
 @import CanvasKeymaster;
 @import CanvasCore;
 
@@ -58,7 +55,7 @@
     self.webView.presentingViewController = self;
     self.webView.finishedLoading = ^{
         @strongify(self);
-        [self finshedLoadingContent];
+        [self finishedLoadingContent];
     };
     
     [self.view addSubview:self.webView];
@@ -73,24 +70,19 @@
     if(self.prependAssignmentInfoToContent){
         self.webView.layer.borderWidth = 0.0f;
     }
-    
+
     if (@available(iOS 11.0, *)) {
         self.webView.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     }
 
     [NSHTTPCookieStorage sharedHTTPCookieStorage].cookieAcceptPolicy = NSHTTPCookieAcceptPolicyAlways;
+    [AppStoreReview handleNavigateToAssignment];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     self.edgesForExtendedLayout = UIRectEdgeNone;
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    DDLogVerbose(@"%@ - viewDidAppear", NSStringFromClass([self class]));
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -100,13 +92,32 @@
     [NSHTTPCookieStorage sharedHTTPCookieStorage].cookieAcceptPolicy = NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
 }
 
-- (void)finshedLoadingContent {
+- (void)dealloc
+{
+    [AppStoreReview handleNavigateFromAssignment];
+}
+
+- (void)finishedLoadingContent {
     [self.webView.scrollView setContentInset:UIEdgeInsetsMake(self.topContentInset, 0, self.bottomContentInset, 0)];
     [self.webView.scrollView setScrollIndicatorInsets:UIEdgeInsetsMake(self.topContentInset, 0, self.bottomContentInset, 0)];
     [self.webView.scrollView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
-    
-    DDLogVerbose(@"AssignmentDetailViewController posting module item progress update");
     CBIPostModuleItemProgressUpdate([@(self.assignment.ident) description], CKIModuleItemCompletionRequirementMustView);
+}
+
+- (void)setTopContentInset:(CGFloat)topContentInset
+{
+    _topContentInset = topContentInset;
+    [self.webView.scrollView setContentInset:UIEdgeInsetsMake(topContentInset, 0, self.bottomContentInset, 0)];
+    [self.webView.scrollView setScrollIndicatorInsets:UIEdgeInsetsMake(topContentInset, 0, self.bottomContentInset, 0)];
+    [self.webView.scrollView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
+}
+
+- (void)setBottomContentInset:(CGFloat)bottomContentInset
+{
+    _bottomContentInset = bottomContentInset;
+    [self.webView.scrollView setContentInset:UIEdgeInsetsMake(self.topContentInset, 0, bottomContentInset, 0)];
+    [self.webView.scrollView setScrollIndicatorInsets:UIEdgeInsetsMake(self.topContentInset, 0, bottomContentInset, 0)];
+    [self.webView.scrollView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
 }
 
 #pragma mark - Assignment Management

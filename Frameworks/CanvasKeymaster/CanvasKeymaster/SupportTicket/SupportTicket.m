@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 //
 
 #import "SupportTicket.h"
-#import <CocoaLumberjack/DDFileLogger.h>
 #import "UIDevice+CKMHardware.h"
 #import "CanvasKeymaster.h"
 

@@ -37,14 +37,10 @@ exports[`SubmissionHeader anonymous and muted 1`] = `
           },
           Object {
             "color": "#2D3B45",
-            "fontFamily": ".SFUIDisplay-semibold",
-            "fontSize": 20,
+            "fontFamily": ".SFUIDisplay-heavy",
+            "fontSize": 24,
           },
-          Object {
-            "color": "#2d3b44",
-            "fontSize": 20,
-            "fontWeight": "600",
-          },
+          undefined,
         ]
       }
     >
@@ -114,18 +110,13 @@ exports[`SubmissionHeader anonymous and muted 1`] = `
             Array [
               Object {
                 "color": "#374A59",
-                "fontSize": 14,
+                "fontSize": 16,
+                "fontWeight": "500",
               },
-              Object {
-                "fontFamily": ".SFUIDisplay-bold",
-              },
-              Object {
-                "color": "#374A59",
-              },
-              Object {},
+              undefined,
             ],
             Object {
-              "fontFamily": ".SFUIDisplay",
+              "fontFamily": ".SFUIDisplay-medium",
             },
           ]
         }
@@ -174,14 +165,10 @@ exports[`SubmissionHeader anonymous grading 1`] = `
           },
           Object {
             "color": "#2D3B45",
-            "fontFamily": ".SFUIDisplay-semibold",
-            "fontSize": 20,
+            "fontFamily": ".SFUIDisplay-heavy",
+            "fontSize": 24,
           },
-          Object {
-            "color": "#2d3b44",
-            "fontSize": 20,
-            "fontWeight": "600",
-          },
+          undefined,
         ]
       }
     >
@@ -251,18 +238,13 @@ exports[`SubmissionHeader anonymous grading 1`] = `
             Array [
               Object {
                 "color": "#374A59",
-                "fontSize": 14,
+                "fontSize": 16,
+                "fontWeight": "500",
               },
-              Object {
-                "fontFamily": ".SFUIDisplay-bold",
-              },
-              Object {
-                "color": "#374A59",
-              },
-              Object {},
+              undefined,
             ],
             Object {
-              "fontFamily": ".SFUIDisplay",
+              "fontFamily": ".SFUIDisplay-medium",
             },
           ]
         }
@@ -311,14 +293,10 @@ exports[`SubmissionHeader muted grading 1`] = `
           },
           Object {
             "color": "#2D3B45",
-            "fontFamily": ".SFUIDisplay-semibold",
-            "fontSize": 20,
+            "fontFamily": ".SFUIDisplay-heavy",
+            "fontSize": 24,
           },
-          Object {
-            "color": "#2d3b44",
-            "fontSize": 20,
-            "fontWeight": "600",
-          },
+          undefined,
         ]
       }
     >
@@ -388,18 +366,13 @@ exports[`SubmissionHeader muted grading 1`] = `
             Array [
               Object {
                 "color": "#374A59",
-                "fontSize": 14,
+                "fontSize": 16,
+                "fontWeight": "500",
               },
-              Object {
-                "fontFamily": ".SFUIDisplay-bold",
-              },
-              Object {
-                "color": "#374A59",
-              },
-              Object {},
+              undefined,
             ],
             Object {
-              "fontFamily": ".SFUIDisplay",
+              "fontFamily": ".SFUIDisplay-medium",
             },
           ]
         }

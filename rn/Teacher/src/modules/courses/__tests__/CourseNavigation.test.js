@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -271,6 +271,28 @@ describe('CourseNavigation', () => {
     expect(navigator.show).toHaveBeenLastCalledWith(`/courses/${props.course.id}/pages/front_page`)
     App.setCurrentApp(currentApp.appId)
   })
+
+  it('navigates to pages list when selecting pages tab', () => {
+    const tab = template.tab({
+      id: 'pages',
+      html_url: '/courses/1/wiki',
+    })
+    const props = {
+      ...defaultProps,
+      tabs: [tab],
+      navigator: template.navigator({
+        show: jest.fn(),
+      }),
+    }
+
+    const tree = shallow(<CourseNavigation {...props} />)
+    tree
+      .find('TabsList').first().dive()
+      .find('OnLayout').first().dive()
+      .find('[testID="courses-details.tab.pages"]')
+      .simulate('Press', tab)
+    expect(props.navigator.show).toHaveBeenCalledWith('/courses/1/pages')
+  })
 })
 
 describe('mapStateToProps', () => {
@@ -362,6 +384,55 @@ describe('mapStateToProps', () => {
     const props = mapStateToProps(state, { courseID: '1' })
 
     expect(props).toEqual(expected)
+  })
+
+  it('excludes hidden tabs in student', () => {
+    App.setCurrentApp('student')
+    const course = template.course({ id: '1' })
+    const tabs = { tabs: [template.tab({ id: '1', hidden: true })], pending: 0 }
+    const state = template.appState({
+      entities: {
+        courses: {
+          '1': {
+            course,
+            color: '#fff',
+            tabs,
+            attendanceTool: { pending: 0 },
+          },
+        },
+      },
+      favoriteCourses: {
+        pending: 0,
+        courseRefs: ['1'],
+      },
+    })
+    const props = mapStateToProps(state, { courseID: '1' })
+    expect(props).toMatchObject({ tabs: [] })
+  })
+
+  it('includes hidden tabs in teacher', () => {
+    App.setCurrentApp('teacher')
+    const course = template.course({ id: '1' })
+    const tab = template.tab({ id: 'files', hidden: true })
+    const tabs = { tabs: [tab], pending: 0 }
+    const state = template.appState({
+      entities: {
+        courses: {
+          '1': {
+            course,
+            color: '#fff',
+            tabs,
+            attendanceTool: { pending: 0 },
+          },
+        },
+      },
+      favoriteCourses: {
+        pending: 0,
+        courseRefs: ['1'],
+      },
+    })
+    const props = mapStateToProps(state, { courseID: '1' })
+    expect(props).toMatchObject({ tabs: [tab] })
   })
 
   describe('external tools', () => {

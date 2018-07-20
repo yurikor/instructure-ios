@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016-present Instructure, Inc.
+// Copyright (C) 2017-present Instructure, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ export const assignment: Template<Assignment> = template({
   updated_at: '2017-03-17T19:15:25Z',
   points_possible: 20,
   grading_type: 'points',
-  assignment_group_id: 1376,
+  assignment_group_id: '1376',
   peer_reviews: false,
   automatic_peer_reviews: false,
   position: 1,
@@ -51,13 +51,14 @@ export const assignment: Template<Assignment> = template({
   rubric_assessment: {},
   rubric_settings: null,
   rubric: null,
+  anonymize_students: false,
 })
 
 export const assignmentGroup: Template<AssignmentGroup> = template({
   id: '1',
   name: 'Learn React Native',
   position: 1,
-  assignments: [assignment()],
+  assignments: [assignment({ assignment_group_id: '1' })],
   group_weight: 1,
   integration_data: {},
   sis_source_id: '',

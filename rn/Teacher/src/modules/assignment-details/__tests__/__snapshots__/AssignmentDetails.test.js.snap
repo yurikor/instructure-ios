@@ -85,8 +85,8 @@ exports[`renders 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -896,6 +896,7 @@ exports[`renders 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -1011,8 +1012,8 @@ exports[`renders as a designer 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -1747,6 +1748,7 @@ exports[`renders as a designer 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -1862,8 +1864,8 @@ exports[`renders loading 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -2596,6 +2598,7 @@ exports[`renders loading 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -2713,8 +2716,8 @@ exports[`renders with no submission types 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -3449,6 +3452,7 @@ exports[`renders with no submission types 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -3564,8 +3568,8 @@ exports[`renders with not_graded submission type 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
@@ -4298,6 +4302,7 @@ exports[`renders with not_graded submission type 1`] = `
                 "dismissAllModals": [Function],
                 "isModal": false,
                 "pop": [Function],
+                "replace": [Function],
                 "show": [Function],
                 "traitCollection": [Function],
               }
@@ -4413,8 +4418,8 @@ exports[`renders without description 1`] = `
                     },
                     Object {
                       "color": "#2D3B45",
-                      "fontFamily": ".SFUIDisplay-semibold",
-                      "fontSize": 20,
+                      "fontFamily": ".SFUIDisplay-heavy",
+                      "fontSize": 24,
                     },
                     undefined,
                   ]
