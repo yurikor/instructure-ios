@@ -19,7 +19,7 @@ import Result
 
 extension String {
     init(deviceToken: Data) {
-        self = deviceToken.reduce("", {$0 + String(format: "%02X", $1)})
+        self = deviceToken.reduce("", {$0 + String(format: "%02.2hhx", $1)})
     }
 }
 
